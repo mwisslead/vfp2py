@@ -87,3 +87,7 @@ ENV/
 
 # Rope project settings
 .ropeproject
+
+VisualFoxpro9*.py
+VisualFoxpro9*.tokens
+test.py
