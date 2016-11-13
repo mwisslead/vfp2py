@@ -19,7 +19,6 @@ preprocessorLine
 nonpreprocessorLine
  : LINECOMMENT 
  | lineEnd
- //| ~('#' | NL | EOF) {_input.enableChannel(1);} (~(NL | COMMENT | EOF))* COMMENT? lineEnd {_input.disableChannel(1);}
  | {_input.enableChannel(1);} .*? lineEnd {_input.disableChannel(1);}
  ;
 
@@ -288,7 +287,7 @@ setCmd
  | NEAR (ON | OFF)
  | NOTIFY CURSOR? (ON | OFF)
  | ORDER TO (specialExpr | TAG? specialExpr (OF specialExpr)? (IN specialExpr)? (ASCENDING | DESCENDING)?)?
- | PRINTER (ON PROMPT?| OFF)
+ | PRINTER (ON PROMPT? | OFF | TO expr?)
  | PROCEDURE TO specialExpr (',' specialExpr)* ADDITIVE?
  | REFRESH TO expr (',' expr)?
  | STATUS (ON | OFF)
