@@ -656,9 +656,9 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
 
     def visitArrayIndex(self, ctx):
         if ctx.twoExpr():
-            return '[' + ', '.join(self.visit(ctx.twoExpr())) + ']'
+            return ', '.join(self.visit(ctx.twoExpr()))
         else:
-            return '[' + str(self.visit(ctx.expr())) + ']'
+            return str(self.visit(ctx.expr()))
 
     def visitTwoExpr(self, ctx):
         return [self.visit(expr) for expr in ctx.expr()]
@@ -693,6 +693,18 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
     def visitWaitWindow(self, ctx):
         #WAIT WINDOW (NOCLEAR? NOWAIT? expr | NOWAIT? NOCLEAR? expr | expr NOWAIT? NOCLEAR? | expr NOCLEAR? NOWAIT?) (TIMEOUT NUM)? #waitWindow
         return 'vfp.wait_window(' + self.visit(ctx.message) + ', nowait=' + repr(ctx.NOWAIT() != None) + ', noclear=' + repr(ctx.NOCLEAR() != None) + (', timeout=' + str(self.visit(ctx.timeout)) if ctx.TIMEOUT() != None else '') + ')'
+
+    def visitCreateTable(self, ctx):
+        if ctx.TABLE():
+            func = 'vfp.create_table'
+        elif ctx.DBF():
+            func = 'vfp.create_dbf'
+        tablename = str(self.visit(ctx.expr()))
+        tablesetup = zip(ctx.identifier()[::2], ctx.identifier()[1::2], ctx.arrayIndex())
+        tablesetup = ((self.visit(id1), self.visit(id2), self.visit(size)) for id1, id2, size in tablesetup)
+        setupstring = repr('; '.join('{} {}({})'.format(id1, id2, int(float(size))) for id1, id2, size in tablesetup))
+        free = '\'free\'' if ctx.FREE() else ''
+        return '{}({}, {}, {})'.format(func, tablename, setupstring, free)
 
     def visitSelect(self, ctx):
         return 'vfp.db(' + repr(str(ctx.start.getInputStream().getText(ctx.start.start, ctx.stop.stop))) + ')'
