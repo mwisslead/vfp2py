@@ -287,7 +287,7 @@ setCmd
  | NEAR (ON | OFF)
  | NOTIFY CURSOR? (ON | OFF)
  | ORDER TO (specialExpr | TAG? specialExpr (OF specialExpr)? (IN specialExpr)? (ASCENDING | DESCENDING)?)?
- | PRINTER (ON PROMPT? | OFF | TO expr?)
+ | PRINTER (ON PROMPT? | OFF | TO (expr ADDITIVE? | DEFAULT | NAME expr)?)
  | PROCEDURE TO specialExpr (',' specialExpr)* ADDITIVE?
  | REFRESH TO expr (',' expr)?
  | STATUS (ON | OFF)
