@@ -655,7 +655,13 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         return 'vfp.get_var[\'' + ctx.getText().lower() + '\']'
 
     def visitArrayIndex(self, ctx):
-        return ', '.join(self.visit(expr) for expr in ctx.expr())
+        if ctx.twoExpr():
+            return '[' + ', '.join(self.visit(ctx.twoExpr())) + ']'
+        else:
+            return '[' + str(self.visit(ctx.expr())) + ']'
+
+    def visitTwoExpr(self, ctx):
+        return [self.visit(expr) for expr in ctx.expr()]
 
     def visitQuit(self, ctx):
         return ['vfp.quit()']
@@ -818,8 +824,6 @@ def time_lines(data):
     return retval
 
 def main(argv):
-    if os.path.splitext(argv[0])[-1] == '.pkl':
-        pass
     tic = Tic()
     tokens = preprocess_file(argv[1]).tokens
     print(tic.toc())
