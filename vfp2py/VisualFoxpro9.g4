@@ -207,7 +207,7 @@ otherCmds
 
  | CREATE (TABLE|DBF) expr FREE? '(' identifier identifier arrayIndex (',' identifier identifier arrayIndex)* ')' #createTable
  | SELECT DISTINCT? (args | '*') (FROM expr)? (WHERE expr)? (INTO TABLE expr)? (ORDER BY identifier)? #select
- | USE (SHARED | EXCL | EXCLUSIVE)? expr? IN expr? (SHARED | EXCL | EXCLUSIVE)? (ALIAS identifier)? #use
+ | USE (SHARED | EXCL | EXCLUSIVE)? name=expr? IN workArea=expr? (SHARED | EXCL | EXCLUSIVE)? (ALIAS identifier)? #use
  | LOCATE (FOR expr)? (WHILE expr)? NOOPTIMIZE? #locate
  | REPLACE scopeClause? idAttr WITH expr (FOR expr)? #replace
  | INDEX ON expr (TAG | TO) expr (COMPACT | ASCENDING | DESCENDING)? ( UNIQUE | CANDIDATE)? ADDITIVE? #indexOn

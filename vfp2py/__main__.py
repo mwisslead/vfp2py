@@ -728,7 +728,28 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         return 'vfpdb.go(' + repr(str(ctx.start.getInputStream().getText(ctx.start.start, ctx.stop.stop))) + ')'
 
     def visitUse(self, ctx):
-        return 'vfpdb.use(' + repr(str(ctx.start.getInputStream().getText(ctx.start.start, ctx.stop.stop))) + ')'
+        # USE (SHARED | EXCL | EXCLUSIVE)? expr? IN expr? (SHARED | EXCL | EXCLUSIVE)? (ALIAS identifier)? #use
+        shared = ctx.SHARED()
+        exclusive = ctx.EXCL() or ctx.EXCLUSIVE()
+        if shared and exclusive:
+            raise Exception('cannot combine shared and exclusive')
+        elif shared:
+            opentype = 'shared'
+        elif exclusive:
+            opentype = 'exclusive'
+        else:
+            opentype = None
+        if ctx.name:
+            name = self.visit(ctx.name)
+        else:
+            name = None
+        if ctx.workArea:
+            workarea = self.visit(ctx.workArea)
+            if isinstance(workarea, float):
+                workarea = int(workarea)
+        else:
+            workarea = None
+        return self.make_func_code('vfpdb.use', name, workarea, opentype)
 
     def visitAppend(self, ctx):
         if ctx.FROM():
