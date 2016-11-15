@@ -106,7 +106,15 @@ class PreprocessVisitor(VisualFoxpro9Visitor):
         return hidden_tokens + retval
 
 def add_indents(struct, num_indents):
-    return '\n'.join(add_indents(item, num_indents+1) if isinstance(item, list) else '    '*num_indents + str(item) for item in struct)
+    retval = []
+    for item in struct:
+        if isinstance(item, list):
+            retval.append(add_indents(item, num_indents+1))
+        elif item:
+            retval.append(' '*4*num_indents + str(item))
+        else:
+            retval.append('')
+    return '\n'.join(retval)
 
 def get_list(should_be_list):
     try:
@@ -142,7 +150,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             main = ['def main(argv):', line_structure, '', 'if __name__ == \'__main__\':', ['main(sys.argv)']]
             self.imports.append('sys')
             self.scope = None
-         
+
 
         defs = []
         if ctx.classDef():
@@ -226,7 +234,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
                 assignments.append('def %s(%s):' % (newfuncname, ', '.join(parameters)))
                 assignments.append(funcbody)
                 assignments.append('self.%s = %s' % (funcname, newfuncname))
-        
+
         if '__init__' in funcs:
             funcs['__init__'][1] = ['super(%s, self).__init__()' % classname] + assignments + funcs['__init__'][1][0]
         else:
@@ -236,7 +244,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             parameters, funcbody = funcs[funcname]
             if '.' not in funcname:
                 retval.append(['def %s(%s):' % (funcname, ', '.join(parameters)), funcbody])
-        
+
         #retval += ['vfpfunctions.classes[%s] = %s' % (repr(classname), classname)]
         return retval
 
@@ -287,7 +295,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
     def visitParameter(self, ctx):
 #parameter: idAttr (AS idAttr)?;
         return self.visit(ctx.idAttr()[0])
-        
+
     def visitParameters(self, ctx):
         return [self.visit(parameter) for parameter in ctx.parameter()]
 
@@ -470,7 +478,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             self.scope = None
             funcname = self.visit(ctx.atom())
             self.scope = savescope
-       
+
             return self.visitFuncCall(funcname, args)
         elif trailer:
             for i, t in enumerate(trailer):
@@ -527,7 +535,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         if ctx.RD() or ctx.RMDIR():
             funcname = 'rmdir'
         return 'os.' + funcname + '(' + self.visit(ctx.specialExpr()) + ')'
- 
+
     #specialExpr: pathname | expr;
     def visitSpecialExpr(self, ctx):
         if ctx.pathname():
@@ -577,7 +585,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         #if ctx.TIME_LITERAL():
         #    hour, minute, second
         #    if innerstr[-2:].upper() in ('AM', 'PM'):
-        #        
+        #
         return 'datetime.dateime(1, 1, 1, 0, 0, 0)'
 
     def visitString(self, ctx):
