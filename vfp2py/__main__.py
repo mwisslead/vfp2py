@@ -773,6 +773,15 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
                 tablename = None
             return self.make_func_code('vfpdb.append', tablename, menupopup)
 
+    def visitReplace(self, ctx):
+        value = self.visit(ctx.expr(0))
+        if ctx.scopeClause():
+            scope = self.visit(ctx.scopeClause())
+        else:
+            scope = None
+        table, field = ctx.idAttr().getText().lower().split('.')
+        return self.make_func_code('vfpdb.replace', table, field, value, scope)
+
     def make_func_code(self, funcname, *kwargs):
         return '{}({})'.format(funcname, ', '.join(repr(x) for x in kwargs))
 
