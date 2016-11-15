@@ -2,7 +2,7 @@
 #DEFINE cantbewrong
 #DEFINE SPACE CHR
 #IFDEF cantbewrong
-#IF FILE ( 'test.h' ) 
+#IF FILE ( 'test.h' )
    ***comment***
    # include  test.h
    # include  'test.h'
@@ -55,7 +55,7 @@ DO CASE
    CASE X == 1 && case 1
       do case
          case x == 1
-         
+
       endcase
       X = 2
    CASE X == 2 && case 2
@@ -78,6 +78,30 @@ do case
 endcase &&empty case end with comment
 
 t=u(v(w(x(y(z)))))
+
+*** CREATE REPORT TABLE
+CREATE TABLE REPORT FREE (NAME C(50), ST C(2), QUANTITY N(5), RECEIVED L(1))
+USE REPORT IN 0 SHARED
+SELECT REPORT
+APPEND BLANK
+
+REPLACE REPORT.NAME WITH 'Michael'
+REPLACE REPORT.ST WITH 'IA'
+REPLACE REPORT.QUANTITY WITH 4
+REPLACE REPORT.RECEIVED WITH .F.
+
+GO TOP
+
+FOR X = 1 TO REPORT.QUANITY
+    SET PRINTER TO ALLTRIM('printer')
+    REPORT FORM TEST.FRX TO PRINTER NOCONSOLE
+    SET PRINTER TO
+ENDFOR
+
+IF USED('REPORT')
+   SELECT REPORT
+   USE IN REPORT
+ENDIF
 
 FUNCTION test
    parameters a, b

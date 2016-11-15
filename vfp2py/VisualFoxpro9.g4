@@ -214,8 +214,7 @@ otherCmds
  | COUNT scopeClause? ((FOR expr) | (WHILE expr) | (TO expr))* NOOPTIMIZE? #count
  | SUM scopeClause? expr (FOR expr | TO idAttr | NOOPTIMIZE)+ #sum
  | DELETE scopeClause? (FOR expr)? (WHILE expr)? (IN expr)? NOOPTIMIZE? #deleteRecord
- | APPEND BLANK? (IN idAttr)? NOMENU? #append
- | APPEND FROM specialExpr #appendFrom
+ | APPEND (BLANK? (IN idAttr)? NOMENU? | FROM specialExpr) #append
  | SKIPKW expr (IN expr)? #skipRecord
  | SEEK expr #seekRecord
  | (GO | GOTO) (TOP | BOTTOM | RECORD? expr) (IN idAttr)? #goRecord

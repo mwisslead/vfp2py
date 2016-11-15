@@ -722,6 +722,20 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
     def visitUse(self, ctx):
         return 'vfp.db(' + repr(str(ctx.start.getInputStream().getText(ctx.start.start, ctx.stop.stop))) + ')'
 
+    def visitAppend(self, ctx):
+        # APPEND (BLANK? (IN idAttr)? NOMENU? | FROM specialExpr)
+        if ctx.FROM():
+            pass #NEED TO ADD
+        else:
+            menupopup = not ctx.BLANK()
+            if ctx.IN():
+                tablename = self.visit(ctx.idAttr())
+            else:
+                tablename = None
+            return self.make_func_code('vfp.db.append', tablename, menupopup)
+
+    def make_func_code(self, funcname, *kwargs):
+        return '{}({})'.format(funcname, ', '.join(repr(x) for x in kwargs))
 
 def print_tokens(stream):
     stream.fill()
