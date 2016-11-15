@@ -711,27 +711,26 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
 
     def visitCreateTable(self, ctx):
         if ctx.TABLE():
-            func = 'vfp.create_table'
+            func = 'vfpdb.create_table'
         elif ctx.DBF():
-            func = 'vfp.create_dbf'
-        tablename = str(self.visit(ctx.expr()))
+            func = 'vfpdb.create_dbf'
+        tablename = self.visit(ctx.expr())
         tablesetup = zip(ctx.identifier()[::2], ctx.identifier()[1::2], ctx.arrayIndex())
         tablesetup = ((self.visit(id1), self.visit(id2), self.visit(size)) for id1, id2, size in tablesetup)
-        setupstring = repr('; '.join('{} {}({})'.format(id1, id2, int(float(size))) for id1, id2, size in tablesetup))
-        free = '\'free\'' if ctx.FREE() else ''
-        return '{}({}, {}, {})'.format(func, tablename, setupstring, free)
+        setupstring = '; '.join('{} {}({})'.format(id1, id2, int(float(size))) for id1, id2, size in tablesetup)
+        free = 'free' if ctx.FREE() else ''
+        return self.make_func_code(func, tablename, setupstring, free)
 
     def visitSelect(self, ctx):
-        return 'vfp.db(' + repr(str(ctx.start.getInputStream().getText(ctx.start.start, ctx.stop.stop))) + ')'
+        return 'vfpdb.select(' + repr(str(ctx.start.getInputStream().getText(ctx.start.start, ctx.stop.stop))) + ')'
 
     def visitGoRecord(self, ctx):
-        return 'vfp.db(' + repr(str(ctx.start.getInputStream().getText(ctx.start.start, ctx.stop.stop))) + ')'
+        return 'vfpdb.go(' + repr(str(ctx.start.getInputStream().getText(ctx.start.start, ctx.stop.stop))) + ')'
 
     def visitUse(self, ctx):
-        return 'vfp.db(' + repr(str(ctx.start.getInputStream().getText(ctx.start.start, ctx.stop.stop))) + ')'
+        return 'vfpdb.use(' + repr(str(ctx.start.getInputStream().getText(ctx.start.start, ctx.stop.stop))) + ')'
 
     def visitAppend(self, ctx):
-        # APPEND (BLANK? (IN idAttr)? NOMENU? | FROM specialExpr)
         if ctx.FROM():
             pass #NEED TO ADD
         else:
@@ -740,7 +739,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
                 tablename = self.visit(ctx.idAttr())
             else:
                 tablename = None
-            return self.make_func_code('vfp.db.append', tablename, menupopup)
+            return self.make_func_code('vfpdb.append', tablename, menupopup)
 
     def make_func_code(self, funcname, *kwargs):
         return '{}({})'.format(funcname, ', '.join(repr(x) for x in kwargs))
