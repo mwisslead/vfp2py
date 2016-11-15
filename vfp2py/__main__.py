@@ -455,7 +455,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
     def visitTrailer(self, ctx):
         trailer = self.visit(ctx.trailer()) if ctx.trailer() else []
         if ctx.args():
-            retval = ['(' + ','.join((str(x) for x in self.visit(ctx.args()))) + ')']
+            retval = [[x for x in self.visit(ctx.args())]]
         elif ctx.identifier():
             retval = [self.visit(ctx.identifier())]
         else:
@@ -472,7 +472,10 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             self.scope = savescope
        
             return self.visitFuncCall(funcname, args)
-        if trailer:
+        elif trailer:
+            for i, t in enumerate(trailer):
+                if isinstance(t, list):
+                    trailer[i] = '({})'.format(', '.join(str(arg) for arg in t))
             return str(self.visit(ctx.atom())) + '.'.join(trailer)
         else:
             return self.visit(ctx.atom())
