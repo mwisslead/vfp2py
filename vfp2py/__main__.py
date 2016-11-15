@@ -722,13 +722,24 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         return self.make_func_code(func, tablename, setupstring, free)
 
     def visitSelect(self, ctx):
-        return 'vfpdb.select(' + repr(str(ctx.start.getInputStream().getText(ctx.start.start, ctx.stop.stop))) + ')'
+        if ctx.tablename:
+            return self.make_func_code('vfpdb.select', self.visit(ctx.tablename))
+        #NEED TO ADD - SQL SELECT
 
     def visitGoRecord(self, ctx):
-        return 'vfpdb.go(' + repr(str(ctx.start.getInputStream().getText(ctx.start.start, ctx.stop.stop))) + ')'
+        if ctx.TOP():
+            record = 0
+        elif ctx.BOTTOM():
+            record = -1
+        else:
+            record = self.visit(ctx.expr())
+        if ctx.idAttr():
+            name = self.visit(ctx.idAttr)
+        else:
+            name = None
+        return self.make_func_code('vfpdb.goto', name, record)
 
     def visitUse(self, ctx):
-        # USE (SHARED | EXCL | EXCLUSIVE)? expr? IN expr? (SHARED | EXCL | EXCLUSIVE)? (ALIAS identifier)? #use
         shared = ctx.SHARED()
         exclusive = ctx.EXCL() or ctx.EXCLUSIVE()
         if shared and exclusive:
@@ -753,7 +764,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
 
     def visitAppend(self, ctx):
         if ctx.FROM():
-            pass #NEED TO ADD
+            pass #NEED TO ADD - APPEND FROM
         else:
             menupopup = not ctx.BLANK()
             if ctx.IN():
