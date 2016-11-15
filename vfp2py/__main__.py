@@ -500,6 +500,12 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         if funcname == 'str':
             self.imports.append('vfpfunctions')
             return 'vfpfunctions.num_to_str(' + ', '.join(str(arg) for arg in args) + ')'
+        if funcname == 'file':
+            self.imports.append('os')
+            return 'os.path.isfile(' + ', '.join(str(arg) for arg in args) + ')'
+        if funcname == 'used':
+            self.imports.append('vfpfunctions')
+            return 'vfpfunction.used(' + ', '.join(str(arg) for arg in args) + ')'
         if funcname == 'round':
             return funcname + '(' + ', '.join(str(arg) for arg in args) + ')'
         if funcname in dir(vfpfunctions):
@@ -580,39 +586,37 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
 
     # expr op=('**'|'^') expr */
     def visitPower(self, ctx):
-        left = self.visit(ctx.expr(0))  # get value of left subexpression
-        right = self.visit(ctx.expr(1)) # get value of right subexpression
-        symbol = '**'
-        return '(%s %s %s)' % (left, symbol, right)
+        return self.operationExpr(ctx, '**')
 
     # expr op=('*'|'/') expr */
     def visitMultiplication(self, ctx):
-        left = self.visit(ctx.expr(0))  # get value of left subexpression
-        right = self.visit(ctx.expr(1)) # get value of right subexpression
-        symbol = '/*'[int(ctx.op.type == VisualFoxpro9Parser.ASTERISK)]
-        return '%s %s %s' % (left, symbol, right)
+        return self.operationExpr(ctx, ctx.op.type)
 
     # expr op=('+'|'-') expr */
     def visitAddition(self, ctx):
-        left = self.visit(ctx.expr(0))  # get value of left subexpression
-        right = self.visit(ctx.expr(1)) # get value of right subexpression
-        symbol = '-+'[int(ctx.op.type == VisualFoxpro9Parser.PLUS_SIGN)]
-        try:
-            raise Exception('')
-            return repr(eval('%s %s %s' % (left, symbol, right)))
-        except Exception as e:
-            return '%s %s %s' % (left, symbol, right)
+        return self.operationExpr(ctx, ctx.op.type)
 
     # expr '%' expr #Mod
     def visitMod(self, ctx):
+        return self.operationExpr(ctx, '%')
+
+    def operationExpr(self, ctx, operation):
         left = self.visit(ctx.expr(0))  # get value of left subexpression
         right = self.visit(ctx.expr(1)) # get value of right subexpression
-        symbol = '%'
+        symbols = {
+            '**': '**',
+            '%': '%',
+            VisualFoxpro9Parser.ASTERISK: '*',
+            VisualFoxpro9Parser.FORWARDSLASH: '/',
+            VisualFoxpro9Parser.PLUS_SIGN: '+',
+            VisualFoxpro9Parser.MINUS_SIGN: '-'
+        }
         try:
             raise Exception('')
-            return repr(eval('%s %s %s' % (left, symbol, right)))
+            return repr(eval('%s %s %s' % (left, symbols[operation], right)))
         except Exception as e:
-            return '%s %s %s' % (left, symbol, right)
+            pass
+        return '(%s %s %s)' % (left, symbols[operation], right)
 
     def visitSubExpr(self, ctx):
         return '(' + self.visit(ctx.expr()) + ')' # return child expr's value
