@@ -101,7 +101,7 @@ forEnd
  ;
 
 forStmt
- : forStart line* forEnd lineEnd
+ : forStart lines forEnd lineEnd
  ;
 
 caseExpr

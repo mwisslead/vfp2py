@@ -31,6 +31,13 @@ class Tic():
     def toc(self):
         return time.time()-self.start
 
+class CodeStr(str):
+    def __init__(self, string):
+        super(CodeStr, self).__init__(string)
+
+    def __repr__(self):
+        return self
+
 class PreprocessVisitor(VisualFoxpro9Visitor):
     def __init__(self):
         self.tokens = None
@@ -63,15 +70,17 @@ class PreprocessVisitor(VisualFoxpro9Visitor):
 
     def visitPreprocessorInclude(self, ctx):
         visitor = PythonConvertVisitor()
-        cmd = eval(visitor.visit(ctx.specialExpr()))
-        include_visitor = preprocess_file(cmd)
+        filename = visitor.visit(ctx.specialExpr())
+        if isinstance(filename, CodeStr):
+            filename = eval(filename)
+        include_visitor = preprocess_file(filename)
         self.memory.update(include_visitor.memory)
         return include_visitor.tokens
 
     def visitPreprocessorIf(self, ctx):
         if ctx.IF():
             visitor = PythonConvertVisitor()
-            ifexpr = eval(str(visitor.visit(ctx.expr())))
+            ifexpr = eval(repr(visitor.visit(ctx.expr())))
         else:
             name = ctx.identifier().getText().lower()
             ifexpr = name in self.memory
@@ -111,7 +120,7 @@ def add_indents(struct, num_indents):
         if isinstance(item, list):
             retval.append(add_indents(item, num_indents+1))
         elif item:
-            retval.append(' '*4*num_indents + str(item))
+            retval.append(' '*4*num_indents + repr(item))
         else:
             retval.append('')
     return '\n'.join(retval)
@@ -146,8 +155,8 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             for line in get_list(ctx.line()):
                 line_structure += self.visit(line)
             if not line_structure:
-                line_structure = ['pass']
-            main = ['def main(argv):', line_structure, '', 'if __name__ == \'__main__\':', ['main(sys.argv)']]
+                line_structure = [CodeStr('pass')]
+            main = [CodeStr('def main(argv):'), line_structure, CodeStr(''), CodeStr('if __name__ == \'__main__\':'), [CodeStr('main(sys.argv)')]]
             self.imports.append('sys')
             self.scope = None
 
@@ -155,13 +164,13 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         defs = []
         if ctx.classDef():
             for classDef in get_list(ctx.classDef()):
-                defs += self.visit(classDef) + ['']
+                defs += self.visit(classDef) + [[]]
 
         if ctx.funcDef():
             for funcDef in get_list(ctx.funcDef()):
                 funcname, parameters, funcbody = self.visit(funcDef)
-                defs.append('def %s(%s):' % (funcname, ', '.join(parameters)))
-                defs += funcbody + ['']
+                defs.append(CodeStr('def {}({}):'.format(funcname, ', '.join(parameters))))
+                defs += funcbody + [[]]
 
         self.imports = sorted(set(self.imports), key=import_key)
         imports = []
@@ -171,17 +180,13 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             imports.append(module)
         if imports:
             imports.append('')
-        return  ['import ' + module if module else '' for module in imports] + defs + main
+        return  [CodeStr('import ' + module) if module else '' for module in imports] + defs + main
 
     def visitLine(self, ctx):
         retval = self.visitChildren(ctx)
         if retval is None:
             print(ctx.getText())
             return []
-        #if ctx.stmt():
-        #    retval = self.visit(ctx.stmt())
-        #else:
-        #    retval = []
         if not isinstance(retval, list):
             return [retval]
         return retval
@@ -197,7 +202,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             return ''
         comment = self.andfix.sub('', comment)
         comment = self.frontfix.sub(repl, comment)
-        return self.endfix.sub(repl, comment)
+        return CodeStr(self.endfix.sub(repl, comment))
 
     def visitCmdStmt(self, ctx):
         if ctx.cmd():
@@ -209,12 +214,15 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         retval = []
         for line in ctx.line():
             retval += self.visit(line)
+        def badline(line):
+            return line.startswith('#') if hasattr(line, 'startswith') else not line
+        if not retval or all(badline(l) for l in retval):
+            retval.append(CodeStr('pass'))
         return retval
-        return [self.visit(line)[0] for line in ctx.line()]
 
     def visitClassDef(self, ctx):
         classname, supername = self.visit(ctx.classDefStart())
-        retval = ['class %s(%s):' % (classname, supername)]
+        retval = [CodeStr('class {}({}):'.format(classname, supername))]
         assignments = []
         funcs = {}
         for stmt in ctx.classDefStmt():
@@ -231,19 +239,19 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             parameters, funcbody = funcs[funcname]
             if '.' in funcname:
                 newfuncname = funcname.replace('.', '_')
-                assignments.append('def %s(%s):' % (newfuncname, ', '.join(parameters)))
+                assignments.append(CodeStr('def {}({}):'.format(newfuncname, ', '.join(parameters))))
                 assignments.append(funcbody)
-                assignments.append('self.%s = %s' % (funcname, newfuncname))
+                assignments.append(CodeStr('self.{} = {}'.format(funcname, newfuncname)))
 
         if '__init__' in funcs:
-            funcs['__init__'][1] = ['super(%s, self).__init__()' % classname] + assignments + funcs['__init__'][1][0]
+            funcs['__init__'][1] = [CodeStr('super({}, self).__init__()'.format(classname))] + assignments + funcs['__init__'][1][0]
         else:
-            funcs['__init__'] = [['self'], ['super(%s, self).__init__()' % classname] + assignments]
+            funcs['__init__'] = [[CodeStr('self')], [CodeStr('super({}, self).__init__()'.format(classname))] + assignments]
 
         for funcname in funcs:
             parameters, funcbody = funcs[funcname]
             if '.' not in funcname:
-                retval.append(['def %s(%s):' % (funcname, ', '.join(parameters)), funcbody])
+                retval.append([CodeStr('def {}({}):'.format(funcname, ', '.join(parameters))), funcbody])
 
         #retval += ['vfpfunctions.classes[%s] = %s' % (repr(classname), classname)]
         return retval
@@ -266,7 +274,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         return classname, supername
 
     def visitClassDefAssign(self, ctx):
-        return ['self.' + arg for arg in self.visit(ctx.assign())]
+        return [CodeStr('self.' + arg) for arg in self.visit(ctx.assign())]
 
     def visitClassDefAddObject(self, ctx):
         #ADD OBJECT identifier AS identifier (WITH assignList)? NL
@@ -274,8 +282,8 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         objtype = self.visit(ctx.idAttr()[0])
         if objtype in self.vfpclassnames:
             objtype = self.vfpclassnames[objtype]
-        retval = ['self.%s = %s(%s)' % (name, objtype, ', '.join([self.visit(idAttr) for idAttr, expr in zip(ctx.idAttr()[1:], ctx.expr())]))]
-        retval += ['self.add_object(self.%s)' % name]
+        retval = [CodeStr('self.{} = {}({})'.format(name, objtype, ', '.join([self.visit(idAttr) for idAttr, expr in zip(ctx.idAttr()[1:], ctx.expr())])))]
+        retval += [CodeStr('self.add_object(self.{})'.format(name))]
         return retval
 
     def visitClassDefFuncDef(self, ctx):
@@ -304,12 +312,12 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         self.scope = {}
         name, parameters = self.visit(ctx.funcDefStart())
         self.imports.append('vfpfunctions')
-        body = [['vfpfunctions.pushscope()']] + [self.visit(ctx.lines())] + [['vfpfunctions.popscope()']]
+        body = [[CodeStr('vfpfunctions.pushscope()')]] + [self.visit(ctx.lines())] + [[CodeStr('vfpfunctions.popscope()')]]
         self.scope = None
         return name, parameters, body
 
     def visitPrintStmt(self, ctx):
-        return ['print(' + ','.join(arg for arg in self.visit(ctx.args())) + ')']
+        return [self.make_func_code('print', *self.visit(ctx.args()))]
 
     def visitIfStart(self, ctx):
         return self.visit(ctx.expr())
@@ -318,17 +326,11 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         evaluation = self.visit(ctx.ifStart())
 
         ifBlock = self.visit(ctx.ifBody)
-        if ifBlock:
-            retval = ['if %s:' % evaluation, ifBlock]
-	else:
-            retval = ['if %s:' % evaluation, ['pass']]
+        retval = [CodeStr('if {}:'.format(evaluation)), ifBlock]
 
         if ctx.elseBody:
             elseBlock = self.visit(ctx.elseBody)
-            if elseBlock:
-                retval += ['else:', elseBlock]
-	    else:
-                retval += ['else:', ['pass']]
+            retval += [CodeStr('else:'), elseBlock]
 
         return retval
 
@@ -341,17 +343,15 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
                 retval.append(self.visit(elem.lineComment()))
             else:
                 expr, lines = self.visit(elem.singleCase())
-                if not any(lines):
-                    lines = ['pass'] + lines
                 if n == 0:
-                    retval += ['if %s:' % expr, lines]
+                    retval += [CodeStr('if {}:'.format(expr)), lines]
                 else:
-                    retval += ['elif %s:' % expr, lines]
+                    retval += [CodeStr('elif {}:'.format(expr)), lines]
                 n += 1
         if n == 0:
-            retval += ['if True:', ['pass']]
+            retval += [CodeStr('if True:'), [CodeStr('pass')]]
         if ctx.otherwise():
-            retval += ['else:', self.visit(ctx.otherwise())]
+            retval += [CodeStr('else:'), self.visit(ctx.otherwise())]
         return retval
 
     def visitSingleCase(self, ctx):
@@ -365,6 +365,20 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
     def visitOtherwise(self, ctx):
         #OTHERWISE NL line*;
         return self.visit(ctx.lines())
+
+    def visitForStart(self, ctx):
+        loopvar = self.visit(ctx.idAttr())
+        loop_start = self.visit(ctx.loopStart)
+        loop_stop = self.visit(ctx.loopStop)
+        if ctx.loopStep:
+            loop_step = self.visit(ctx.loopStep)
+            return CodeStr('for {} in range({}+1, {}+1, {}):'.format(loopvar, loop_start, loop_stop, loop_step))
+        else:
+            return CodeStr('for {} in range({}+1, {}+1):'.format(loopvar, loop_start, loop_stop))
+            loop_step = 1
+
+    def visitForStmt(self, ctx):
+        return [self.visit(ctx.forStart()), self.visit(ctx.lines())]
 
     def visitDeclaration(self, ctx):
         if ctx.PUBLIC():
@@ -391,18 +405,17 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
     def visitAssign(self, ctx):
         if ctx.STORE():
             value = self.visit(ctx.expr())
-            args = [self.visit(var) for var in ctx.idAttr()] + [str(value)]
-            return ' = '.join(args)
-#            return [arg + ' = ' + str(value) for arg in get_list(args)]
+            args = [self.visit(var) for var in ctx.idAttr()] + [repr(value)]
+            return CodeStr(' = '.join(args))
         else:
             name = self.visit(ctx.idAttr()[0])
             value = self.visit(ctx.expr())
             try:
                 if value.startswith(name + ' + '):
-                    return ['%s += %s' % (name, value[len(name + ' + '):])]
+                    return [CodeStr('{} += {}'.format(name, repr(value[len(name + ' + '):])))]
             except Exception as e:
                 pass
-            return ['%s = %s' % (name, value)]
+            return [CodeStr('{} = {}'.format(name, repr(value)))]
 
     def visitArgs(self, ctx):
         return [self.visit(c) for c in ctx.expr()]
@@ -419,7 +432,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
                        VisualFoxpro9Lexer.AND: 'and'
                       }
         symbol = symbol_dict[ctx.op.type]
-        return '%s %s %s' % (self.visit(ctx.expr(0)), symbol, self.visit(ctx.expr(1)))
+        return CodeStr('{} {} {}'.format(self.visit(ctx.expr(0)), symbol, self.visit(ctx.expr(1))))
 
     def scopeId(self, text, vartype):
         if '.' in text:
@@ -442,23 +455,29 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
                 self.imports.append('vfpfunctions')
                 #vals[0] = 'vfpfunctions.' + vartype + '[' + repr(str(t)) + ']' + r
         text = '.'.join(vals)
-        return text
+        return CodeStr(text)
 
     def visitIdAttr(self, ctx):
         identifier = self.visit(ctx.identifier())
-        return identifier
-        if ctx.arrayIndex():
-            arrayIndex = self.visit(ctx.arrayIndex()).split(', ')
-            try:
-                arrayIndex = ', '.join(str(int(i) - 1) for i in arrayIndex)
-            except Exception as e:
-                arrayIndex = ', '.join(i + ' - 1' for i in arrayIndex)
-            text += '[' + arrayIndex + ']'
-        if text.startswith('this.'):
-            return 'self.' + text[5:]
-        if text.startswith('thisform.'):
-            return 'self.parentform.' + text[9:]
-        return self.scopeId(text, 'val')
+        identifier = self.scopeId(identifier, 'val')
+        if identifier == 'this':
+            identifier = 'self'
+        if identifier == 'thisform':
+            identifier = 'self.parentform'
+        if ctx.trailer():
+            trailer = self.visit(ctx.trailer())
+            identifier += self.convert_trailer_args(trailer)
+        return CodeStr(identifier)
+
+    def convert_trailer_args(self, trailers):
+        retval = ''
+        for trailer in trailers:
+            if isnstance(trailer, list):
+                retval += '({})'.format(', '.join(repr(t) for t in trailer))
+            else:
+                retval += '.' + trailer
+        return retval
+
 
     def visitTrailer(self, ctx):
         trailer = self.visit(ctx.trailer()) if ctx.trailer() else []
@@ -467,7 +486,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         elif ctx.identifier():
             retval = [self.visit(ctx.identifier())]
         else:
-            retval = ['()']
+            retval = [[]]
         return retval + trailer
 
     def visitAtomExpr(self, ctx):
@@ -483,8 +502,10 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         elif trailer:
             for i, t in enumerate(trailer):
                 if isinstance(t, list):
-                    trailer[i] = '({})'.format(', '.join(str(arg) for arg in t))
-            return str(self.visit(ctx.atom())) + '.'.join(trailer)
+                    trailer[i] = '({})'.format(', '.join(repr(arg) for arg in t))
+                else:
+                    trailer[i] = '.' + trailer[i]
+            return CodeStr(''.join([repr(self.visit(ctx.atom()))] + trailer))
         else:
             return self.visit(ctx.atom())
 
@@ -493,39 +514,40 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
 
     def visitFuncCall(self, funcname, args):
         if funcname == 'chr' and len(args) == 1 and isinstance(args[0], float):
-            return repr(chr(int(args[0])))
+            return chr(int(args[0]))
+        if funcname == 'space' and len(args) == 1 and isinstance(args[0], float):
+            return ' '*int(args[0])
         if funcname == 'date' and len(args) == 0:
             self.imports.append('datetime')
-            return 'datetime.datetime.now().date()'
+            return self.make_func_code('datetime.datetime.now().date')
         if funcname == 'iif' and len(args) == 3:
-            return '(' + str(args[1]) + ' if ' + str(args[0]) + ' else ' + str(args[2]) + ')'
+            return CodeStr('({} if {} else {})'.format(repr(args[1]), repr(args[0]), repr(args[2])))
         if funcname == 'alltrim' and len(args) == 1:
-            return args[0] + '.strip()'
+            return CodeStr(repr(args[0]) + '.strip()')
         if funcname == 'strtran' and len(args) == 3:
-            return args[0] + '.replace(' + ', '.join(str(arg) for arg in args[1:]) + ')'
+            return self.make_func_code('{}.replace'.format(args[0]), *args[1:])
         if funcname == 'left' and len(args) == 2 and isinstance(args[1], float):
-            return args[0] + '[:' + str(int(args[1])) + ']'
+            return CodeStr('{}[:{}]'.format(args[0], int(args[1])))
         if funcname == 'ceiling' and len(args) == 1:
             self.imports.append('math')
-            return 'math.ceil(' + str(args[0]) + ')'
+            return self.make_func_code('math.ceil', *args)
         if funcname == 'str':
             self.imports.append('vfpfunctions')
-            return 'vfpfunctions.num_to_str(' + ', '.join(str(arg) for arg in args) + ')'
+            return self.make_func_code('vfpfunctions.num_to_str', *args)
         if funcname == 'file':
             self.imports.append('os')
-            return 'os.path.isfile(' + ', '.join(str(arg) for arg in args) + ')'
+            return self.make_func_code('os.path.isfile', *args)
         if funcname == 'used':
             self.imports.append('vfpfunctions')
-            return 'vfpfunction.used(' + ', '.join(str(arg) for arg in args) + ')'
+            return self.make_func_code('vfpfunctions.used', *args)
         if funcname == 'round':
-            return funcname + '(' + ', '.join(str(arg) for arg in args) + ')'
+            return self.make_func_code(funcname, *args)
         if funcname in dir(vfpfunctions):
             self.imports.append('vfpfunctions')
             funcname = 'vfpfunctions.' + funcname
         else:
             funcname = self.scopeId(funcname, 'func')
-        retval =  funcname + '(' + ', '.join(str(arg) for arg in args) + ')'
-        return retval
+        return self.make_func_code(funcname, *args)
 
     #(MD | MKDIR | RD | RMDIR) specialExpr #Directory
     def visitAddRemoveDirectory(self, ctx):
@@ -534,7 +556,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             funcname = 'mkdir'
         if ctx.RD() or ctx.RMDIR():
             funcname = 'rmdir'
-        return 'os.' + funcname + '(' + self.visit(ctx.specialExpr()) + ')'
+        return self.make_func_code('os.' + funcname, self.visit(ctx.specialExpr()))
 
     #specialExpr: pathname | expr;
     def visitSpecialExpr(self, ctx):
@@ -544,14 +566,13 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             return self.visit(ctx.expr())
 
     def visitPathname(self, ctx):
-        return repr(str(ctx.getText()))
+        return ctx.getText()
 
     def visitNumber(self, ctx):
         num = ctx.NUMBER_LITERAL().getText()
         if num[-1:].lower() == 'e':
             num += '0'
         return float(num)
-        return str(float(num))
 
     def visitBoolean(self, ctx):
         if ctx.T():
@@ -565,11 +586,11 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         raise Exception('Can\'t convert boolean:' + ctx.getText())
 
     def visitNull(self, ctx):
-        return 'None'
+        return None
 
     def visitDate(self, ctx):
         if ctx.NULLDATE_LITERAL():
-            return 'None'
+            return None
         raise Exception('Date constants not implemented for none null dates')
         innerstr = ctx.getText()[1:-1]
         if ctx.DATE_LITERAL():
@@ -579,21 +600,17 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             if len(y) != 4:
                 raise Exception('year must be 2 or 4 digits in date constant: ' + ctx.getText())
             try:
-                return repr(datetime.date(int(y), int(m), int(d)))
+                return datetime.date(int(y), int(m), int(d))
             except ValueError as e:
                 raise Exception('invalid date constant: ' + ctx.getText())
         #if ctx.TIME_LITERAL():
         #    hour, minute, second
         #    if innerstr[-2:].upper() in ('AM', 'PM'):
         #
-        return 'datetime.dateime(1, 1, 1, 0, 0, 0)'
+        return datetime.dateime(1, 1, 1, 0, 0, 0)
 
     def visitString(self, ctx):
-        value = ctx.getText()[1:-1]
-        #if value[0] != '\'':
-        #    value = '\'' + ''.join([c if c != '\'' else '\\\'' for c in value[1:-1]]) + '\''
-        return repr(str(value))
-        return 'vfp.str(%s)' % value
+        return ctx.getText()[1:-1]
 
     # expr op=('**'|'^') expr */
     def visitPower(self, ctx):
@@ -627,23 +644,23 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             return repr(eval('%s %s %s' % (left, symbols[operation], right)))
         except Exception as e:
             pass
-        return '(%s %s %s)' % (left, symbols[operation], right)
+        return CodeStr('({} {} {})'.format(repr(left), symbols[operation], repr(right)))
 
     def visitSubExpr(self, ctx):
-        return '(' + self.visit(ctx.expr()) + ')' # return child expr's value
+        return CodeStr('({})'.format(self.visit(ctx.expr())))
 
     def visitDoFunc(self, ctx):
         func = self.visit(ctx.idAttr())
         if ctx.args():
-            args = ', '.join(self.visit(ctx.args()))
+            args = self.visit(ctx.args())
         else:
-            args = ''
+            args = []
         namespace = self.visit(ctx.specialExpr())
         if namespace:
             if namespace.endswith('.app'):
                 namespace = namespace[:-4]
             func = namespace + '.' + func
-        return func + '(' + args + ')'
+        return self.make_func_code(func, *args)
 
     def visitMethodCall(self, ctx):
         return self.visit(ctx.idAttr()) + '.' + self.visit(ctx.identifier()) + '()'
@@ -666,31 +683,30 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         return ['vfp.error_func = lambda: ' + func]
 
     def visitIdentifier(self, ctx):
-        return ctx.getText().lower()
-        return 'vfp.get_var[\'' + ctx.getText().lower() + '\']'
+        return CodeStr(ctx.getText().lower())
 
     def visitArrayIndex(self, ctx):
         if ctx.twoExpr():
-            return ', '.join(self.visit(ctx.twoExpr()))
+            return self.visit(ctx.twoExpr())
         else:
-            return str(self.visit(ctx.expr()))
+            return self.visit(ctx.expr())
 
     def visitTwoExpr(self, ctx):
         return [self.visit(expr) for expr in ctx.expr()]
 
     def visitQuit(self, ctx):
-        return ['vfp.quit()']
+        return [CodeStr('vfp.quit()')]
 
     def visitDeleteFile(self, ctx):
         if ctx.specialExpr():
-            filename = str(self.visit(ctx.specialExpr()))
+            filename = self.visit(ctx.specialExpr())
         else:
-            filename = 'None'
+            filename = None
         if ctx.RECYCLE():
-            return 'vfp.delete_file(' + filename + ', True)'
+            return self.make_func_code('vfp.delete_file', filename, True)
         else:
             self.imports.append('os')
-            return 'os.remove(' + filename + ')'
+            return self.make_func_code('os.remove', filename)
 
     def visitFile(self, ctx):
         return ctx.getText()
@@ -698,16 +714,17 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
     def visitRelease(self, ctx):
         #RELEASE vartype=(PROCEDURE|CLASSLIB)? args #release
         if ctx.ALL():
-            return "vfp.release('')"
+            return self.make_funce_code('vfp.release', '')
         savescope = self.scope
         self.scope = None
-        retval = ['vfp.release(' + repr(str(arg)) + ')' for arg in self.visit(ctx.args())]
+        retval = [self.make_func_code('vfp.release', arg) for arg in self.visit(ctx.args())]
         self.scope = savescope
         return retval
 
     def visitWaitWindow(self, ctx):
         #WAIT WINDOW (NOCLEAR? NOWAIT? expr | NOWAIT? NOCLEAR? expr | expr NOWAIT? NOCLEAR? | expr NOCLEAR? NOWAIT?) (TIMEOUT NUM)? #waitWindow
-        return 'vfp.wait_window(' + self.visit(ctx.message) + ', nowait=' + repr(ctx.NOWAIT() != None) + ', noclear=' + repr(ctx.NOCLEAR() != None) + (', timeout=' + str(self.visit(ctx.timeout)) if ctx.TIMEOUT() != None else '') + ')'
+        code = 'vfp.wait_window({}, nowait={}, noclear={}, timeout={})'
+        return CodeStr(code.format(self.visit(ctx.message), repr(ctx.NOWAIT() != None), repr(ctx.NOCLEAR() != None), repr(self.visit(ctx.timeout))))
 
     def visitCreateTable(self, ctx):
         if ctx.TABLE():
@@ -783,7 +800,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         return self.make_func_code('vfpdb.replace', table, field, value, scope)
 
     def make_func_code(self, funcname, *kwargs):
-        return '{}({})'.format(funcname, ', '.join(repr(x) for x in kwargs))
+        return CodeStr('{}({})'.format(funcname, ', '.join(repr(x) for x in kwargs)))
 
 def print_tokens(stream):
     stream.fill()

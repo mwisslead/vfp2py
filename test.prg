@@ -39,11 +39,13 @@ else
 ENDif
 
 if x > 5
+**do nothing
 else
 endif
 
 delete file x
 delete file (x)
+delete file '' + x
 
 _screen.refresh
 test.prg()
@@ -96,6 +98,9 @@ FOR X = 1 TO REPORT.QUANITY
     SET PRINTER TO ALLTRIM('printer')
     REPORT FORM TEST.FRX TO PRINTER NOCONSOLE
     SET PRINTER TO
+ENDFOR
+
+FOR X = 1 TO REPORT.QUANITY
 ENDFOR
 
 IF USED('REPORT')
