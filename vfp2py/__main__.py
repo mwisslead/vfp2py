@@ -15,6 +15,9 @@ from vfp2py import *
 
 STDLIBS = ['sys', 'os', 'math', 'datetime']
 
+if sys.version_info >= (3,):
+    unicode=str
+
 def import_key(module):
     if module in STDLIBS:
         return STDLIBS.index(module)
@@ -156,6 +159,10 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             return int(expr)
         else:
             return PythonConvertVisitor.make_func_code('int', expr)
+
+    @staticmethod
+    def string_type(val):
+        return isinstance(val, (str, unicode)) and not isinstance(val, CodeStr)
 
     @staticmethod
     def add_args_to_code(codestr, args):
@@ -655,6 +662,8 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             VisualFoxpro9Parser.PLUS_SIGN: '+',
             VisualFoxpro9Parser.MINUS_SIGN: '-'
         }
+        if self.string_type(left) and self.string_type(right) and operation == VisualFoxpro9Parser.PLUS_SIGN:
+            return left + right
         return CodeStr('({} {} {})'.format(repr(left), symbols[operation], repr(right)))
 
     def visitSubExpr(self, ctx):
