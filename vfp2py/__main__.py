@@ -721,10 +721,23 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         self.scope = savescope
         return retval
 
-    def visitWaitWindow(self, ctx):
-        #WAIT WINDOW (NOCLEAR? NOWAIT? expr | NOWAIT? NOCLEAR? expr | expr NOWAIT? NOCLEAR? | expr NOCLEAR? NOWAIT?) (TIMEOUT NUM)? #waitWindow
-        code = 'vfp.wait_window({}, nowait={}, noclear={}, timeout={})'
-        return CodeStr(code.format(self.visit(ctx.message), repr(ctx.NOWAIT() != None), repr(ctx.NOCLEAR() != None), repr(self.visit(ctx.timeout))))
+    def visitWaitCmd(self, ctx):
+        #WAIT (TO toExpr=expr | WINDOW (AT atExpr1=expr ',' atExpr2=expr)? | NOWAIT | CLEAR | NOCLEAR | TIMEOUT timeout=expr | message=expr)*
+        message = repr(self.visit(ctx.message) if ctx.message else '')
+        to_expr = repr(self.visit(ctx.toExpr) if ctx.TO() else None)
+        if ctx.WINDOW():
+            if ctx.AT():
+                window=[self.visit(ctx.atExpr1), self.visit(ctx.atExpr2)]
+            else:
+                window = [-1, -1]
+        else:
+            window = []
+        window = repr(window)
+        nowait = repr(ctx.NOWAIT() != None)
+        noclear = repr(ctx.NOCLEAR() != None)
+        timeout = repr(self.visit(ctx.timeout)) if ctx.TIMEOUT() else -1
+        code = 'vfpfunc.wait({}, to={}, window={}, nowait={}, noclear={}, timeout={})'
+        return CodeStr(code.format(message, to_expr, window, nowait, noclear, timeout))
 
     def visitCreateTable(self, ctx):
         if ctx.TABLE():

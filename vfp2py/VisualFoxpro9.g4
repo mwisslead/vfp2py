@@ -235,7 +235,7 @@ printStmt
  ;
 
 waitCmd
- : WAIT (TO expr | WINDOW (AT expr ',' expr)? | NOWAIT | CLEAR | NOCLEAR | TIMEOUT expr | expr)*
+ : WAIT (TO toExpr=expr | WINDOW (AT atExpr1=expr ',' atExpr2=expr)? | NOWAIT | CLEAR | NOCLEAR | TIMEOUT timeout=expr | message=expr)*
  ;
 
 filesystemCmd
