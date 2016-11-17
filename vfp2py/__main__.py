@@ -35,11 +35,14 @@ class Tic():
         return time.time()-self.start
 
 class CodeStr(str):
-    def __init__(self, string):
-        super(CodeStr, self).__init__(string)
-
     def __repr__(self):
         return self
+
+    def __add__(self, val):
+        #if not isinstance(val, CodeStr):
+            return CodeStr('{} + {}'.format(self, repr(val)))
+        #else:
+        #    return CodeStr(str.__add__(self, val))
 
 class PreprocessVisitor(VisualFoxpro9Visitor):
     def __init__(self):
@@ -163,6 +166,13 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
     @staticmethod
     def string_type(val):
         return isinstance(val, (str, unicode)) and not isinstance(val, CodeStr)
+
+    @staticmethod
+    def create_string(val):
+        try:
+            return str(val)
+        except UnicodeEncodeError: #can this happen?
+            return val
 
     @staticmethod
     def add_args_to_code(codestr, args):
@@ -390,14 +400,13 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
 
     def visitForStart(self, ctx):
         loopvar = self.visit(ctx.idAttr())
-        loop_start = self.visit(ctx.loopStart)
-        loop_stop = self.visit(ctx.loopStop)
+        loop_start = self.to_int(self.visit(ctx.loopStart))
+        loop_stop = self.to_int(self.visit(ctx.loopStop)) + 1
         if ctx.loopStep:
-            loop_step = self.visit(ctx.loopStep)
-            return CodeStr('for {} in range({}+1, {}+1, {}):'.format(loopvar, loop_start, loop_stop, loop_step))
+            loop_step = self.to_int(self.visit(ctx.loopStep))
+            return CodeStr('for {} in range({}, {}, {}):'.format(loopvar, loop_start, loop_stop, loop_step))
         else:
-            return CodeStr('for {} in range({}+1, {}+1):'.format(loopvar, loop_start, loop_stop))
-            loop_step = 1
+            return CodeStr('for {} in range({}, {}):'.format(loopvar, loop_start, loop_stop))
 
     def visitForStmt(self, ctx):
         return [self.visit(ctx.forStart()), self.visit(ctx.lines())]
@@ -453,8 +462,12 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
                        VisualFoxpro9Lexer.OR: 'or',
                        VisualFoxpro9Lexer.AND: 'and'
                       }
+        left = self.visit(ctx.expr(0))
+        right = self.visit(ctx.expr(1))
+        if isinstance(right, float) and right == int(right):
+            right = int(right)
         symbol = symbol_dict[ctx.op.type]
-        return CodeStr('{} {} {}'.format(self.visit(ctx.expr(0)), symbol, self.visit(ctx.expr(1))))
+        return CodeStr('{} {} {}'.format(repr(left), symbol, repr(right)))
 
     def scopeId(self, text, vartype):
         if '.' in text:
@@ -487,18 +500,19 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         if identifier == 'thisform':
             identifier = 'self.parentform'
         if ctx.trailer():
-            trailer = self.visit(ctx.trailer())
-            identifier += self.convert_trailer_args(trailer)
-        return CodeStr(identifier)
+            trailer = self.convert_trailer_args(self.visit(ctx.trailer()))
+        else:
+            trailer = CodeStr('')
+        return CodeStr('{}{}'.format(repr(identifier), repr(trailer)))
 
     def convert_trailer_args(self, trailers):
         retval = ''
         for trailer in trailers:
-            if isnstance(trailer, list):
+            if isinstance(trailer, list):
                 retval += '({})'.format(', '.join(repr(t) for t in trailer))
             else:
                 retval += '.' + trailer
-        return retval
+        return CodeStr(retval)
 
 
     def visitTrailer(self, ctx):
@@ -550,7 +564,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             return self.make_func_code('{}.replace'.format(args[0]), *args[1:])
         if funcname == 'left' and len(args) == 2:
             args[1] = self.to_int(args[1])
-            return self.add_args_to_code('({}[:{}]', args)
+            return self.add_args_to_code('{}[:{}]', args)
         if funcname == 'ceiling' and len(args) == 1:
             self.imports.append('math')
             return self.make_func_code('math.ceil', *args)
@@ -583,13 +597,15 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
 
     #specialExpr: pathname | expr;
     def visitSpecialExpr(self, ctx):
-        if ctx.pathname():
+        if ctx.constant():
+            return self.visit(ctx.constant())
+        elif ctx.pathname():
             return self.visit(ctx.pathname())
-        if ctx.expr():
+        elif ctx.expr():
             return self.visit(ctx.expr())
 
     def visitPathname(self, ctx):
-        return ctx.getText()
+        return self.create_string(ctx.getText())
 
     def visitNumber(self, ctx):
         num = ctx.NUMBER_LITERAL().getText()
@@ -633,7 +649,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         return datetime.dateime(1, 1, 1, 0, 0, 0)
 
     def visitString(self, ctx):
-        return ctx.getText()[1:-1]
+        return self.create_string(ctx.getText()[1:-1])
 
     # expr op=('**'|'^') expr */
     def visitPower(self, ctx):
@@ -764,7 +780,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             func = 'vfpfunc.db.create_table'
         elif ctx.DBF():
             func = 'vfpfunc.db.create_dbf'
-        tablename = self.visit(ctx.expr())
+        tablename = self.visit(ctx.specialExpr())
         tablesetup = zip(ctx.identifier()[::2], ctx.identifier()[1::2], ctx.arrayIndex())
         tablesetup = ((self.visit(id1), self.visit(id2), self.visit(size)) for id1, id2, size in tablesetup)
         setupstring = '; '.join('{} {}({})'.format(id1, id2, int(float(size))) for id1, id2, size in tablesetup)
@@ -829,7 +845,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             scope = self.visit(ctx.scopeClause())
         else:
             scope = None
-        table, field = ctx.idAttr().getText().lower().split('.')
+        table, field = self.visit(ctx.idAttr()).split('.')
         return self.make_func_code('vfpfunc.db.replace', table, field, value, scope)
 
 def print_tokens(stream):
@@ -960,7 +976,7 @@ def main(argv):
     with tempfile.NamedTemporaryFile() as fid:
         pass
     with open(fid.name, 'wb') as fid:
-        fid.write(data)
+        fid.write(data.encode('utf-8'))
     input_stream = antlr4.InputStream(data)
     lexer = VisualFoxpro9Lexer(input_stream)
     stream = MultichannelTokenStream(lexer)

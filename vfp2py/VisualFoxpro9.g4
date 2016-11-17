@@ -205,9 +205,9 @@ otherCmds
  | DEACTIVATE MENU (parameters | ALL) #deactivateMenu
 
 
- | CREATE (TABLE|DBF) expr FREE? '(' identifier identifier arrayIndex (',' identifier identifier arrayIndex)* ')' #createTable
- | SELECT (tablename=expr | (DISTINCT? (args | '*') (FROM fromexpr=expr)? (WHERE whereexpr=expr)? (INTO TABLE intoexpr=expr)? (ORDER BY orderbyid=identifier)?)) #select
- | USE (SHARED | EXCL | EXCLUSIVE)? name=expr? IN workArea=expr? (SHARED | EXCL | EXCLUSIVE)? (ALIAS identifier)? #use
+ | CREATE (TABLE|DBF) specialExpr FREE? '(' identifier identifier arrayIndex (',' identifier identifier arrayIndex)* ')' #createTable
+ | SELECT (tablename=specialExpr | (DISTINCT? (args | '*') (FROM fromexpr=expr)? (WHERE whereexpr=expr)? (INTO TABLE intoexpr=expr)? (ORDER BY orderbyid=identifier)?)) #select
+ | USE (SHARED | EXCL | EXCLUSIVE)? name=specialExpr? IN workArea=specialExpr? (SHARED | EXCL | EXCLUSIVE)? (ALIAS identifier)? #use
  | LOCATE (FOR expr)? (WHILE expr)? NOOPTIMIZE? #locate
  | REPLACE scopeClause? idAttr WITH expr (FOR expr)? #replace
  | INDEX ON expr (TAG | TO) expr (COMPACT | ASCENDING | DESCENDING)? ( UNIQUE | CANDIDATE)? ADDITIVE? #indexOn
@@ -346,7 +346,7 @@ trailer
 pathname
 //@init {_input.enableChannel(1)}
 //@after {_input.disableChannel(1)}
- : (identifier ':')? pathElement+
+ : (identifier ':')? pathElement+?
  ;
 
 pathElement
@@ -379,6 +379,7 @@ pathElement
 
 specialExpr
  : '(' expr ')'
+ | constant
  | pathname
  | expr
  ;
