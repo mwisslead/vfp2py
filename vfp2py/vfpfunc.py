@@ -46,3 +46,6 @@ def space(num):
 
 def dtoc(dateval):
     return dateval.strftime('%m/%d/%Y')
+
+def rgb(red, green, blue):
+    return (red, green, blue)

@@ -39,10 +39,7 @@ class CodeStr(str):
         return self
 
     def __add__(self, val):
-        #if not isinstance(val, CodeStr):
-            return CodeStr('{} + {}'.format(self, repr(val)))
-        #else:
-        #    return CodeStr(str.__add__(self, val))
+        return CodeStr('{} + {}'.format(self, repr(val)))
 
 class PreprocessVisitor(VisualFoxpro9Visitor):
     def __init__(self):
@@ -526,6 +523,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         return retval + trailer
 
     def visitAtomExpr(self, ctx):
+        print(type(ctx.atom()))
         trailer = self.visit(ctx.trailer()) if ctx.trailer() else ''
         if len(trailer) > 0 and isinstance(trailer[0], list):
             args = trailer[0]
@@ -559,7 +557,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         if funcname == 'iif' and len(args) == 3:
             return self.add_args_to_code('({} if {} else {})', [args[i] for i in (1, 0, 2)])
         if funcname == 'alltrim' and len(args) == 1:
-            return self.add_args_to_code('({}.strip()', args)
+            return self.add_args_to_code('{}.strip()', args)
         if funcname == 'strtran' and len(args) == 3:
             return self.make_func_code('{}.replace'.format(args[0]), *args[1:])
         if funcname == 'left' and len(args) == 2:
@@ -847,6 +845,39 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             scope = None
         table, field = self.visit(ctx.idAttr()).split('.')
         return self.make_func_code('vfpfunc.db.replace', table, field, value, scope)
+
+    def visitReport(self, ctx):
+        if ctx.specialExpr():
+            formname = self.visit(ctx.specialExpr())
+        else:
+            formname = None
+        return self.make_func_code('vfpfunc.report_form', formname)
+
+    def visitSetCmd(self, ctx):
+        if ctx.setword.text.lower() == 'printer':
+            args=['printer']
+            if ctx.ON():
+                args.append(1)
+                if ctx.PROMPT():
+                    args.append(True)
+            elif ctx.OFF():
+                args.append(0)
+            elif ctx.TO():
+                if ctx.DEFAULT():
+                    args.append(['Default', None])
+                elif ctx.NAME():
+                    args.append(['Name', self.visit(ctx.specialExpr()[0])])
+                elif ctx.specialExpr():
+                    args.append(['File', self.visit(ctx.specialExpr()[0])])
+                    args.append(ctx.ADDITIVE() != None)
+            return self.make_func_code('vfpfunc.set', *args)
+
+    def visitReturnStmt(self, ctx):
+        args = []
+        if ctx.expr():
+            args.append(self.visit(ctx.expr()))
+        print(args)
+        return self.add_args_to_code('return {}', *args)
 
 def print_tokens(stream):
     stream.fill()

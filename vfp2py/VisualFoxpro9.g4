@@ -225,7 +225,7 @@ otherCmds
  | READ EVENTS #readEvent
  | CLEAR (ALL | DLLS args | MACROS | EVENTS) #clearStmt
  | DO FORM specialExpr #doForm
- | REPORT FORM expr NOEJECT? TO PRINTER PROMPT? NOCONSOLE #report
+ | REPORT FORM ('?' | specialExpr) (NOEJECT | TO PRINTER PROMPT? | NOCONSOLE)* #report
  | DECLARE datatype? identifier IN expr (AS identifier)? (datatype '@'? identifier? (',' datatype '@'? identifier?)*)? #dllDeclare
  | NODEFAULT #nodefault
  ;
@@ -271,29 +271,28 @@ setStmt
  ;
 
 setCmd
- : ALTERNATE (ON | OFF | TO specialExpr ADDITIVE?)
- | BELL (ON | OFF | TO specialExpr)
- | CENTURY (ON | OFF | TO (expr (ROLLOVER expr)?)?) 
- | CLASSLIB TO specialExpr ADDITIVE?
- | CLOCK (ON | OFF | STATUS | TO (expr ',' expr)?)
- | CURSOR (ON | OFF)
- | DATE TO? identifier
- | DELETED (ON | OFF)
- | EXACT (ON | OFF)
- | FILTER TO expr (IN specialExpr)?
- | LIBRARY TO (specialExpr ADDITIVE?)
- | MEMOWIDTH TO expr
- | NEAR (ON | OFF)
- | NOTIFY CURSOR? (ON | OFF)
- | ORDER TO (specialExpr | TAG? specialExpr (OF specialExpr)? (IN specialExpr)? (ASCENDING | DESCENDING)?)?
- | PRINTER (ON PROMPT? | OFF | TO (expr ADDITIVE? | DEFAULT | NAME expr)?)
- | PROCEDURE TO specialExpr (',' specialExpr)* ADDITIVE?
- | REFRESH TO expr (',' expr)?
- | STATUS (ON | OFF)
- | STATUS BAR (ON | OFF)
- | SYSMENU (ON | OFF | TO (expr | DEFAULT)? | SAVE | NOSAVE)
- | TYPEAHEAD TO expr
- | UNIQUE (ON | OFF)
+ : setword=ALTERNATE (ON | OFF | TO specialExpr ADDITIVE?)
+ | setword=BELL (ON | OFF | TO specialExpr)
+ | setword=CENTURY (ON | OFF | TO (expr (ROLLOVER expr)?)?) 
+ | setword=CLASSLIB TO specialExpr ADDITIVE?
+ | setword=CLOCK (ON | OFF | STATUS | TO (expr ',' expr)?)
+ | setword=CURSOR (ON | OFF)
+ | setword=DATE TO? identifier
+ | setword=DELETED (ON | OFF)
+ | setword=EXACT (ON | OFF)
+ | setword=FILTER TO expr (IN specialExpr)?
+ | setword=LIBRARY TO (specialExpr ADDITIVE?)
+ | setword=MEMOWIDTH TO expr
+ | setword=NEAR (ON | OFF)
+ | setword=NOTIFY CURSOR? (ON | OFF)
+ | setword=ORDER TO (specialExpr | TAG? specialExpr (OF specialExpr)? (IN specialExpr)? (ASCENDING | DESCENDING)?)?
+ | setword=PRINTER (ON PROMPT? | OFF | TO (specialExpr ADDITIVE? | DEFAULT | NAME specialExpr)?)
+ | setword=PROCEDURE TO specialExpr (',' specialExpr)* ADDITIVE?
+ | setword=REFRESH TO expr (',' expr)?
+ | setword=STATUS BAR? (ON | OFF)
+ | setword=SYSMENU (ON | OFF | TO (expr | DEFAULT)? | SAVE | NOSAVE)
+ | setword=TYPEAHEAD TO expr
+ | setword=UNIQUE (ON | OFF)
  ;
 
 declaration

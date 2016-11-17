@@ -119,6 +119,10 @@ DEFINE CLASS test as custom
    procedure init
       parameters initx, inity
       x = initx
+
+   function athing(test)
+      return this.x
+   endfunc
 ENDDEFINE
 
 DEFINE CLASS test2 as form
