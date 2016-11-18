@@ -489,15 +489,17 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         text = '.'.join(vals)
         return CodeStr(text)
 
-    def visitIdAttr(self, ctx):
-        identifier = self.visit(ctx.identifier())
+    def createIdAttr(self, identifier, trailer):
         identifier = self.scopeId(identifier, 'val')
         if identifier == 'this':
-            identifier = 'self'
+            identifier = CodeStr('self')
         if identifier == 'thisform':
-            identifier = 'self.parentform'
-        if ctx.trailer():
-            trailer = self.convert_trailer_args(self.visit(ctx.trailer()))
+            identifier = CodeStr('self.parentform')
+        if trailer and len(trailer) == 1 and isinstance(trailer[0], list):
+            args = trailer[0]
+            return self.visitFuncCall(identifier, args)
+        if trailer:
+            trailer = self.convert_trailer_args(trailer)
         else:
             trailer = CodeStr('')
         return CodeStr('{}{}'.format(repr(identifier), repr(trailer)))
@@ -511,7 +513,6 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
                 retval += '.' + trailer
         return CodeStr(retval)
 
-
     def visitTrailer(self, ctx):
         trailer = self.visit(ctx.trailer()) if ctx.trailer() else []
         if ctx.args():
@@ -522,21 +523,20 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             retval = [[]]
         return retval + trailer
 
-    def visitAtomExpr(self, ctx):
-        print(type(ctx.atom()))
-        trailer = self.visit(ctx.trailer()) if ctx.trailer() else ''
-        if len(trailer) > 0 and isinstance(trailer[0], list):
-            args = trailer[0]
-            savescope = self.scope
-            self.scope = None
-            funcname = self.visit(ctx.atom())
-            self.scope = savescope
+    def visitIdAttr(self, ctx):
+        identifier = self.visit(ctx.identifier())
+        trailer = self.visit(ctx.trailer()) if ctx.trailer() else None
+        return self.createIdAttr(identifier, trailer)
 
-            return self.visitFuncCall(funcname, args)
+    def visitAtomExpr(self, ctx):
+        atom = self.visit(ctx.atom())
+        trailer = self.visit(ctx.trailer()) if ctx.trailer() else None
+        if isinstance(ctx.atom().getChild(0), VisualFoxpro9Parser.IdentifierContext):
+            return self.createIdAttr(atom, trailer)
         elif trailer:
             for i, t in enumerate(trailer):
                 if isinstance(t, list):
-                    trailer[i] = '({})'.format(', '.join(repr(arg) for arg in t))
+                    trailer[i] = self.add_args_to_code('({})', t)
                 else:
                     trailer[i] = '.' + trailer[i]
             return CodeStr(''.join([repr(self.visit(ctx.atom()))] + trailer))
@@ -876,7 +876,6 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         args = []
         if ctx.expr():
             args.append(self.visit(ctx.expr()))
-        print(args)
         return self.add_args_to_code('return {}', *args)
 
 def print_tokens(stream):
