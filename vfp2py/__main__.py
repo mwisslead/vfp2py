@@ -876,7 +876,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         args = []
         if ctx.expr():
             args.append(self.visit(ctx.expr()))
-        return self.add_args_to_code('return {}', *args)
+        return self.add_args_to_code('return {}', args)
 
 def print_tokens(stream):
     stream.fill()
