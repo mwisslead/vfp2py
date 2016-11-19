@@ -61,7 +61,7 @@ classDefStmt
  ;
 
 funcDefStart
- : (PROCEDURE | FUNCTION) idAttr ('(' parameters? ')')? NL parameterDef?
+ : (PROCEDURE | FUNCTION) idAttr2 ('(' parameters? ')')? NL parameterDef?
  ;
 
 funcDefEnd
@@ -394,6 +394,10 @@ constant
 assign
  : STORE expr TO idAttr (',' idAttr)*
  | idAttr '=' expr
+ ;
+
+idAttr2
+ : '.'? identifier ('.' identifier)*
  ;
 
 idAttr

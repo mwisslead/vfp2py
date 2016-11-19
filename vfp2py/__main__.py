@@ -199,7 +199,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             for funcDef in get_list(ctx.funcDef()):
                 funcname, parameters, funcbody = self.visit(funcDef)
                 defs.append(CodeStr('def {}({}):'.format(funcname, ', '.join(parameters))))
-                defs += funcbody + [[]]
+                defs += [funcbody] + [[]]
 
         self.imports = sorted(set(self.imports), key=import_key)
         imports = []
@@ -273,7 +273,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
                 assignments.append(CodeStr('self.{} = {}'.format(funcname, newfuncname)))
 
         if '__init__' in funcs:
-            funcs['__init__'][1] = [CodeStr('super({}, self).__init__()'.format(classname))] + assignments + funcs['__init__'][1][0]
+            funcs['__init__'][1] = [CodeStr('super({}, self).__init__()'.format(classname))] + assignments + funcs['__init__'][1]
         else:
             funcs['__init__'] = [[CodeStr('self')], [CodeStr('super({}, self).__init__()'.format(classname))] + assignments]
 
@@ -323,7 +323,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
 
     def visitFuncDefStart(self, ctx):
 #funcDefStart: (PROCEDURE | FUNCTION) idAttr ('(' parameters? ')')? NL parameterDef?;
-        return self.visit(ctx.idAttr()), (self.visit(ctx.parameters()) if ctx.parameters() else []) + (self.visit(ctx.parameterDef()) if ctx.parameterDef() else [])
+        return self.visit(ctx.idAttr2()), (self.visit(ctx.parameters()) if ctx.parameters() else []) + (self.visit(ctx.parameterDef()) if ctx.parameterDef() else [])
 
     def visitParameterDef(self, ctx):
 #parameterDef: (LPARAMETER | LPARAMETERS | PARAMETERS) parameters NL;
@@ -341,7 +341,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         self.scope = {}
         name, parameters = self.visit(ctx.funcDefStart())
         self.imports.append('vfpfunc')
-        body = [[CodeStr('vfpfunc.pushscope()')]] + [self.visit(ctx.lines())] + [[CodeStr('vfpfunc.popscope()')]]
+        body = [CodeStr('vfpfunc.pushscope()')] + self.visit(ctx.lines()) + [CodeStr('vfpfunc.popscope()')]
         self.scope = None
         return name, parameters, body
 
@@ -527,6 +527,9 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         identifier = self.visit(ctx.identifier())
         trailer = self.visit(ctx.trailer()) if ctx.trailer() else None
         return self.createIdAttr(identifier, trailer)
+
+    def visitIdAttr2(self, ctx):
+        return '.'.join(self.visit(identifier) for identifier in ctx.identifier())
 
     def visitAtomExpr(self, ctx):
         atom = self.visit(ctx.atom())
