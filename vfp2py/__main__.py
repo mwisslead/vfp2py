@@ -846,7 +846,13 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             scope = self.visit(ctx.scopeClause())
         else:
             scope = None
-        table, field = self.visit(ctx.idAttr()).split('.')
+        field = self.visit(ctx.idAttr()).split('.')
+        if len(field) > 1:
+            table = '.'.join(field[:-1])
+            field = str(field[-1])
+        else:
+            field = field[0]
+            table = None
         return self.make_func_code('vfpfunc.db.replace', table, field, value, scope)
 
     def visitReport(self, ctx):

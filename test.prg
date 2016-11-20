@@ -105,6 +105,10 @@ ENDFOR
 FOR X = 1 TO REPORT.QUANITY
 ENDFOR
 
+tablename = 'REPORT'
+
+USE (tablename) IN 0 SHARED
+
 IF USED('REPORT')
    SELECT REPORT
    USE IN REPORT
@@ -113,6 +117,14 @@ ENDIF
 FUNCTION test
    parameters a, b
    ?a, b
+
+FUNCTION REPLACE_TEST(TABLENAME, FIELD_VAL)
+   IF FILE(TABLE_NAME + '.DBF')
+      USE (TABLENAME) IN 0 SHARED
+      SELECT (TABLENAME)
+      REPLACE ALL TEST WITH .T. FOR FIELD1 = FIELDVAL
+      USE IN (SELECT(TABLENAME))
+   ENDIF
 
 DEFINE CLASS test as custom
    x = 3 && x is a thing in this class
