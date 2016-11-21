@@ -598,12 +598,15 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
 
     #specialExpr: pathname | expr;
     def visitSpecialExpr(self, ctx):
-        if ctx.constant():
-            return self.visit(ctx.constant())
-        elif ctx.pathname():
+        if ctx.pathname():
             return self.visit(ctx.pathname())
         elif ctx.expr():
-            return self.visit(ctx.expr())
+            expr = self.visit(ctx.expr())
+            start, stop = ctx.getSourceInterval()
+            raw_expr = ''.join(t.text for t in ctx.parser._input.tokens[start:stop+1])
+            if raw_expr.lower() == expr and isinstance(ctx.expr(), VisualFoxpro9Parser.AtomExprContext) and (not ctx.expr().trailer() or not any(isinstance(arg, list) for arg in self.visit(ctx.expr().trailer()))):
+                return raw_expr
+            return expr
 
     def visitPathname(self, ctx):
         return self.create_string(ctx.getText())

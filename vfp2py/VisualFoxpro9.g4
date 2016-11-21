@@ -377,10 +377,8 @@ pathElement
  ;
 
 specialExpr
- : '(' expr ')'
- | constant
+ : expr
  | pathname
- | expr
  ;
 
 constant

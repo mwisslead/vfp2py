@@ -45,6 +45,8 @@ if x > 5
 else
 endif
 
+delete file test . h
+delete file test.h
 delete file x
 delete file (x)
 delete file '' + x
@@ -123,7 +125,11 @@ FUNCTION REPLACE_TEST(TABLENAME, FIELD_VAL)
       USE (TABLENAME) IN 0 SHARED
       SELECT (TABLENAME)
       REPLACE ALL TEST WITH .T. FOR FIELD1 = FIELDVAL
-      USE IN (SELECT(TABLENAME))
+      USE IN SELECT(TABLENAME)
+      USE IN SELECT('tablename')
+      USE IN TABLENAME
+      USE IN (TABLENAME)
+      USE IN 'TABLENAME'
    ENDIF
 
 DEFINE CLASS test as custom
