@@ -306,13 +306,16 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         return [CodeStr('self.' + arg) for arg in self.visit(ctx.assign())]
 
     def visitClassDefAddObject(self, ctx):
-        #ADD OBJECT identifier AS identifier (WITH assignList)? NL
+        #ADD OBJECT identifier AS idAttr (WITH idAttr '=' expr (',' idAttr '=' expr)*)?
         name = self.visit(ctx.identifier())
         objtype = self.visit(ctx.idAttr()[0])
         if objtype in self.vfpclassnames:
             objtype = self.vfpclassnames[objtype]
-        retval = [CodeStr('self.{} = {}({})'.format(name, objtype, ', '.join([self.visit(idAttr) for idAttr, expr in zip(ctx.idAttr()[1:], ctx.expr())])))]
-        retval += [CodeStr('self.add_object(self.{})'.format(name))]
+        args = [self.add_args_to_code('{}={}', (self.visit(idAttr), self.visit(expr))) for idAttr, expr in zip(ctx.idAttr()[1:], ctx.expr())]
+        funcname = self.add_args_to_code('self.{} = {}', (name, objtype))
+        retval = []
+        retval.append(self.make_func_code(funcname, *args))
+        retval.append(self.add_args_to_code('self.add_object(self.{})', [name]))
         return retval
 
     def visitClassDefFuncDef(self, ctx):
