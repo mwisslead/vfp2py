@@ -185,7 +185,11 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
                 line_structure += self.visit(line)
             if not line_structure:
                 line_structure = [CodeStr('pass')]
-            main = [CodeStr('def main(argv):'), line_structure, CodeStr(''), CodeStr('if __name__ == \'__main__\':'), [CodeStr('main(sys.argv)')]]
+            main = [CodeStr('def main(argv):'), [CodeStr('vfpfunc.pushscope()')]]
+            main += [line_structure]
+            main.append([CodeStr('vfpfunc.popscope()')])
+            main.append([])
+            main += [CodeStr('if __name__ == \'__main__\':'), [CodeStr('main(sys.argv)')]]
             self.imports.append('sys')
             self.scope = None
 
@@ -344,7 +348,9 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         self.scope = {}
         name, parameters = self.visit(ctx.funcDefStart())
         self.imports.append('vfpfunc')
-        body = [CodeStr('vfpfunc.pushscope()')] + self.visit(ctx.lines()) + [CodeStr('vfpfunc.popscope()')]
+        body = [CodeStr('vfpfunc.pushscope()')]
+        body += self.visit(ctx.lines())
+        body.append(CodeStr('vfpfunc.popscope()'))
         self.scope = None
         return name, parameters, body
 
@@ -888,12 +894,12 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             return self.make_func_code('vfpfunc.set', *args)
 
     def visitReturnStmt(self, ctx):
-        args = []
+        retval = [CodeStr('vfpfunc.popscope()')]
         if ctx.expr():
-            args.append(self.visit(ctx.expr()))
-        if args:
-            return self.add_args_to_code('return {}', args)
-        return CodeStr('return')
+            args = self.visit(ctx.expr())
+            return retval + [self.add_args_to_code('return {}', (args,))]
+        else:
+            return retval + [CodeStr('return')]
 
 def print_tokens(stream):
     stream.fill()
