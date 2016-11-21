@@ -131,6 +131,7 @@ FUNCTION REPLACE_TEST(TABLENAME, FIELD_VAL)
       USE IN (TABLENAME)
       USE IN 'TABLENAME'
    ENDIF
+   RETURN
 
 DEFINE CLASS test as custom
    x = 3 && x is a thing in this class

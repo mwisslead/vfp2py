@@ -167,6 +167,7 @@ cmdStmt
 cmd
  : funcDo
  | assign
+ | '='? expr
  | declaration
  | printStmt
  | waitCmd
@@ -176,7 +177,6 @@ cmd
  | release
  | setup
  | otherCmds
- | '='? expr
  ;
 
 release
