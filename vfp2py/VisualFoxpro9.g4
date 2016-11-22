@@ -175,8 +175,8 @@ cmd
  | quit
  | release
  | setup
- | '='? expr
  | otherCmds
+ | '='? expr
  ;
 
 release

@@ -696,9 +696,9 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         return CodeStr('({} {} {})'.format(repr(left), symbols[operation], repr(right)))
 
     def visitSubExpr(self, ctx):
-        return CodeStr('({})'.format(self.visit(ctx.expr())))
+        return self.add_args_to_code('({})', [self.visit(ctx.expr())])
 
-    def visitDoFunc(self, ctx):
+    def visitFuncDo(self, ctx):
         func = self.visit(ctx.idAttr())
         if ctx.args():
             args = self.visit(ctx.args())
