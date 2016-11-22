@@ -2,6 +2,20 @@ import builtins
 import datetime
 import os
 
+SCOPES = []
+
+class Form(object):
+    def __init__(self):
+        pass
+
+def pushscope():
+    global SCOPES
+    SCOPES.append({})
+
+def popscope():
+    global SCOPES
+    SCOPES.pop()
+
 def alltrim(string):
     return string.strip()
 
@@ -49,3 +63,6 @@ def dtoc(dateval):
 
 def rgb(red, green, blue):
     return (red, green, blue)
+
+def wait(msg, to=None, window=[-1, -1], nowait=False, noclear=False, timeout=-1):
+    pass

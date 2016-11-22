@@ -568,7 +568,7 @@ COUNT : C O U N T;
 GOTO : G O T O;
 GO : G O;
 TOP : T O P;
-BOTTOM : B O T T O M;
+BOTTOM : B O T T O M | B O T T;
 RECORD : R E C O R D;
 CLOSE : C L O S E;
 APPEND : A P P E N D;

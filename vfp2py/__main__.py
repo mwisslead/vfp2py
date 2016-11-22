@@ -13,7 +13,7 @@ import antlr4
 
 from vfp2py import *
 
-STDLIBS = ['sys', 'os', 'math', 'datetime']
+STDLIBS = ['import sys', 'import os', 'import math', 'import datetime']
 
 if sys.version_info >= (3,):
     unicode=str
@@ -190,7 +190,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             main.append([CodeStr('vfpfunc.popscope()')])
             main.append([])
             main += [CodeStr('if __name__ == \'__main__\':'), [CodeStr('main(sys.argv)')]]
-            self.imports.append('sys')
+            self.imports.append('import sys')
             self.scope = None
 
 
@@ -213,7 +213,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             imports.append(module)
         if imports:
             imports.append('')
-        return  [CodeStr('import ' + module) if module else '' for module in imports] + defs + main
+        return  [CodeStr(imp) for imp in imports] + defs + main
 
     def visitLine(self, ctx):
         retval = self.visitChildren(ctx)
@@ -347,7 +347,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
 #funcDef:  funcDefStart line* funcDefEnd?;
         self.scope = {}
         name, parameters = self.visit(ctx.funcDefStart())
-        self.imports.append('vfpfunc')
+        self.imports.append('from vfp2py import vfpfunc')
         body = [CodeStr('vfpfunc.pushscope()')]
         body += self.visit(ctx.lines())
         body.append(CodeStr('vfpfunc.popscope()'))
@@ -493,7 +493,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             else:
                 r = ''
             if t not in self.scope:
-                self.imports.append('vfpfunc')
+                self.imports.append('from vfp2py import vfpfunc')
                 #vals[0] = 'vfpfunc.' + vartype + '[' + repr(str(t)) + ']' + r
         text = '.'.join(vals)
         return CodeStr(text)
@@ -564,7 +564,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         if funcname == 'space' and len(args) == 1 and isinstance(args[0], float):
             return ' '*int(args[0])
         if funcname == 'date' and len(args) == 0:
-            self.imports.append('datetime')
+            self.imports.append('import datetime')
             return self.make_func_code('datetime.datetime.now().date')
         if funcname == 'iif' and len(args) == 3:
             return self.add_args_to_code('({} if {} else {})', [args[i] for i in (1, 0, 2)])
@@ -576,21 +576,21 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             args[1] = self.to_int(args[1])
             return self.add_args_to_code('{}[:{}]', args)
         if funcname == 'ceiling' and len(args) == 1:
-            self.imports.append('math')
+            self.imports.append('import math')
             return self.make_func_code('math.ceil', *args)
         if funcname == 'str':
-            self.imports.append('vfpfunc')
+            self.imports.append('from vfp2py import vfpfunc')
             return self.make_func_code('vfpfunc.num_to_str', *args)
         if funcname == 'file':
-            self.imports.append('os')
+            self.imports.append('import os')
             return self.make_func_code('os.path.isfile', *args)
         if funcname == 'used':
-            self.imports.append('vfpfunc')
+            self.imports.append('from vfp2py import vfpfunc')
             return self.make_func_code('vfpfunc.used', *args)
         if funcname == 'round':
             return self.make_func_code(funcname, *args)
         if funcname in dir(vfpfunc):
-            self.imports.append('vfpfunc')
+            self.imports.append('from vfp2py import vfpfunc')
             funcname = 'vfpfunc.' + funcname
         else:
             funcname = self.scopeId(funcname, 'func')
@@ -598,7 +598,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
 
     #(MD | MKDIR | RD | RMDIR) specialExpr #Directory
     def visitAddRemoveDirectory(self, ctx):
-        self.imports.append('os')
+        self.imports.append('import os')
         if ctx.MD() or ctx.MKDIR():
             funcname = 'mkdir'
         if ctx.RD() or ctx.RMDIR():
@@ -614,11 +614,11 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             start, stop = ctx.getSourceInterval()
             raw_expr = ''.join(t.text for t in ctx.parser._input.tokens[start:stop+1])
             if raw_expr.lower() == expr and isinstance(ctx.expr(), VisualFoxpro9Parser.AtomExprContext) and (not ctx.expr().trailer() or not any(isinstance(arg, list) for arg in self.visit(ctx.expr().trailer()))):
-                return raw_expr
+                return self.create_string(raw_expr).lower()
             return expr
 
     def visitPathname(self, ctx):
-        return self.create_string(ctx.getText())
+        return self.create_string(ctx.getText()).lower()
 
     def visitNumber(self, ctx):
         num = ctx.NUMBER_LITERAL().getText()
@@ -732,7 +732,12 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         return ['vfp.error_func = lambda: ' + func]
 
     def visitIdentifier(self, ctx):
-        return CodeStr(ctx.getText().lower())
+        altermap = {
+            'class': 'classtype'
+        }
+        identifier = ctx.getText().lower()
+        identifier = altermap.get(identifier, identifier)
+        return CodeStr(identifier)
 
     def visitArrayIndex(self, ctx):
         if ctx.twoExpr():
@@ -754,7 +759,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         if ctx.RECYCLE():
             return self.make_func_code('vfp.delete_file', filename, True)
         else:
-            self.imports.append('os')
+            self.imports.append('import os')
             return self.make_func_code('os.remove', filename)
 
     def visitFile(self, ctx):
