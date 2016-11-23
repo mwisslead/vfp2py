@@ -14,6 +14,7 @@ import antlr4
 from vfp2py import *
 
 STDLIBS = ['import sys', 'import os', 'import math', 'import datetime']
+SEARCH_PATH = ['.']
 
 if sys.version_info >= (3,):
     unicode=str
@@ -23,6 +24,14 @@ def import_key(module):
         return STDLIBS.index(module)
     else:
         return len(STDLIBS)
+
+def which(filename):
+    '''find file on path'''
+    for path in SEARCH_PATH:
+        testpath = os.path.join(path, filename)
+        if os.path.isfile(testpath):
+            return testpath
+    return filename
 
 class Tic():
     def __init__(self):
@@ -76,6 +85,7 @@ class PreprocessVisitor(VisualFoxpro9Visitor):
         filename = visitor.visit(ctx.specialExpr())
         if isinstance(filename, CodeStr):
             filename = eval(filename)
+        filename = which(filename)
         include_visitor = preprocess_file(filename)
         self.memory.update(include_visitor.memory)
         return include_visitor.tokens
@@ -142,6 +152,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
                               'label': 'vfpfunc.Label',
                               'textbox': 'vfpfunc.Textbox',
                               'checkbox': 'vfpfunc.Checkbox',
+                              'combobox': 'vfpfunc.Combobox',
                               'spinner': 'vfpfunc.Spinner',
                               'shape': 'vfpfunc.Shape',
                               'commandbutton': 'vfpfunc.CommandButton'
@@ -296,14 +307,12 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         #print(names)
         #exit()
         classname = names[0]
-        try:
-            supername = names[1]
-        except IndexError:
-            supername = 'custom'
-        if supername in self.vfpclassnames:
-            supername = self.vfpclassnames[supername]
         if classname in self.vfpclassnames:
             raise Exception(classname + ' is a reserved classname')
+        supername = names[1] if len(names) > 0 else 'custom'
+        if supername in self.vfpclassnames:
+            self.imports.append('from vfp2py import vfpfunc')
+            supername = self.vfpclassnames[supername]
         return classname, supername
 
     def visitClassDefAssign(self, ctx):
@@ -314,7 +323,8 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         name = self.visit(ctx.identifier())
         objtype = self.visit(ctx.idAttr()[0])
         if objtype in self.vfpclassnames:
-            objtype = self.vfpclassnames[objtype]
+            self.imports.append('from vfp2py import vfpfunc')
+            objtype = CodeStr(self.vfpclassnames[objtype])
         args = [self.add_args_to_code('{}={}', (self.visit(idAttr), self.visit(expr))) for idAttr, expr in zip(ctx.idAttr()[1:], ctx.expr())]
         funcname = self.add_args_to_code('self.{} = {}', (name, objtype))
         retval = []
@@ -465,6 +475,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
                        VisualFoxpro9Lexer.NOTEQUALS: '!=',
                        VisualFoxpro9Lexer.EQUALS: '==',
                        VisualFoxpro9Lexer.DOUBLEEQUALS: '==',
+                       VisualFoxpro9Lexer.DOLLAR: 'in',
                        VisualFoxpro9Lexer.OR: 'or',
                        VisualFoxpro9Lexer.AND: 'and'
                       }
@@ -743,7 +754,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         if ctx.twoExpr():
             return self.visit(ctx.twoExpr())
         else:
-            return self.visit(ctx.expr())
+            return [self.visit(ctx.expr())]
 
     def visitTwoExpr(self, ctx):
         return [self.visit(expr) for expr in ctx.expr()]
@@ -801,7 +812,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         tablename = self.visit(ctx.specialExpr())
         tablesetup = zip(ctx.identifier()[::2], ctx.identifier()[1::2], ctx.arrayIndex())
         tablesetup = ((self.visit(id1), self.visit(id2), self.visit(size)) for id1, id2, size in tablesetup)
-        setupstring = '; '.join('{} {}({})'.format(id1, id2, int(float(size))) for id1, id2, size in tablesetup)
+        setupstring = '; '.join('{} {}({})'.format(id1, id2, ', '.join(str(int(i)) for i in size)) for id1, id2, size in tablesetup)
         free = 'free' if ctx.FREE() else ''
         return self.make_func_code(func, tablename, setupstring, free)
 
@@ -1034,6 +1045,9 @@ def time_lines(data):
     return retval
 
 def main(argv):
+    global SEARCH_PATH
+    if len(argv) > 3:
+        SEARCH_PATH += argv[3:]
     tic = Tic()
     tokens = preprocess_file(argv[1]).tokens
     print(tic.toc())
