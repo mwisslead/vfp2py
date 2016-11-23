@@ -19,6 +19,8 @@ _SCREEN.LOGO.TOP = (_SCREEN.HEIGHT-_SCREEN.LOGO.HEIGHT)/2-3
 WAIT WINDOW space(3) + 'please wait' + CHR(32) NOWAIT TIMEOUT 1.3
 #ENDIF
 
+ON ERROR
+ON ERROR DO test
 ?LEFT('Hello, World', 5)
 WAIT WINDOW space(3) + 'please wait' + CHR(32) NOWAIT TIMEOUT 1.3
 md test - test
@@ -116,6 +118,7 @@ IF USED('REPORT')
    USE IN REPORT
 ENDIF
 
+DO test
 DO test in test
 
 IF FILE('DBFTABLE.DBF')
@@ -132,6 +135,10 @@ IF FILE('DBFTABLE.DBF')
    ENDIF
 ENDIF
 
+RELEASE ALL
+RELEASE test1
+RELEASE test1, test2, test3
+
 FUNCTION test
    parameters a, b
    ?a, b
@@ -144,8 +151,12 @@ FUNCTION REPLACE_TEST(TABLENAME, FIELD_VAL)
       REPLACE ALL TEST WITH .T. FOR FIELD1 = FIELDVAL
       GO TOP
       SKIP -3
+      SKIP 1
       GO BOTTOM
       GO 15
+      DELETE NEXT 1
+      DELETE NEXT 10
+      DELETE NEXT (THREE)
       USE IN SELECT(TABLENAME)
       USE IN SELECT('tablename')
       USE IN TABLENAME
