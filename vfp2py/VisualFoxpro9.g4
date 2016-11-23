@@ -416,7 +416,7 @@ datatype
  ;
 
 scopeClause
- : ALL | NEXT NUMBER | RECORD NUMBER | REST
+ : ALL | NEXT expr | RECORD expr | REST
  ;
 
 //identifier
