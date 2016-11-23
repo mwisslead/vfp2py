@@ -86,7 +86,7 @@ endcase &&empty case end with comment
 t=u(v(w(x(y(z)))))
 
 *** CREATE REPORT TABLE
-CREATE TABLE REPORT FREE (NAME C(50), ST C(2), QUANTITY N(5), RECEIVED L(1))
+CREATE TABLE REPORT FREE (NAME C(50), ST C(2), QUANTITY N(5, 0), RECEIVED L(1))
 USE REPORT IN 0 SHARED
 SELECT REPORT
 APPEND BLANK
@@ -117,6 +117,20 @@ IF USED('REPORT')
 ENDIF
 
 DO test in test
+
+IF FILE('DBFTABLE.DBF')
+   USE DBFTABLE IN 0 SHARED
+   SELECT DBFTABLE
+   COPY STRUCTURE TO 'DBFTEMP.DBF'
+   IF USED('DBFTABLE')
+      SELECT DBFTABLE
+      USE IN DBFTABLE
+   ENDIF
+   IF USED('DBFTEMP')
+      SELECT DBFTEMP
+      USE IN DBFTEMP
+   ENDIF
+ENDIF
 
 FUNCTION test
    parameters a, b
@@ -153,6 +167,7 @@ ENDDEFINE
 
 DEFINE CLASS test2 as form
    add object test as t with prop = 'hello'
+   add object cbox as combobox
    x = 3
 ENDDEFINE
 
