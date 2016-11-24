@@ -779,12 +779,13 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
     def visitRelease(self, ctx):
         #RELEASE vartype=(PROCEDURE|CLASSLIB)? args #release
         if ctx.ALL():
-            return self.make_funce_code('vfp.release', '')
-        savescope = self.scope
-        self.scope = None
-        retval = [self.make_func_code('vfp.release', arg) for arg in self.visit(ctx.args())]
-        self.scope = savescope
-        return retval
+            args = []
+        else:
+            savescope = self.scope
+            self.scope = None
+            args = [str(arg) for arg in self.visit(ctx.args())]
+            self.scope = savescope
+        return self.make_func_code('vfpfunc.release', *args)
 
     def visitWaitCmd(self, ctx):
         #WAIT (TO toExpr=expr | WINDOW (AT atExpr1=expr ',' atExpr2=expr)? | NOWAIT | CLEAR | NOCLEAR | TIMEOUT timeout=expr | message=expr)*
