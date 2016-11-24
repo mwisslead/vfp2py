@@ -715,8 +715,14 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             args = self.visit(ctx.args())
         else:
             args = []
-        namespace = self.visit(ctx.specialExpr())
-        if namespace:
+        if func.endswith('.prg'):
+            func = func[:-4]
+        if func.endswith('.mpr'):
+            func = func[:-4]
+            args = [func] + args
+            func = 'vfpfunc.mprfile'
+        if ctx.specialExpr():
+            namespace = self.visit(ctx.specialExpr())
             if namespace.endswith('.app'):
                 namespace = namespace[:-4]
             func = namespace + '.' + func

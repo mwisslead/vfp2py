@@ -120,6 +120,7 @@ ENDIF
 
 DO test
 DO test in test
+DO test.mpr
 
 IF FILE('DBFTABLE.DBF')
    USE DBFTABLE IN 0 SHARED
