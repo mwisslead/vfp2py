@@ -716,7 +716,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         else:
             args = []
         if func.endswith('.prg'):
-            func = func[:-4]
+            func = func[:-4] + '.main'
         if func.endswith('.mpr'):
             func = func[:-4]
             args = [func] + args

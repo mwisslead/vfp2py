@@ -120,6 +120,7 @@ ENDIF
 
 DO test
 DO test in test
+DO test.prg
 DO test.mpr
 
 IF FILE('DBFTABLE.DBF')
