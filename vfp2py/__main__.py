@@ -10,6 +10,7 @@ import tempfile
 import argparse
 
 import antlr4
+import autopep8
 
 from vfp2py import *
 
@@ -1084,6 +1085,7 @@ def main(argv):
     output = re.sub(r'\'\s*\+\s*\'', '', output)
     with open(argv[2], 'wb') as fid:
         fid.write(output)
+    autopep8.main([argv[0], '--in-place', '--aggressive', '--aggressive', argv[2]])
 
 if __name__ == '__main__':
     try:
