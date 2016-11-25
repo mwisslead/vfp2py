@@ -899,6 +899,11 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         skipnum = self.visit(ctx.expr()[0])
         return self.make_func_code('vfpfunc.db.skip', table, skipnum)
 
+    def visitCopyTo(self, ctx):
+        copyTo = self.visit(ctx.specialExpr())
+        if ctx.STRUCTURE():
+            return self.make_func_code('vfpfunc.dp.copyStructure', copyTo)
+
     def visitReport(self, ctx):
         if ctx.specialExpr():
             formname = self.visit(ctx.specialExpr())

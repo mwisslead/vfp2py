@@ -218,7 +218,7 @@ otherCmds
  | SKIPKW expr (IN expr)? #skipRecord
  | SEEK expr #seekRecord
  | (GO | GOTO) (TOP | BOTTOM | RECORD? expr) (IN idAttr)? #goRecord
- | COPY STRUCTURE? TO expr #copyTo
+ | COPY STRUCTURE? TO specialExpr #copyTo
  | ZAP (IN expr)? #zapTable
 
  | CLOSE ((DATABASES | INDEXES | TABLES) ALL? | ALL) #closeStmt
