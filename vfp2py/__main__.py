@@ -749,8 +749,8 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         if ctx.cmd():
             func = self.visit(ctx.cmd())
         else:
-            return ['vfp.error_func = None']
-        return ['vfp.error_func = lambda: ' + func]
+            return [CodeStr('vfp.error_func = None')]
+        return [CodeStr('vfp.error_func = lambda: ' + func)]
 
     def visitIdentifier(self, ctx):
         altermap = {
