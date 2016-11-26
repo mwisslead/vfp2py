@@ -213,7 +213,7 @@ otherCmds
  | INDEX ON expr (TAG | TO) expr (COMPACT | ASCENDING | DESCENDING)? ( UNIQUE | CANDIDATE)? ADDITIVE? #indexOn
  | COUNT scopeClause? ((FOR expr) | (WHILE expr) | (TO expr))* NOOPTIMIZE? #count
  | SUM scopeClause? expr (FOR expr | TO idAttr | NOOPTIMIZE)+ #sum
- | DELETE scopeClause? (FOR expr)? (WHILE expr)? (IN expr)? NOOPTIMIZE? #deleteRecord
+ | DELETE scopeClause? (FOR forExpr=expr)? (WHILE whileExpr=expr)? (IN inExpr=expr)? NOOPTIMIZE? #deleteRecord
  | APPEND (BLANK? (IN idAttr)? NOMENU? | FROM specialExpr) #append
  | SKIPKW expr (IN expr)? #skipRecord
  | SEEK expr #seekRecord

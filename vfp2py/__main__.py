@@ -6,6 +6,7 @@ import time
 import datetime
 import re
 import tempfile
+from collections import OrderedDict
 
 import argparse
 
@@ -162,8 +163,10 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         self.scope = None
 
     @staticmethod
-    def make_func_code(funcname, *kwargs):
-        return CodeStr('{}({})'.format(funcname, ', '.join(repr(x) for x in kwargs)))
+    def make_func_code(funcname, *args, **kwargs):
+        args = [repr(x) for x in args]
+        args += ['{}={}'.format(key, repr(kwargs[key])) for key in kwargs]
+        return CodeStr('{}({})'.format(funcname, ', '.join(args)))
 
     @staticmethod
     def to_int(expr):
@@ -902,7 +905,34 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
     def visitCopyTo(self, ctx):
         copyTo = self.visit(ctx.specialExpr())
         if ctx.STRUCTURE():
-            return self.make_func_code('vfpfunc.dp.copyStructure', copyTo)
+            return self.make_func_code('vfpfunc.db.copy_structure', copyTo)
+
+    def visitDeleteRecord(self, ctx):
+        kwargs = OrderedDict()
+        if ctx.scopeClause():
+            scopetype, num = self.visit(ctx.scopeClause())
+        else:
+            scopetype = 'next'
+            num = 1
+        if ctx.IN():
+            name = self.visit(ctx.inExpr)
+        else:
+            name = None
+        if ctx.forExpr:
+            kwargs['forCond'] = self.add_args_to_code('lambda: {}', [self.visit(ctx.forExpr)])
+        if ctx.whileExpr:
+            kwargs['whileCond'] = self.add_args_to_code('lambda: {}', [self.visit(ctx.whileExpr)])
+        return self.make_func_code('vfpfunc.db.delete_record', name, scopetype, num, **kwargs)
+
+    def visitScopeClause(self, ctx):
+        if ctx.ALL():
+            return 'all', -1
+        elif ctx.NEXT():
+            return 'next', self.visit(ctx.expr())
+        elif ctx.RECORD():
+            return 'record', self.visit(ctx.expr())
+        elif ctx.REST():
+            return 'rest', -1
 
     def visitReport(self, ctx):
         if ctx.specialExpr():
