@@ -442,7 +442,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             for name in names:
                 savescope[name] = False
             self.scope = savescope
-            return '#PRIVATE %s' % ', '.join(names)
+            return CodeStr('#PRIVATE %s' % ', '.join(names))
         if ctx.LOCAL():
             string = 'vfp.addlocalvar(\'%s\')'
         if ctx.ARRAY():
