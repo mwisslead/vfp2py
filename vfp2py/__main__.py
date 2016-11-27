@@ -433,7 +433,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
 
     def visitDeclaration(self, ctx):
         if ctx.PUBLIC():
-            string = 'vfp.addpublicvar(\'%s\')'
+            string = 'vfpfunc.publicvar(\'%s\')'
         if ctx.PRIVATE():
             #string = 'vfp.addprivatevar(\'%s\')'
             savescope = self.scope
@@ -449,9 +449,9 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             string = 'vfp.addarray(\'%s\', %s)'
             values = [self.visit(ctx.arrayIndex())]
             args = [self.visit(ctx.identifier())]
-            return [string % (name, value) for name, value in zip(args, values)]
+            return [CodeStr(string % (name, value)) for name, value in zip(args, values)]
         else:
-            return [string % name for name in self.visit(ctx.parameters())]
+            return [CodeStr(string % name) for name in self.visit(ctx.parameters())]
 
     def visitAssign(self, ctx):
         if ctx.STORE():
