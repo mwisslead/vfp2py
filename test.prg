@@ -21,6 +21,7 @@ WAIT WINDOW space(3) + 'please wait' + CHR(32) NOWAIT TIMEOUT 1.3
 
 ON ERROR
 ON ERROR DO test
+SET TYPEAHEAD TO 0
 ?LEFT('Hello, World', 5)
 WAIT WINDOW space(3) + 'please wait' + CHR(32) NOWAIT TIMEOUT 1.3
 md test - test

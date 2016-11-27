@@ -959,6 +959,8 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
                     args.append(['File', self.visit(ctx.specialExpr()[0])])
                     args.append(ctx.ADDITIVE() != None)
             return self.make_func_code('vfpfunc.set', *args)
+        if ctx.setword.text.lower() == 'typeahead':
+            return self.make_func_code('vfpfunc.set', 'typeahead', self.visit(ctx.expr()[0]))
 
     def visitReturnStmt(self, ctx):
         retval = [CodeStr('vfpfunc.popscope()')]
