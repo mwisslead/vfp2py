@@ -568,11 +568,13 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
 
     def visitIdAttr(self, ctx):
         identifier = self.visit(ctx.identifier())
+        if ctx.PERIOD() and self.withid:
+            identifier = CodeStr(str(repr(self.withid)) + '.' + str(repr(identifier)))
         trailer = self.visit(ctx.trailer()) if ctx.trailer() else None
         return self.createIdAttr(identifier, trailer)
 
     def visitIdAttr2(self, ctx):
-        return '.'.join(self.visit(identifier) for identifier in ctx.identifier())
+        return CodeStr('.'.join([self.withid] if ctx.PERIOD() else [] + [self.visit(identifier) for identifier in ctx.identifier()]))
 
     def visitAtomExpr(self, ctx):
         atom = self.visit(ctx.atom())

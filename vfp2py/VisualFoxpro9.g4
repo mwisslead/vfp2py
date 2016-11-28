@@ -399,11 +399,11 @@ assign
  ;
 
 idAttr2
- : '.'? identifier ('.' identifier)*
+ : PERIOD? identifier ('.' identifier)*
  ;
 
 idAttr
- : '.'? identifier trailer?
+ : PERIOD? identifier trailer?
  ;
 
 twoExpr
