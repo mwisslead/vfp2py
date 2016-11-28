@@ -130,11 +130,11 @@ whileStart
  ;
 
 whileStmt
- : whileStart line* ENDDO lineEnd
+ : whileStart lines ENDDO lineEnd
  ;
 
 withStmt
- : WITH idAttr NL line* ENDWITH lineEnd
+ : WITH idAttr NL lines ENDWITH lineEnd
  ;
 
 scanStmt
@@ -206,7 +206,7 @@ otherCmds
 
 
  | CREATE (TABLE|DBF) specialExpr FREE? '(' identifier identifier arrayIndex (',' identifier identifier arrayIndex)* ')' #createTable
- | SELECT (tablename=specialExpr | (DISTINCT? (args | '*') (FROM fromexpr=expr)? (WHERE whereexpr=expr)? (INTO TABLE intoexpr=expr)? (ORDER BY orderbyid=identifier)?)) #select
+ | SELECT (tablename=specialExpr | (DISTINCT? (specialArgs | '*') (FROM fromExpr=specialExpr)? (WHERE whereExpr=expr)? (INTO TABLE intoExpr=specialExpr)? (ORDER BY orderbyid=identifier)?)) #select
  | USE (SHARED | EXCL | EXCLUSIVE)? name=specialExpr? IN (workArea=specialExpr)? (SHARED | EXCL | EXCLUSIVE)? (ALIAS identifier)? #use
  | LOCATE (FOR expr)? (WHILE expr)? NOOPTIMIZE? #locate
  | REPLACE scopeClause? idAttr WITH expr (FOR expr)? #replace
@@ -304,6 +304,10 @@ args
  : expr (',' expr)*
  ;
 
+specialArgs
+ : specialExpr (',' specialExpr)*
+ ;
+
 funcDo
  : DO idAttr (IN specialExpr)? (WITH args)?
  ;
@@ -326,7 +330,7 @@ expr
  | expr op=('+'|'-') expr #addition
  | expr op=('=='|NOTEQUALS|'='|'#'|'>'|'>='|'<'|'<='|'$') expr #comparison
  | expr op=(OR|AND) expr #booleanOperation
- | atom trailer? #atomExpr
+ | PERIOD? atom trailer? #atomExpr
  ;
 
 atom
