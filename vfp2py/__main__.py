@@ -431,6 +431,12 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
     def visitForStmt(self, ctx):
         return [self.visit(ctx.forStart()), self.visit(ctx.lines())]
 
+    def visitWhileStart(self, ctx):
+        return CodeStr('while {}:'.format(self.visit(ctx.expr())))
+
+    def visitWhileStmt(self, ctx):
+        return [self.visit(ctx.whileStart()), self.visit(ctx.lines())]
+
     def visitDeclaration(self, ctx):
         if ctx.PUBLIC():
             string = 'vfpfunc.publicvar(\'%s\')'
