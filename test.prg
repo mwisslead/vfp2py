@@ -110,6 +110,13 @@ ENDFOR
 FOR X = 1 TO REPORT.QUANITY
 ENDFOR
 
+WITH item
+   DO WHILE .value <= 3
+      .value = .value + 1
+      .test
+   ENDDO
+ENDWITH
+
 tablename = 'REPORT'
 
 USE (tablename) IN 0 SHARED
