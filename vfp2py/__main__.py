@@ -471,6 +471,9 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
     def visitArgs(self, ctx):
         return [self.visit(c) for c in ctx.expr()]
 
+    def visitSpecialArgs(self, ctx):
+        return [self.visit(c) for c in ctx.specialExpr()]
+
     def visitComparison(self, ctx):
         symbol_dict = {VisualFoxpro9Lexer.GREATERTHAN: '>',
                        VisualFoxpro9Lexer.GTEQ: '>=',
@@ -830,7 +833,14 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
     def visitSelect(self, ctx):
         if ctx.tablename:
             return self.make_func_code('vfpfunc.db.select', self.visit(ctx.tablename))
-        #NEED TO ADD - SQL SELECT
+        else:
+            args = [arg for arg in self.visit(ctx.specialArgs())] if ctx.specialArgs() else CodeStr('*')
+            from_table = self.visit(ctx.fromExpr) if ctx.fromExpr else None
+            into_table = self.visit(ctx.intoExpr) if ctx.intoExpr else None
+            where_expr = self.visit(ctx.whereExpr) if ctx.whereExpr else None
+            order_by = self.visit(ctx.orderbyid) if ctx.orderbyid else None
+            distinct = 'distinct' if ctx.DISTINCT() else None
+            return self.make_func_code('vfpfunc.db.sqlselect', args, from_table, into_table, where_expr, order_by, distinct)
 
     def visitGoRecord(self, ctx):
         if ctx.TOP():
