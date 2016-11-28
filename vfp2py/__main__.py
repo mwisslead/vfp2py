@@ -161,6 +161,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
                              }
         self.imports = []
         self.scope = None
+        self.withid = ''
 
     @staticmethod
     def make_func_code(funcname, *args, **kwargs):
@@ -437,6 +438,12 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
     def visitWhileStmt(self, ctx):
         return [self.visit(ctx.whileStart()), self.visit(ctx.lines())]
 
+    def visitWithStmt(self, ctx):
+        self.withid = self.visit(ctx.idAttr())
+        lines = self.visit(ctx.lines())
+        self.withid = ''
+        return lines
+
     def visitDeclaration(self, ctx):
         if ctx.PUBLIC():
             string = 'vfpfunc.publicvar(\'%s\')'
@@ -569,6 +576,8 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
 
     def visitAtomExpr(self, ctx):
         atom = self.visit(ctx.atom())
+        if ctx.PERIOD() and self.withid:
+            atom = CodeStr(str(repr(self.withid)) + '.' + str(repr(atom)))
         trailer = self.visit(ctx.trailer()) if ctx.trailer() else None
         if isinstance(ctx.atom().getChild(0), VisualFoxpro9Parser.IdentifierContext):
             return self.createIdAttr(atom, trailer)
