@@ -493,6 +493,9 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         symbol = symbol_dict[ctx.op.type]
         return CodeStr('{} {} {}'.format(repr(left), symbol, repr(right)))
 
+    def visitBooleanNegation(self, ctx):
+        return CodeStr('not {}'.format(repr(self.visit(ctx.expr()))))
+
     def scopeId(self, text, vartype):
         if '.' in text:
             vals = text.split('.')
