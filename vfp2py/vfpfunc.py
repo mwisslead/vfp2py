@@ -66,3 +66,9 @@ def rgb(red, green, blue):
 
 def wait(msg, to=None, window=[-1, -1], nowait=False, noclear=False, timeout=-1):
     pass
+
+def select(tablename):
+    pass
+
+def set(setitem, *args, **kwargs):
+    pass

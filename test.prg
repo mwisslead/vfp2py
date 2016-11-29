@@ -110,12 +110,17 @@ ENDFOR
 FOR X = 1 TO REPORT.QUANITY
 ENDFOR
 
+&&Demo using local to generate cleaner code since no way to know if variable is local otherwise.
+LOCAL ITEM
 WITH item
    DO WHILE .value <= 3
       .value = .value + 1
       .test
    ENDDO
 ENDWITH
+RELEASE ITEM, X
+***ITEM no long a local***
+ITEM.VALUE = 3
 
 tablename = 'REPORT'
 
@@ -154,7 +159,7 @@ FUNCTION test
    ?a, b
 
 FUNCTION REPLACE_TEST(TABLENAME, FIELD_VAL)
-   IF FILE(TABLE_NAME + '.DBF')
+   IF FILE(TABLENAME + '.DBF')
       USE (TABLENAME) IN 0 SHARED
       SELECT (TABLENAME)
       SELECT('TABLENAME')

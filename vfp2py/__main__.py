@@ -161,6 +161,8 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
                              }
         self.imports = []
         self.scope = None
+        self._saved_scope = None
+        self._scope_count = 0
         self.withid = ''
 
     @staticmethod
@@ -191,11 +193,35 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
     def add_args_to_code(codestr, args):
         return CodeStr(codestr.format(*[repr(arg) for arg in args]))
 
+    def enable_scope(self, enabled):
+        self._scope_count = max(self._scope_count + 1 - 2*int(enabled), 0)
+        if enabled and self._scope_count == 0:
+            if self._saved_scope:
+                self.scope = self._saved_scope
+            else:
+                self.new_scope()
+            self.scope
+        else:
+            if self.scope:
+                self._saved_scope = self.scope
+            self.scope = None
+
+    def new_scope(self):
+        self._scope_count = 0
+        self.scope = {}
+
+    def delete_scope(self):
+        self._scope_count = 0
+        self.scope = None
+
+    def has_scope(self):
+        return self.scope is not None
+
     def visitPrg(self, ctx):
         self.imports = []
         main = []
         if ctx.line():
-            self.scope = {}
+            self.new_scope()
             line_structure = []
             for line in get_list(ctx.line()):
                 line_structure += self.visit(line)
@@ -207,7 +233,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             main.append([])
             main += [CodeStr('if __name__ == \'__main__\':'), [CodeStr('main(sys.argv)')]]
             self.imports.append('import sys')
-            self.scope = None
+            self.delete_scope()
 
 
         defs = []
@@ -360,13 +386,14 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
 
     def visitFuncDef(self, ctx):
 #funcDef:  funcDefStart line* funcDefEnd?;
-        self.scope = {}
         name, parameters = self.visit(ctx.funcDefStart())
         self.imports.append('from vfp2py import vfpfunc')
         body = [CodeStr('vfpfunc.pushscope()')]
+        self.new_scope()
+        self.scope.update({key: False for key in parameters})
         body += self.visit(ctx.lines())
+        self.delete_scope()
         body.append(CodeStr('vfpfunc.popscope()'))
-        self.scope = None
         return name, parameters, body
 
     def visitPrintStmt(self, ctx):
@@ -420,7 +447,9 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         return self.visit(ctx.lines())
 
     def visitForStart(self, ctx):
+        self.enable_scope(False)
         loopvar = self.visit(ctx.idAttr())
+        self.enable_scope(True)
         loop_start = self.to_int(self.visit(ctx.loopStart))
         loop_stop = self.to_int(self.visit(ctx.loopStop)) + 1
         if ctx.loopStep:
@@ -446,25 +475,23 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
 
     def visitDeclaration(self, ctx):
         if ctx.PUBLIC():
-            string = 'vfpfunc.publicvar(\'%s\')'
+            func = 'vfpfunc.publicvar'
         if ctx.PRIVATE():
-            #string = 'vfp.addprivatevar(\'%s\')'
-            savescope = self.scope
-            self.scope = None
-            names = self.visit(ctx.parameters())
-            for name in names:
-                savescope[name] = False
-            self.scope = savescope
-            return CodeStr('#PRIVATE %s' % ', '.join(names))
+            func = 'vfpfunc.privatevar'
         if ctx.LOCAL():
-            string = 'vfp.addlocalvar(\'%s\')'
+            self.enable_scope(False)
+            names = self.visit(ctx.parameters())
+            self.enable_scope(True)
+            for name in names:
+                self.scope[name] = False
+            return CodeStr('#Added {} to scope'.format(', '.join(names)))
         if ctx.ARRAY():
-            string = 'vfp.addarray(\'%s\', %s)'
+            func = 'vfp.addarray'
             values = [self.visit(ctx.arrayIndex())]
             args = [self.visit(ctx.identifier())]
-            return [CodeStr(string % (name, value)) for name, value in zip(args, values)]
+            return [self.make_func_code(func, name, value) for name, value in zip(args, values)]
         else:
-            return [CodeStr(string % name) for name in self.visit(ctx.parameters())]
+            return [self.make_func_code(func, name) for name in self.visit(ctx.parameters())]
 
     def visitAssign(self, ctx):
         if ctx.STORE():
@@ -509,94 +536,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
     def visitBooleanNegation(self, ctx):
         return CodeStr('not {}'.format(repr(self.visit(ctx.expr()))))
 
-    def scopeId(self, text, vartype):
-        if '.' in text:
-            vals = text.split('.')
-        else:
-            vals = [text]
-        if self.scope is not None:
-            t = vals[0]
-            n1 = t.find('[')
-            n2 = t.find('(')
-            if n2 > n1:
-                r = t[n1:]
-                t = t[:n1]
-            elif n1 > n2:
-                r = t[n1:]
-                t = t[:n1]
-            else:
-                r = ''
-            if t not in self.scope:
-                self.imports.append('from vfp2py import vfpfunc')
-                #vals[0] = 'vfpfunc.' + vartype + '[' + repr(str(t)) + ']' + r
-        text = '.'.join(vals)
-        return CodeStr(text)
-
-    def createIdAttr(self, identifier, trailer):
-        identifier = self.scopeId(identifier, 'val')
-        if identifier == 'this':
-            identifier = CodeStr('self')
-        if identifier == 'thisform':
-            identifier = CodeStr('self.parentform')
-        if trailer and len(trailer) == 1 and isinstance(trailer[0], list):
-            args = trailer[0]
-            return self.visitFuncCall(identifier, args)
-        if trailer:
-            trailer = self.convert_trailer_args(trailer)
-        else:
-            trailer = CodeStr('')
-        return CodeStr('{}{}'.format(repr(identifier), repr(trailer)))
-
-    def convert_trailer_args(self, trailers):
-        retval = ''
-        for trailer in trailers:
-            if isinstance(trailer, list):
-                retval += '({})'.format(', '.join(repr(t) for t in trailer))
-            else:
-                retval += '.' + trailer
-        return CodeStr(retval)
-
-    def visitTrailer(self, ctx):
-        trailer = self.visit(ctx.trailer()) if ctx.trailer() else []
-        if ctx.args():
-            retval = [[x for x in self.visit(ctx.args())]]
-        elif ctx.identifier():
-            retval = [self.visit(ctx.identifier())]
-        else:
-            retval = [[]]
-        return retval + trailer
-
-    def visitIdAttr(self, ctx):
-        identifier = self.visit(ctx.identifier())
-        if ctx.PERIOD() and self.withid:
-            identifier = CodeStr(str(repr(self.withid)) + '.' + str(repr(identifier)))
-        trailer = self.visit(ctx.trailer()) if ctx.trailer() else None
-        return self.createIdAttr(identifier, trailer)
-
-    def visitIdAttr2(self, ctx):
-        return CodeStr('.'.join([self.withid] if ctx.PERIOD() else [] + [self.visit(identifier) for identifier in ctx.identifier()]))
-
-    def visitAtomExpr(self, ctx):
-        atom = self.visit(ctx.atom())
-        if ctx.PERIOD() and self.withid:
-            atom = CodeStr(str(repr(self.withid)) + '.' + str(repr(atom)))
-        trailer = self.visit(ctx.trailer()) if ctx.trailer() else None
-        if isinstance(ctx.atom().getChild(0), VisualFoxpro9Parser.IdentifierContext):
-            return self.createIdAttr(atom, trailer)
-        elif trailer:
-            for i, t in enumerate(trailer):
-                if isinstance(t, list):
-                    trailer[i] = self.add_args_to_code('({})', t)
-                else:
-                    trailer[i] = '.' + trailer[i]
-            return CodeStr(''.join([repr(self.visit(ctx.atom()))] + trailer))
-        else:
-            return self.visit(ctx.atom())
-
-    def visitIdList(self, ctx):
-        return [self.visit(i) for i in get_list(ctx.idAttr())]
-
-    def visitFuncCall(self, funcname, args):
+    def func_call(self, funcname, args):
         if funcname == 'chr' and len(args) == 1 and isinstance(args[0], float):
             return chr(int(args[0]))
         if funcname == 'space' and len(args) == 1 and isinstance(args[0], float):
@@ -634,6 +574,83 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             funcname = self.scopeId(funcname, 'func')
         return self.make_func_code(funcname, *args)
 
+    def scopeId(self, identifier, vartype):
+        if not self.has_scope() or identifier in self.scope:
+            return identifier
+        if identifier == 'this':
+            return CodeStr('self')
+        if identifier == 'thisform':
+            return CodeStr('self.parentform')
+        self.imports.append('from vfp2py import vfpfunc')
+        if vartype == 'val':
+            return self.add_args_to_code('vfpfunc.variable[{}]', [str(identifier)])
+        elif vartype == 'func':
+            return self.add_args_to_code('vfpfunc.function[{}]', [str(identifier)])
+
+    def createIdAttr(self, identifier, trailer):
+        if trailer and len(trailer) == 1 and isinstance(trailer[0], list):
+            args = trailer[0]
+            return self.func_call(identifier, args)
+        if trailer:
+            trailer = self.convert_trailer_args(trailer)
+        else:
+            trailer = CodeStr('')
+        identifier = self.scopeId(identifier, 'val')
+        return self.add_args_to_code('{}{}', (identifier, trailer))
+
+    def convert_trailer_args(self, trailers):
+        retval = ''
+        for trailer in trailers:
+            if isinstance(trailer, list):
+                retval += '({})'.format(', '.join(repr(t) for t in trailer))
+            else:
+                retval += '.' + trailer
+        return CodeStr(retval)
+
+    def visitTrailer(self, ctx):
+        trailer = self.visit(ctx.trailer()) if ctx.trailer() else []
+        if ctx.args():
+            retval = [[x for x in self.visit(ctx.args())]]
+        elif ctx.identifier():
+            self.enable_scope(False)
+            retval = [self.visit(ctx.identifier())]
+            self.enable_scope(True)
+        else:
+            retval = [[]]
+        return retval + trailer
+
+    def visitIdAttr(self, ctx):
+        identifier = self.visit(ctx.identifier())
+        trailer = self.visit(ctx.trailer()) if ctx.trailer() else None
+        if ctx.PERIOD() and self.withid:
+            trailer = [identifier] + (trailer if trailer else [])
+            identifier = self.withid
+        return self.createIdAttr(identifier, trailer)
+
+    def visitIdAttr2(self, ctx):
+        return CodeStr('.'.join([self.withid] if ctx.PERIOD() else [] + [self.visit(identifier) for identifier in ctx.identifier()]))
+
+    def visitAtomExpr(self, ctx):
+        atom = self.visit(ctx.atom())
+        trailer = self.visit(ctx.trailer()) if ctx.trailer() else None
+        if ctx.PERIOD() and self.withid:
+            trailer = [atom] + (trailer if trailer else [])
+            atom = self.withid
+        if isinstance(atom, CodeStr):
+            return self.createIdAttr(atom, trailer)
+        elif trailer:
+            for i, t in enumerate(trailer):
+                if isinstance(t, list):
+                    trailer[i] = self.add_args_to_code('({})', t)
+                else:
+                    trailer[i] = '.' + trailer[i]
+            return CodeStr(''.join([repr(self.visit(ctx.atom()))] + trailer))
+        else:
+            return self.visit(ctx.atom())
+
+    def visitIdList(self, ctx):
+        return [self.visit(i) for i in get_list(ctx.idAttr())]
+
     #(MD | MKDIR | RD | RMDIR) specialExpr #Directory
     def visitAddRemoveDirectory(self, ctx):
         self.imports.append('import os')
@@ -648,12 +665,18 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         if ctx.pathname():
             return self.visit(ctx.pathname())
         elif ctx.expr():
+            self.enable_scope(False)
             expr = self.visit(ctx.expr())
+            self.enable_scope(True)
             start, stop = ctx.getSourceInterval()
             raw_expr = ''.join(t.text for t in ctx.parser._input.tokens[start:stop+1])
             if raw_expr.lower() == expr and isinstance(ctx.expr(), VisualFoxpro9Parser.AtomExprContext) and (not ctx.expr().trailer() or not any(isinstance(arg, list) for arg in self.visit(ctx.expr().trailer()))):
                 return self.create_string(raw_expr).lower()
             return expr
+            if isinstance(expr, CodeStr):
+                return self.scopeId(expr, 'val')
+            else:
+                return expr
 
     def visitPathname(self, ctx):
         return self.create_string(ctx.getText()).lower()
@@ -737,22 +760,35 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         return self.add_args_to_code('({})', [self.visit(ctx.expr())])
 
     def visitFuncDo(self, ctx):
+        self.enable_scope(False)
         func = self.visit(ctx.idAttr())
+        self.enable_scope(True)
         if ctx.args():
             args = self.visit(ctx.args())
         else:
             args = []
-        if func.endswith('.prg'):
-            func = func[:-4] + '.main'
-        if func.endswith('.mpr'):
+        needs_scoped = True
+        if func.endswith('.prg') or func.endswith('.app'):
+            func = func[:-4]
+            self.imports.append('import ' + str(func))
+            func = '.'.join((func, 'main'))
+            needs_scoped = False
+        elif func.endswith('.mpr'):
             func = func[:-4]
             args = [func] + args
+            self.imports.append('from vfp2py import vfpfunc')
             func = 'vfpfunc.mprfile'
+            needs_scoped = False
         if ctx.specialExpr():
             namespace = self.visit(ctx.specialExpr())
             if namespace.endswith('.app'):
                 namespace = namespace[:-4]
+            self.imports.append('import ' + str(namespace))
             func = namespace + '.' + func
+            needs_scoped = False
+        if needs_scoped:
+            func = self.scopeId(func, 'func')
+
         return self.make_func_code(func, *args)
 
     def visitMethodCall(self, ctx):
@@ -811,14 +847,28 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
 
     def visitRelease(self, ctx):
         #RELEASE vartype=(PROCEDURE|CLASSLIB)? args #release
+        scoped_args = []
         if ctx.ALL():
             args = []
         else:
-            savescope = self.scope
-            self.scope = None
-            args = [str(arg) for arg in self.visit(ctx.args())]
-            self.scope = savescope
-        return self.make_func_code('vfpfunc.release', *args)
+            self.enable_scope(False)
+            args = self.visit(ctx.args())
+            self.enable_scope(True)
+            final_args = []
+            for arg in args:
+                if arg in self.scope:
+                    scoped_args.append(arg)
+                else:
+                    final_args.append(str(arg))
+            args = final_args if final_args else None
+        retval = []
+        if scoped_args:
+            for arg in scoped_args:
+                self.scope.pop(arg)
+            retval.append(CodeStr('#Released {}'.format(', '.join(scoped_args))))
+        if args is not None:
+            retval.append(self.make_func_code('vfpfunc.release', *args))
+        return retval
 
     def visitWaitCmd(self, ctx):
         #WAIT (TO toExpr=expr | WINDOW (AT atExpr1=expr ',' atExpr2=expr)? | NOWAIT | CLEAR | NOCLEAR | TIMEOUT timeout=expr | message=expr)*
@@ -915,9 +965,14 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             scope = self.visit(ctx.scopeClause())
         else:
             scope = None
+        self.enable_scope(False)
         field = self.visit(ctx.idAttr()).split('.')
+        self.enable_scope(True)
         if len(field) > 1:
-            table = '.'.join(field[:-1])
+            if len(field) == 2:
+                table = str(field[0])
+            else:
+                table = CodeStr('.'.join(field[:-1]))
             field = str(field[-1])
         else:
             field = field[0]
