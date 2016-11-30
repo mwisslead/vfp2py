@@ -904,7 +904,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         if ctx.tablename:
             return self.make_func_code('vfpfunc.db.select', self.visit(ctx.tablename))
         else:
-            args = [arg for arg in self.visit(ctx.specialArgs())] if ctx.specialArgs() else CodeStr('*')
+            args = [arg for arg in self.visit(ctx.specialArgs())] if ctx.specialArgs() else ('*',)
             from_table = self.visit(ctx.fromExpr) if ctx.fromExpr else None
             into_table = self.visit(ctx.intoExpr) if ctx.intoExpr else None
             where_expr = self.visit(ctx.whereExpr) if ctx.whereExpr else None
