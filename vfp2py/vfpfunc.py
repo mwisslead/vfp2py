@@ -75,45 +75,85 @@ def select(tablename):
 def set(setitem, *args, **kwargs):
     pass
 
-class Database_Context(object):
+class _Database_Context(object):
     def __init__(self):
         self.current_table = -1
         self.open_tables = [{'name': None}]*10
+
+    def _table_index(self, tablename=None):
+        if not tablename:
+            ind = self.current_table
+        elif isinstance(tablename, (int, float)):
+            ind = tablename
+        else:
+            tablenames = [t['name'] for t in self.open_tables]
+            if tablename in tablenames:
+                ind = tablenames.index(tablename)
+            else:
+                raise Exception('Table is not currently open')
+        return ind
+
+    def _get_table_info(self, tablename=None):
+        return self.open_tables[self._table_index(tablename)]
+
+    def _get_table(self, tablename=None):
+        return self._get_table_info(tablename)['table']
 
     def create_table(self, tablename, setup_string, free):
         if free == 'free':
             dbf.Table(tablename, setup_string)
 
     def select(self, tablename):
-        if isinstance(tablename, (int, float)):
-            self.current_table = int(tablename)
-            return
-        tablenames = [t['name'] for t in self.open_tables]
-        if tablename in tablenames:
-            self.current_table = tablenames.index(tablename)
-        else:
-            raise Exception('Table is not currently open')
+        self.current_table = self._table_index(tablename)
+        table_data = self.open_tables[self.current_table]
+        if table_data['recno'] == 0:
+            table_data['recno'] = min(len(table_data['table']), 1)
 
     def use(self, tablename, workarea, opentype):
-        tablenames = [t['name'] for t in self.open_tables]
-        if tablename is None and workarea is None:
-            table = self.open_tables[self.current_table]['table']
+        if tablename is None:
+            table = self.open_tables[self._table_index(workarea)]['table']
             table.close()
             self.open_tables[self.current_table] = {'name': None}
             self.current_table = -1
             return
-        elif tablename is None:
-            ind = self.tablenames.index(workarea)
-            table = self.open_tables[ind]['table']
-            table.close()
-            self.open_tables[ind] = {'name': None}
-            if ind == self.current_table:
-                self.current_table = -1
-            return
         table = dbf.Table(tablename)
         table.open()
         if workarea == 0:
+            tablenames = [t['name'] for t in self.open_tables]
             workarea = tablenames.index(None)
-        self.open_tables[workarea] = {'name': tablename, 'table': table}
+        self.open_tables[workarea] = {'name': tablename, 'table': table, 'recno': 0}
+        self.current_table = workarea
 
-db = Database_Context()
+    def append(self, tablename, editwindow):
+        table_info = self._get_table_info(tablename)
+        table = table_info['table']
+        table.append()
+        table_info['recno'] = len(table)
+
+    def replace(self, tablename, fieldname, value, scope):
+        table_info = self._get_table_info(tablename)
+        table = table_info['table']
+        recno = table_info['recno']
+        record = table[recno-1]
+        dbf.write(record, **{fieldname: value})
+
+    def skip(self, tablename, skipnum):
+        table_info = self._get_table_info(tablename)
+        table_info['recno'] += int(skipnum)
+
+    def recno(self):
+        try:
+            return self.open_tables[self.current_table]['recno']
+        except:
+            return 0
+
+    def reccount(self):
+        try:
+            return len(self.open_tables[self.current_table]['table'])
+        except:
+            return 0
+
+db = _Database_Context()
+
+recno = db.recno
+reccount = db.reccount

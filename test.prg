@@ -48,8 +48,8 @@ if x > 5
 else
 endif
 
-delete file test . h
-delete file test.h
+delete file test . txt
+delete file test.txt
 delete file x
 delete file (x)
 delete file '' + x

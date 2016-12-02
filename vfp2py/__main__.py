@@ -899,7 +899,13 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         tablename = self.visit(ctx.specialExpr())
         tablesetup = zip(ctx.identifier()[::2], ctx.identifier()[1::2], ctx.arrayIndex())
         tablesetup = ((self.visit(id1), self.visit(id2), self.visit(size)) for id1, id2, size in tablesetup)
-        setupstring = '; '.join('{} {}({})'.format(id1, id2, ', '.join(str(int(i)) for i in size)) for id1, id2, size in tablesetup)
+        setupstring = []
+        for id1, id2, size in tablesetup:
+            if id2.upper() == 'L' and len(size) == 1 and size[0] == 1:
+                setupstring.append('{} {}'.format(id1, id2))
+            else:
+                setupstring.append('{} {}({})'.format(id1, id2, ', '.join(str(int(i)) for i in size)))
+        setupstring = '; '.join(setupstring)
         free = 'free' if ctx.FREE() else ''
         return self.make_func_code(func, tablename, setupstring, free)
 
