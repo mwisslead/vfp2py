@@ -173,7 +173,23 @@ class _Database_Context(object):
         except:
             return 0
 
+class _Variable(object):
+    def __init__(self, db):
+        self.variables = {}
+        self.db = db
+
+    def __getitem__(self, key):
+        if key in self.variables:
+            return self.variables[key]
+        elif key in self.db._get_table().field_names:
+            table_info = self.db._get_table_info()
+            return table_info['table'][table_info['recno']][key]
+
+    def __setitem__(self, key, val):
+        self.variables[key] = val
+
 db = _Database_Context()
+variable = _Variable(db)
 
 recno = db.recno
 reccount = db.reccount
