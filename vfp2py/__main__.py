@@ -1013,9 +1013,9 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         else:
             name = None
         if ctx.forExpr:
-            kwargs['forCond'] = self.add_args_to_code('lambda: {}', [self.visit(ctx.forExpr)])
+            kwargs['for_cond'] = self.add_args_to_code('lambda: {}', [self.visit(ctx.forExpr)])
         if ctx.whileExpr:
-            kwargs['whileCond'] = self.add_args_to_code('lambda: {}', [self.visit(ctx.whileExpr)])
+            kwargs['while_cond'] = self.add_args_to_code('lambda: {}', [self.visit(ctx.whileExpr)])
         return self.make_func_code('vfpfunc.db.delete_record', name, scopetype, num, **kwargs)
 
     def visitScopeClause(self, ctx):

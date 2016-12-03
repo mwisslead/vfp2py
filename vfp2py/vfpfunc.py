@@ -141,6 +141,26 @@ class _Database_Context(object):
         table_info = self._get_table_info(tablename)
         table_info['recno'] += int(skipnum)
 
+    def delete_record(self, tablename, scope, num, for_cond=None, while_cond=None):
+        save_current_table = self.current_table
+        if not for_cond:
+            for_cond = lambda: True
+        if not while_cond:
+            while_cond = lambda: True
+        self.select(tablename)
+        table_info = self._get_table_info()
+        table = table_info['table']
+        recno = table_info['recno']
+        reccount = len(table)
+        if scope.lower() == 'rest':
+            records = table[recno-1:reccount]
+        for record in records:
+            if not while_cond():
+                break
+            if for_cond():
+                dbf.delete(record)
+        self.current_table = save_current_table
+
     def recno(self):
         try:
             return self.open_tables[self.current_table]['recno']
