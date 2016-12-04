@@ -1018,6 +1018,20 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             kwargs['while_cond'] = self.add_args_to_code('lambda: {}', [self.visit(ctx.whileExpr)])
         return self.make_func_code('vfpfunc.db.delete_record', name, scopetype, num, **kwargs)
 
+    def visitPack(self, ctx):
+        if ctx.DBF():
+            pack = 'dbf'
+        elif ctx.MEMO():
+            pack = 'memo'
+        else:
+            pack = 'both'
+        tablename = self.visit(ctx.tableName) if ctx.tableName else None
+        workarea = self.visit(ctx.workArea) if ctx.workArea else None
+        return self.make_func_code('vfpfunc.db.pack', pack, tablename, workarea)
+
+    def visitPackDatabase(self, ctx):
+        return self.make_func_code('vfpfunc.db.pack_database')
+
     def visitScopeClause(self, ctx):
         if ctx.ALL():
             return 'all', -1
