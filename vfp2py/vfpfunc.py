@@ -159,7 +159,19 @@ class _Database_Context(object):
                 break
             if for_cond():
                 dbf.delete(record)
+            table_info['recno'] += 1
+        table_info['recno'] = recno
         self.current_table = save_current_table
+
+    def pack(self, pack, tablename, workarea):
+        if tablename:
+            table = dbf.Table(tablename)
+            table.open()
+            table.pack()
+            table.close()
+        else:
+            table = self._get_table(workarea)
+            table.pack()
 
     def recno(self):
         try:
@@ -183,7 +195,7 @@ class _Variable(object):
             return self.variables[key]
         elif key in self.db._get_table().field_names:
             table_info = self.db._get_table_info()
-            return table_info['table'][table_info['recno']][key]
+            return table_info['table'][table_info['recno']-1][key]
 
     def __setitem__(self, key, val):
         self.variables[key] = val
