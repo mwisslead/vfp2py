@@ -220,6 +220,22 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
 
     def visitPrg(self, ctx):
         self.imports = []
+        if ctx.funcDef():
+            for funcDef in get_list(ctx.funcDef()):
+                self.function_list.append(self.visit(ctx.funcDef()[0].funcDefStart().idAttr2()))
+            self.function_list = list(set(self.function_list))
+
+        defs = []
+        if ctx.classDef():
+            for classDef in get_list(ctx.classDef()):
+                defs += self.visit(classDef) + [[]]
+
+        if ctx.funcDef():
+            for funcDef in get_list(ctx.funcDef()):
+                funcname, parameters, funcbody = self.visit(funcDef)
+                defs.append(CodeStr('def {}({}):'.format(funcname, ', '.join(parameters))))
+                defs += [funcbody] + [[]]
+
         main = []
         if ctx.line():
             self.new_scope()
@@ -235,18 +251,6 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             main += [CodeStr('if __name__ == \'__main__\':'), [CodeStr('main(sys.argv)')]]
             self.imports.append('import sys')
             self.delete_scope()
-
-
-        defs = []
-        if ctx.classDef():
-            for classDef in get_list(ctx.classDef()):
-                defs += self.visit(classDef) + [[]]
-
-        if ctx.funcDef():
-            for funcDef in get_list(ctx.funcDef()):
-                funcname, parameters, funcbody = self.visit(funcDef)
-                defs.append(CodeStr('def {}({}):'.format(funcname, ', '.join(parameters))))
-                defs += [funcbody] + [[]]
 
         self.imports = sorted(set(self.imports), key=import_key)
         imports = []
