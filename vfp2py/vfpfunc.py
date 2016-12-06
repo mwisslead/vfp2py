@@ -75,6 +75,11 @@ def select(tablename):
 def set(setitem, *args, **kwargs):
     pass
 
+def do_command(command, module, *args, **kwargs):
+    mod = __import__(module)
+    cmd = getattr(mod, command)
+    cmd(*args, **kwargs)
+
 class _Database_Context(object):
     def __init__(self):
         self.current_table = -1

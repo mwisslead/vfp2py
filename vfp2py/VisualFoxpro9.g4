@@ -311,7 +311,7 @@ specialArgs
  ;
 
 funcDo
- : DO idAttr (IN specialExpr)? (WITH args)?
+ : DO specialExpr (IN specialExpr)? (WITH args)?
  ;
 
 reference

@@ -164,6 +164,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         self._saved_scope = None
         self._scope_count = 0
         self.withid = ''
+        self.function_list = []
 
     @staticmethod
     def make_func_code(funcname, *args, **kwargs):
@@ -764,35 +765,23 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
 
     def visitFuncDo(self, ctx):
         self.enable_scope(False)
-        func = self.visit(ctx.idAttr())
+        func = self.visit(ctx.specialExpr()[0])
         self.enable_scope(True)
-        if ctx.args():
-            args = self.visit(ctx.args())
-        else:
-            args = []
-        needs_scoped = True
-        if func.endswith('.prg') or func.endswith('.app'):
-            func = func[:-4]
-            self.imports.append('import ' + str(func))
-            func = '.'.join((func, 'main'))
-            needs_scoped = False
-        elif func.endswith('.mpr'):
+        args = self.visit(ctx.args()) if ctx.args() else []
+        if func.endswith('.mpr'):
             func = func[:-4]
             args = [func] + args
             self.imports.append('from vfp2py import vfpfunc')
-            func = 'vfpfunc.mprfile'
-            needs_scoped = False
-        if ctx.specialExpr():
-            namespace = self.visit(ctx.specialExpr())
-            if namespace.endswith('.app'):
-                namespace = namespace[:-4]
-            self.imports.append('import ' + str(namespace))
-            func = namespace + '.' + func
-            needs_scoped = False
-        if needs_scoped:
-            func = self.scopeId(func, 'func')
+            return self.make_func_code('vfpfunc.mprfile', *args)
+        if ctx.IN():
+            namespace = self.visit(ctx.specialExpr()[1])
+        else:
+            if func in self.function_list:
+                return self.make_func_code(func, *args)
+            namespace = func
+            func = 'main'
 
-        return self.make_func_code(func, *args)
+        return self.make_func_code('vfpfunc.do_command', namespace, func, *args)
 
     def visitMethodCall(self, ctx):
         return self.visit(ctx.idAttr()) + '.' + self.visit(ctx.identifier()) + '()'
