@@ -740,8 +740,8 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
     def visitAddition(self, ctx):
         return self.operationExpr(ctx, ctx.op.type)
 
-    # expr '%' expr #Mod
-    def visitMod(self, ctx):
+    # expr '%' expr #Modulo
+    def visitModulo(self, ctx):
         return self.operationExpr(ctx, '%')
 
     def operationExpr(self, ctx, operation):
