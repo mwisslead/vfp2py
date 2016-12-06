@@ -474,6 +474,9 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         self.withid = ''
         return lines
 
+    def visitBreakLoop(self, ctx):
+        return CodeStr('break')
+
     def visitDeclaration(self, ctx):
         if ctx.PUBLIC():
             func = 'vfpfunc.publicvar'
