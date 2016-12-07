@@ -178,6 +178,11 @@ class _Database_Context(object):
             table = self._get_table(workarea)
             table.pack()
 
+    def close_tables(self, all_flag):
+        for i, table in enumerate(self.open_tables):
+            if table['name'] is not None:
+                self.use(None, i, None)
+
     def recno(self):
         try:
             return self.open_tables[self.current_table]['recno']

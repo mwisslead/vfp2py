@@ -869,6 +869,11 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             retval.append(self.make_func_code('vfpfunc.release', *args))
         return retval
 
+    def visitCloseStmt(self, ctx):
+        allflag = not not ctx.ALL()
+        if ctx.TABLES():
+            return self.make_func_code('vfpfunc.db.close_tables', allflag)
+
     def visitWaitCmd(self, ctx):
         #WAIT (TO toExpr=expr | WINDOW (AT atExpr1=expr ',' atExpr2=expr)? | NOWAIT | CLEAR | NOCLEAR | TIMEOUT timeout=expr | message=expr)*
         message = repr(self.visit(ctx.message) if ctx.message else '')
