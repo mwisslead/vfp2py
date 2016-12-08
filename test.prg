@@ -196,6 +196,7 @@ DEFINE CLASS test as custom
       x = initx
 
    function athing(test)
+      NODEFAULT
       return this.x
    endfunc
 ENDDEFINE

@@ -374,6 +374,9 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             funcname = '__init__'
         return {funcname: [['self'] + parameters, funcbody]}
 
+    def visitNodefault(self, ctx):
+        return []
+
     def visitFuncDefStart(self, ctx):
 #funcDefStart: (PROCEDURE | FUNCTION) idAttr ('(' parameters? ')')? NL parameterDef?;
         return self.visit(ctx.idAttr2()), (self.visit(ctx.parameters()) if ctx.parameters() else []) + (self.visit(ctx.parameterDef()) if ctx.parameterDef() else [])
