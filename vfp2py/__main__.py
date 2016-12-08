@@ -1030,6 +1030,9 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         workarea = self.visit(ctx.workArea) if ctx.workArea else None
         return self.make_func_code('vfpfunc.db.pack', pack, tablename, workarea)
 
+    def visitReindex(self, ctx):
+        return self.make_func_code('vfpfunc.db.reindex', not not ctx.COMPACT())
+
     def visitPackDatabase(self, ctx):
         return self.make_func_code('vfpfunc.db.pack_database')
 

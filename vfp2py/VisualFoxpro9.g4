@@ -218,6 +218,7 @@ otherCmds
  | SKIPKW expr (IN expr)? #skipRecord
  | PACK (MEMO | DBF)? tableName=specialExpr? (IN workArea=specialExpr)? #pack
  | PACK DATABASE #packDatabase
+ | REINDEX COMPACT? #reindex
  | SEEK expr #seekRecord
  | (GO | GOTO) (TOP | BOTTOM | RECORD? expr) (IN idAttr)? #goRecord
  | COPY STRUCTURE? TO specialExpr #copyTo
@@ -689,6 +690,7 @@ TABLES : T A B L E S;
 INDEXES : I N D E X E S;
 LOOP: L O O P;
 PACK: P A C K;
+REINDEX: R E I N D E X;
 MEMO: M E M O;
 
 ID : [A-Za-z_] [a-zA-Z0-9_]*;

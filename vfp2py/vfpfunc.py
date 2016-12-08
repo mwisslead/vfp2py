@@ -178,6 +178,10 @@ class _Database_Context(object):
             table = self._get_table(workarea)
             table.pack()
 
+    def reindex(self, compact_flag):
+        table = self._get_table()
+        table.reindex()
+
     def close_tables(self, all_flag):
         for i, table in enumerate(self.open_tables):
             if table['name'] is not None:
