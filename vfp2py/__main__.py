@@ -218,6 +218,9 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
     def has_scope(self):
         return self.scope is not None
 
+    def getCtxText(self, ctx):
+        return ''.join(t.text for t in ctx.parser._input.tokens[start:stop+1])
+
     def visitPrg(self, ctx):
         self.imports = []
         if ctx.funcDef():
@@ -1032,6 +1035,18 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         tablename = self.visit(ctx.tableName) if ctx.tableName else None
         workarea = self.visit(ctx.workArea) if ctx.workArea else None
         return self.make_func_code('vfpfunc.db.pack', pack, tablename, workarea)
+
+    def visitIndexOn(self, ctx):
+        #INDEX ON expr (TAG | TO) expr (COMPACT | ASCENDING | DESCENDING)? ( UNIQUE | CANDIDATE)? ADDITIVE?
+        field = self.visit(ctx.specialExpr()[0])
+        indexname = self.visit(ctx.specialExpr()[1])
+        tag_flag = not not ctx.TAG()
+        compact_flag = not not ctx.COMPACT()
+        if ctx.ASCENDING() and ctx.DESCENDING():
+            raise Exception('Invalid statement: {}'.format(self.getCtxText(ctx)))
+        order = 'descending' if ctx.DESCENDING() else 'ascending'
+        unique_flag = not not ctx.UNIQUE()
+        return self.make_func_code('vfpfunc.db.index_on', field, indexname, order, tag_flag, compact_flag, unique_flag)
 
     def visitReindex(self, ctx):
         return self.make_func_code('vfpfunc.db.reindex', not not ctx.COMPACT())

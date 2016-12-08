@@ -182,6 +182,9 @@ class _Database_Context(object):
         table = self._get_table()
         table.reindex()
 
+    def index_on(field, indexname, order, tag_flag, compact_flag, unique_flag):
+        pass
+
     def close_tables(self, all_flag):
         for i, table in enumerate(self.open_tables):
             if table['name'] is not None:
