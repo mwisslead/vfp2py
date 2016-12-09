@@ -584,6 +584,8 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             return self.make_func_code('vfpfunc.used', *args)
         if funcname == 'round':
             return self.make_func_code(funcname, *args)
+        if funcname == 'createobject' and len(args) > 0 and self.string_type(args[0]):
+            return self.make_func_code(args[0].lower(), *args[1:])
         if funcname in dir(vfpfunc):
             self.imports.append('from vfp2py import vfpfunc')
             funcname = 'vfpfunc.' + funcname

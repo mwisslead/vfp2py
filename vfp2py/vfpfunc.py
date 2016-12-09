@@ -80,6 +80,9 @@ def do_command(command, module, *args, **kwargs):
     cmd = getattr(mod, command)
     cmd(*args, **kwargs)
 
+def createobject(objtype, *args):
+    pass
+
 class _Database_Context(object):
     def __init__(self):
         self.current_table = -1
