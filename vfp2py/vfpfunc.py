@@ -4,19 +4,23 @@ import os
 
 import dbf
 
-SCOPES = []
+PUBLIC_SCOPE = {}
+PRIVATE_SCOPES = []
+LOCAL_SCOPES = []
 
 class Form(object):
     def __init__(self):
         pass
 
 def pushscope():
-    global SCOPES
-    SCOPES.append({})
+    global PRIVATE_SCOPES, LOCAL_SCOPES
+    PRIVATE_SCOPES.append({})
+    LOCAL_SCOPES.append({})
 
 def popscope():
-    global SCOPES
-    SCOPES.pop()
+    global PRIVATE_SCOPES, LOCAL_SCOPES
+    PRIVATE_SCOPES.pop()
+    LOCAL_SCOPES.pop()
 
 def alltrim(string):
     return string.strip()
@@ -207,18 +211,35 @@ class _Database_Context(object):
 
 class _Variable(object):
     def __init__(self, db):
-        self.variables = {}
         self.db = db
 
+    def _get_scope(self, key):
+        if len(LOCAL_SCOPES) > 0 and key in LOCAL_SCOPES[-1]:
+            return LOCAL_SCOPES[-1]
+        for scope in reversed(PRIVATE_SCOPES):
+            if key in scope:
+                return scope
+        if key in PUBLIC_SCOPE:
+            return PUBLIC_SCOPE
+
     def __getitem__(self, key):
-        if key in self.variables:
-            return self.variables[key]
-        elif key in self.db._get_table().field_names:
-            table_info = self.db._get_table_info()
+        scope = self._get_scope(key)
+        table_info = self.db._get_table_info()
+        if scope is not None:
+            return scope[key]
+        elif table_info['name'] is not None and key in table_info['table'].field_names:
             return table_info['table'][table_info['recno']-1][key]
+        else:
+            raise NameError('name {} is not defined'.format(key))
 
     def __setitem__(self, key, val):
-        self.variables[key] = val
+        scope = self._get_scope(key)
+        if scope is None:
+            scope = LOCAL_SCOPES[-1]
+        scope[key] = val
+
+    def add_private(self, key):
+        PRIVATE_SCOPES[-1][key] = None
 
 db = _Database_Context()
 variable = _Variable(db)

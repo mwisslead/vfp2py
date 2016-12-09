@@ -488,14 +488,14 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         return CodeStr('break')
 
     def visitDeclaration(self, ctx):
+        self.enable_scope(False)
+        names = self.visit(ctx.parameters())
+        self.enable_scope(True)
         if ctx.PUBLIC():
             func = 'vfpfunc.publicvar'
         if ctx.PRIVATE():
-            func = 'vfpfunc.privatevar'
+            func = 'vfpfunc.variable.add_private'
         if ctx.LOCAL():
-            self.enable_scope(False)
-            names = self.visit(ctx.parameters())
-            self.enable_scope(True)
             for name in names:
                 self.scope[name] = False
             return CodeStr('#Added {} to scope'.format(', '.join(names)))
@@ -505,7 +505,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             args = [self.visit(ctx.identifier())]
             return [self.make_func_code(func, name, value) for name, value in zip(args, values)]
         else:
-            return [self.make_func_code(func, name) for name in self.visit(ctx.parameters())]
+            return [self.make_func_code(func, str(name)) for name in names]
 
     def visitAssign(self, ctx):
         if ctx.STORE():
@@ -554,6 +554,8 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         return CodeStr('not {}'.format(repr(self.visit(ctx.expr()))))
 
     def func_call(self, funcname, args):
+        if funcname in self.function_list:
+            return self.make_func_code(funcname, *args)
         if funcname == 'chr' and len(args) == 1 and isinstance(args[0], float):
             return chr(int(args[0]))
         if funcname == 'space' and len(args) == 1 and isinstance(args[0], float):
