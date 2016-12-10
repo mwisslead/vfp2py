@@ -657,6 +657,9 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         if ctx.PERIOD() and self.withid:
             trailer = [atom] + (trailer if trailer else [])
             atom = self.withid
+
+        if trailer and len(trailer) > 0 and not isinstance(trailer[-1], list) and isinstance(atom, CodeStr) and isinstance(ctx.parentCtx, VisualFoxpro9Parser.CmdContext):
+            return self.make_func_code('vfpfunc.call_if_callable', self.createIdAttr(atom, trailer))
         if isinstance(atom, CodeStr):
             return self.createIdAttr(atom, trailer)
         elif trailer:

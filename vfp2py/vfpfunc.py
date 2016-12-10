@@ -84,6 +84,11 @@ def do_command(command, module, *args, **kwargs):
     cmd = getattr(mod, command)
     cmd(*args, **kwargs)
 
+def call_if_callable(expr):
+    if callable(expr):
+        return expr()
+    return expr
+
 def createobject(objtype, *args):
     pass
 
