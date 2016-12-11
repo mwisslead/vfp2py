@@ -164,6 +164,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         self._saved_scope = None
         self._scope_count = 0
         self.withid = ''
+        self.class_list = []
         self.function_list = []
 
     @staticmethod
@@ -230,6 +231,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
 
         defs = []
         if ctx.classDef():
+            self.class_list = [self.visit(classDef.classDefStart().identifier()[0]) for classDef in ctx.classDef()]
             for classDef in get_list(ctx.classDef()):
                 defs += self.visit(classDef) + [[]]
 
@@ -586,8 +588,11 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             return self.make_func_code('vfpfunc.used', *args)
         if funcname == 'round':
             return self.make_func_code(funcname, *args)
-        if funcname == 'createobject' and len(args) > 0 and self.string_type(args[0]):
-            return self.make_func_code(args[0].lower(), *args[1:])
+        if funcname == 'createobject':
+            if len(args) > 0 and self.string_type(args[0]) and args[0].lower() in self.class_list:
+                return self.make_func_code(args[0].lower(), *args[1:])
+            else:
+                return self.make_func_code('vfpfunc.create_object', *args)
         if funcname in dir(vfpfunc):
             self.imports.append('from vfp2py import vfpfunc')
             funcname = 'vfpfunc.' + funcname

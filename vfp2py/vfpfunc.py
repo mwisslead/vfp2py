@@ -89,7 +89,7 @@ def call_if_callable(expr):
         return expr()
     return expr
 
-def createobject(objtype, *args):
+def create_object(objtype, *args):
     pass
 
 class _Database_Context(object):
@@ -251,3 +251,4 @@ variable = _Variable(db)
 
 recno = db.recno
 reccount = db.reccount
+
