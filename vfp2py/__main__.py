@@ -490,23 +490,21 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         return CodeStr('break')
 
     def visitDeclaration(self, ctx):
-        self.enable_scope(False)
-        names = self.visit(ctx.parameters())
-        self.enable_scope(True)
-        if ctx.PUBLIC():
-            func = 'vfpfunc.publicvar'
-        if ctx.PRIVATE():
-            func = 'vfpfunc.variable.add_private'
-        if ctx.LOCAL():
-            for name in names:
-                self.scope[name] = False
-            return CodeStr('#Added {} to scope'.format(', '.join(names)))
-        if ctx.ARRAY():
-            func = 'vfp.addarray'
-            values = [self.visit(ctx.arrayIndex())]
-            args = [self.visit(ctx.identifier())]
-            return [self.make_func_code(func, name, value) for name, value in zip(args, values)]
+        if ctx.ARRAY() or ctx.DIMENSION() or ctx.DEFINE():
+            func = 'vfpfunc.array'
+            value = self.visit(ctx.arrayIndex())
+            array = self.make_func_code(func, *value)
+            name = self.visit(ctx.identifier())
+            return [CodeStr('{} = {}'.format(name, array))]
         else:
+            self.enable_scope(False)
+            names = self.visit(ctx.parameters())
+            self.enable_scope(True)
+            if ctx.LOCAL():
+                for name in names:
+                    self.scope[name] = False
+                return CodeStr('#Added {} to scope'.format(', '.join(names)))
+            func = 'vfpfunc.publicvar' if ctx.PUBLIC() else 'vfpfunc.variable.add_private'
             return [self.make_func_code(func, str(name)) for name in names]
 
     def visitAssign(self, ctx):
