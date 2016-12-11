@@ -508,19 +508,23 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             return [self.make_func_code(func, str(name)) for name in names]
 
     def visitAssign(self, ctx):
-        if ctx.STORE():
-            value = self.visit(ctx.expr())
-            args = [self.visit(var) for var in ctx.idAttr()] + [repr(value)]
-            return CodeStr(' = '.join(args))
-        else:
-            name = self.visit(ctx.idAttr()[0])
-            value = self.visit(ctx.expr())
+        value = self.visit(ctx.expr())
+        args = []
+        for var in ctx.idAttr():
+            trailer = self.visit(var.trailer()) if var.trailer() else []
+            if len(trailer) > 0 and isinstance(trailer[-1], list):
+                identifier = self.visit(ctx.idAttr()[0].identifier())
+                arg = self.createIdAttr(identifier, trailer[:-1])
+                args.append('{}[{}]'.format(arg, ','.join(repr(x) for x in trailer[-1])))
+            else:
+                args.append(self.visit(var))
+        if len(args) == 1:
             try:
-                if value.startswith(name + ' + '):
-                    return [CodeStr('{} += {}'.format(name, repr(value[len(name + ' + '):])))]
+                if value.startswith(args[0] + ' + '):
+                    return [CodeStr('{} += {}'.format(args[0], repr(value[len(name + ' + '):])))]
             except Exception as e:
                 pass
-            return [CodeStr('{} = {}'.format(name, repr(value)))]
+        return [CodeStr(' = '.join(args + [repr(value)]))]
 
     def visitArgs(self, ctx):
         return [self.visit(c) for c in ctx.expr()]
