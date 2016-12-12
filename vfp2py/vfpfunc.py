@@ -269,9 +269,37 @@ class _Variable(object):
     def add_private(self, key):
         PRIVATE_SCOPES[-1][key] = None
 
+class _Function(object):
+    def __init__(self):
+        self.functions = {}
+
+    def __getitem__(self, key):
+        if key in self.functions:
+            return self.functions[key]
+        for scope in PRIVATE_SCOPES:
+            if key in scope and isinstance(scope[key], Array):
+                return scope[key]
+        if key in PUBLIC_SCOPE and isinstance(scope[key], Array):
+            return PUBLIC_SCOPE[key]
+        raise Exception('{} is not a procedure'.format(key))
+
+    def __setitem__(self, key, val):
+        self.functions[key] = val
+
+    def set_procedure(self, procedure_name, additive=False):
+        pass
+
+
 db = _Database_Context()
 variable = _Variable(db)
+function = _Function()
 
 recno = db.recno
 reccount = db.reccount
 
+def array(arrayname, dim1, dim2=1, public=False):
+    arr = Array(dim1, dim2)
+    if public:
+        PUBLIC_SCOPE[arrayname] = arr
+    else:
+        PRIVATE_SCOPES[-1][arrayname] = arr
