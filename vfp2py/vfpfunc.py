@@ -1,6 +1,7 @@
 import builtins
 import datetime
 import os
+import types
 
 import dbf
 
@@ -286,8 +287,13 @@ class _Function(object):
     def __setitem__(self, key, val):
         self.functions[key] = val
 
-    def set_procedure(self, procedure_name, additive=False):
-        pass
+    def set_procedure(self, *procedures, **kwargs):
+        for procedure in procedures:
+            module = __import__(procedure)
+            for obj_name in dir(module):
+                obj = getattr(module, obj_name)
+                if isinstance(obj, types.FunctionType):
+                    self.functions[obj_name] = obj
 
 
 db = _Database_Context()

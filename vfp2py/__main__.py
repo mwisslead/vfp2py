@@ -1105,6 +1105,9 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             return self.make_func_code('vfpfunc.set', *args)
         if ctx.setword.text.lower() == 'typeahead':
             return self.make_func_code('vfpfunc.set', 'typeahead', self.visit(ctx.expr()[0]))
+        if ctx.setword.text.lower() == 'procedure':
+            kwargs = {'additive': True} if ctx.ADDITIVE() else {}
+            return self.make_func_code('vfpfunc.function.set_procedure', *[self.visit(expr) for expr in ctx.specialExpr()], **kwargs)
 
     def visitReturnStmt(self, ctx):
         retval = [CodeStr('vfpfunc.popscope()')]
