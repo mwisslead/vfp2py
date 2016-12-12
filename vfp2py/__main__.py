@@ -493,9 +493,9 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         if ctx.ARRAY() or ctx.DIMENSION() or ctx.DEFINE():
             func = 'vfpfunc.array'
             value = self.visit(ctx.arrayIndex())
-            array = self.make_func_code(func, *value)
+            kwargs = {'public': True} if ctx.PUBLIC() else {}
             name = self.visit(ctx.identifier())
-            return [CodeStr('{} = {}'.format(name, array))]
+            return self.make_func_code(func, *([str(name)] + value), **kwargs)
         else:
             self.enable_scope(False)
             names = self.visit(ctx.parameters())
@@ -514,8 +514,8 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             trailer = self.visit(var.trailer()) if var.trailer() else []
             if len(trailer) > 0 and isinstance(trailer[-1], list):
                 identifier = self.visit(ctx.idAttr()[0].identifier())
-                arg = self.createIdAttr(identifier, trailer[:-1])
-                args.append('{}[{}]'.format(arg, ','.join(repr(x) for x in trailer[-1])))
+                arg = self.createIdAttr(identifier, trailer[:-1] + [[]])
+                args.append('{}[{}]'.format(arg[:-2], ','.join(repr(x) for x in trailer[-1])))
             else:
                 args.append(self.visit(var))
         if len(args) == 1:
