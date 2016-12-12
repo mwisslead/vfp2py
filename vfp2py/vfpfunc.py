@@ -5,7 +5,6 @@ import types
 
 import dbf
 
-PUBLIC_SCOPE = {}
 PRIVATE_SCOPES = []
 LOCAL_SCOPES = []
 
@@ -248,8 +247,6 @@ class _Variable(object):
         for scope in reversed(PRIVATE_SCOPES):
             if key in scope:
                 return scope
-        if key in PUBLIC_SCOPE:
-            return PUBLIC_SCOPE
 
     def __getitem__(self, key):
         scope = self._get_scope(key)
@@ -268,7 +265,10 @@ class _Variable(object):
         scope[key] = val
 
     def add_private(self, key):
-        PRIVATE_SCOPES[-1][key] = None
+        PRIVATE_SCOPES[-1][key] = False
+
+    def add_public(self, key):
+        PRIVATE_SCOPES[0][key] = False
 
 class _Function(object):
     def __init__(self):
@@ -280,8 +280,6 @@ class _Function(object):
         for scope in PRIVATE_SCOPES:
             if key in scope and isinstance(scope[key], Array):
                 return scope[key]
-        if key in PUBLIC_SCOPE and isinstance(scope[key], Array):
-            return PUBLIC_SCOPE[key]
         raise Exception('{} is not a procedure'.format(key))
 
     def __setitem__(self, key, val):
@@ -306,6 +304,8 @@ reccount = db.reccount
 def array(arrayname, dim1, dim2=1, public=False):
     arr = Array(dim1, dim2)
     if public:
-        PUBLIC_SCOPE[arrayname] = arr
+        PRIVATE_SCOPES[0][arrayname] = arr
     else:
         PRIVATE_SCOPES[-1][arrayname] = arr
+
+pushscope()
