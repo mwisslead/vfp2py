@@ -12,6 +12,29 @@ class Form(object):
     def __init__(self):
         pass
 
+class Array(object):
+    def __init__(self, dim1, dim2=1):
+        self.dim1 = dim1
+        self.data = [False]*int(dim1*dim2)
+
+    def _get_index(self, inds):
+        if not isinstance(inds, tuple):
+            inds = (inds, 1)
+        dim1, dim2 = inds
+        ind = self.dim1*(dim2-1) + dim1 - 1
+        if ind < 0:
+            raise IndexError('invalid indices')
+        return int(ind)
+
+    def __getitem__(self, inds):
+        return self.data[self._get_index(inds)]
+
+    def __setitem__(self, inds, val):
+        self.data[self._get_index(inds)] = val
+
+    def __call__(self, *args):
+        return self[args]
+
 def pushscope():
     global PRIVATE_SCOPES, LOCAL_SCOPES
     PRIVATE_SCOPES.append({})
