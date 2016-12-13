@@ -402,7 +402,7 @@ assign
  ;
 
 idAttr2
- : PERIOD? identifier ('.' identifier)*
+ : (startPeriod='.')? identifier ('.' identifier)*
  ;
 
 idAttr

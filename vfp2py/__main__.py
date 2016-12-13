@@ -226,9 +226,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
     def visitPrg(self, ctx):
         self.imports = []
         if ctx.funcDef():
-            for funcDef in get_list(ctx.funcDef()):
-                self.function_list.append(self.visit(ctx.funcDef()[0].funcDefStart().idAttr2()))
-            self.function_list = list(set(self.function_list))
+            self.function_list = [self.visit(funcdef.funcDefStart().idAttr2()) for funcdef in ctx.funcDef()]
 
         defs = []
         if ctx.classDef():
@@ -658,7 +656,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         return self.createIdAttr(identifier, trailer)
 
     def visitIdAttr2(self, ctx):
-        return CodeStr('.'.join([self.withid] if ctx.PERIOD() else [] + [self.visit(identifier) for identifier in ctx.identifier()]))
+        return CodeStr('.'.join(([self.withid] if ctx.startPeriod else []) + [self.visit(identifier) for identifier in ctx.identifier()]))
 
     def visitAtomExpr(self, ctx):
         atom = self.visit(ctx.atom())
