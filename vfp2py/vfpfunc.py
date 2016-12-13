@@ -1,6 +1,7 @@
 import builtins
 import datetime
 import os
+import sys
 import types
 
 import dbf
@@ -34,86 +35,6 @@ class Array(object):
 
     def __call__(self, *args):
         return self[args]
-
-def pushscope():
-    global PRIVATE_SCOPES, LOCAL_SCOPES
-    PRIVATE_SCOPES.append({})
-    LOCAL_SCOPES.append({})
-
-def popscope():
-    global PRIVATE_SCOPES, LOCAL_SCOPES
-    PRIVATE_SCOPES.pop()
-    LOCAL_SCOPES.pop()
-
-def alltrim(string):
-    return string.strip()
-
-def delete_file(string, recycle=False):
-    pass
-
-def error(txt):
-    raise Exception(txt)
-
-def file(string):
-     return os.path.isfile(string.lower())
-
-def messagebox(message, flags, title):
-    pass
-
-def quit(message, flags, title):
-    pass
-
-def isblank(expr):
-    return not not expr
-
-def release(varname, publics=False, skeleton=None, like=True):
-    if varname:
-        pass #pop the variable from locals
-    else:
-        pass #pop all variables locals
-    if publics:
-        pass #pop all public variables
-        
-    
-def chr(num):
-    return __builtin__.chr(int(num))
-
-def chrtran(expr, fchrs, rchrs):
-     return ''.join(rchrs[fchrs.index(c)] if c in fchrs else c for c in expr)
-
-def ctod(string):
-    return datetime.datetime.strptime(string, '%m/%d/%Y').date()
-
-def space(num):
-    return ' ' * int(num)
-
-def dtoc(dateval):
-    return dateval.strftime('%m/%d/%Y')
-
-def rgb(red, green, blue):
-    return (red, green, blue)
-
-def wait(msg, to=None, window=[-1, -1], nowait=False, noclear=False, timeout=-1):
-    pass
-
-def select(tablename):
-    pass
-
-def set(setitem, *args, **kwargs):
-    pass
-
-def do_command(command, module, *args, **kwargs):
-    mod = __import__(module)
-    cmd = getattr(mod, command)
-    cmd(*args, **kwargs)
-
-def call_if_callable(expr):
-    if callable(expr):
-        return expr()
-    return expr
-
-def create_object(objtype, *args):
-    pass
 
 class _Database_Context(object):
     def __init__(self):
@@ -293,13 +214,123 @@ class _Function(object):
                 if isinstance(obj, types.FunctionType):
                     self.functions[obj_name] = obj
 
+def alias(workarea):
+    pass
 
-db = _Database_Context()
-variable = _Variable(db)
-function = _Function()
+def alltrim(string):
+    return string.strip()
 
-recno = db.recno
-reccount = db.reccount
+def asc(string):
+    return ord(string[0])
+
+def cdx(index, workarea):
+    pass
+
+def chr(num):
+    return __builtin__.chr(int(num))
+
+def chrtran(expr, fchrs, rchrs):
+     return ''.join(rchrs[fchrs.index(c)] if c in fchrs else c for c in expr)
+
+def ctod(string):
+    return datetime.datetime.strptime(string, '%m/%d/%Y').date()
+
+def delete_file(string, recycle=False):
+    pass
+
+def directory(path, flag):
+    return os.path.isdir(directory)
+
+def dtoc(dateval):
+    return dateval.strftime('%m/%d/%Y')
+
+def error(txt):
+    raise Exception(txt)
+
+def file(string):
+     return os.path.isfile(string.lower())
+
+def filetostr(filename):
+    with open(filename) as fid:
+        return fid.read().decode('ISO-8859-1')
+
+def isblank(expr):
+    return not not expr
+
+def lineno(flag):
+    pass
+
+def message(flag):
+    pass
+
+def messagebox(message, flags, title):
+    print(message)
+    print(flags)
+    print(title)
+
+def program(level):
+    pass
+
+def quit(message=None, flags=None, title=None):
+    sys.exit()
+
+def reccount():
+    return db.reccount()
+
+def recno():
+    return db.recno()
+
+def rgb(red, green, blue):
+    return (red, green, blue)
+
+def space(num):
+    return ' ' * int(num)
+
+def substr(string, start, chars):
+    return string[start-1:start-1+chars]
+
+def val(string):
+    return float(string)
+
+def wait(msg, to=None, window=[-1, -1], nowait=False, noclear=False, timeout=-1):
+    pass
+
+def select(tablename):
+    pass
+
+def set(setitem, *args, **kwargs):
+    pass
+
+def do_command(command, module, *args, **kwargs):
+    mod = __import__(module)
+    cmd = getattr(mod, command)
+    cmd(*args, **kwargs)
+
+def call_if_callable(expr):
+    if callable(expr):
+        return expr()
+    return expr
+
+def create_object(objtype, *args):
+    pass
+
+def pushscope():
+    global PRIVATE_SCOPES, LOCAL_SCOPES
+    PRIVATE_SCOPES.append({})
+    LOCAL_SCOPES.append({})
+
+def popscope():
+    global PRIVATE_SCOPES, LOCAL_SCOPES
+    PRIVATE_SCOPES.pop()
+    LOCAL_SCOPES.pop()
+
+def release(varname, publics=False, skeleton=None, like=True):
+    if varname:
+        pass #pop the variable from locals
+    else:
+        pass #pop all variables locals
+    if publics:
+        pass #pop all public variables
 
 def array(arrayname, dim1, dim2=1, public=False):
     arr = Array(dim1, dim2)
@@ -308,4 +339,8 @@ def array(arrayname, dim1, dim2=1, public=False):
     else:
         PRIVATE_SCOPES[-1][arrayname] = arr
 
+db = _Database_Context()
+variable = _Variable(db)
+function = _Function()
+error_func = None
 pushscope()
