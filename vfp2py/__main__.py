@@ -149,7 +149,7 @@ def get_list(should_be_list):
 class PythonConvertVisitor(VisualFoxpro9Visitor):
     def __init__(self, filename):
         super(PythonConvertVisitor, self).__init__()
-        self.vfpclassnames = {'custom': 'object',
+        self.vfpclassnames = {'custom': 'vfpfunc.Custom',
                               'form': 'vfpfunc.Form',
                               'label': 'vfpfunc.Label',
                               'textbox': 'vfpfunc.Textbox',
@@ -224,36 +224,30 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         return ''.join(t.text for t in ctx.parser._input.tokens[start:stop+1])
 
     def visitPrg(self, ctx):
-        self.imports = []
+        if ctx.classDef():
+            self.class_list = [self.visit(classDef.classDefStart().identifier()[0]) for classDef in ctx.classDef()]
         if ctx.funcDef():
             self.function_list = [self.visit(funcdef.funcDefStart().idAttr2()) for funcdef in ctx.funcDef()]
 
+        self.imports = []
         defs = []
         if ctx.classDef():
-            self.class_list = [self.visit(classDef.classDefStart().identifier()[0]) for classDef in ctx.classDef()]
             for classDef in get_list(ctx.classDef()):
-                defs += self.visit(classDef) + [[]]
+                defs += self.visit(classDef)
 
+        funcdefs = {}
         if ctx.funcDef():
             for funcDef in get_list(ctx.funcDef()):
                 funcname, parameters, funcbody = self.visit(funcDef)
-                defs.append(CodeStr('def {}({}):'.format(funcname, ', '.join(parameters))))
-                defs += [funcbody] + [[]]
+                funcdefs[funcname] = [parameters, funcbody]
 
-        main = []
         if ctx.line():
             self.new_scope()
             line_structure = []
-            for line in get_list(ctx.line()):
+            for line in ctx.line():
                 line_structure += self.visit(line)
-            if not line_structure:
-                line_structure = [CodeStr('pass')]
-            main = [CodeStr('def main(argv):'), [CodeStr('vfpfunc.pushscope()')]]
-            main += [line_structure]
-            main.append([CodeStr('vfpfunc.popscope()')])
-            main.append([])
-            main += [CodeStr('if __name__ == \'__main__\':'), [CodeStr('main(sys.argv)')]]
-            self.imports.append('import sys')
+            line_structure = line_structure or [CodeStr('pass')]
+            funcdefs['_program_main'] = [[], line_structure]
             self.delete_scope()
 
         self.imports = sorted(set(self.imports), key=import_key)
@@ -264,16 +258,21 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             imports.append(module)
         if imports:
             imports.append('')
-        return  [CodeStr(imp) for imp in imports] + defs + main
+
+        for funcname in funcdefs:
+            parameters, funcbody = funcdefs[funcname]
+            defs.append(CodeStr('def {}({}):'.format(funcname, ', '.join(parameters))))
+            funcbody = [CodeStr('vfpfunc.pushscope()')] + funcbody + [CodeStr('vfpfunc.popscope()')]
+            defs += [funcbody]
+
+        return  [CodeStr(imp) for imp in imports] + defs
 
     def visitLine(self, ctx):
         retval = self.visitChildren(ctx)
         if retval is None:
             print(ctx.getText())
-            return []
-        if not isinstance(retval, list):
-            return [retval]
-        return retval
+            retval = []
+        return retval if isinstance(retval, list) else [retval]
 
     andfix = re.compile('^&&')
     frontfix = re.compile('^\**')
@@ -317,35 +316,28 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             elif isinstance(stmt, VisualFoxpro9Parser.ClassDefLineCommentContext):
                 assignments += [self.visit(stmt)]
             else:
-                funcs.update(self.visit(stmt))
+                funcname, parameters, funcbody = self.visit(stmt)
+                if '.' in funcname:
+                    newfuncname = funcname.replace('.', '_')
+                    assignments.append(CodeStr('def {}({}):'.format(newfuncname, ', '.join(parameters))))
+                    funcbody = [CodeStr('vfpfunc.pushscope()')] + funcbody + [CodeStr('vfpfunc.popscope()')]
+                    assignments.append(funcbody)
+                    assignments.append(CodeStr('self.{} = {}'.format(funcname, newfuncname)))
+                else:
+                    funcs.update({funcname: [['self'] + parameters, funcbody]})
+
+        if 'init' in funcs:
+            funcs['init'][1] = assignments + funcs['init'][1]
 
         for funcname in funcs:
             parameters, funcbody = funcs[funcname]
-            if '.' in funcname:
-                newfuncname = funcname.replace('.', '_')
-                assignments.append(CodeStr('def {}({}):'.format(newfuncname, ', '.join(parameters))))
-                assignments.append(funcbody)
-                assignments.append(CodeStr('self.{} = {}'.format(funcname, newfuncname)))
-
-        if '__init__' in funcs:
-            funcs['__init__'][1] = [CodeStr('super({}, self).__init__()'.format(classname))] + assignments + funcs['__init__'][1]
-        else:
-            funcs['__init__'] = [[CodeStr('self')], [CodeStr('super({}, self).__init__()'.format(classname))] + assignments]
-
-        for funcname in funcs:
-            parameters, funcbody = funcs[funcname]
-            if '.' not in funcname:
-                retval.append([CodeStr('def {}({}):'.format(funcname, ', '.join(parameters))), funcbody])
-
-        #retval += ['vfpfunc.classes[%s] = %s' % (repr(classname), classname)]
+            self.imports.append('from vfp2py import vfpfunc')
+            funcbody = [CodeStr('vfpfunc.pushscope()')] + funcbody + [CodeStr('vfpfunc.popscope()')]
+            retval.append([CodeStr('def {}({}):'.format(funcname, ', '.join(parameters))), funcbody])
         return retval
 
     def visitClassDefStart(self, ctx):
-        # DEFINE CLASS identifier (AS identifier)? NL
-        #print(ctx.getText())
         names = [self.visit(identifier) for identifier in ctx.identifier()]
-        #print(names)
-        #exit()
         classname = names[0]
         if classname in self.vfpclassnames:
             raise Exception(classname + ' is a reserved classname')
@@ -359,7 +351,6 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         return [CodeStr('self.' + arg) for arg in self.visit(ctx.assign())]
 
     def visitClassDefAddObject(self, ctx):
-        #ADD OBJECT identifier AS idAttr (WITH idAttr '=' expr (',' idAttr '=' expr)*)?
         name = self.visit(ctx.identifier())
         objtype = self.visit(ctx.idAttr()[0])
         if objtype in self.vfpclassnames:
@@ -373,40 +364,31 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         return retval
 
     def visitClassDefFuncDef(self, ctx):
+        return self.visit(ctx.funcDef())
         funcname, parameters, funcbody = self.visit(ctx.funcDef())
-
-        if funcname == 'init':
-            funcname = '__init__'
         return {funcname: [['self'] + parameters, funcbody]}
 
     def visitNodefault(self, ctx):
         return []
 
     def visitFuncDefStart(self, ctx):
-#funcDefStart: (PROCEDURE | FUNCTION) idAttr ('(' parameters? ')')? NL parameterDef?;
         return self.visit(ctx.idAttr2()), (self.visit(ctx.parameters()) if ctx.parameters() else []) + (self.visit(ctx.parameterDef()) if ctx.parameterDef() else [])
 
     def visitParameterDef(self, ctx):
-#parameterDef: (LPARAMETER | LPARAMETERS | PARAMETERS) parameters NL;
         return self.visit(ctx.parameters())
 
     def visitParameter(self, ctx):
-#parameter: idAttr (AS idAttr)?;
         return self.visit(ctx.idAttr()[0])
 
     def visitParameters(self, ctx):
         return [self.visit(parameter) for parameter in ctx.parameter()]
 
     def visitFuncDef(self, ctx):
-#funcDef:  funcDefStart line* funcDefEnd?;
         name, parameters = self.visit(ctx.funcDefStart())
-        self.imports.append('from vfp2py import vfpfunc')
-        body = [CodeStr('vfpfunc.pushscope()')]
         self.new_scope()
         self.scope.update({key: False for key in parameters})
-        body += self.visit(ctx.lines())
+        body = self.visit(ctx.lines())
         self.delete_scope()
-        body.append(CodeStr('vfpfunc.popscope()'))
         return name, parameters, body
 
     def visitPrintStmt(self, ctx):
@@ -428,7 +410,6 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         return retval
 
     def visitCaseStmt(self, ctx):
-        #doCase caseElement* otherwise? ENDCASE
         n = 0
         retval = []
         for elem in ctx.caseElement():
@@ -448,15 +429,12 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         return retval
 
     def visitSingleCase(self, ctx):
-        #caseExpr line*
         return self.visit(ctx.caseExpr()), self.visit(ctx.lines())
 
     def visitCaseExpr(self, ctx):
-        #CASE expr NL
         return self.visit(ctx.expr())
 
     def visitOtherwise(self, ctx):
-        #OTHERWISE NL line*;
         return self.visit(ctx.lines())
 
     def visitForStart(self, ctx):
@@ -682,7 +660,6 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
     def visitIdList(self, ctx):
         return [self.visit(i) for i in get_list(ctx.idAttr())]
 
-    #(MD | MKDIR | RD | RMDIR) specialExpr #Directory
     def visitAddRemoveDirectory(self, ctx):
         self.imports.append('import os')
         if ctx.MD() or ctx.MKDIR():
@@ -691,7 +668,6 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             funcname = 'rmdir'
         return self.make_func_code('os.' + funcname, self.visit(ctx.specialExpr()))
 
-    #specialExpr: pathname | expr;
     def visitSpecialExpr(self, ctx):
         if ctx.pathname():
             return self.visit(ctx.pathname())
@@ -747,34 +723,26 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
                 return datetime.date(int(y), int(m), int(d))
             except ValueError as e:
                 raise Exception('invalid date constant: ' + ctx.getText())
-        #if ctx.TIME_LITERAL():
-        #    hour, minute, second
-        #    if innerstr[-2:].upper() in ('AM', 'PM'):
-        #
         return datetime.dateime(1, 1, 1, 0, 0, 0)
 
     def visitString(self, ctx):
         return self.create_string(ctx.getText()[1:-1])
 
-    # expr op=('**'|'^') expr */
     def visitPower(self, ctx):
         return self.operationExpr(ctx, '**')
 
-    # expr op=('*'|'/') expr */
     def visitMultiplication(self, ctx):
         return self.operationExpr(ctx, ctx.op.type)
 
-    # expr op=('+'|'-') expr */
     def visitAddition(self, ctx):
         return self.operationExpr(ctx, ctx.op.type)
 
-    # expr '%' expr #Modulo
     def visitModulo(self, ctx):
         return self.operationExpr(ctx, '%')
 
     def operationExpr(self, ctx, operation):
-        left = self.visit(ctx.expr(0))  # get value of left subexpression
-        right = self.visit(ctx.expr(1)) # get value of right subexpression
+        left = self.visit(ctx.expr(0))
+        right = self.visit(ctx.expr(1))
         symbols = {
             '**': '**',
             '%': '%',
@@ -805,8 +773,8 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             return self.make_func_code(func, *args)
         if not namespace:
             namespace = func
-            func = 'main'
-        return self.make_func_code('vfpfunc.do_command', namespace, func, *args)
+            func = '_program_main'
+        return self.make_func_code('vfpfunc.do_command', func, namespace, *args)
 
     def visitMethodCall(self, ctx):
         return self.visit(ctx.idAttr()) + '.' + self.visit(ctx.identifier()) + '()'
@@ -863,7 +831,6 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         return ctx.getText()
 
     def visitRelease(self, ctx):
-        #RELEASE vartype=(PROCEDURE|CLASSLIB)? args #release
         scoped_args = []
         if ctx.ALL():
             args = []
@@ -893,7 +860,6 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             return self.make_func_code('vfpfunc.db.close_tables', allflag)
 
     def visitWaitCmd(self, ctx):
-        #WAIT (TO toExpr=expr | WINDOW (AT atExpr1=expr ',' atExpr2=expr)? | NOWAIT | CLEAR | NOCLEAR | TIMEOUT timeout=expr | message=expr)*
         message = repr(self.visit(ctx.message) if ctx.message else '')
         to_expr = repr(self.visit(ctx.toExpr) if ctx.TO() else None)
         if ctx.WINDOW():
@@ -1049,7 +1015,6 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         return self.make_func_code('vfpfunc.db.pack', pack, tablename, workarea)
 
     def visitIndexOn(self, ctx):
-        #INDEX ON expr (TAG | TO) expr (COMPACT | ASCENDING | DESCENDING)? ( UNIQUE | CANDIDATE)? ADDITIVE?
         field = self.visit(ctx.specialExpr()[0])
         indexname = self.visit(ctx.specialExpr()[1])
         tag_flag = not not ctx.TAG()
@@ -1117,17 +1082,6 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         retval.append(CodeStr('vfpfunc.popscope()'))
         return retval + [CodeStr('return function_return_value')]
 
-def print_tokens(stream):
-    stream.fill()
-    for t in stream.tokens:
-        if t.channel != 0:
-            continue
-        #if token.type == VisualFoxpro9Lexer.WS or (token.type > 0 and token.channel==0):
-        #    print(token.text, end='')
-        out = (t.tokenIndex, t.start, t.stop, repr(str(t.text)), t.type, t.line, t.column, t.channel)
-        print('[@%d,%d:%d=%s,<%d>,%d:%d,%d]' % out)
-    stream.reset()
-
 def convert(codestr):
     input_stream = antlr4.InputStream(codestr)
     lexer = VisualFoxpro9Lexer(input_stream)
@@ -1149,8 +1103,6 @@ def preprocess_file(filename):
     input_stream = antlr4.InputStream(data)
     lexer = VisualFoxpro9Lexer(input_stream)
     stream = MultichannelTokenStream(lexer)
-    #print_tokens(stream)
-    #exit()
     parser = VisualFoxpro9Parser(stream)
     tree = parser.preprocessorCode()
     visitor = PreprocessVisitor()
@@ -1184,57 +1136,10 @@ class MultichannelTokenStream(antlr4.CommonTokenStream):
         if channel not in self.channels:
             self.channels.append(channel)
             self.channels = sorted(self.channels)
-            #print('added channel %s: %s' % (repr(channel), repr(self.channels)))
 
     def disableChannel(self, channel):
         if channel in self.channels:
             self.channels.remove(channel)
-            #print('removed channel %s: %s' % (repr(channel), repr(self.channels)))
-
-class just_raise_an_error:
-    def __init__(self):
-        pass
-
-    @staticmethod
-    def reportAttemptingFullContext(ctx, arg2, arg3, arg4, arg5, arg6):
-        pass#raise Exception('error')
-
-    @staticmethod
-    def reportAmbiguity(ctx, arg2, arg3, arg4, arg5, arg6, arg7):
-        pass#raise Exception('error')
-
-    @staticmethod
-    def reportContextSensitivity(ctx, arg2, arg3, arg4, arg5, arg6):
-        pass#raise Exception('error')
-
-    @staticmethod
-    def syntaxError(ctx, arg2, arg3, arg4, arg5, arg6):
-        raise Exception('error')
-
-def time_lines(data):
-    testdata = data.split('\n')
-    if not testdata[-1]:
-        testdata.pop()
-    retval = []
-    input_string = ''
-    while testdata:
-        input_string += testdata.pop(0) + '\n'
-        try:
-            #print('trying: %s' % repr(input_string)[:50] + '... ' + repr(input_string)[-50:] )
-            input_stream = antlr4.InputStream(input_string)
-            lexer = VisualFoxpro9Lexer(input_stream)
-            stream = MultichannelTokenStream(lexer)
-            #print_tokens(stream)
-            parser = VisualFoxpro9Parser(stream)
-            parser.removeErrorListeners()
-            parser.addErrorListener(just_raise_an_error)
-            tic = Tic()
-            tree = parser.prg()
-            retval.append([tic.toc(), input_string])
-            input_string = ''
-        except Exception as e:
-            pass
-    return retval
 
 def main(argv):
     global SEARCH_PATH
@@ -1252,17 +1157,11 @@ def main(argv):
     input_stream = antlr4.InputStream(data)
     lexer = VisualFoxpro9Lexer(input_stream)
     stream = MultichannelTokenStream(lexer)
-    #print_tokens(stream)
     parser = VisualFoxpro9Parser(stream)
     print(tic.toc())
     tic.tic()
     tree = parser.prg()
     print(tic.toc())
-    #timed_lines = time_lines(data)
-    #print(sum(item[0] for item in timed_lines))
-    #for item in time_lines(data):
-    #    print(item[0])
-    #    print(add_indents([item[1]], 0))
     visitor = PythonConvertVisitor(os.path.splitext(os.path.basename(argv[1]))[0])
     output_tree = visitor.visit(tree)
     output = add_indents(output_tree, 0)

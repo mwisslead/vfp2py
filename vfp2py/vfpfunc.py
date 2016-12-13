@@ -13,6 +13,9 @@ class Form(object):
     def __init__(self):
         pass
 
+class Custom(object):
+    pass
+
 class Array(object):
     def __init__(self, dim1, dim2=1):
         self.dim1 = dim1
