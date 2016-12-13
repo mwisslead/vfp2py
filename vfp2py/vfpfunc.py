@@ -200,14 +200,20 @@ class _Function(object):
 
     def __getitem__(self, key):
         if key in self.functions:
-            return self.functions[key]
+            return self.functions[key]['func']
         for scope in PRIVATE_SCOPES:
             if key in scope and isinstance(scope[key], Array):
                 return scope[key]
         raise Exception('{} is not a procedure'.format(key))
 
     def __setitem__(self, key, val):
-        self.functions[key] = val
+        self.functions[key] = {'func': val, 'source': None}
+
+    def __repr__(self):
+        return repr(self.functions)
+
+    def pop(self, key):
+        return self.functions.pop(key)
 
     def set_procedure(self, *procedures, **kwargs):
         for procedure in procedures:
@@ -215,7 +221,15 @@ class _Function(object):
             for obj_name in dir(module):
                 obj = getattr(module, obj_name)
                 if isinstance(obj, types.FunctionType):
-                    self.functions[obj_name] = obj
+                    self.functions[obj_name] = {'func': obj, 'source': procedure}
+
+    def release_procedure(self, *procedures, **kwargs):
+        release_keys = []
+        for key in self.functions:
+            if self.functions[key]['source'] in procedures:
+                release_keys.append(key)
+        for key in release_keys:
+            self.functions.pop(key)
 
 def alias(workarea):
     pass

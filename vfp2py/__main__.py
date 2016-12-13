@@ -851,7 +851,10 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
                 self.scope.pop(arg)
             retval.append(CodeStr('#Released {}'.format(', '.join(scoped_args))))
         if args is not None:
-            retval.append(self.make_func_code('vfpfunc.release', *args))
+            if ctx.PROCEDURE():
+                retval.append(self.make_func_code('vfpfunc.function.release_procedure', *args))
+            else:
+                retval.append(self.make_func_code('vfpfunc.release', *args))
         return retval
 
     def visitCloseStmt(self, ctx):
