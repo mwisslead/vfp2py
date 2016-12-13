@@ -147,7 +147,7 @@ def get_list(should_be_list):
         return [should_be_list]
 
 class PythonConvertVisitor(VisualFoxpro9Visitor):
-    def __init__(self):
+    def __init__(self, filename):
         super(PythonConvertVisitor, self).__init__()
         self.vfpclassnames = {'custom': 'object',
                               'form': 'vfpfunc.Form',
@@ -159,6 +159,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
                               'shape': 'vfpfunc.Shape',
                               'commandbutton': 'vfpfunc.CommandButton'
                              }
+        self.filename = filename
         self.imports = []
         self.scope = None
         self._saved_scope = None
@@ -375,6 +376,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
 
     def visitClassDefFuncDef(self, ctx):
         funcname, parameters, funcbody = self.visit(ctx.funcDef())
+
         if funcname == 'init':
             funcname = '__init__'
         return {funcname: [['self'] + parameters, funcbody]}
@@ -800,14 +802,12 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             args = [func] + args
             self.imports.append('from vfp2py import vfpfunc')
             return self.make_func_code('vfpfunc.mprfile', *args)
-        if ctx.IN():
-            namespace = self.visit(ctx.specialExpr()[1])
-        else:
-            if func in self.function_list:
-                return self.make_func_code(func, *args)
+        namespace = self.visit(ctx.specialExpr()[1]) if ctx.IN() else None
+        if (not namespace or os.path.splitext(namespace)[0] == self.filename) and func in self.function_list:
+            return self.make_func_code(func, *args)
+        if not namespace:
             namespace = func
             func = 'main'
-
         return self.make_func_code('vfpfunc.do_command', namespace, func, *args)
 
     def visitMethodCall(self, ctx):
@@ -1265,7 +1265,7 @@ def main(argv):
     #for item in time_lines(data):
     #    print(item[0])
     #    print(add_indents([item[1]], 0))
-    visitor = PythonConvertVisitor()
+    visitor = PythonConvertVisitor(os.path.splitext(os.path.basename(argv[1]))[0])
     output_tree = visitor.visit(tree)
     output = add_indents(output_tree, 0)
     output = re.sub(r'\'\s*\+\s*\'', '', output)
