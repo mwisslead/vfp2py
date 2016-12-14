@@ -12,11 +12,23 @@ LOCAL_SCOPES = []
 class MainWindow(object):
     pass
 
-class Form(object):
-    def __init__(self):
+class Custom(object):
+    def __init__(self, **kwargs):
+        self.init()
+
+    def init(self):
         pass
 
-class Custom(object):
+    def add_object(self, obj):
+        pass
+
+class Form(Custom):
+    pass
+
+class CommandButton(Custom):
+    pass
+
+class Label(Custom):
     pass
 
 class Array(object):

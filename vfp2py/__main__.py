@@ -256,14 +256,11 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             if n != 0 and module not in STDLIBS:
                 imports.append('')
             imports.append(module)
-        if imports:
-            imports.append('')
 
         for funcname in funcdefs:
             parameters, funcbody = funcdefs[funcname]
             defs.append(CodeStr('def {}({}):'.format(funcname, ', '.join(parameters))))
-            funcbody = [CodeStr('vfpfunc.pushscope()')] + funcbody + [CodeStr('vfpfunc.popscope()')]
-            defs += [funcbody]
+            defs += [[CodeStr('vfpfunc.pushscope()')] + funcbody + [CodeStr('vfpfunc.popscope()')]]
 
         return  [CodeStr(imp) for imp in imports] + defs
 
@@ -288,15 +285,10 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         return CodeStr(self.endfix.sub(repl, comment))
 
     def visitCmdStmt(self, ctx):
-        if ctx.cmd():
-            return self.visit(ctx.cmd())
-        else:
-            return self.visit(ctx.setup())
+        return self.visit(ctx.cmd()) if ctx.cmd() else self.visit(ctx.setup())
 
     def visitLines(self, ctx):
-        retval = []
-        for line in ctx.line():
-            retval += self.visit(line)
+        retval = sum((self.visit(line) for line in ctx.line()), [])
         def badline(line):
             return line.startswith('#') if hasattr(line, 'startswith') else not line
         if not retval or all(badline(l) for l in retval):
@@ -307,7 +299,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         classname, supername = self.visit(ctx.classDefStart())
         retval = [CodeStr('class {}({}):'.format(classname, supername))]
         assignments = []
-        funcs = {'init': [[], []]}
+        funcs = OrderedDict({'init': [[], []]})
         for stmt in ctx.classDefStmt():
             if isinstance(stmt, VisualFoxpro9Parser.ClassDefAssignContext):
                 assignments += self.visit(stmt)
@@ -348,18 +340,30 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         return classname, supername
 
     def visitClassDefAssign(self, ctx):
-        return [CodeStr('self.' + arg) for arg in self.visit(ctx.assign())]
+        #FIXME - come up with a less hacky way to make this work
+        self.enable_scope(False)
+        args1 = self.visit(ctx.assign())
+        self.enable_scope(True)
+        args2 = self.visit(ctx.assign())
+        args = []
+        for arg1, arg2 in zip(args1, args2):
+            ident = arg1[:arg1.find(' = ')]
+            value = arg2[arg2.find(' = '):]
+            args.append(ident + value)
+        return [CodeStr('self.' + arg) for arg in args]
 
     def visitClassDefAddObject(self, ctx):
+        self.enable_scope(False)
         name = self.visit(ctx.identifier())
         objtype = self.visit(ctx.idAttr()[0])
         if objtype in self.vfpclassnames:
             self.imports.append('from vfp2py import vfpfunc')
             objtype = CodeStr(self.vfpclassnames[objtype])
-        args = [self.add_args_to_code('{}={}', (self.visit(idAttr), self.visit(expr))) for idAttr, expr in zip(ctx.idAttr()[1:], ctx.expr())]
+        keywords = [self.visit(idAttr) for idAttr in ctx.idAttr()[1:]]
+        self.enable_scope(True)
+        kwargs = {key: self.visit(expr) for key, expr in zip(keywords, ctx.expr())}
         funcname = self.add_args_to_code('self.{} = {}', (name, objtype))
-        retval = []
-        retval.append(self.make_func_code(funcname, *args))
+        retval = [self.make_func_code(funcname, **kwargs)]
         retval.append(self.add_args_to_code('self.add_object(self.{})', [name]))
         return retval
 
