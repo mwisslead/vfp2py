@@ -83,7 +83,7 @@ class PreprocessVisitor(VisualFoxpro9Visitor):
         return []
 
     def visitPreprocessorInclude(self, ctx):
-        visitor = PythonConvertVisitor()
+        visitor = PythonConvertVisitor('')
         filename = visitor.visit(ctx.specialExpr())
         if isinstance(filename, CodeStr):
             filename = eval(filename)
@@ -94,7 +94,7 @@ class PreprocessVisitor(VisualFoxpro9Visitor):
 
     def visitPreprocessorIf(self, ctx):
         if ctx.IF():
-            visitor = PythonConvertVisitor()
+            visitor = PythonConvertVisitor('')
             ifexpr = eval(repr(visitor.visit(ctx.expr())))
         else:
             name = ctx.identifier().getText().lower()
@@ -376,7 +376,11 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         return []
 
     def visitFuncDefStart(self, ctx):
-        return self.visit(ctx.idAttr2()), (self.visit(ctx.parameters()) if ctx.parameters() else []) + (self.visit(ctx.parameterDef()) if ctx.parameterDef() else [])
+        self.enable_scope(False)
+        params = self.visit(ctx.parameters()) if ctx.parameters() else []
+        params += self.visit(ctx.parameterDef()) if ctx.parameterDef() else []
+        self.enable_scope(True)
+        return self.visit(ctx.idAttr2()), params
 
     def visitParameterDef(self, ctx):
         return self.visit(ctx.parameters())
@@ -797,8 +801,8 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         if ctx.cmd():
             func = self.visit(ctx.cmd())
         else:
-            return [CodeStr('vfp.error_func = None')]
-        return [CodeStr('vfp.error_func = lambda: ' + func)]
+            return [CodeStr('vfpfunc.error_func = None')]
+        return [CodeStr('vfpfunc.error_func = lambda: ' + func)]
 
     def visitIdentifier(self, ctx):
         altermap = {
@@ -818,7 +822,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         return [self.visit(expr) for expr in ctx.expr()]
 
     def visitQuit(self, ctx):
-        return [CodeStr('vfp.quit()')]
+        return [CodeStr('vfpfunc.quit()')]
 
     def visitDeleteFile(self, ctx):
         if ctx.specialExpr():
@@ -826,7 +830,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         else:
             filename = None
         if ctx.RECYCLE():
-            return self.make_func_code('vfp.delete_file', filename, True)
+            return self.make_func_code('vfpfunc.delete_file', filename, True)
         else:
             self.imports.append('import os')
             return self.make_func_code('os.remove', filename)
