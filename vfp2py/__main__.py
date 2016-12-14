@@ -235,7 +235,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             for classDef in get_list(ctx.classDef()):
                 defs += self.visit(classDef)
 
-        funcdefs = {}
+        funcdefs = OrderedDict()
         if ctx.funcDef():
             for funcDef in get_list(ctx.funcDef()):
                 funcname, parameters, funcbody = self.visit(funcDef)
@@ -307,7 +307,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         classname, supername = self.visit(ctx.classDefStart())
         retval = [CodeStr('class {}({}):'.format(classname, supername))]
         assignments = []
-        funcs = {}
+        funcs = {'init': [[], []]}
         for stmt in ctx.classDefStmt():
             if isinstance(stmt, VisualFoxpro9Parser.ClassDefAssignContext):
                 assignments += self.visit(stmt)
@@ -781,13 +781,13 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
 
     def visitClearStmt(self, ctx):
         if ctx.ALL:
-            return 'vfpfunc.clearall()'
+            return CodeStr('vfpfunc.clearall()')
         if ctx.DLLS:
-            return 'vfpfunc.cleardlls(' + self.visit(ctx.args()) + ')'
+            return self.make_func_code('vfpfunc.cleardlls', *self.visit(ctx.args()))
         if ctx.MACROS:
-            return 'vfpfunc.clearmacros()'
+            return CodeStr('vfpfunc.clearmacros()')
         if ctx.EVENTS:
-            return 'vfpfunc.clearevents()'
+            return CodeStr('vfpfunc.clearevents()')
 
     def visitOnError(self, ctx):
         if ctx.cmd():

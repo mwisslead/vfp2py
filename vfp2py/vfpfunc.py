@@ -9,6 +9,9 @@ import dbf
 PRIVATE_SCOPES = []
 LOCAL_SCOPES = []
 
+class MainWindow(object):
+    pass
+
 class Form(object):
     def __init__(self):
         pass
@@ -252,6 +255,21 @@ def chrtran(expr, fchrs, rchrs):
 def ctod(string):
     return datetime.datetime.strptime(string, '%m/%d/%Y').date()
 
+def ddeinitiate(a, b):
+    pass
+
+def ddesetoption(a, b):
+    pass
+
+def ddeterminate(a):
+    pass
+
+def ddesetservice(a, b, c=False):
+    pass
+
+def ddesettopic(a, b, c):
+    pass
+
 def delete_file(string, recycle=False):
     pass
 
@@ -349,6 +367,9 @@ def release(varname, publics=False, skeleton=None, like=True):
     if publics:
         pass #pop all public variables
 
+def clearall():
+    pass
+
 def array(arrayname, dim1, dim2=1, public=False):
     arr = Array(dim1, dim2)
     if public:
@@ -361,3 +382,5 @@ variable = _Variable(db)
 function = _Function()
 error_func = None
 pushscope()
+variable.add_public('_vfp')
+variable['_vfp'] = MainWindow()
