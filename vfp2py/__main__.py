@@ -799,6 +799,14 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         if ctx.PROGRAM():
             return CodeStr('vfpfunc.clearprogram()')
 
+    def visitDllDeclare(self, ctx):
+        self.enable_scope(False)
+        dll_name = self.visit(ctx.specialExpr())
+        funcname = str(self.visit(ctx.identifier()[0]))
+        alias = str(self.visit(ctx.alias)) if ctx.alias else None
+        self.enable_scope(True)
+        return self.make_func_code('vfpfunc.function.dll_declare', dll_name, funcname, alias)
+
     def visitReadEvent(self, ctx):
         return CodeStr('vfpfunc.read_events()')
 

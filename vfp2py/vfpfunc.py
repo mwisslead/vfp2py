@@ -3,6 +3,8 @@ import datetime
 import os
 import sys
 import types
+import ctypes
+import ctypes.util
 
 import dbf
 
@@ -245,6 +247,16 @@ class _Function(object):
                 release_keys.append(key)
         for key in release_keys:
             self.functions.pop(key)
+
+    def dll_declare(self, dllname, funcname, alias):
+        # need something here to determine more about the dll file.
+        try:
+            dll = ctypes.CDLL(dllname)
+        except:
+            dll = ctypes.CDLL(ctypes.util.find_library(dllname))
+        func = getattr(dll, funcname)
+        alias = alias or funcname
+        self.functions[alias] = {'func': func, 'source': dllname}
 
 def alias(workarea):
     pass

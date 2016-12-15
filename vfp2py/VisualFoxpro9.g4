@@ -229,8 +229,16 @@ otherCmds
  | CLEAR (ALL | DLLS args | MACROS | EVENTS | PROGRAM) #clearStmt
  | DO FORM specialExpr #doForm
  | REPORT FORM ('?' | specialExpr) (NOEJECT | TO PRINTER PROMPT? | NOCONSOLE)* #report
- | DECLARE datatype? identifier IN expr (AS identifier)? (datatype '@'? identifier? (',' datatype '@'? identifier?)*)? #dllDeclare
+ | DECLARE returnType=datatype? identifier IN specialExpr (AS alias=identifier)? dllArgs? #dllDeclare
  | NODEFAULT #nodefault
+ ;
+
+dllArgs
+ : dllArg (',' dllArg)*
+ ;
+
+dllArg
+ : datatype '@'? identifier?
  ;
 
 printStmt
