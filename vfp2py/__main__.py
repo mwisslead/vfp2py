@@ -788,14 +788,16 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         return self.visit(ctx.idAttr()) + '.' + self.visit(ctx.identifier()) + '()'
 
     def visitClearStmt(self, ctx):
-        if ctx.ALL:
+        if ctx.ALL():
             return CodeStr('vfpfunc.clearall()')
-        if ctx.DLLS:
+        if ctx.DLLS():
             return self.make_func_code('vfpfunc.cleardlls', *self.visit(ctx.args()))
-        if ctx.MACROS:
+        if ctx.MACROS():
             return CodeStr('vfpfunc.clearmacros()')
-        if ctx.EVENTS:
+        if ctx.EVENTS():
             return CodeStr('vfpfunc.clearevents()')
+        if ctx.PROGRAM():
+            return CodeStr('vfpfunc.clearprogram()')
 
     def visitOnError(self, ctx):
         if ctx.cmd():
@@ -869,6 +871,11 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         allflag = not not ctx.ALL()
         if ctx.TABLES():
             return self.make_func_code('vfpfunc.db.close_tables', allflag)
+        if ctx.INDEXES():
+            return self.make_func_code('vfpfunc.db.close_indexes', allflag)
+        if ctx.DATABASES():
+            return self.make_func_code('vfpfunc.db.close_databases', allflag)
+        return self.make_func_code('vfpfunc.db.close_all')
 
     def visitWaitCmd(self, ctx):
         message = repr(self.visit(ctx.message) if ctx.message else '')
