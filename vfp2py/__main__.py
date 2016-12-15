@@ -799,6 +799,9 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         if ctx.PROGRAM():
             return CodeStr('vfpfunc.clearprogram()')
 
+    def visitReadEvent(self, ctx):
+        return CodeStr('vfpfunc.read_events()')
+
     def visitOnError(self, ctx):
         if ctx.cmd():
             func = self.visit(ctx.cmd())
