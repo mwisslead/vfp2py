@@ -1126,6 +1126,11 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             elif ctx.DEFAULT():
                 args += ['default']
             return self.make_func_code('vfpfunc.set', setword, *args)
+        elif setword == 'date':
+            self.enable_scope(False)
+            date_format = str(self.visit(ctx.identifier()))
+            self.enable_scope(True)
+            return self.make_func_code('vfpfunc.set', setword, date_format)
 
     def visitReturnStmt(self, ctx):
         retval = []
