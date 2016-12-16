@@ -825,6 +825,9 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         identifier = altermap.get(identifier, identifier)
         return CodeStr(identifier)
 
+    def visitReference(self, ctx):
+        return [self.visit(ctx.idAttr())]
+
     def visitArrayIndex(self, ctx):
         if ctx.twoExpr():
             return self.visit(ctx.twoExpr())
