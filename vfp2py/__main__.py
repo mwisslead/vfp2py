@@ -1113,6 +1113,12 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
                 return self.make_func_code('vfpfunc.set', setword, not ctx.OFF())
         elif setword == 'cursor':
             return self.make_func_code('vfpfunc.set', setword, not ctx.OFF())
+        elif setword == 'century':
+            if ctx.TO():
+                args = [None] + [self.visit(expr) for expr in ctx.expr()]
+            else:
+                args = [not ctx.OFF()]
+            return self.make_func_code('vfpfunc.set', setword, *args)
 
     def visitReturnStmt(self, ctx):
         retval = []
