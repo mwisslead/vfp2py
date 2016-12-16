@@ -1100,6 +1100,13 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         if ctx.setword.text.lower() == 'procedure':
             kwargs = {'additive': True} if ctx.ADDITIVE() else {}
             return self.make_func_code('vfpfunc.function.set_procedure', *[self.visit(expr) for expr in ctx.specialExpr()], **kwargs)
+        if ctx.setword.text.lower() == 'status':
+            onoff = not ctx.OFF()
+            if ctx.BAR():
+                setkw = 'status bar'
+            else:
+                setkw = 'status'
+            return self.make_func_code('vfpfunc.set', setkw, onoff)
 
     def visitReturnStmt(self, ctx):
         retval = []
