@@ -1119,6 +1119,13 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             else:
                 args = [not ctx.OFF()]
             return self.make_func_code('vfpfunc.set', setword, *args)
+        elif setword == 'sysmenu':
+            args = [x.symbol.text.lower() for x in (ctx.ON(), ctx.OFF(), ctx.TO(), ctx.SAVE(), ctx.NOSAVE()) if x]
+            if ctx.expr():
+                args += [self.visit(ctx.expr()[0])]
+            elif ctx.DEFAULT():
+                args += ['default']
+            return self.make_func_code('vfpfunc.set', setword, *args)
 
     def visitReturnStmt(self, ctx):
         retval = []

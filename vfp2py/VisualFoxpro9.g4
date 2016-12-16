@@ -301,7 +301,7 @@ setCmd
  | setword=PROCEDURE TO specialExpr (',' specialExpr)* ADDITIVE?
  | setword=REFRESH TO expr (',' expr)?
  | setword=STATUS BAR? (ON | OFF)
- | setword=SYSMENU (ON | OFF | TO (expr | DEFAULT)? | SAVE | NOSAVE)
+ | setword=SYSMENU (ON | OFF | TO (DEFAULT | expr)? | SAVE | NOSAVE)
  | setword=TYPEAHEAD TO expr
  | setword=UNIQUE (ON | OFF)
  ;
