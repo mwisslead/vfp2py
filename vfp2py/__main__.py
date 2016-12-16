@@ -1078,7 +1078,8 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         return self.make_func_code('vfpfunc.report_form', formname)
 
     def visitSetCmd(self, ctx):
-        if ctx.setword.text.lower() == 'printer':
+        setword = ctx.setword.text.lower()
+        if setword == 'printer':
             args=['printer']
             if ctx.ON():
                 args.append(1)
@@ -1095,18 +1096,21 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
                     args.append(['File', self.visit(ctx.specialExpr()[0])])
                     args.append(ctx.ADDITIVE() != None)
             return self.make_func_code('vfpfunc.set', *args)
-        if ctx.setword.text.lower() == 'typeahead':
+        elif setword == 'typeahead':
             return self.make_func_code('vfpfunc.set', 'typeahead', self.visit(ctx.expr()[0]))
-        if ctx.setword.text.lower() == 'procedure':
+        elif setword == 'procedure':
             kwargs = {'additive': True} if ctx.ADDITIVE() else {}
             return self.make_func_code('vfpfunc.function.set_procedure', *[self.visit(expr) for expr in ctx.specialExpr()], **kwargs)
-        if ctx.setword.text.lower() == 'status':
+        elif setword == 'status':
             onoff = not ctx.OFF()
             if ctx.BAR():
-                setkw = 'status bar'
+                setword += ' bar'
+            return self.make_func_code('vfpfunc.set', setword, onoff)
+        elif setword == 'bell':
+            if ctx.TO():
+                return self.make_func_code('vfpfunc.set', setword, self.visit(ctx.specialExpr()[0]))
             else:
-                setkw = 'status'
-            return self.make_func_code('vfpfunc.set', setkw, onoff)
+                return self.make_func_code('vfpfunc.set', setword, not ctx.OFF())
 
     def visitReturnStmt(self, ctx):
         retval = []
