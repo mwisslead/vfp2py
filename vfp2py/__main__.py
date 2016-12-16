@@ -1111,6 +1111,8 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
                 return self.make_func_code('vfpfunc.set', setword, self.visit(ctx.specialExpr()[0]))
             else:
                 return self.make_func_code('vfpfunc.set', setword, not ctx.OFF())
+        elif setword == 'cursor':
+            return self.make_func_code('vfpfunc.set', setword, not ctx.OFF())
 
     def visitReturnStmt(self, ctx):
         retval = []
