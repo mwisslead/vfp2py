@@ -1091,6 +1091,8 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
 
     def visitSetCmd(self, ctx):
         setword = ctx.setword.text.lower()
+        if ctx.BAR():
+            setword += ' bar'
         if setword == 'printer':
             args=['printer']
             if ctx.ON():
@@ -1113,17 +1115,12 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         elif setword == 'procedure':
             kwargs = {'additive': True} if ctx.ADDITIVE() else {}
             return self.make_func_code('vfpfunc.function.set_procedure', *[self.visit(expr) for expr in ctx.specialExpr()], **kwargs)
-        elif setword == 'status':
-            onoff = not ctx.OFF()
-            if ctx.BAR():
-                setword += ' bar'
-            return self.make_func_code('vfpfunc.set', setword, onoff)
         elif setword == 'bell':
             if ctx.TO():
                 return self.make_func_code('vfpfunc.set', setword, self.visit(ctx.specialExpr()[0]))
             else:
                 return self.make_func_code('vfpfunc.set', setword, not ctx.OFF())
-        elif setword == 'cursor':
+        elif setword in ('cursor', 'deleted', 'exact', 'near', 'status', 'status bar', 'unique'):
             return self.make_func_code('vfpfunc.set', setword, not ctx.OFF())
         elif setword == 'century':
             if ctx.TO():
