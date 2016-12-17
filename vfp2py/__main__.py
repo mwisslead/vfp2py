@@ -810,12 +810,21 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
     def visitReadEvent(self, ctx):
         return CodeStr('vfpfunc.read_events()')
 
-    def visitOnError(self, ctx):
+    def on_error_shutdown(self, ctx, funcname):
         if ctx.cmd():
             func = self.visit(ctx.cmd())
+            if isinstance(func, list) and len(func) == 1:
+                func = func[0]
+            func = CodeStr('lambda: ' + repr(func))
         else:
-            return [CodeStr('vfpfunc.error_func = None')]
-        return [CodeStr('vfpfunc.error_func = lambda: ' + func)]
+            func = None
+        return [CodeStr('vfpfunc.shutdown_func = ' + repr(func))]
+
+    def visitOnError(self, ctx):
+        return self.on_error_shutdown(ctx, 'vfpfunc.error_func')
+
+    def visitOnShutdown(self, ctx):
+        return self.on_error_shutdown(ctx, 'vfpfunc.shutdown_func')
 
     def visitIdentifier(self, ctx):
         altermap = {
