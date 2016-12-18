@@ -1147,12 +1147,9 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             return self.make_func_code('vfpfunc.set', setword, *args)
 
     def visitReturnStmt(self, ctx):
-        retval = []
-        if ctx.expr():
-            args = self.visit(ctx.expr())
-            retval.append(self.add_args_to_code('function_return_value = {}', [args]))
-        else:
-            retval.append(CodeStr('function_return_value = None'))
+        if not ctx.expr():
+            return [CodeStr('vfpfunc.popscope()'), CodeStr('return')]
+        retval = [self.add_args_to_code('function_return_value = {}', [self.visit(ctx.expr())])]
         retval.append(CodeStr('vfpfunc.popscope()'))
         return retval + [CodeStr('return function_return_value')]
 
