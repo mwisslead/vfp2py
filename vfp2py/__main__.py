@@ -751,8 +751,28 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
     def visitMultiplication(self, ctx):
         return self.operationExpr(ctx, ctx.op.type)
 
+    def walkAdditions(self, ctx):
+        retval = []
+        for expr in ctx.expr():
+            if isinstance(expr, VisualFoxpro9Parser.AdditionContext):
+                retval += self.walkAdditions(expr)
+            else:
+                retval.append(self.visit(expr))
+        return retval
+
     def visitAddition(self, ctx):
-        return self.operationExpr(ctx, ctx.op.type)
+        if ctx.op.type == VisualFoxpro9Parser.MINUS_SIGN:
+            return self.operationExpr(ctx, ctx.op.type)
+        exprs = self.walkAdditions(ctx)
+        exprs2 = [exprs[0]]
+        for expr in exprs[1:]:
+            if self.string_type(expr) and self.string_type(exprs2[-1]):
+                exprs2[-1] += expr
+            else:
+                exprs2.append(expr)
+        if len(exprs2) == 1:
+            return exprs2[0]
+        return CodeStr('(' + ' + '.join(repr(expr) for expr in exprs2) + ')')
 
     def visitModulo(self, ctx):
         return self.operationExpr(ctx, '%')
@@ -768,8 +788,6 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             VisualFoxpro9Parser.PLUS_SIGN: '+',
             VisualFoxpro9Parser.MINUS_SIGN: '-'
         }
-        if self.string_type(left) and self.string_type(right) and operation == VisualFoxpro9Parser.PLUS_SIGN:
-            return left + right
         return CodeStr('({} {} {})'.format(repr(left), symbols[operation], repr(right)))
 
     def visitSubExpr(self, ctx):
@@ -1245,7 +1263,6 @@ def main(argv):
     visitor = PythonConvertVisitor(os.path.splitext(os.path.basename(argv[1]))[0])
     output_tree = visitor.visit(tree)
     output = add_indents(output_tree, 0)
-    output = re.sub(r'\'\s*\+\s*\'', '', output)
     with open(argv[2], 'wb') as fid:
         fid.write(output)
     autopep8.main([argv[0], '--in-place', '--aggressive', '--aggressive', argv[2]])
