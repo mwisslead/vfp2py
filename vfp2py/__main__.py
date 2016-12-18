@@ -242,12 +242,14 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
                 funcdefs[funcname] = [parameters, funcbody]
 
         if ctx.line():
+            params = self.visit(ctx.parameterDef()) if ctx.parameterDef() else []
             self.new_scope()
+            self.scope.update({key: False for key in params})
             line_structure = []
             for line in ctx.line():
                 line_structure += self.visit(line)
             line_structure = line_structure or [CodeStr('pass')]
-            funcdefs['_program_main'] = [[], line_structure]
+            funcdefs['_program_main'] = [params, line_structure]
             self.delete_scope()
 
         self.imports = sorted(set(self.imports), key=import_key)

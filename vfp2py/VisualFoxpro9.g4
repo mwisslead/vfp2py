@@ -23,7 +23,7 @@ nonpreprocessorLine
  ;
 
 prg
- : line* (classDef | funcDef | lineComment)*
+ : parameterDef? line* (classDef | funcDef | lineComment)*
  ;
 
 lineComment
