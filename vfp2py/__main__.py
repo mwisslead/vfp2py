@@ -261,7 +261,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
 
         for funcname in funcdefs:
             parameters, funcbody = funcdefs[funcname]
-            defs.append(CodeStr('def {}({}):'.format(funcname, ', '.join(parameters))))
+            defs.append(CodeStr('def {}({}):'.format(funcname, ', '.join([str(repr(p)) + '=False' for p in parameters]))))
             defs += [[CodeStr('vfpfunc.pushscope()')] + funcbody + [CodeStr('vfpfunc.popscope()')]]
 
         return  [CodeStr(imp) for imp in imports] + defs
@@ -318,7 +318,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
                     assignments.append(funcbody)
                     assignments.append(CodeStr('self.{} = {}'.format(funcname, newfuncname)))
                 else:
-                    funcs.update({funcname: [['self'] + parameters, funcbody]})
+                    funcs.update({funcname: [[CodeStr('self')] + parameters, funcbody]})
 
         if 'init' in funcs:
             funcs['init'][1] = assignments + funcs['init'][1]
@@ -327,7 +327,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             parameters, funcbody = funcs[funcname]
             self.imports.append('from vfp2py import vfpfunc')
             funcbody = [CodeStr('vfpfunc.pushscope()')] + funcbody + [CodeStr('vfpfunc.popscope()')]
-            retval.append([CodeStr('def {}({}):'.format(funcname, ', '.join(parameters))), funcbody])
+            retval.append([CodeStr('def {}({}):'.format(funcname, ', '.join(parameters[:1] + [str(repr(p)) + '=False' for p in parameters[1:]]))), funcbody])
         return retval
 
     def visitClassDefStart(self, ctx):
