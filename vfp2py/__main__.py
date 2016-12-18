@@ -1145,6 +1145,8 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         elif setword == 'refresh':
             args = [self.visit(expr) for expr in ctx.expr()]
             return self.make_func_code('vfpfunc.set', setword, *args)
+        elif setword == 'notify':
+            return self.make_func_code('vfpfunc.set', setword, not not ctx.CURSOR(), not ctx.OFF())
 
     def visitReturnStmt(self, ctx):
         if not ctx.expr():
