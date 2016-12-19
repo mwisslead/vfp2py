@@ -554,6 +554,9 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             return self.make_func_code('ord', CodeStr(str(repr(args[0])) + '[0]'))
         if funcname == 'space' and len(args) == 1 and isinstance(args[0], float):
             return ' '*int(args[0])
+        if funcname in ('repli', 'replicate'):
+            args[1:] = [self.to_int(arg) for arg in args[1:]]
+            return self.add_args_to_code('({} * {})', args)
         if funcname == 'date' and len(args) == 0:
             self.imports.append('import datetime')
             return self.make_func_code('datetime.datetime.now().date')
