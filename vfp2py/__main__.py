@@ -554,6 +554,8 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             return chr(int(args[0]))
         if funcname == 'asc':
             return self.make_func_code('ord', CodeStr(str(repr(args[0])) + '[0]'))
+        if funcname == 'len':
+            return self.make_func_code('len', *args)
         if funcname == 'space' and len(args) == 1 and isinstance(args[0], float):
             return ' '*int(args[0])
         if funcname in ('repli', 'replicate'):
