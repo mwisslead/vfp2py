@@ -1,6 +1,9 @@
+import sys
 from setuptools import setup
 
 VERSION='0.1.0'
+
+ANTLR4 = 'antlr4-python{}-runtime'.format(sys.version_info.major)
 
 setup(
     name='vfp2py',
@@ -16,5 +19,6 @@ setup(
         "Operating System :: OS Independent",
         "Programming Language :: Python",
         "Topic :: Software Development :: Libraries :: Python Modules",
-    ]
+    ],
+    install_requires=[ANTLR4, 'dbf', 'autopep8']
 )
