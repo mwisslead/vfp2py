@@ -264,6 +264,8 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             defs.append(CodeStr('def {}({}):'.format(funcname, ', '.join([str(repr(p)) + '=False' for p in parameters]))))
             defs += [[CodeStr('vfpfunc.pushscope()')] + funcbody + [CodeStr('vfpfunc.popscope()')]]
 
+        imports.insert(0, '')
+        imports.insert(0, 'from __future__ import division, print_function')
         return  [CodeStr(imp) for imp in imports] + defs
 
     def visitLine(self, ctx):
@@ -402,7 +404,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         return name, parameters, body
 
     def visitPrintStmt(self, ctx):
-        return [self.make_func_code('print', *self.visit(ctx.args()))]
+        return [self.make_func_code('print', *(self.visit(ctx.args()) if ctx.args() else []))]
 
     def visitIfStart(self, ctx):
         return self.visit(ctx.expr())
