@@ -611,6 +611,13 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             return self.make_func_code('open', *args)
         if funcname == 'fclose':
             return self.add_args_to_code('{}.close()', args)
+        if funcname in ('fputs', 'fwrite'):
+            if len(args) == 3:
+                args[2] = self.to_int(args[2])
+                args[1] = self.add_args_to_code('{}[:{}]', args[1:])
+            if funcname == 'fputs':
+                args[1] += '\r\n'
+            return self.add_args_to_code('{}.write({})', args)
         if funcname in dir(vfpfunc):
             self.imports.append('from vfp2py import vfpfunc')
             funcname = 'vfpfunc.' + funcname
