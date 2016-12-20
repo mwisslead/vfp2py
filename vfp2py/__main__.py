@@ -620,6 +620,16 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             if funcname == 'fputs':
                 args[1] += '\r\n'
             return self.add_args_to_code('{}.write({})', args)
+        if funcname in ('fgets', 'fread'):
+            if funcname == 'fgets':
+                code = '{}.readline({}).strip(\'\\r\\n\')'
+            else:
+                code = '{}.read({})'
+            if len(args) < 2:
+                args.append(CodeStr(''))
+            else:
+                args[1] = self.to_int(args[1])
+            return self.add_args_to_code(code, args)
         if funcname in dir(vfpfunc):
             self.imports.append('from vfp2py import vfpfunc')
             funcname = 'vfpfunc.' + funcname
