@@ -45,9 +45,9 @@ class Tic():
     def toc(self):
         return time.time()-self.start
 
-class CodeStr(str):
+class CodeStr(unicode):
     def __repr__(self):
-        return self
+        return self.encode('ISO-8859-1')
 
     def __add__(self, val):
         return CodeStr('{} + {}'.format(self, repr(val)))
