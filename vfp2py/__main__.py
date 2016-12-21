@@ -564,6 +564,9 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         if funcname == 'date' and len(args) == 0:
             self.imports.append('import datetime')
             return self.make_func_code('datetime.datetime.now().date')
+        if funcname == 'time':
+            self.imports.append('import datetime')
+            return self.make_func_code('datetime.datetime.now().time().strftime', '%H:%M:%S')
         if funcname == 'iif' and len(args) == 3:
             return self.add_args_to_code('({} if {} else {})', [args[i] for i in (1, 0, 2)])
         if funcname == 'alltrim' and len(args) == 1:
