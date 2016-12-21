@@ -267,6 +267,9 @@ def alltrim(string):
 def asc(string):
     return ord(string[0])
 
+def capslock(on=None):
+    pass
+
 def cdx(index, workarea):
     pass
 
@@ -312,6 +315,12 @@ def file(string):
 def filetostr(filename):
     with open(filename) as fid:
         return fid.read().decode('ISO-8859-1')
+
+def home(location=0):
+    pass
+
+def inkey(seconds=0, hide_cursor=False):
+    pass
 
 def isblank(expr):
     return not not expr
