@@ -1224,6 +1224,9 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             return self.make_func_code('vfpfunc.set', setword, *args)
         elif setword == 'memowidth':
             return self.make_func_code('vfpfunc.set', setword, self.visit(ctx.expr()[0]))
+        elif setword == 'library':
+            kwargs = {'additive': True} if ctx.ADDITIVE() else {}
+            return self.make_func_code('vfpfunc.function.set_library', *[self.visit(expr) for expr in ctx.specialExpr()], **kwargs)
 
     def visitReturnStmt(self, ctx):
         if not ctx.expr():
