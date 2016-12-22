@@ -1217,6 +1217,11 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             return self.make_func_code('vfpfunc.set', setword, *args)
         elif setword == 'notify':
             return self.make_func_code('vfpfunc.set', setword, not not ctx.CURSOR(), not ctx.OFF())
+        elif setword == 'clock':
+            args = [x.symbol.text.lower() for x in (ctx.ON(), ctx.OFF(), ctx.TO(), ctx.STATUS()) if x]
+            if ctx.expr():
+                args += [self.visit(expr) for expr in ctx.expr()]
+            return self.make_func_code('vfpfunc.set', setword, *args)
 
     def visitReturnStmt(self, ctx):
         if not ctx.expr():
