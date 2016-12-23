@@ -312,7 +312,7 @@ declaration
  ;
 
 args
- : expr (',' expr)*
+ : expr (',' expr)* ','?
  ;
 
 specialArgs
