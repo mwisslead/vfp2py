@@ -294,7 +294,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
     def visitLines(self, ctx):
         retval = sum((self.visit(line) for line in ctx.line()), [])
         def badline(line):
-            return line.startswith('#') if hasattr(line, 'startswith') else not line
+            return line.startswith('#') or not line if hasattr(line, 'startswith') else not line
         if not retval or all(badline(l) for l in retval):
             retval.append(CodeStr('pass'))
         return retval
