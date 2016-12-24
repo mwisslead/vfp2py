@@ -573,6 +573,9 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             return self.add_args_to_code('{}.strip()', args)
         if funcname == 'strtran' and len(args) == 3:
             return self.make_func_code('{}.replace'.format(args[0]), *args[1:])
+        if funcname == 'right':
+            args[1] = self.to_int(args[1])
+            return self.add_args_to_code('{}[-{}:]', args)
         if funcname == 'left' and len(args) == 2:
             args[1] = self.to_int(args[1])
             return self.add_args_to_code('{}[:{}]', args)
