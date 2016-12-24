@@ -556,6 +556,12 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             return self.make_func_code('ord', CodeStr(str(repr(args[0])) + '[0]'))
         if funcname == 'len':
             return self.make_func_code('len', *args)
+        if funcname == 'alen':
+            if len(args) == 1:
+                return self.make_func_code('len', *args)
+            else:
+                args[1] = self.to_int(args[1])
+                return self.add_args_to_code('{}.alen({})', args)
         if funcname == 'space' and len(args) == 1 and isinstance(args[0], float):
             return ' '*int(args[0])
         if funcname in ('repli', 'replicate'):

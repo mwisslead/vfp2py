@@ -1,3 +1,5 @@
+from __future__ import division
+
 import builtins
 import datetime
 import os
@@ -34,7 +36,10 @@ class Label(Custom):
     pass
 
 class Array(object):
-    def __init__(self, dim1, dim2=1):
+    def __init__(self, dim1, dim2=0):
+        self.columns = bool(dim2)
+        if not dim2:
+            dim2=1
         self.dim1 = dim1
         self.data = [False]*int(dim1*dim2)
 
@@ -55,6 +60,15 @@ class Array(object):
 
     def __call__(self, *args):
         return self[args]
+
+    def __len__(self):
+        return len(self.data)
+
+    def alen(self, arr_attr=0):
+        if arr_attr == 2 and not self.columns:
+            return 0
+        return int(len(self)/{0: 1, 1: len(self)/self.dim1, 2: self.dim1}[arr_attr])
+
 
 class _Database_Context(object):
     def __init__(self):
