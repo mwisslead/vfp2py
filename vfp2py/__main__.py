@@ -604,7 +604,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         if funcname == 'used':
             self.imports.append('from vfp2py import vfpfunc')
             return self.make_func_code('vfpfunc.used', *args)
-        if funcname == 'round':
+        if funcname in ('round', 'max', 'min'):
             return self.make_func_code(funcname, *args)
         if funcname == 'int':
             return self.to_int(args[0])
