@@ -176,9 +176,9 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
 
     @staticmethod
     def to_int(expr):
-        if isinstance(expr, float):
+        try:
             return int(expr)
-        else:
+        except:
             return PythonConvertVisitor.make_func_code('int', expr)
 
     @staticmethod
