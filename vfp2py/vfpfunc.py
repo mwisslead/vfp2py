@@ -172,7 +172,7 @@ class _Database_Context(object):
         table = self._get_table()
         table.reindex()
 
-    def index_on(field, indexname, order, tag_flag, compact_flag, unique_flag):
+    def index_on(self, field, indexname, order, tag_flag, compact_flag, unique_flag):
         pass
 
     def close_tables(self, all_flag):
@@ -337,7 +337,10 @@ def inkey(seconds=0, hide_cursor=False):
     pass
 
 def isblank(expr):
-    return not not expr
+    try:
+        return not expr.strip()
+    except:
+        return expr is None
 
 def lineno(flag):
     pass
@@ -386,6 +389,13 @@ def strtran(string, old, new='', start=0, maxreplace=None, flags=0):
 
 def substr(string, start, chars):
     return string[start-1:start-1+chars]
+
+def vfp_sys(funcnum, *args):
+    if funcnum == 16:
+        import imp
+        if hasattr(sys, "frozen") or hasattr(sys, "importers") or imp.is_frozen("__main__"):
+            return os.path.dirname(sys.executable)
+        return os.path.dirname(sys.argv[0])
 
 def val(string):
     return float(string)
