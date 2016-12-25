@@ -823,7 +823,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         for expr in exprs[1:]:
             if self.string_type(expr) and self.string_type(exprs2[-1]):
                 exprs2[-1] += expr
-            else:
+            elif expr:
                 exprs2.append(expr)
         if len(exprs2) == 1:
             return exprs2[0]
