@@ -368,6 +368,22 @@ def rgb(red, green, blue):
 def space(num):
     return ' ' * int(num)
 
+def strtran(string, old, new='', start=0, maxreplace=None, flags=0):
+    retstr = ''
+    while start > 0:
+        try:
+            ind = string.find(old) + len(old)
+            retstr += string[:ind]
+            string = string[ind:]
+        except:
+            break
+        start -= 1
+    if maxreplace:
+        retstr += string.replace(old, new, maxreplace)
+    else:
+        retstr += string.replace(old, new)
+    return retstr
+
 def substr(string, start, chars):
     return string[start-1:start-1+chars]
 

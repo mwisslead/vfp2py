@@ -577,8 +577,24 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             return self.add_args_to_code('({} if {} else {})', [args[i] for i in (1, 0, 2)])
         if funcname == 'alltrim' and len(args) == 1:
             return self.add_args_to_code('{}.strip()', args)
-        if funcname == 'strtran' and len(args) == 3:
-            return self.make_func_code('{}.replace'.format(args[0]), *args[1:])
+        if funcname == 'strtran':
+            args = args[:6]
+            if len(args) > 3:
+                args[3:] = [self.to_int(arg) for arg in args[3:]]
+            if len(args) == 6 and int(args[5]) in (0, 2):
+                args.pop()
+            if len(args) == 2:
+                args.append('')
+            str_replace = self.add_args_to_code('{}.replace', [args[0]])
+            if len(args) == 3:
+                return self.make_func_code(str_replace, *args[1:])
+            elif len(args) == 4 and args[3] < 2:
+                args.pop()
+                return self.make_func_code(str_replace, *args[1:])
+            elif len(args) == 5 and args[3] < 2:
+                args[3] = args[4]
+                args.pop()
+                return self.make_func_code(str_replace, *args[1:])
         if funcname == 'right':
             args[1] = self.to_int(args[1])
             return self.add_args_to_code('{}[-{}:]', args)
