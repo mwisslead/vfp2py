@@ -353,6 +353,42 @@ def messagebox(message, flags, title):
     print(flags)
     print(title)
 
+def num_to_str(num, length=10, decimals=0):
+    length = int(length)
+    decimals = int(decimals)
+    if num == int(num):
+        string = str(int(num))
+        if length >= len(string):
+            return ' ' * (length-len(string)) + string
+        return '*' * length
+    else:
+        string = '{:f}'.format(num)
+        integer, mantissa = string.split('.')
+        if decimals:
+            if len(mantissa) <= decimals:
+                mantissa += '0' * (decimals - len(mantissa))
+            else:
+                if int(mantissa[decimals:]) > 0:
+                    mantissa = str(int(mantissa[:decimals]) + 1)
+                    if len(mantissa) > decimals:
+                        integer += 1
+                        mantissa = '0' * decimals
+                mantissa = mantissa[:decimals]
+            string = integer + '.' + mantissa
+        else:
+            string = integer
+        if length >= len(string):
+            return ' ' * (length-len(string)) + string
+        else:
+            string = '{:e}'.format(num)
+            if length >= len(string):
+                return ' ' * (length-len(string)) + string
+            string, exp = string.split('e')
+            exp = 'e' + exp
+            if length <= len(exp):
+                return '*' * length
+            return string[:length-len(exp)] + exp
+
 def program(level):
     pass
 

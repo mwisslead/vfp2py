@@ -612,8 +612,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             self.imports.append('import math')
             return self.make_func_code('math.ceil', *args)
         if funcname == 'str':
-            self.imports.append('from vfp2py import vfpfunc')
-            return self.make_func_code('vfpfunc.num_to_str', *args)
+            funcname = 'num_to_str'
         if funcname == 'file':
             self.imports.append('import os')
             return self.make_func_code('os.path.isfile', *args)
