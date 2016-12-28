@@ -209,7 +209,7 @@ otherCmds
  | SELECT (tablename=specialExpr | (DISTINCT? (specialArgs | '*') (FROM fromExpr=specialExpr)? (WHERE whereExpr=expr)? (INTO TABLE intoExpr=specialExpr)? (ORDER BY orderbyid=identifier)?)) #select
  | USE (SHARED | EXCL | EXCLUSIVE)? name=specialExpr? IN (workArea=specialExpr)? (SHARED | EXCL | EXCLUSIVE)? (ALIAS identifier)? #use
  | LOCATE (FOR expr)? (WHILE expr)? NOOPTIMIZE? #locate
- | REPLACE scopeClause? idAttr WITH expr (FOR expr)? #replace
+ | REPLACE scopeClause? specialExpr WITH expr (FOR expr)? #replace
  | INDEX ON specialExpr (TAG | TO) specialExpr COMPACT? (ASCENDING | DESCENDING)? ( UNIQUE | CANDIDATE)? ADDITIVE? #indexOn
  | COUNT scopeClause? ((FOR expr) | (WHILE expr) | (TO expr))* NOOPTIMIZE? #count
  | SUM scopeClause? expr (FOR expr | TO idAttr | NOOPTIMIZE)+ #sum

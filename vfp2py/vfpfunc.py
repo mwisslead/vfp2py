@@ -125,12 +125,22 @@ class _Database_Context(object):
         table.append()
         table_info['recno'] = len(table)
 
-    def replace(self, tablename, fieldname, value, scope):
-        table_info = self._get_table_info(tablename)
+    def replace(self, field, value, scope):
+        field = field.lower().split('.')
+        if len(field) > 1:
+            if len(field) == 2:
+                table = str(field[0])
+            else:
+                table = '.'.join(field[:-1])
+            field = field[-1]
+        else:
+            field = field[0]
+            table = None
+        table_info = self._get_table_info(table)
         table = table_info['table']
         recno = table_info['recno']
         record = table[recno-1]
-        dbf.write(record, **{fieldname: value})
+        dbf.write(record, **{field: value})
 
     def skip(self, tablename, skipnum):
         table_info = self._get_table_info(tablename)

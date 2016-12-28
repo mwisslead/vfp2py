@@ -1101,18 +1101,9 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         else:
             scope = None
         self.enable_scope(False)
-        field = self.visit(ctx.idAttr()).split('.')
+        field = self.visit(ctx.specialExpr())
         self.enable_scope(True)
-        if len(field) > 1:
-            if len(field) == 2:
-                table = str(field[0])
-            else:
-                table = CodeStr('.'.join(field[:-1]))
-            field = str(field[-1])
-        else:
-            field = field[0]
-            table = None
-        return self.make_func_code('vfpfunc.db.replace', table, field, value, scope)
+        return self.make_func_code('vfpfunc.db.replace', field, value, scope)
 
     def visitSkipRecord(self, ctx):
         if len(ctx.expr()) > 1:
