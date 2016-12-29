@@ -660,7 +660,9 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             return self.add_args_to_code(code, args)
         if funcname == 'sys':
             funcname = 'vfp_sys'
-        if funcname in dir(vfpfunc):
+        if funcname in ('bof', 'eof', 'deleted'):
+            funcname = 'vfpfunc.db.' + funcname
+        elif funcname in dir(vfpfunc):
             self.imports.append('from vfp2py import vfpfunc')
             funcname = 'vfpfunc.' + funcname
         else:

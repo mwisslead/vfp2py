@@ -202,6 +202,14 @@ class _Database_Context(object):
         except:
             return 0
 
+    def bof(self, workarea=None):
+        table_info = self._get_table_info(workarea)
+        return table_info['recno'] == 0
+
+    def eof(self, workarea=None):
+        table_info = self._get_table_info(workarea)
+        return table_info['recno'] == len(table_info['table'])
+
 class _Variable(object):
     def __init__(self, db):
         self.db = db
