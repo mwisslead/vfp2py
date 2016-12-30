@@ -210,6 +210,10 @@ class _Database_Context(object):
         table_info = self._get_table_info(workarea)
         return table_info['recno'] == len(table_info['table'])
 
+    def deleted(self, workarea=None):
+        table_info = self._get_table_info(workarea)
+        dbf.is_deleted(table_info['table'][table_info['recno']])
+
 class _Variable(object):
     def __init__(self, db):
         self.db = db
