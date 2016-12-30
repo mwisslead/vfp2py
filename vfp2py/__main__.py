@@ -565,12 +565,14 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         if funcname in ('repli', 'replicate'):
             args[1:] = [self.to_int(arg) for arg in args[1:]]
             return self.add_args_to_code('({} * {})', args)
-        if funcname == 'date' and len(args) == 0:
-            self.imports.append('import datetime')
-            return self.make_func_code('datetime.datetime.now().date')
-        if funcname == 'time':
-            self.imports.append('import datetime')
-            return self.make_func_code('datetime.datetime.now().time().strftime', '%H:%M:%S')
+        if funcname in ('date', 'datetime', 'time') and len(args) == 0:
+            self.imports.append('from datetime import datetime')
+            if funcname == 'date':
+                return self.make_func_code('datetime.now().date')
+            elif funcname == 'datetime':
+                return self.make_func_code('datetime.now')
+            elif funcname == 'time':
+                return self.make_func_code('datetime.now().time().strftime', '%H:%M:%S')
         if funcname == 'iif' and len(args) == 3:
             return self.add_args_to_code('({} if {} else {})', [args[i] for i in (1, 0, 2)])
         if funcname == 'alltrim' and len(args) == 1:
