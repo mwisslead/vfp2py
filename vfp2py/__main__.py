@@ -582,8 +582,17 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
                 return self.make_func_code('datetime.now().time().strftime', '%H:%M:%S')
         if funcname == 'iif' and len(args) == 3:
             return self.add_args_to_code('({} if {} else {})', [args[i] for i in (1, 0, 2)])
-        if funcname == 'alltrim' and len(args) == 1:
-            return self.add_args_to_code('{}.strip()', args)
+        if funcname in ('alltrim', 'ltrim', 'rtrim', 'lower', 'upper', 'padr', 'padl', 'padc'):
+            funcname = {
+                'alltrim': 'strip',
+                'ltrim': 'lstrip',
+                'rtrim': 'rstrip',
+                'padr': 'ljust',
+                'padl': 'rjust',
+                'padc': 'center',
+            }.get(funcname, funcname)
+            funcname = '{}.{}'.format(args[0], funcname)
+            return self.make_func_code(funcname, *args[1:])
         if funcname == 'strtran':
             args = args[:6]
             if len(args) > 3:
