@@ -580,6 +580,11 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
                 return self.make_func_code('datetime.now')
             elif funcname == 'time':
                 return self.make_func_code('datetime.now().time().strftime', '%H:%M:%S')
+        if funcname in ('year', 'month', 'day', 'hour', 'minute', 'sec'):
+            funcname = {
+                'sec': 'second'
+            }.get(funcname, funcname)
+            return self.add_args_to_code('{}.{}', [args[0], funcname])
         if funcname == 'iif' and len(args) == 3:
             return self.add_args_to_code('({} if {} else {})', [args[i] for i in (1, 0, 2)])
         if funcname in ('alltrim', 'ltrim', 'rtrim', 'lower', 'upper', 'padr', 'padl', 'padc'):
