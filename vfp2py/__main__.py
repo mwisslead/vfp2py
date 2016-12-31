@@ -499,6 +499,10 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
 
     def visitAssign(self, ctx):
         value = self.visit(ctx.expr())
+	while isinstance(value, CodeStr):
+	    if not (value.startswith('(') and value.endswith(')')):
+                break
+            value = CodeStr(value[1:-1])
         args = []
         for var in ctx.idAttr():
             trailer = self.visit(var.trailer()) if var.trailer() else []
@@ -510,8 +514,11 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
                 args.append(self.visit(var))
         if len(args) == 1:
             try:
-                if value.startswith(args[0] + ' + '):
-                    return [CodeStr('{} += {}'.format(args[0], repr(value[len(name + ' + '):])))]
+                if isinstance(value, CodeStr):
+                    for op in ('+', '-', '*', '/'):
+                        start = str(args[0]) + ' ' + op + ' '
+                        if value.startswith(start):
+                            return [CodeStr('{} {}= {}'.format(args[0], op, value[len(start):]))]
             except Exception as e:
                 pass
         return [CodeStr(' = '.join(args + [repr(value)]))]
