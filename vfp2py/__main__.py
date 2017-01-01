@@ -7,8 +7,11 @@ import datetime
 import re
 import tempfile
 from collections import OrderedDict
+import shutil
 
 import argparse
+
+import dbf
 
 import antlr4
 import autopep8
@@ -902,6 +905,10 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         self.enable_scope(False)
         func = self.visit(ctx.specialExpr()[0])
         self.enable_scope(True)
+        if ctx.FORM():
+            func = func.lower()
+            func = func.replace('.', '_')
+            return self.make_func_code('{}._program_main'.format(func))
         args = self.visit(ctx.args()) if ctx.args() else []
         if func.endswith('.mpr'):
             func = func[:-4]
@@ -915,6 +922,11 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             namespace = func
             func = '_program_main'
         return self.make_func_code('vfpfunc.do_command', func, namespace, *args)
+
+    def visitDoForm(self, ctx):
+        self.enable_scope(False)
+        form = self.visit(ctx.specialExpr())
+        self.enable_scope(True)
 
     def visitMethodCall(self, ctx):
         return self.visit(ctx.idAttr()) + '.' + self.visit(ctx.identifier()) + '()'
@@ -1306,12 +1318,7 @@ def convert(codestr):
 def evaluateCode(codestr):
     return eval(convert(codestr))
 
-def preprocess_file(filename):
-    import codecs
-    fid = codecs.open(filename, 'r', 'ISO-8859-1')
-    data = fid.read()
-    fid.close()
-
+def preprocess_code(data):
     input_stream = antlr4.InputStream(data)
     lexer = VisualFoxpro9Lexer(input_stream)
     stream = MultichannelTokenStream(lexer)
@@ -1320,6 +1327,14 @@ def preprocess_file(filename):
     visitor = PreprocessVisitor()
     visitor.tokens = visitor.visit(tree)
     return visitor
+
+def preprocess_file(filename):
+    import codecs
+    fid = codecs.open(filename, 'r', 'ISO-8859-1')
+    data = fid.read()
+    fid.close()
+
+    return preprocess_code(data)
 
 class MultichannelTokenStream(antlr4.CommonTokenStream):
     def __init__(self, lexer, channel=antlr4.Token.DEFAULT_CHANNEL):
@@ -1353,16 +1368,113 @@ class MultichannelTokenStream(antlr4.CommonTokenStream):
         if channel in self.channels:
             self.channels.remove(channel)
 
+def find_file_ignore_case(filename, directories):
+    for directory in directories:
+        for testfile in os.listdir(directory):
+            if testfile.lower() == filename.lower():
+                return os.path.join(directory, testfile)
+
+def memo_filename(filename, ext):
+    directory = os.path.dirname(filename)
+    basename = os.path.basename(filename)
+    memofile = os.path.splitext(basename)[0] + '.' + ext
+    return find_file_ignore_case(memofile, [directory])
+
+def copy_obscured_dbf(filename, memo_ext, dbf_basename):
+    memofile = memo_filename(filename, memo_ext)
+    dbffile = dbf_basename + '.dbf'
+    shutil.copy(filename, dbffile)
+    if memofile:
+        shutil.copy(memofile, dbf_basename + '.fpt')
+    return dbffile
+
+def convert_scx_to_vfp_code(scxfile):
+    with tempfile.NamedTemporaryFile() as tmpfile:
+        pass
+    tmpfile = tmpfile.name
+    dbffile = copy_obscured_dbf(scxfile, 'sct', tmpfile)
+
+    table = dbf.Table(dbffile)
+    table.open()
+
+    children = [list() for record in table]
+    names = [record.objname for record in table]
+    for record in table:
+        if record['class'].lower() == 'form':
+            form = record.objname
+        parent = record.parent
+        if not parent:
+            continue
+        parent_ind = names.index(parent)
+        children[parent_ind].append(record)
+
+    code = [l.format(form, form) for l in ('local {}', '{} = createObject("{}")', '{}.show()')]
+    for record, child in zip(table, children):
+        if not record.objname or record.parent or record['class'].lower() == 'dataenvironment':
+            continue
+
+        code.append('DEFINE CLASS {} AS {}'.format(record.objname, record['class']))
+        subcode = []
+        for line in record.properties.split('\r\n'):
+            subcode.append(line)
+        for child_record in child:
+            subcode.append('ADD OBJECT {} AS {}'.format(child_record.objname, child_record['class']))
+            for line in child_record.properties.split('\r\n'):
+                line = line.strip()
+                if not line:
+                    continue
+                prop, value = line.split(' = ')
+                if prop == 'Picture':
+                    value = '"{}"'.format(value)
+                elif prop.endswith('Color'):
+                    value = 'RGB({})'.format(value)
+                subcode.append(child_record.objname + '.' + prop + ' = ' + value)
+            subcode.append('')
+
+        for line in record.methods.split('\r\n'):
+            subcode.append(line)
+        subcode.append('')
+        for child_record in child:
+            for line in child_record.methods.split('\r\n'):
+                if not line:
+                    continue
+                line = re.sub(r'PROCEDURE ', 'PROCEDURE {}.'.format(child_record.objname), line)
+                subcode.append(line)
+            subcode.append('')
+        code.append(subcode)
+        code.append('ENDDEFINE')
+        code.append('')
+
+    def add_indent(code, level):
+        retval = ''
+        for line in code:
+            if isinstance(line, list):
+                retval += add_indent(line, level+1)
+            else:
+                retval += '   '*level + line + '\n'
+        return retval
+
+    code = add_indent(code, 0)
+
+    code = re.sub(r'(\n\s*)+\n+', '\n\n', code)
+    return code
+
 def main(argv):
     global SEARCH_PATH
     if len(argv) > 3:
         SEARCH_PATH += argv[3:]
     tic = Tic()
-    tokens = preprocess_file(argv[1]).tokens
-    print(tic.toc())
-    tic.tic()
+    if argv[1].lower().endswith('.scx'):
+        data = convert_scx_to_vfp_code(argv[1])
+        tokens = preprocess_code(data).tokens
+        print(tic.toc())
+        tic.tic()
+    else:
+        tokens = preprocess_file(argv[1]).tokens
+        print(tic.toc())
+        tic.tic()
     data = ''.join(token.text.replace('\r', '') for token in tokens)
-    with tempfile.NamedTemporaryFile() as fid:
+    with tempfile.NamedTemporaryFile(suffix='.prg') as fid:
         pass
     with open(fid.name, 'wb') as fid:
         fid.write(data.encode('utf-8'))
