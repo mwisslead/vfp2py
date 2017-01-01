@@ -1019,7 +1019,15 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             if ctx.PROCEDURE():
                 retval.append(self.make_func_code('vfpfunc.function.release_procedure', *args))
             else:
-                retval.append(self.make_func_code('vfpfunc.release', *args))
+                thisargs = [arg for arg in args if arg in ('this', 'thisform')]
+                args = [arg for arg in args if arg not in ('this', 'thisform')]
+                for arg in thisargs:
+                    if arg == 'this':
+                        retval.append(self.make_func_code('self.release()'))
+                    if arg == 'thisform':
+                        retval.append(self.make_func_code('self.parentform.release()'))
+                if args:
+                    retval.append(self.make_func_code('vfpfunc.release', *args))
         return retval
 
     def visitCloseStmt(self, ctx):
