@@ -241,11 +241,13 @@ class _Variable(object):
             scope = LOCAL_SCOPES[-1]
         scope[key] = val
 
-    def add_private(self, key):
-        PRIVATE_SCOPES[-1][key] = False
+    def add_private(self, *keys):
+        for key in keys:
+            PRIVATE_SCOPES[-1][key] = False
 
-    def add_public(self, key):
-        PRIVATE_SCOPES[0][key] = False
+    def add_public(self, *keys):
+        for key in keys:
+            PRIVATE_SCOPES[0][key] = False
 
 class _Function(object):
     def __init__(self):

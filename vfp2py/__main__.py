@@ -495,7 +495,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
                     self.scope[name] = False
                 return CodeStr('#Added {} to scope'.format(', '.join(names)))
             func = 'vfpfunc.variable.add_public' if ctx.PUBLIC() else 'vfpfunc.variable.add_private'
-            return [self.make_func_code(func, str(name)) for name in names]
+            return self.make_func_code(func, *[str(name) for name in names])
 
     def visitAssign(self, ctx):
         value = self.visit(ctx.expr())
