@@ -341,7 +341,9 @@ def delete_file(string, recycle=False):
 def directory(path, flag):
     return os.path.isdir(directory)
 
-def dtoc(dateval):
+def dtoc(dateval, index_format=False):
+    if index_format == 1:
+        return dateval.strftime('%Y%m%d')
     return dateval.strftime('%m/%d/%Y')
 
 def error(txt):

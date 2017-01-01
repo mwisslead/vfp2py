@@ -585,6 +585,13 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
                 'sec': 'second'
             }.get(funcname, funcname)
             return self.add_args_to_code('{}.{}', [args[0], funcname])
+        if funcname == 'dtoc':
+            if len(args) == 1 or args[1] == 1:
+                if len(args) > 1 and args[1] == 1:
+                    args[1] = '%Y%m%d'
+                else:
+                    args.append('%m/%d/%Y')
+                return self.make_func_code('{}.{}'.format(args[0], 'strftime'), args[1])
         if funcname == 'iif' and len(args) == 3:
             return self.add_args_to_code('({} if {} else {})', [args[i] for i in (1, 0, 2)])
         if funcname in ('alltrim', 'ltrim', 'rtrim', 'lower', 'upper', 'padr', 'padl', 'padc'):
