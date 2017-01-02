@@ -816,11 +816,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             raw_expr = ''.join(t.text for t in ctx.parser._input.tokens[start:stop+1])
             if raw_expr.lower() == expr and isinstance(ctx.expr(), VisualFoxpro9Parser.AtomExprContext) and (not ctx.expr().trailer() or not any(isinstance(arg, list) for arg in self.visit(ctx.expr().trailer()))):
                 return self.create_string(raw_expr).lower()
-            return expr
-            if isinstance(expr, CodeStr):
-                return self.scopeId(expr, 'val')
-            else:
-                return expr
+            return self.visit(ctx.expr())
 
     def visitPathname(self, ctx):
         return self.create_string(ctx.getText()).lower()
@@ -895,6 +891,9 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
                 exprs2.append(expr)
         if len(exprs2) == 1:
             return exprs2[0]
+        exprs2 = [expr for expr in exprs2 if expr != '']
+        if len(exprs2) == 0:
+            return ''
         return CodeStr('(' + ' + '.join(repr(expr) for expr in exprs2) + ')')
 
     def visitModulo(self, ctx):
