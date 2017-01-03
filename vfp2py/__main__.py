@@ -1473,20 +1473,22 @@ def convert_scx_to_vfp_code(scxfile):
     code = re.sub(r'(\n\s*)+\n+', '\n\n', code)
     return code
 
-def main(argv):
-    global SEARCH_PATH
-    if len(argv) > 3:
-        SEARCH_PATH += argv[3:]
+def parse_args(argv=None):
+    parser = argparse.ArgumentParser(description='Tool for rewriting Foxpro code in Python')
+    parser.add_argument("infile", help="file to convert", type=str)
+    parser.add_argument("outfile", help="file to output to", type=str)
+    parser.add_argument("search", help="directories to search for included files", type=str, nargs='*')
+    return parser.parse_args(argv)
+
+def convert_file(infile):
     tic = Tic()
-    if argv[1].lower().endswith('.scx'):
-        data = convert_scx_to_vfp_code(argv[1])
+    if infile.lower().endswith('.scx'):
+        data = convert_scx_to_vfp_code(infile)
         tokens = preprocess_code(data).tokens
-        print(tic.toc())
-        tic.tic()
     else:
-        tokens = preprocess_file(argv[1]).tokens
-        print(tic.toc())
-        tic.tic()
+        tokens = preprocess_file(infile).tokens
+    print(tic.toc())
+    tic.tic()
     data = ''.join(token.text.replace('\r', '') for token in tokens)
     with tempfile.NamedTemporaryFile(suffix='.prg') as fid:
         pass
@@ -1500,15 +1502,21 @@ def main(argv):
     tic.tic()
     tree = parser.prg()
     print(tic.toc())
-    visitor = PythonConvertVisitor(os.path.splitext(os.path.basename(argv[1]))[0])
+    visitor = PythonConvertVisitor(os.path.splitext(os.path.basename(infile))[0])
     output_tree = visitor.visit(tree)
-    output = add_indents(output_tree, 0)
-    with open(argv[2], 'wb') as fid:
+    return add_indents(output_tree, 0)
+
+def main(argv=None):
+    args = parse_args(argv)
+    global SEARCH_PATH
+    SEARCH_PATH += args.search
+    output = convert_file(args.infile)
+    with open(args.outfile, 'wb') as fid:
         fid.write(output)
-    autopep8.main([argv[0], '--in-place', '--aggressive', '--aggressive', argv[2]])
+    autopep8.main([__file__, '--in-place', args.outfile])
 
 if __name__ == '__main__':
     try:
-        main(sys.argv)
+        main()
     except KeyboardInterrupt:
         pass
