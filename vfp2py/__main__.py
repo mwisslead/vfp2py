@@ -170,6 +170,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         self.withid = ''
         self.class_list = []
         self.function_list = []
+        self.used_scope = False
 
     @staticmethod
     def make_func_code(funcname, *args, **kwargs):
@@ -241,10 +242,12 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         funcdefs = OrderedDict()
         if ctx.funcDef():
             for funcDef in get_list(ctx.funcDef()):
+                self.used_scope = False
                 funcname, parameters, funcbody = self.visit(funcDef)
                 funcdefs[funcname] = [parameters, funcbody]
 
         if ctx.line():
+            self.used_scope = False
             params = self.visit(ctx.parameterDef()) if ctx.parameterDef() else []
             self.new_scope()
             self.scope.update({key: False for key in params})
@@ -252,7 +255,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             for line in ctx.line():
                 line_structure += self.visit(line)
             line_structure = line_structure or [CodeStr('pass')]
-            self.modify_func_body(line_structure)
+            line_structure = self.modify_func_body(line_structure)
             self.delete_scope()
         else:
             params = []
@@ -310,16 +313,22 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         classname, supername = self.visit(ctx.classDefStart())
         retval = [CodeStr('class {}({}):'.format(classname, supername))]
         assignments = []
-        funcs = OrderedDict({'init': [[], []]})
+        funcs = OrderedDict({'init': [[CodeStr('self')], [CodeStr('vfpfunc.pushscope()'), CodeStr('vfpfunc.popscope()')]]})
         for stmt in ctx.classDefStmt():
             if isinstance(stmt, VisualFoxpro9Parser.ClassDefAssignContext):
                 assignments += self.visit(stmt)
             elif isinstance(stmt, VisualFoxpro9Parser.ClassDefAddObjectContext):
                 assignments += self.visit(stmt)
             elif isinstance(stmt, VisualFoxpro9Parser.ClassDefLineCommentContext):
-                assignments += [self.visit(stmt)]
+                assignment = self.visit(stmt)
+                if assignment:
+                    assignments.append(assignment)
             else:
+                self.used_scope = False
                 funcname, parameters, funcbody = self.visit(stmt)
+                if funcname == 'init':
+                    self.used_scope = True
+                    funcname, parameters, funcbody = self.visit(stmt)
                 if '.' in funcname:
                     newfuncname = funcname.replace('.', '_')
                     assignments.append(CodeStr('def {}({}):'.format(newfuncname, ', '.join(parameters))))
@@ -328,8 +337,8 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
                 else:
                     funcs.update({funcname: [[CodeStr('self')] + parameters, funcbody]})
 
-        if 'init' in funcs:
-            funcs['init'][1] = assignments + funcs['init'][1]
+        funcbody = funcs['init'][1]
+        funcs['init'][1] = [funcbody[0]] + assignments + funcbody[1:]
 
         for funcname in funcs:
             parameters, funcbody = funcs[funcname]
@@ -376,11 +385,6 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         retval.append(self.add_args_to_code('self.add_object(self.{})', [name]))
         return retval
 
-    def visitClassDefFuncDef(self, ctx):
-        return self.visit(ctx.funcDef())
-        funcname, parameters, funcbody = self.visit(ctx.funcDef())
-        return {funcname: [['self'] + parameters, funcbody]}
-
     def visitNodefault(self, ctx):
         return []
 
@@ -401,16 +405,36 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         return [self.visit(parameter) for parameter in ctx.parameter()]
 
     def modify_func_body(self, body):
-        while len(body) > 0 and (not body[-1] or (isinstance(body[-1], CodeStr) and (body[-1] == 'return' or body[-1] == 'vfpfunc.popscope()'))):
+        while len(body) > 0 and (not body[-1] or (isinstance(body[-1], CodeStr) and (body[-1] == 'return'))):
             body.pop()
         if len(body) == 0:
             body.append(CodeStr('pass'))
-        if isinstance(body[-1], CodeStr) and body[-1] == 'pass':
-            return
-        body.insert(0, CodeStr('vfpfunc.pushscope()'))
+        if not self.used_scope:
+            return body
+        while CodeStr('pass') in body:
+            body.pop(body.index(CodeStr('pass')))
+        def fix_returns(lines):
+            newbody = []
+            for line in lines:
+                if isinstance(line, list):
+                    newbody.append(fix_returns(line))
+                elif isinstance(line, CodeStr) and line.startswith('return '):
+                    return_value = CodeStr(line[7:])
+                    if 'vfpfunc.variable[' in return_value or 'vfpfunc.function[' in return_value:
+                        newbody.append(self.add_args_to_code('function_return_value = {}', [return_value]))
+                        newbody.append(CodeStr('vfpfunc.popscope()'))
+                        newbody.append(CodeStr('return function_return_value'))
+                    else:
+                        newbody.append(CodeStr('vfpfunc.popscope()'))
+                        newbody.append(line)
+                else:
+                    newbody.append(line)
+            return newbody
+        body = [CodeStr('vfpfunc.pushscope()')] + fix_returns(body)
         if isinstance(body[-1], CodeStr) and body[-1].startswith('return '):
-            return
+            return body
         body.append(CodeStr('vfpfunc.popscope()'))
+        return body
 
     def visitFuncDef(self, ctx):
         name, parameters = self.visit(ctx.funcDefStart())
@@ -418,7 +442,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         self.scope.update({key: False for key in parameters})
         body = self.visit(ctx.lines())
         self.delete_scope()
-        self.modify_func_body(body)
+        body = self.modify_func_body(body)
         return name, parameters, body
 
     def visitPrintStmt(self, ctx):
@@ -512,6 +536,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
                 for name in names:
                     self.scope[name] = False
                 return CodeStr('#Added {} to scope'.format(', '.join(names)))
+            self.used_scope = True
             func = 'vfpfunc.variable.add_public' if ctx.PUBLIC() else 'vfpfunc.variable.add_private'
             return self.make_func_code(func, *[str(name) for name in names])
 
@@ -725,6 +750,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         if identifier == 'thisform':
             return CodeStr('self.parentform')
         self.imports.append('from vfp2py import vfpfunc')
+        self.used_scope = True
         if vartype == 'val':
             return self.add_args_to_code('vfpfunc.variable[{}]', [str(identifier)])
         elif vartype == 'func':
@@ -1315,10 +1341,8 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
 
     def visitReturnStmt(self, ctx):
         if not ctx.expr():
-            return [CodeStr('vfpfunc.popscope()'), CodeStr('return')]
-        retval = [self.add_args_to_code('function_return_value = {}', [self.visit(ctx.expr())])]
-        retval.append(CodeStr('vfpfunc.popscope()'))
-        return retval + [CodeStr('return function_return_value')]
+            return [CodeStr('return')]
+        return [self.add_args_to_code('return {}', [self.visit(ctx.expr())])]
 
 def convert(codestr):
     input_stream = antlr4.InputStream(codestr)
