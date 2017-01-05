@@ -208,7 +208,7 @@ otherCmds
 
  | CREATE (TABLE|DBF) specialExpr FREE? '(' identifier identifier arrayIndex (',' identifier identifier arrayIndex)* ')' #createTable
  | SELECT (tablename=specialExpr | (DISTINCT? (specialArgs | '*') (FROM fromExpr=specialExpr)? (WHERE whereExpr=expr)? (INTO TABLE intoExpr=specialExpr)? (ORDER BY orderbyid=identifier)?)) #select
- | USE (SHARED | EXCL | EXCLUSIVE)? name=specialExpr? IN (workArea=specialExpr)? (SHARED | EXCL | EXCLUSIVE)? (ALIAS identifier)? #use
+ | USE (SHARED | EXCL | EXCLUSIVE)? name=specialExpr? (IN workArea=specialExpr)? (SHARED | EXCL | EXCLUSIVE)? (ALIAS identifier)? #use
  | LOCATE (FOR expr)? (WHILE expr)? NOOPTIMIZE? #locate
  | REPLACE scopeClause? specialExpr WITH expr (FOR expr)? #replace
  | INDEX ON specialExpr (TAG | TO) specialExpr COMPACT? (ASCENDING | DESCENDING)? ( UNIQUE | CANDIDATE)? ADDITIVE? #indexOn
@@ -704,7 +704,7 @@ PROGRAM: P R O G R A M;
 
 ID : [A-Za-z_] [a-zA-Z0-9_]*;
 
-NL : '\n' | EOF;
+NL : '\n';
 
 WS : [ \t\r] -> channel(1);
 
