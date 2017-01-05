@@ -176,7 +176,8 @@ cmd
  | release
  | setup
  | otherCmds
- | '='? expr
+ | '=' expr
+ | complexId
  ;
 
 release
@@ -342,6 +343,11 @@ expr
  | expr op=('=='|NOTEQUALS|'='|'#'|'>'|'>='|'<'|'<='|'$') expr #comparison
  | expr op=(OR|AND) expr #booleanOperation
  | PERIOD? atom trailer? #atomExpr
+ ;
+
+complexId
+ : PERIOD? atom trailer
+ | PERIOD atom trailer?
  ;
 
 atom

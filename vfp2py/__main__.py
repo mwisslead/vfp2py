@@ -820,6 +820,9 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         else:
             return self.visit(ctx.atom())
 
+    def visitComplexId(self, ctx):
+        return self.visitAtomExpr(ctx)
+
     def visitIdList(self, ctx):
         return [self.visit(i) for i in get_list(ctx.idAttr())]
 
