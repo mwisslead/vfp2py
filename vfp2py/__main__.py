@@ -700,9 +700,16 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
                 return self.add_args_to_code('{}[{}]', args[:2])
             args[2] += args[1]
             return self.add_args_to_code('{}[{}:{}]', args)
-        if funcname == 'ceiling' and len(args) == 1:
+        if funcname in ('ceiling', 'exp', 'log', 'log10', 'sin', 'cos', 'tan', 'asin', 'acos', 'atan', 'atan2', 'pi'):
             self.imports.append('import math')
-            return self.make_func_code('math.ceil', *args)
+            if funcname == 'pi':
+                return CodeStr('math.pi')
+            funcname = {
+                'ceiling': 'ceil',
+                'atn2': 'atan2'
+            }.get(funcname, funcname)
+            funcname = 'math.' + funcname
+            return self.make_func_code(funcname, *args)
         if funcname == 'str':
             funcname = 'num_to_str'
         if funcname == 'file':
