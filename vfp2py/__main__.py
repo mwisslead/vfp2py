@@ -331,13 +331,14 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             if funcname == 'init' and assign_scope and not self.used_scope:
                 self.used_scope = True
                 funcname, parameters, funcbody = self.visit(funcdef)
+            parameters = [CodeStr('self')] + parameters
             if '.' in funcname:
                 newfuncname = funcname.replace('.', '_')
                 assignments.append(CodeStr('def {}({}):'.format(newfuncname, ', '.join(parameters))))
                 assignments.append(funcbody)
                 assignments.append(CodeStr('self.{} = {}'.format(funcname, newfuncname)))
             else:
-                funcs.update({funcname: [[CodeStr('self')] + parameters, funcbody, funcdef.start.line]})
+                funcs.update({funcname: [parameters, funcbody, funcdef.start.line]})
 
         if assignments and 'init' not in funcs:
             funcs['init'] = [[CodeStr('self')], [], float('inf')]
