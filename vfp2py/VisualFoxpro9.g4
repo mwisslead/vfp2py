@@ -50,13 +50,12 @@ classDefStart
  ;
 
 classDef
- : classDefStart classDefStmt* ENDDEFINE lineEnd
+ : classDefStart classDefProperty* (funcDef (funcDef | lineComment)*)* ENDDEFINE lineEnd
  ;
 
-classDefStmt
+classDefProperty
  : ADD OBJECT identifier AS idAttr (WITH idAttr '=' expr (',' idAttr '=' expr)*)? NL #classDefAddObject
  | assign NL #classDefAssign
- | funcDef #classDefFuncDef
  | lineComment #classDefLineComment
  ;
 

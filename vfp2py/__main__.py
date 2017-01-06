@@ -310,40 +310,55 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         return retval
 
     def visitClassDef(self, ctx):
-        classname, supername = self.visit(ctx.classDefStart())
-        retval = [CodeStr('class {}({}):'.format(classname, supername))]
         assignments = []
-        funcs = OrderedDict({'init': [[CodeStr('self')], [CodeStr('vfpfunc.pushscope()'), CodeStr('vfpfunc.popscope()')]]})
-        for stmt in ctx.classDefStmt():
-            if isinstance(stmt, VisualFoxpro9Parser.ClassDefAssignContext):
-                assignments += self.visit(stmt)
-            elif isinstance(stmt, VisualFoxpro9Parser.ClassDefAddObjectContext):
-                assignments += self.visit(stmt)
-            elif isinstance(stmt, VisualFoxpro9Parser.ClassDefLineCommentContext):
-                assignment = self.visit(stmt)
-                if assignment:
-                    assignments.append(assignment)
+        self.used_scope = False
+        for stmt in ctx.classDefProperty():
+            assignment = self.visit(stmt)
+            if isinstance(stmt, VisualFoxpro9Parser.ClassDefLineCommentContext) and assignment:
+                assignments.append(assignment)
             else:
-                self.used_scope = False
-                funcname, parameters, funcbody = self.visit(stmt)
-                if funcname == 'init':
-                    self.used_scope = True
-                    funcname, parameters, funcbody = self.visit(stmt)
-                if '.' in funcname:
-                    newfuncname = funcname.replace('.', '_')
-                    assignments.append(CodeStr('def {}({}):'.format(newfuncname, ', '.join(parameters))))
-                    assignments.append(funcbody)
-                    assignments.append(CodeStr('self.{} = {}'.format(funcname, newfuncname)))
-                else:
-                    funcs.update({funcname: [[CodeStr('self')] + parameters, funcbody]})
+                assignments += assignment
+        assign_scope = self.used_scope
+
+        comments = []
+        for comment in ctx.lineComment():
+            comments.append([self.visit(comment), comment.start.line])
+
+        funcs = OrderedDict()
+        for funcdef in ctx.funcDef():
+            self.used_scope = False
+            funcname, parameters, funcbody = self.visit(funcdef)
+            if funcname == 'init' and assign_scope and not self.used_scope:
+                self.used_scope = True
+                funcname, parameters, funcbody = self.visit(funcdef)
+            if '.' in funcname:
+                newfuncname = funcname.replace('.', '_')
+                assignments.append(CodeStr('def {}({}):'.format(newfuncname, ', '.join(parameters))))
+                assignments.append(funcbody)
+                assignments.append(CodeStr('self.{} = {}'.format(funcname, newfuncname)))
+            else:
+                funcs.update({funcname: [[CodeStr('self')] + parameters, funcbody, funcdef.start.line]})
+
+        if assignments and 'init' not in funcs:
+            funcs['init'] = [[CodeStr('self')], [], float('inf')]
 
         funcbody = funcs['init'][1]
-        funcs['init'][1] = [funcbody[0]] + assignments + funcbody[1:]
+        if funcbody:
+            funcs['init'][1] = [funcbody[0]] + assignments + funcbody[1:]
+        else:
+            self.used_scope = assign_scope
+            funcs['init'][1] = self.modify_func_body(assignments)
 
+        classname, supername = self.visit(ctx.classDefStart())
+        retval = [CodeStr('class {}({}):'.format(classname, supername))]
         for funcname in funcs:
-            parameters, funcbody = funcs[funcname]
-            self.imports.append('from vfp2py import vfpfunc')
+            parameters, funcbody, line_number = funcs[funcname]
+            while comments and comments[0][1] < line_number:
+                retval.append([comments.pop(0)[0]])
             retval.append([CodeStr('def {}({}):'.format(funcname, ', '.join([str(repr(p)) + '=False' for p in parameters]))), funcbody])
+        while comments:
+            retval.append([comments.pop(0)[0]])
+
         return retval
 
     def visitClassDefStart(self, ctx):
@@ -362,12 +377,16 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         self.enable_scope(False)
         args1 = self.visit(ctx.assign())
         self.enable_scope(True)
+        used_scope = self.used_scope
         args2 = self.visit(ctx.assign())
         args = []
         for arg1, arg2 in zip(args1, args2):
             ident = arg1[:arg1.find(' = ')]
             value = arg2[arg2.find(' = '):]
+            if 'vfpfunc.variable' in value or 'vfpfunc.function' in value:
+                used_scope = True
             args.append(ident + value)
+        self.used_scope = used_scope
         return [CodeStr('self.' + arg) for arg in args]
 
     def visitClassDefAddObject(self, ctx):
@@ -527,6 +546,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             value = self.visit(ctx.arrayIndex())
             kwargs = {'public': True} if ctx.PUBLIC() else {}
             name = self.visit(ctx.identifier())
+            self.used_scope = True
             return self.make_func_code(func, *([str(name)] + value), **kwargs)
         else:
             self.enable_scope(False)
@@ -646,7 +666,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
                 'padl': 'rjust',
                 'padc': 'center',
             }.get(funcname, funcname)
-            funcname = '{}.{}'.format(args[0], funcname)
+            funcname = '{}.{}'.format(repr(args[0]), funcname)
             return self.make_func_code(funcname, *args[1:])
         if funcname == 'strtran':
             args = args[:6]

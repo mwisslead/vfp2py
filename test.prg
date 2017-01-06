@@ -193,12 +193,13 @@ DEFINE CLASS test as custom
    x = 3 && x is a thing in this class
    procedure init
       parameters initx, inity
-      x = initx
+      this.x = initx
 
    function athing(test)
       NODEFAULT
       return this.x
    endfunc
+   && comment
 ENDDEFINE
 
 DEFINE CLASS test2 as form
