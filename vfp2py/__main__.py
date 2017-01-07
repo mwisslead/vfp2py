@@ -2,6 +2,7 @@ from __future__ import print_function
 
 import sys
 import os
+import ntpath
 import time
 import datetime
 import re
@@ -1444,7 +1445,7 @@ def find_file_ignore_case(filename, directories):
                 return os.path.join(directory, testfile)
 
 def memo_filename(filename, ext):
-    directory = os.path.dirname(filename)
+    directory = os.path.dirname(filename) or '.'
     basename = os.path.basename(filename)
     memofile = os.path.splitext(basename)[0] + '.' + ext
     return find_file_ignore_case(memofile, [directory])
@@ -1528,6 +1529,45 @@ def convert_scx_to_vfp_code(scxfile):
     code = re.sub(r'(\n\s*)+\n+', '\n\n', code)
     return code
 
+def find_full_path(pathname, start_directory):
+    name_parts = ntpath.split(pathname)
+    while ntpath.split(name_parts[0])[1]:
+        name_parts = ntpath.split(name_parts[0]) + name_parts[1:]
+    pathname = start_directory
+    for part in name_parts:
+        if part in ('..', '.', ''):
+            pathname = os.path.abspath(os.path.join(pathname, part))
+            continue
+        next_part = find_file_ignore_case(part, [pathname])
+        if next_part is None:
+            badind = name_parts.index(part)
+            return os.path.join(pathname, *name_parts[badind:]), True
+        pathname = next_part
+    return pathname, False
+
+def read_vfp_project(pjxfile):
+    directory = os.path.dirname(pjxfile)
+    with tempfile.NamedTemporaryFile() as tmpfile:
+        pass
+    tmpfile = tmpfile.name
+    dbffile = copy_obscured_dbf(pjxfile, 'pjt', tmpfile)
+
+    table = dbf.Table(dbffile)
+    table.open()
+
+    files = {}
+    main_file = ''
+    for record in table[1:]:
+        name, failed = find_full_path(record.name.rstrip('\x00'), directory)
+        if failed:
+            files[name] = None
+        else:
+            files[os.path.basename(name).lower()] = name
+        if record.mainprog:
+            main_file = os.path.basename(name).lower()
+
+    return files, main_file
+
 def parse_args(argv=None):
     parser = argparse.ArgumentParser(description='Tool for rewriting Foxpro code in Python')
     parser.add_argument("infile", help="file to convert", type=str)
@@ -1537,7 +1577,10 @@ def parse_args(argv=None):
 
 def convert_file(infile):
     tic = Tic()
-    if infile.lower().endswith('.scx'):
+    if infile.lower().endswith('.pjx'):
+        project_files, main_file = read_vfp_project(infile)
+        tokens = preprocess_file(project_files[main_file]).tokens
+    elif infile.lower().endswith('.scx'):
         data = convert_scx_to_vfp_code(infile)
         tokens = preprocess_code(data).tokens
     else:
