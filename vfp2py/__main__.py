@@ -516,6 +516,10 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         self.enable_scope(False)
         loopvar = self.visit(ctx.idAttr())
         self.enable_scope(True)
+        self.scope[loopvar] = False
+        if ctx.EACH():
+            iterator = self.visit(ctx.expr(0))
+            return self.add_args_to_code('for {} in {}:', (loopvar, iterator))
         loop_start = self.to_int(self.visit(ctx.loopStart))
         loop_stop = self.to_int(self.visit(ctx.loopStop)) + 1
         if ctx.loopStep:
