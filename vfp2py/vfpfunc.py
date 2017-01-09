@@ -46,6 +46,8 @@ class Array(object):
     def _get_index(self, inds):
         if not isinstance(inds, tuple):
             inds = (inds, 1)
+        if len(inds) < 2:
+            inds = (inds[0], 1)
         dim1, dim2 = inds
         ind = self.dim1*(dim2-1) + dim1 - 1
         if ind < 0:
@@ -68,6 +70,9 @@ class Array(object):
         if arr_attr == 2 and not self.columns:
             return 0
         return int(len(self)/{0: 1, 1: len(self)/self.dim1, 2: self.dim1}[arr_attr])
+
+    def __iter__(self):
+        return (d for d in self.data)
 
 
 class _Database_Context(object):
