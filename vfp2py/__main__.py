@@ -1572,6 +1572,48 @@ def read_vfp_project(pjxfile):
 
     return files, main_file
 
+def convert_project(infile, directory):
+    project_files, main_file = read_vfp_project(infile)
+    global SEARCH_PATH
+    search = SEARCH_PATH
+    search += [project_files[name] for name in project_files]
+    if not os.path.isdir(directory):
+        os.mkdir(directory)
+    directory = os.path.join(directory, os.path.basename(directory))
+    if not os.path.isdir(directory):
+        os.mkdir(directory)
+    for name in project_files:
+        outfile = os.path.join(directory, os.path.splitext(name)[0] + '.py')
+        args = [project_files[name], outfile] + search
+        try:
+            main(args)
+        except:
+            print('failed to convert {}'.format(name))
+    if 'config.fpw' in project_files:
+        with open(project_files['config.fpw']) as fid:
+            import ConfigParser
+            import io
+            config_data = io.StringIO('[config]\r\n' + fid.read().decode('utf-8'))
+        config = ConfigParser.RawConfigParser()
+        config.readfp(config_data)
+        config = {x[0]: x[1] for x in config.items('config')}
+    else:
+        config = {}
+    name = os.path.splitext(main_file)[0]
+    with open(os.path.join(directory, '__main__.py'), 'wb') as fid:
+        import pprint
+        pp = pprint.PrettyPrinter(indent=4)
+        print('import {}'.format(name, name), file=fid)
+        print(file=fid)
+        print('config = {}'.format(pp.pformat(config)), file=fid)
+        print(file=fid)
+        print('{}._program_main()'.format(name), file=fid)
+    with open(os.path.join(directory, '__init__.py'), 'wb') as fid:
+        pass
+    directory = os.path.dirname(directory)
+    with open(os.path.join(directory, 'setup.py'), 'wb') as fid:
+        pass
+
 def parse_args(argv=None):
     parser = argparse.ArgumentParser(description='Tool for rewriting Foxpro code in Python')
     parser.add_argument("infile", help="file to convert", type=str)
@@ -1579,16 +1621,40 @@ def parse_args(argv=None):
     parser.add_argument("search", help="directories to search for included files", type=str, nargs='*')
     return parser.parse_args(argv)
 
-def convert_file(infile):
+def convert_file(infile, outfile):
     tic = Tic()
     if infile.lower().endswith('.pjx'):
-        project_files, main_file = read_vfp_project(infile)
-        tokens = preprocess_file(project_files[main_file]).tokens
+        convert_project(infile, outfile)
+        return
+    elif infile.lower().endswith('.fpw'):
+        return
+    elif infile.lower().endswith('.h'):
+        return
     elif infile.lower().endswith('.scx'):
         data = convert_scx_to_vfp_code(infile)
         tokens = preprocess_code(data).tokens
-    else:
+    elif infile.lower().endswith('.vcx'):
+        print('.vcx files not currently supported')
+        return
+    elif infile.lower().endswith('.frx'):
+        print('.frx files not currently supported')
+        return
+    elif infile.lower().endswith('.mnx'):
+        print('.mnx files not currently supported')
+        return
+    elif infile.lower().endswith('.fll'):
+        print('.fll files not currently supported')
+        return
+    elif infile.lower().endswith('.app'):
+        print('.app can\'t be converted')
+        return
+    elif infile.lower().endswith('.prg'):
         tokens = preprocess_file(infile).tokens
+    else:
+        directory = os.path.dirname(outfile)
+        name = os.path.basename(infile).lower()
+        shutil.copy(infile, os.path.join(directory, name))
+        return
     print(tic.toc())
     tic.tic()
     data = ''.join(token.text.replace('\r', '') for token in tokens)
@@ -1606,16 +1672,16 @@ def convert_file(infile):
     print(tic.toc())
     visitor = PythonConvertVisitor(os.path.splitext(os.path.basename(infile))[0])
     output_tree = visitor.visit(tree)
-    return add_indents(output_tree, 0)
+    output = add_indents(output_tree, 0)
+    with open(outfile, 'wb') as fid:
+        fid.write(output)
+    autopep8.main([__file__, '--in-place', outfile])
 
 def main(argv=None):
     args = parse_args(argv)
     global SEARCH_PATH
-    SEARCH_PATH += args.search
-    output = convert_file(args.infile)
-    with open(args.outfile, 'wb') as fid:
-        fid.write(output)
-    autopep8.main([__file__, '--in-place', args.outfile])
+    SEARCH_PATH = args.search
+    convert_file(args.infile, args.outfile)
 
 if __name__ == '__main__':
     try:
