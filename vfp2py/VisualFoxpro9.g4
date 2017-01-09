@@ -293,7 +293,7 @@ setCmd
  | setword=DATE TO? identifier
  | setword=DELETED (ON | OFF)
  | setword=EXACT (ON | OFF)
- | setword=FILTER TO expr (IN specialExpr)?
+ | setword=FILTER TO (specialExpr (IN specialExpr)?)?
  | setword=LIBRARY TO (specialExpr ADDITIVE?)
  | setword=MEMOWIDTH TO expr
  | setword=NEAR (ON | OFF)

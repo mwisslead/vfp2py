@@ -1376,6 +1376,9 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         elif setword == 'library':
             kwargs = {'additive': True} if ctx.ADDITIVE() else {}
             return self.make_func_code('vfpfunc.function.set_library', *[self.visit(expr) for expr in ctx.specialExpr()], **kwargs)
+        elif setword == 'filter':
+            args = [self.visit(expr) for expr in ctx.specialExpr()]
+            return self.make_func_code('vfpfunc.set', setword, *args)
 
     def visitReturnStmt(self, ctx):
         if not ctx.expr():
