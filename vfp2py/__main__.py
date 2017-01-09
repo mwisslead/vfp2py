@@ -701,6 +701,8 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         if funcname == 'substr':
             args[1:] = [self.to_int(arg) for arg in args[1:]]
             args[1] -= 1
+            if len(args) < 3:
+                return self.add_args_to_code('{}[{}:]', args)
             if args[2] == 1:
                 return self.add_args_to_code('{}[{}]', args[:2])
             args[2] += args[1]
