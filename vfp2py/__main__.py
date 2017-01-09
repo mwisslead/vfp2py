@@ -282,8 +282,10 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
     def visitLine(self, ctx):
         retval = self.visitChildren(ctx)
         if retval is None:
-            print(ctx.getText())
-            retval = []
+            start, stop = ctx.getSourceInterval()
+            lines = ''.join(t.text for t in ctx.parser._input.tokens[start:stop+1])
+            print(lines, file=sys.stderr)
+            retval = [CodeStr('#FIX ME: {}'.format(line)) for line in lines.split('\n') if line]
         return retval if isinstance(retval, list) else [retval]
 
     andfix = re.compile('^&&')
