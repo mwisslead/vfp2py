@@ -1383,6 +1383,13 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         elif setword == 'filter':
             args = [self.visit(expr) for expr in ctx.specialExpr()]
             return self.make_func_code('vfpfunc.set', setword, *args)
+        elif setword == 'order':
+            order = self.visit(ctx.specialExpr(0))
+            of_expr = self.visit(ctx.ofExpr) if ctx.ofExpr else None
+            in_expr = self.visit(ctx.inExpr) if ctx.inExpr else None
+            kwargs = {'descending': True} if ctx.DESCENDING() else {}
+            kwargs.update({'tag': True} if ctx.TAG() else {})
+            return self.make_func_code('vfpfunc.set', setword, order, of_expr, in_expr, **kwargs)
 
     def visitReturnStmt(self, ctx):
         if not ctx.expr():

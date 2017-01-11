@@ -298,7 +298,7 @@ setCmd
  | setword=MEMOWIDTH TO expr
  | setword=NEAR (ON | OFF)
  | setword=NOTIFY CURSOR? (ON | OFF)
- | setword=ORDER TO (specialExpr | TAG? specialExpr (OF specialExpr)? (IN specialExpr)? (ASCENDING | DESCENDING)?)?
+ | setword=ORDER TO (specialExpr | TAG? specialExpr (OF ofExpr=specialExpr)? (IN inExpr=specialExpr)? (ASCENDING | DESCENDING)?)?
  | setword=PRINTER (ON PROMPT? | OFF | TO (specialExpr ADDITIVE? | DEFAULT | NAME specialExpr)?)
  | setword=PROCEDURE TO specialExpr (',' specialExpr)* ADDITIVE?
  | setword=REFRESH TO expr (',' expr)?
