@@ -606,6 +606,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
                        VisualFoxpro9Lexer.LESSTHAN: '<',
                        VisualFoxpro9Lexer.LTEQ: '<=',
                        VisualFoxpro9Lexer.NOTEQUALS: '!=',
+                       VisualFoxpro9Lexer.HASH: '!=',
                        VisualFoxpro9Lexer.EQUALS: '==',
                        VisualFoxpro9Lexer.DOUBLEEQUALS: '==',
                        VisualFoxpro9Lexer.DOLLAR: 'in',
