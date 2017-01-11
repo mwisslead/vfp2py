@@ -640,6 +640,8 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             else:
                 args[1] = self.to_int(args[1])
                 return self.add_args_to_code('{}.alen({})', args)
+        if funcname == 'empty':
+            return self.add_args_to_code('(not {} if {} is not None else False)', args + args)
         if funcname in ('repli', 'replicate'):
             args[1:] = [self.to_int(arg) for arg in args[1:]]
             return self.add_args_to_code('({} * {})', args)
