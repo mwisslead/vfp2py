@@ -563,7 +563,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             if ctx.LOCAL():
                 for name in names:
                     self.scope[name] = False
-                return CodeStr('#Added {} to scope'.format(', '.join(names)))
+                return CodeStr(' = '.join([repr(arg) for arg in (names + [False])]) + ' #LOCAL Declaration')
             self.used_scope = True
             func = 'vfpfunc.variable.add_public' if ctx.PUBLIC() else 'vfpfunc.variable.add_private'
             return self.make_func_code(func, *[str(name) for name in names])
