@@ -88,6 +88,7 @@ class PreprocessVisitor(VisualFoxpro9Visitor):
 
     def visitPreprocessorInclude(self, ctx):
         visitor = PythonConvertVisitor('')
+        visitor.scope = {}
         filename = visitor.visit(ctx.specialExpr())
         if isinstance(filename, CodeStr):
             filename = eval(filename)
@@ -99,6 +100,7 @@ class PreprocessVisitor(VisualFoxpro9Visitor):
     def visitPreprocessorIf(self, ctx):
         if ctx.IF():
             visitor = PythonConvertVisitor('')
+            visitor.scope = {}
             ifexpr = eval(repr(visitor.visit(ctx.expr())))
         else:
             name = ctx.identifier().getText().lower()
