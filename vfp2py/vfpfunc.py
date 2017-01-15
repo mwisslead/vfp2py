@@ -467,6 +467,10 @@ def vfp_sys(funcnum, *args):
 def val(string):
     return float(string)
 
+def version(ver_type=4):
+    if ver_type == 5:
+        return 900
+
 def wait(msg, to=None, window=[-1, -1], nowait=False, noclear=False, timeout=-1):
     pass
 
