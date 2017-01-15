@@ -1,2 +1,0 @@
-x = CHR(10)
-#DEFINE _SCREEN 			   VFP_SCREEN
