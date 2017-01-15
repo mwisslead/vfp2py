@@ -1041,7 +1041,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
     def visitReadEvent(self, ctx):
         return CodeStr('vfpfunc.read_events()')
 
-    def on_error_shutdown(self, ctx, funcname):
+    def on_event(self, ctx, func_prefix):
         if ctx.cmd():
             func = self.visit(ctx.cmd())
             if isinstance(func, list) and len(func) == 1:
@@ -1049,13 +1049,13 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             func = CodeStr('lambda: ' + repr(func))
         else:
             func = None
-        return [CodeStr('vfpfunc.shutdown_func = ' + repr(func))]
+        return [CodeStr(func_prefix + ' = ' + repr(func))]
 
     def visitOnError(self, ctx):
-        return self.on_error_shutdown(ctx, 'vfpfunc.error_func')
+        return self.on_event(ctx, 'vfpfunc.error_func')
 
     def visitOnShutdown(self, ctx):
-        return self.on_error_shutdown(ctx, 'vfpfunc.shutdown_func')
+        return self.on_event(ctx, 'vfpfunc.shutdown_func')
 
     def visitIdentifier(self, ctx):
         altermap = {
@@ -1155,6 +1155,10 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         timeout = repr(self.visit(ctx.timeout)) if ctx.TIMEOUT() else -1
         code = 'vfpfunc.wait({}, to={}, window={}, nowait={}, noclear={}, timeout={})'
         return CodeStr(code.format(message, to_expr, window, nowait, noclear, timeout))
+
+    def visitOnKey(self, ctx):
+        keys = [repr(str(self.visit(i))) for i in ctx.identifier()]
+        return self.on_event(ctx, 'vfpfunc.on_key[{}]'.format(', '.join(keys)))
 
     def visitCreateTable(self, ctx):
         if ctx.TABLE():
