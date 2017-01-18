@@ -724,6 +724,19 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             }.get(funcname, funcname)
             funcname = 'math.' + funcname
             return self.make_func_code(funcname, *args)
+        if funcname in ('bitand', 'bitclear', 'bitlshift', 'bitnot', 'bitor', 'bitrshift', 'bitset', 'bittest', 'bitxor'):
+            op = {
+                'bitand': '({} & {})',
+                'bitclear': '({} & ((1 << {}) ^ 0xffffffff))',
+                'bitlshift': '({} << {})',
+                'bitnot': '~{}',
+                'bitor': '({} | {})',
+                'bitrshift': '({} >> {})',
+                'bitset': '({} | (1 << {}))',
+                'bittest': '(({} & (1 << {})) > 0)',
+                'bitxor': '({} ^ {})'
+            }
+            return self.add_args_to_code(op[funcname], [self.to_int(arg) for arg in args])
         if funcname == 'str':
             funcname = 'num_to_str'
         if funcname == 'file':
