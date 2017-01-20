@@ -336,7 +336,7 @@ argReplace
 
 expr
  : '(' expr ')' #subExpr
- | '-' expr #unaryNegation
+ | op=('+'|'-') expr #unaryNegation
  | ('!'|NOT) expr #booleanNegation
  | expr ('*' '*'|'^') expr #power
  | expr op=('*'|'/') expr #multiplication
