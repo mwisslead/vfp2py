@@ -56,6 +56,9 @@ class CodeStr(unicode):
     def __add__(self, val):
         return CodeStr('{} + {}'.format(self, repr(val)))
 
+    def __sub__(self, val):
+        return CodeStr('{} - {}'.format(self, repr(val)))
+
 class PreprocessVisitor(VisualFoxpro9Visitor):
     def __init__(self):
         self.tokens = None
