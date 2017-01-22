@@ -252,22 +252,6 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
                 funcname, parameters, funcbody = self.visit(funcDef)
                 funcdefs[funcname] = [parameters, funcbody]
 
-        if ctx.line():
-            self.used_scope = False
-            params = self.visit(ctx.parameterDef()) if ctx.parameterDef() else []
-            self.new_scope()
-            self.scope.update({key: False for key in params})
-            line_structure = []
-            for line in ctx.line():
-                line_structure += self.visit(line)
-            line_structure = line_structure or [CodeStr('pass')]
-            line_structure = self.modify_func_body(line_structure)
-            self.delete_scope()
-        else:
-            params = []
-            line_structure = [CodeStr('pass')]
-        funcdefs['_program_main'] = [params, line_structure]
-
         self.imports = sorted(set(self.imports), key=import_key)
         imports = []
         for n, module in enumerate(self.imports):
@@ -1703,7 +1687,7 @@ def convert_file(infile, outfile):
         return
     print(tic.toc())
     tic.tic()
-    data = ''.join(token.text.replace('\r', '') for token in tokens)
+    data = 'procedure _program_main\n' + ''.join(token.text.replace('\r', '') for token in tokens)
     with tempfile.NamedTemporaryFile(suffix='.prg') as fid:
         pass
     with open(fid.name, 'wb') as fid:
