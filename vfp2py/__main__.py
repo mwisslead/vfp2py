@@ -241,16 +241,14 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
 
         self.imports = []
         defs = []
-        if ctx.classDef():
-            for classDef in get_list(ctx.classDef()):
-                defs += self.visit(classDef)
 
-        funcdefs = OrderedDict()
-        if ctx.funcDef():
-            for funcDef in get_list(ctx.funcDef()):
+        for child in ctx.children:
+            if isinstance(child, VisualFoxpro9Parser.FuncDefContext):
                 self.used_scope = False
-                funcname, parameters, funcbody = self.visit(funcDef)
-                funcdefs[funcname] = [parameters, funcbody]
+                funcname, parameters, funcbody = self.visit(child)
+                defs += [CodeStr('def {}({}):'.format(funcname, ', '.join([str(repr(p)) + '=False' for p in parameters]))), funcbody]
+            else:
+                defs += self.visit(child)
 
         self.imports = sorted(set(self.imports), key=import_key)
         imports = []
@@ -258,11 +256,6 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             if n != 0 and module not in STDLIBS:
                 imports.append('')
             imports.append(module)
-
-        for funcname in funcdefs:
-            parameters, funcbody = funcdefs[funcname]
-            self.imports.append('from vfp2py import vfpfunc')
-            defs += [CodeStr('def {}({}):'.format(funcname, ', '.join([str(repr(p)) + '=False' for p in parameters]))), funcbody]
 
         imports.insert(0, '')
         imports.insert(0, 'from __future__ import division, print_function')
