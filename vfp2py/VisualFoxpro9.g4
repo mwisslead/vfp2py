@@ -216,7 +216,7 @@ otherCmds
  | INDEX ON specialExpr (TAG | TO) specialExpr COMPACT? (ASCENDING | DESCENDING)? ( UNIQUE | CANDIDATE)? ADDITIVE? #indexOn
  | COUNT scopeClause? ((FOR expr) | (WHILE expr) | (TO expr))* NOOPTIMIZE? #count
  | SUM scopeClause? expr (FOR expr | TO idAttr | NOOPTIMIZE)+ #sum
- | DELETE scopeClause? (FOR forExpr=expr)? (WHILE whileExpr=expr)? (IN inExpr=expr)? NOOPTIMIZE? #deleteRecord
+ | (RECALL | DELETE) scopeClause? (FOR forExpr=expr)? (WHILE whileExpr=expr)? (IN inExpr=expr)? NOOPTIMIZE? #deleteRecord
  | APPEND (BLANK? (IN idAttr)? NOMENU? | FROM specialExpr) #append
  | SKIPKW expr (IN expr)? #skipRecord
  | PACK (MEMO | DBF)? tableName=specialExpr? (IN workArea=specialExpr)? #pack
@@ -518,6 +518,7 @@ PRIVATE : P R I V A T E;
 LOCAL : L O C A L;
 ARRAY : A R R A Y;
 DELETE : D E L E T E;
+RECALL : R E C A L L;
 FILE : F I L E;
 SET : S E T;
 RELEASE : R E L E A S E;

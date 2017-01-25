@@ -1271,7 +1271,9 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             kwargs['for_cond'] = self.add_args_to_code('lambda: {}', [self.visit(ctx.forExpr)])
         if ctx.whileExpr:
             kwargs['while_cond'] = self.add_args_to_code('lambda: {}', [self.visit(ctx.whileExpr)])
-        return self.make_func_code('vfpfunc.db.delete_record', name, scopetype, num, **kwargs)
+        if ctx.RECALL():
+            kwargs['recall'] = True
+        return self.make_func_code('vfpfunc.db.delete_record', scopetype, num, **kwargs)
 
     def visitPack(self, ctx):
         if ctx.DBF():

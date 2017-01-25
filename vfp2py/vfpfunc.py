@@ -151,7 +151,7 @@ class _Database_Context(object):
         table_info = self._get_table_info(tablename)
         table_info['recno'] += int(skipnum)
 
-    def delete_record(self, tablename, scope, num, for_cond=None, while_cond=None):
+    def delete_record(self, tablename, scope, num, for_cond=None, while_cond=None, recall=False):
         save_current_table = self.current_table
         if not for_cond:
             for_cond = lambda: True
@@ -164,11 +164,16 @@ class _Database_Context(object):
         reccount = len(table)
         if scope.lower() == 'rest':
             records = table[recno-1:reccount]
+        else:
+            records = table[recno-1:recno-1+num]
         for record in records:
             if not while_cond():
                 break
             if for_cond():
-                dbf.delete(record)
+                if recall:
+                    dbf.delete(record)
+                else:
+                    dbf.undelete(record)
             table_info['recno'] += 1
         table_info['recno'] = recno
         self.current_table = save_current_table
