@@ -181,7 +181,7 @@ cmd
  ;
 
 release
- : RELEASE (ALL | vartype=(PROCEDURE|CLASSLIB)? args)
+ : RELEASE (ALL | vartype=(PROCEDURE|CLASSLIB)? args | POPUPS args EXTENDED?)
  ;
 
 otherCmds
@@ -641,6 +641,8 @@ MARK : M A R K;
 MESSAGE : M E S S A G E;
 ACTIVATE : A C T I V A T E;
 POPUP : P O P U P;
+POPUPS : P O P U P S;
+EXTENDED : E X T E N D E D;
 SHADOW : S H A D O W;
 MARGIN : M A R G I N;
 RELATIVE : R E L A T I V E;

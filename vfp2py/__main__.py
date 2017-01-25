@@ -1129,6 +1129,11 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         if args is not None:
             if ctx.PROCEDURE():
                 retval.append(self.make_func_code('vfpfunc.function.release_procedure', *args))
+            if ctx.POPUPS():
+                kwargs = {}
+                if ctx.EXTENDED():
+                    kwargs['extended'] = True
+                retval.append(self.make_func_code('vfpfunc.function.release_popups', *args, **kwargs))
             else:
                 thisargs = [arg for arg in args if arg in ('this', 'thisform')]
                 args = [arg for arg in args if arg not in ('this', 'thisform')]

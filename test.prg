@@ -154,6 +154,8 @@ ENDIF
 RELEASE ALL
 RELEASE test1
 RELEASE test1, test2, test3
+RELEASE POPUPS popup1
+RELEASE POPUPS popup1 EXTENDED
 
 FUNCTION test
    parameters a, b
