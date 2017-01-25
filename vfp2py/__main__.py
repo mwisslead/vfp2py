@@ -1625,7 +1625,7 @@ def convert_project(infile, directory):
     if not os.path.isdir(directory):
         os.mkdir(directory)
     for name in project_files:
-        outfile = os.path.join(directory, os.path.splitext(name)[0] + '.py')
+        outfile = directory
         args = [project_files[name], outfile] + search
         try:
             main(args)
@@ -1673,6 +1673,9 @@ def convert_file(infile, outfile):
     elif infile.lower().endswith('.h'):
         return
     elif infile.lower().endswith('.scx'):
+        if os.path.isdir(outfile):
+            name = (os.path.splitext(os.path.basename(infile).lower())[0] + '.py').lower()
+            outfile = os.path.join(outfile, name)
         data = convert_scx_to_vfp_code(infile)
         tokens = preprocess_code(data).tokens
     elif infile.lower().endswith('.vcx'):
@@ -1691,11 +1694,14 @@ def convert_file(infile, outfile):
         print('.app can\'t be converted')
         return
     elif infile.lower().endswith('.prg'):
+        if os.path.isdir(outfile):
+            name = (os.path.splitext(os.path.basename(infile).lower())[0] + '.py').lower()
+            outfile = os.path.join(outfile, name)
         tokens = preprocess_file(infile).tokens
     else:
-        directory = os.path.dirname(outfile)
-        name = os.path.basename(infile).lower()
-        shutil.copy(infile, os.path.join(directory, name))
+        if os.path.isdir(outfile):
+            name = os.path.basename(infile).lower()
+            shutil.copy(infile, os.path.join(outfile, name))
         return
     print(tic.toc())
     tic.tic()
