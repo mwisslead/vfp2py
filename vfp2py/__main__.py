@@ -12,6 +12,9 @@ import shutil
 
 import argparse
 
+import random
+import string
+
 import dbf
 
 import antlr4
@@ -38,6 +41,9 @@ def which(filename):
         if os.path.isfile(testpath):
             return testpath
     return filename
+
+def random_variable(length=10):
+    return '_' + ''.join(random.choice(string.ascii_lowercase + string.digits) for _ in range(length))
 
 class Tic():
     def __init__(self):
@@ -526,6 +532,17 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         lines = self.visit(ctx.lines())
         self.withid = ''
         return lines
+
+    def visitScanStmt(self, ctx):
+        lines = self.visit(ctx.lines())
+        lines.append(self.make_func_code('vfpfunc.db.skip', None, 1))
+        if ctx.FOR():
+            condition = self.visit(ctx.expr())
+            lines = [self.add_args_to_code('if not {}:', [condition]), [CodeStr('continue')]] + lines
+        save_variable_name = CodeStr(random_variable(length=10) + '_current_record')
+        save_recno = CodeStr('{} = {}'.format(save_variable_name, 'vfpfunc.db.recno()'))
+        return_recno = self.make_func_code('vfpfunc.db.goto', None, CodeStr(save_variable_name))
+        return [save_recno, CodeStr('while not vfpfunc.db.eof():'), lines, return_recno]
 
     def visitBreakLoop(self, ctx):
         return CodeStr('break')

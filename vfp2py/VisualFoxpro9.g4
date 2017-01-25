@@ -138,7 +138,7 @@ withStmt
  ;
 
 scanStmt
- : SCAN NL line* ENDSCAN
+ : SCAN (FOR expr)? NL lines ENDSCAN lineEnd
  ;
 
 breakLoop
