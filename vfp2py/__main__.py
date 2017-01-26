@@ -1432,6 +1432,18 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             kwargs.update({'tag': True} if ctx.TAG() else {})
             return self.make_func_code('vfpfunc.set', setword, order, of_expr, in_expr, **kwargs)
 
+    def visitShellRun(self, ctx):
+        if ctx.identifier():
+            pass
+        command = ''
+        for expr in ctx.specialExpr():
+            start, stop = expr.getSourceInterval()
+            tokens = ctx.parser._input.tokens[start:stop+1]
+            command += ''.join(tok.text for tok in tokens) + ' '
+        command = [t for t in command.split() if t]
+        self.imports.append('import subprocess')
+        return self.make_func_code('subprocess.call', command)
+
     def visitReturnStmt(self, ctx):
         if not ctx.expr():
             return [CodeStr('return')]

@@ -159,6 +159,8 @@ RELEASE test1, test2, test3
 RELEASE POPUPS popup1
 RELEASE POPUPS popup1 EXTENDED
 
+RUN /N2 ls -al
+
 FUNCTION test
    parameters a, b
    ?a, b
