@@ -203,7 +203,7 @@ otherCmds
  | ON SELECTION BAR NUMBER_LITERAL OF identifier cmd #onSelectionBar
  | ACTIVATE WINDOW (parameters | ALL) (IN (WINDOW? identifier | SCREEN))? (BOTTOM | TOP | SAME)? NOSHOW? #activateWindow
  | ACTIVATE MENU identifier NOWAIT? (PAD identifier)? #activateMenu
- | DEACTIVATE MENU (parameters | ALL) #deactivateMenu
+ | DEACTIVATE (MENU|POPUP) (ALL | parameters) #deactivate
 
  | ERROR expr #raiseError
  | THROW expr #throwError

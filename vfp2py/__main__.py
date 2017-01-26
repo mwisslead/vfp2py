@@ -1177,6 +1177,16 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         keys = [repr(str(self.visit(i))) for i in ctx.identifier()]
         return self.on_event(ctx, 'vfpfunc.on_key[{}]'.format(', '.join(keys)))
 
+    def visitDeactivate(self, ctx):
+        if ctx.MENU():
+            func = 'vfpfunc.deactivate_menu'
+        else:
+            func = 'vfpfunc.deactivate_popup'
+        self.enable_scope(False)
+        args = self.visit(ctx.parameters()) if not ctx.ALL() else []
+        self.enable_scope(True)
+        return self.make_func_code(func, *[str(arg) for arg in args])
+
     def visitCreateTable(self, ctx):
         if ctx.TABLE():
             func = 'vfpfunc.db.create_table'
