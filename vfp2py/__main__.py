@@ -1033,14 +1033,16 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
     def visitClearStmt(self, ctx):
         if ctx.ALL():
             return CodeStr('vfpfunc.clearall()')
-        if ctx.DLLS():
+        elif ctx.DLLS():
             return self.make_func_code('vfpfunc.cleardlls', *self.visit(ctx.args()))
-        if ctx.MACROS():
+        elif ctx.MACROS():
             return CodeStr('vfpfunc.clearmacros()')
-        if ctx.EVENTS():
+        elif ctx.EVENTS():
             return CodeStr('vfpfunc.clearevents()')
-        if ctx.PROGRAM():
+        elif ctx.PROGRAM():
             return CodeStr('vfpfunc.clearprogram()')
+        else:
+            return CodeStr('vfpfunc.clear()')
 
     def visitDllDeclare(self, ctx):
         self.enable_scope(False)

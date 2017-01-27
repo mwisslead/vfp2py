@@ -229,7 +229,7 @@ otherCmds
 
  | CLOSE ((DATABASES | INDEXES | TABLES) ALL? | ALL) #closeStmt
  | READ EVENTS #readEvent
- | CLEAR (ALL | DLLS args | MACROS | EVENTS | PROGRAM) #clearStmt
+ | CLEAR (ALL | DLLS args | MACROS | EVENTS | PROGRAM)? #clearStmt
  | REPORT FORM ('?' | specialExpr) (NOEJECT | TO PRINTER PROMPT? | NOCONSOLE)* #report
  | DECLARE returnType=datatype? identifier IN specialExpr (AS alias=identifier)? dllArgs? #dllDeclare
  | NODEFAULT #nodefault
