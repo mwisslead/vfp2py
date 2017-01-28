@@ -161,6 +161,10 @@ RELEASE POPUPS popup1 EXTENDED
 
 RUN /N2 ls -al
 
+local x
+?SIGN(x)
+release x
+
 FUNCTION test
    parameters a, b
    ?a, b
