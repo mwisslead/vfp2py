@@ -547,6 +547,9 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
     def visitBreakLoop(self, ctx):
         return CodeStr('break')
 
+    def visitContinueLoop(self, ctx):
+        return CodeStr('continue')
+
     def visitDeclaration(self, ctx):
         if ctx.ARRAY() or ctx.DIMENSION() or ctx.DEFINE():
             func = 'vfpfunc.array'
