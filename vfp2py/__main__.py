@@ -672,6 +672,8 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
                 return self.make_func_code('{}.{}'.format(args[0], 'strftime'), args[1])
         if funcname == 'iif' and len(args) == 3:
             return self.add_args_to_code('({} if {} else {})', [args[i] for i in (1, 0, 2)])
+        if funcname == 'nvl':
+            return self.add_args_to_code('({} or {})', args)
         if funcname == 'sign':
             return self.add_args_to_code('1 if {} > 0 else (-1 if {} < 0 else 0)', [args[0], args[0]])
         if funcname in ('alltrim', 'ltrim', 'rtrim', 'lower', 'upper', 'padr', 'padl', 'padc'):
