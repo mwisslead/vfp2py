@@ -11,7 +11,7 @@ def round_sig(x, sig):
     return round(x, sig-int(floor(log10(abs(x))))-1)
 
 def read_string(fid):
-    return fid.read(read_ushort(fid))
+    return fid.read(read_ushort(fid)).decode('utf-8')
 
 def read_int8(fid):
     digits = fid.read(1)[0]
@@ -38,9 +38,12 @@ def read_alias(fid):
 def read_field(fid):
     return 'field {}'.format(read_ushort(fid))
 
+def read_raw(fid, length):
+    return ' '.join('{:02x}'.format(d) for d in fid.read(length))
+
 COMMANDS = {
     #Commands are identified by a single byte as shown in the following list:
-    0x01: lambda fid, length: fid.read(length),
+    0x01: lambda fid, length: ['RAW CODE', read_raw(fid, length)],
     0x02: '?',
     0x03: '??',
     0x0C: 'CASE',
@@ -62,12 +65,13 @@ COMMANDS = {
     0x42: 'RETURN',
     0x45: 'SEEK',
     0x46: 'SELECT',
-    0x47: 'SET',
+    0x47: lambda fid, length: ['SET', SETCODES[fid.read(1)[0]]],
     0x48: 'SKIP',
     0x4A: 'STORE',
     0x51: 'USE',
     0x54: 'variable assignment',
     0x55: 'ENDPROC',
+    0x7C: 'DECLARE',
     0x84: 'FOR',
     0x85: 'ENDFOR',
     0x86: 'expression',
@@ -76,34 +80,57 @@ COMMANDS = {
     0xA3: 'add protected method',
     0xA6: 'WITH',
     0xA7: 'ENDWITH',
+    0xA8: 'ERROR',
     0xAC: 'NODEFAULT',
     0xAE: 'LOCAL',
     0xAF: 'LPARAMETERS',
-    0xB0: 'CD'
+    0xB0: 'CD',
+    0xB5: 'FOR EACH'
+}
+
+SETCODES = {
+    0x28: 'ORDER',
+    0x2B: 'PROCEDURE'
 }
 
 CODES = {
     #Functions are also identified by a single byte code. To deal with more than 255 functions, Microsoft added an escape code (0xEA) that provides another 255 function. This is enough to handle all functions available in FoxPro. Function codes are only used in expressions. The following list contains all regular functions
+    0x1A: lambda fid: read_func(fid, EXTENDED1),
+    0x20: 'CHR',
+    0x24: 'DATE',
+    0x25: 'DAY',
     0x30: 'FILE', 
+    0x34: 'FOUND',
     0x3E: 'LEN',
+    0x48: 'MONTH',
+    0x54: 'ROUND',
     0x5A: 'STR',
+    0x5D: 'SYS',
     0x62: 'TYPE',
+    0x66: 'UPPER',
+    0x69: 'YEAR',
     0x9B: 'ALLTRIM',
     0xAA: 'USED',
     0xB2: 'PADR',
-    0xEA: lambda fid: read_func(fid, EXTENDED),
+    0xBA: 'CURDIR',
+    0xC4: 'PARAMETERS',
+    0xEA: lambda fid: read_func(fid, EXTENDED2),
 
     #Clauses share the same value range as expressions and functions:
+    0x01: 'ADDITIVE',
     0x14: 'FORM',
     0x16: 'IN',
     0x28: 'TO',
     0x2B: 'WHILE',
     0x51: 'AS',
+    0xBE: 'PROCEDURE',
     0xD1: 'WITH',
     #Expressions are stored in inverse polish notation. A calculation like lnSum + 5 is stored as:
     #Expressions must be treated as a stream. The first byte identifies an expression element. However, depending on the type, multiple bytes follow. The following list contains expression elements. Expression codes share the same range of values as functions because both can be mxed:
+    0x00: 'NOP',
     0x06: '+',
     0x07: ',',
+    0x09: 'AND',
     0x0A: 'Not',
     0x0B: 'OR',
     0x0D: '<',
@@ -113,10 +140,13 @@ CODES = {
     0x11: '>=',
     0x12: '>',
     0x14: '==',
+    0x2d: '.F.',
     0x43: 'Parameter Mark',
     0x61: '.T.',
     0xD9: read_string,
+    0xE4: '.NULL.',
     0xE9: read_int32,
+    0xF1: lambda fid: ' '.join('{:02x}'.format(d) for d in (b'\xf1' + fid.read(2))),
     0xF4: read_alias,
     0xF6: read_field,
     0xF7: read_name,
@@ -129,11 +159,21 @@ CODES = {
     0xFE: 'End of Expr'
 }
 
-EXTENDED = {
+EXTENDED1 = {
+    0x04: 'BINDEVENT',
+}
+
+EXTENDED2 = {
     #This list contains all those functions that are available through the 0xEA (extended function) code:
     0x4E: 'CREATEOBJECT',
     0x5A: 'ISBLANK',
+    0x68: 'PEMSTATUS',
     0x78: 'MESSAGEBOX',
+    0x83: 'HOUR',
+    0x84: 'MINUTE',
+    0x85: 'SEC',
+    0x86: 'DATETIME',
+    0xD9: 'VARTYPE',
     0xF0: 'STREXTRACT'
 }
 def read_short(fid):
@@ -155,6 +195,7 @@ def read_func(fid, codes=CODES):
         if callable(code):
             return code(fid)
     except:
+        print(fid.tell(), code)
         pass
     return code
 
@@ -167,23 +208,28 @@ def parse_line(fid, length):
     except:
         command = hex(command)
     if callable(command):
-        line.append('RAW CODE')
-        line.append(command(fid, length-1))
+        line += command(fid, length-1)
     else:
         line.append(command)
     while fid.tell() < final:
         line.append(read_func(fid))
-    fid.seek(final)
-    import pdb
-    pdb.set_trace()
-    return line
+    fid.seek(final - length)
+    return line + [read_raw(fid, length)] + [fid.tell() - length]
 
 def read_code_line_area(fid):
     tot_length = read_ushort(fid)
     d = []
     while tot_length > 0:
         length = read_ushort(fid)
-        d.append(parse_line(fid, length-2))
+        try:
+            file_pos = fid.tell()
+            d.append(parse_line(fid, length-2))
+        except:
+            fid.seek(file_pos)
+            import pdb
+            pdb.set_trace()
+            d.append(parse_line(fid, length-2))
+            #d.append([fid.read(length-2)])
         tot_length -= length
     return d
 
@@ -192,10 +238,22 @@ def read_code_name_list(fid):
     return [read_string(fid) for i in range(num_entries)]
 
 def read_code_block(fid):
-    d = []
-    d.append(read_code_line_area(fid))
-    d.append(read_code_name_list(fid))
-    return d
+    lines = read_code_line_area(fid)
+    names = read_code_name_list(fid)
+    for line in lines:
+        for i, code in enumerate(line):
+            try:
+                if not hasattr(code, 'startswith'):
+                    continue
+                if code.startswith('name '):
+                    line[i] = names[int(code[5:])]
+                elif code.startswith('field '):
+                    line[i] = names[int(code[6:])]
+                elif code.startswith('alias '):
+                    line[i] = names[int(code[6:])] + '.'
+            except:
+                pass
+    return lines
 
 def get_date(fid):
     date_bits = read_uint(fid)
@@ -262,9 +320,6 @@ def fxp_read():
             proc['code'] = read_code_block(fid)
             proc.pop('pos')
 
-        print(procedures[1])
-        exit()
-
         fid.seek(class_pos, 0)
         classes = [read_class_header(fid) for i in range(num_classes)]
 
@@ -279,8 +334,9 @@ def fxp_read():
         for proc in procedures:
             proc.pop('class')
 
-        print(procedures)
-        print(classes)
+        import json
+        print(json.dumps(procedures, indent=4))
+        print(json.dumps(classes, indent=4))
 
 if __name__ == '__main__':
-    main()
+    fxp_read()
