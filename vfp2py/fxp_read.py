@@ -27,7 +27,7 @@ def read_int32(fid):
 
 def read_double(fid):
     digits = fid.read(1)[0]
-    return round_sig(struct.unpack('@d', fid.read(8)), digits)
+    return round_sig(struct.unpack('<d', fid.read(8)), digits)
 
 def read_name(fid):
     return 'name {}'.format(read_ushort(fid))
@@ -41,6 +41,14 @@ def read_field(fid):
 def read_raw(fid, length):
     return ' '.join('{:02x}'.format(d) for d in fid.read(length))
 
+class Token(object):
+    def __init__(self, tokenstr, tokenval):
+        self.str = tokenstr
+        self.val = tokenval
+
+    def __repr__(self):
+        return repr('{}({})'.format(self.str, self.val))
+
 COMMANDS = {
     #Commands are identified by a single byte as shown in the following list:
     0x01: lambda fid, length: ['RAW CODE', read_raw(fid, length)],
@@ -49,6 +57,7 @@ COMMANDS = {
     0x0C: 'CASE',
     0x0F: 'CLOSE',
     0x18: 'DO',
+    0x18: lambda fid, length: ['DO', CLAUSES[fid.read(1)[0]]],
     0x1B: 'ELSE',
     0x1C: 'ENDCASE',
     0x1D: 'ENDDO',
@@ -93,16 +102,32 @@ SETCODES = {
     0x2B: 'PROCEDURE'
 }
 
+CLAUSES = {
+    0x01: 'ADDITIVE',
+    0x02: 'ALIAS',
+    0x14: 'FORM',
+    0x16: 'IN',
+    0x28: 'TO',
+    0x29: 'TOP',
+    0x2B: 'WHILE',
+    0x48: 'CASE',
+    0x51: 'AS',
+    0xBE: 'PROCEDURE',
+    0xC2: 'SHARED',
+    0xD1: 'WITH',
+}
+
 CODES = {
-    #Functions are also identified by a single byte code. To deal with more than 255 functions, Microsoft added an escape code (0xEA) that provides another 255 function. This is enough to handle all functions available in FoxPro. Function codes are only used in expressions. The following list contains all regular functions
     0x1A: lambda fid: read_func(fid, EXTENDED1),
     0x20: 'CHR',
     0x24: 'DATE',
     0x25: 'DAY',
+    0x2B: 'EOF',
     0x30: 'FILE', 
     0x34: 'FOUND',
     0x3E: 'LEN',
     0x48: 'MONTH',
+    0x4F: 'RECNO',
     0x54: 'ROUND',
     0x5A: 'STR',
     0x5D: 'SYS',
@@ -116,17 +141,6 @@ CODES = {
     0xC4: 'PARAMETERS',
     0xEA: lambda fid: read_func(fid, EXTENDED2),
 
-    #Clauses share the same value range as expressions and functions:
-    0x01: 'ADDITIVE',
-    0x14: 'FORM',
-    0x16: 'IN',
-    0x28: 'TO',
-    0x2B: 'WHILE',
-    0x51: 'AS',
-    0xBE: 'PROCEDURE',
-    0xD1: 'WITH',
-    #Expressions are stored in inverse polish notation. A calculation like lnSum + 5 is stored as:
-    #Expressions must be treated as a stream. The first byte identifies an expression element. However, depending on the type, multiple bytes follow. The following list contains expression elements. Expression codes share the same range of values as functions because both can be mxed:
     0x00: 'NOP',
     0x06: '+',
     0x07: ',',
@@ -144,6 +158,7 @@ CODES = {
     0x43: 'Parameter Mark',
     0x61: '.T.',
     0xD9: read_string,
+    0xE2: '.',
     0xE4: '.NULL.',
     0xE9: read_int32,
     0xF1: lambda fid: ' '.join('{:02x}'.format(d) for d in (b'\xf1' + fid.read(2))),
@@ -173,6 +188,7 @@ EXTENDED2 = {
     0x84: 'MINUTE',
     0x85: 'SEC',
     0x86: 'DATETIME',
+    0xA1: 'DODEFAULT',
     0xD9: 'VARTYPE',
     0xF0: 'STREXTRACT'
 }
@@ -189,15 +205,17 @@ def read_uint(fid):
     return struct.unpack('<I', fid.read(4))[0]
 
 def read_func(fid, codes=CODES):
-    code = fid.read(1)[0]
+    codeval = fid.read(1)[0]
     try:
-        code = codes[code]
+        code = codes[codeval]
         if callable(code):
-            return code(fid)
+            code = code(fid)
     except:
-        print(fid.tell(), code)
+        print(fid.tell(), codeval)
+        code = str(codeval)
         pass
     return code
+    return Token(code, codeval)
 
 def parse_line(fid, length):
     final = fid.tell() + length
@@ -224,7 +242,9 @@ def read_code_line_area(fid):
         try:
             file_pos = fid.tell()
             d.append(parse_line(fid, length-2))
-        except:
+        except Exception as err:
+            import traceback
+            traceback.print_exc()
             fid.seek(file_pos)
             import pdb
             pdb.set_trace()
