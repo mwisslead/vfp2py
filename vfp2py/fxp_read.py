@@ -26,8 +26,9 @@ def read_int32(fid):
     return round_sig(read_int(fid), digits)
 
 def read_double(fid):
-    digits = fid.read(1)[0]
-    return round_sig(struct.unpack('<d', fid.read(8)), digits)
+    digits = fid.read(1)[0] - 1
+    digits += fid.read(1)[0]
+    return round_sig(struct.unpack('<d', fid.read(8))[0], digits)
 
 def read_name(fid):
     return 'name {}'.format(read_ushort(fid))
@@ -55,6 +56,7 @@ COMMANDS = {
     0x02: '?',
     0x03: '??',
     0x0C: 'CASE',
+    0x0E: 'CLEAR',
     0x0F: 'CLOSE',
     0x18: 'DO',
     0x18: lambda fid, length: ['DO', CLAUSES[fid.read(1)[0]]],
@@ -102,6 +104,11 @@ SETCODES = {
     0x2B: 'PROCEDURE'
 }
 
+TYPECODES = {
+    0xD1: 'INTEGER',
+    0xD6: 'STRING'
+}
+
 CLAUSES = {
     0x01: 'ADDITIVE',
     0x02: 'ALIAS',
@@ -112,42 +119,18 @@ CLAUSES = {
     0x2B: 'WHILE',
     0x48: 'CASE',
     0x51: 'AS',
+    0x56: 'DLLS',
     0xBE: 'PROCEDURE',
     0xC2: 'SHARED',
     0xD1: 'WITH',
 }
 
 CODES = {
-    0x1A: lambda fid: read_func(fid, EXTENDED1),
-    0x1E: 'BOF',
-    0x20: 'CHR',
-    0x24: 'DATE',
-    0x25: 'DAY',
-    0x2B: 'EOF',
-    0x30: 'FILE', 
-    0x34: 'FOUND',
-    0x3E: 'LEN',
-    0x48: 'MONTH',
-    0x4F: 'RECNO',
-    0x54: 'ROUND',
-    0x57: 'SELECT',
-    0x5A: 'STR',
-    0x5D: 'SYS',
-    0x62: 'TYPE',
-    0x66: 'UPPER',
-    0x69: 'YEAR',
-    0x9B: 'ALLTRIM',
-    0xAA: 'USED',
-    0xB2: 'PADR',
-    0xBA: 'CURDIR',
-    0xC4: 'PARAMETERS',
-    0xEA: lambda fid: read_func(fid, EXTENDED2),
-
     0x00: 'NOP',
     0x06: '+',
     0x07: ',',
     0x09: 'AND',
-    0x0A: 'Not',
+    0x0A: 'NOT',
     0x0B: 'OR',
     0x0D: '<',
     0x0E: '<=',
@@ -156,9 +139,39 @@ CODES = {
     0x11: '>=',
     0x12: '>',
     0x14: '==',
-    0x2d: '.F.',
-    0x43: 'Parameter Mark',
+    0x1A: lambda fid: read_func(fid, EXTENDED1),
+    0x1E: 'BOF',
+    0x1F: 'CDOW',
+    0x20: 'CHR',
+    0x24: 'DATE',
+    0x25: 'DAY',
+    0x2B: 'EOF',
+    0x2D: '.F.',
+    0x30: 'FILE', 
+    0x34: 'FOUND',
+    0x3E: 'LEN',
+    0x46: 'MIN',
+    0x48: 'MONTH',
+    0x4F: 'RECNO',
+    0x54: 'ROUND',
+    0x57: 'SELECT',
+    0x5A: 'STR',
+    0x5D: 'SYS',
     0x61: '.T.',
+    0x62: 'TYPE',
+    0x66: 'UPPER',
+    0x69: 'YEAR',
+    0x77: 'CEILING',
+    0x9B: 'ALLTRIM',
+    0xAA: 'USED',
+    0xAB: 'BETWEEN',
+    0xB2: 'PADR',
+    0xBA: 'CURDIR',
+    0xC4: 'PARAMETERS',
+    0xCE: 'EVALUATE',
+    0xEA: lambda fid: read_func(fid, EXTENDED2),
+
+    0x43: 'Parameter Mark',
     0xD9: read_string,
     0xE2: '.',
     0xE4: '.NULL.',
@@ -178,10 +191,12 @@ CODES = {
 
 EXTENDED1 = {
     0x04: 'BINDEVENT',
+    0x0F: 'CAST',
 }
 
 EXTENDED2 = {
     #This list contains all those functions that are available through the 0xEA (extended function) code:
+    0x3E: 'CAPSLOCK',
     0x4E: 'CREATEOBJECT',
     0x5A: 'ISBLANK',
     0x5E: 'RGB',
@@ -192,6 +207,12 @@ EXTENDED2 = {
     0x85: 'SEC',
     0x86: 'DATETIME',
     0xA1: 'DODEFAULT',
+    0xA8: 'BITRSHIFT',
+    0xAA: 'BITOR',
+    0xAC: 'BITXOR',
+    0xAD: 'BITSET',
+    0xAE: 'BITTEST',
+    0xBF: 'BINTOC',
     0xD9: 'VARTYPE',
     0xF0: 'STREXTRACT'
 }
