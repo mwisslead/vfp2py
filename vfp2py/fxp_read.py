@@ -30,17 +30,31 @@ def read_double(fid):
     digits += fid.read(1)[0]
     return round_sig(struct.unpack('<d', fid.read(8))[0], digits)
 
-def read_name(fid):
-    return 'name {}'.format(read_ushort(fid))
-
 def read_alias(fid):
-    return 'alias {}'.format(read_ushort(fid))
+    return 'NAME {}.'.format(read_ushort(fid))
+
+def read_name(fid):
+    return 'NAME {}'.format(read_ushort(fid))
 
 def read_field(fid):
-    return 'field {}'.format(read_ushort(fid))
+    return 'NAME {}'.format(read_ushort(fid))
 
 def read_raw(fid, length):
     return ' '.join('{:02x}'.format(d) for d in fid.read(length))
+
+def read_expr(fid):
+    codeval = fid.read(1)[0]
+    expr = []
+    while codeval != 0xFD:
+        try:
+            code = FUNCTIONS[codeval]
+            if callable(code):
+                code = code(fid)
+        except:
+            code = 'FUNCTION {:02x}'.format(code)
+        expr.append(code)
+        codeval = fid.read(1)[0]
+    return expr
 
 class Token(object):
     def __init__(self, tokenstr, tokenval):
@@ -83,6 +97,8 @@ COMMANDS = {
     0x54: 'variable assignment',
     0x55: 'ENDPROC',
     0x7C: 'DECLARE',
+    0x7E: 'SCAN',
+    0x7F: 'SCAN',
     0x84: 'FOR',
     0x85: 'ENDFOR',
     0x86: 'expression',
@@ -96,12 +112,13 @@ COMMANDS = {
     0xAE: 'LOCAL',
     0xAF: 'LPARAMETERS',
     0xB0: 'CD',
-    0xB5: 'FOR EACH'
+    0xB5: 'FOR EACH',
+    0xB6: 'ENDFOREACH',
 }
 
 SETCODES = {
-    0x28: 'ORDER',
-    0x2B: 'PROCEDURE'
+    0x28: 'ORDER (SET)',
+    0x2B: 'PROCEDURE (SET)'
 }
 
 TYPECODES = {
@@ -112,6 +129,7 @@ TYPECODES = {
 CLAUSES = {
     0x01: 'ADDITIVE',
     0x02: 'ALIAS',
+    0x13: 'FOR',
     0x14: 'FORM',
     0x16: 'IN',
     0x28: 'TO',
@@ -123,9 +141,12 @@ CLAUSES = {
     0xBE: 'PROCEDURE',
     0xC2: 'SHARED',
     0xD1: 'WITH',
+    0xFC: read_expr,
+    0xFD: 'END EXPR',
+    0xFE: 'END COMMAND'
 }
 
-CODES = {
+VALUES = {
     0x00: 'NOP',
     0x04: '*',
     0x06: '+',
@@ -140,7 +161,23 @@ CODES = {
     0x11: '>=',
     0x12: '>',
     0x14: '==',
-    0x1A: lambda fid: read_func(fid, EXTENDED1),
+    0xD9: read_string,
+    0xE2: '.',
+    0xE9: read_int32,
+    0xF0: lambda fid: ' '.join('{:02x}'.format(d) for d in (b'\xf1' + fid.read(2))),
+    0xF1: lambda fid: ' '.join('{:02x}'.format(d) for d in (b'\xf1' + fid.read(2))),
+    0xFF: lambda fid: ' '.join('{:02x}'.format(d) for d in (b'\xf1' + fid.read(2))),
+    0xF4: read_alias,
+    0xF6: read_field,
+    0xF7: read_name,
+    0xF8: read_int8,
+    0xF9: read_int16,
+    0xFA: read_double,
+    0xFB: read_string,
+}
+
+FUNCTIONS = {
+    0x1A: lambda fid: EXTENDED1[fid.read(1)[0]],
     0x1C: 'ASC',
     0x1E: 'BOF',
     0x1F: 'CDOW',
@@ -153,6 +190,7 @@ CODES = {
     0x34: 'FOUND',
     0x3D: 'LEFT',
     0x3E: 'LEN',
+    0x43: 'MARK PARAMETERS',
     0x46: 'MIN',
     0x48: 'MONTH',
     0x4F: 'RECNO',
@@ -173,24 +211,8 @@ CODES = {
     0xBA: 'CURDIR',
     0xC4: 'PARAMETERS',
     0xCE: 'EVALUATE',
-    0xEA: lambda fid: read_func(fid, EXTENDED2),
-
-    0x43: 'Parameter Mark',
-    0xD9: read_string,
-    0xE2: '.',
     0xE4: '.NULL.',
-    0xE9: read_int32,
-    0xF1: lambda fid: ' '.join('{:02x}'.format(d) for d in (b'\xf1' + fid.read(2))),
-    0xF4: read_alias,
-    0xF6: read_field,
-    0xF7: read_name,
-    0xF8: read_int8,
-    0xF9: read_int16,
-    0xFA: read_double,
-    0xFB: read_string,
-    0xFC: 'Start Name',
-    0xFD: 'End Name',
-    0xFE: 'End of Expr'
+    0xEA: lambda fid: EXTENDED2[fid.read(1)[0]],
 }
 
 EXTENDED1 = {
@@ -224,6 +246,10 @@ EXTENDED2 = {
     0xD9: 'VARTYPE',
     0xF0: 'STREXTRACT'
 }
+
+CLAUSES.update(VALUES)
+FUNCTIONS.update(VALUES)
+
 def read_short(fid):
     return struct.unpack('<h', fid.read(2))[0]
 
@@ -235,19 +261,6 @@ def read_uint(fid):
 
 def read_uint(fid):
     return struct.unpack('<I', fid.read(4))[0]
-
-def read_func(fid, codes=CODES):
-    codeval = fid.read(1)[0]
-    try:
-        code = codes[codeval]
-        if callable(code):
-            code = code(fid)
-    except:
-        print(fid.tell(), codeval)
-        code = str(codeval)
-        pass
-    return code
-    return Token(code, codeval)
 
 def parse_line(fid, length):
     final = fid.tell() + length
@@ -262,7 +275,14 @@ def parse_line(fid, length):
     else:
         line.append(command)
     while fid.tell() < final:
-        line.append(read_func(fid))
+        clause = fid.read(1)[0]
+        try:
+            clause = CLAUSES[clause]
+        except:
+            clause = hex(clause)
+        if callable(clause):
+            clause = clause(fid)
+        line.append(clause)
     fid.seek(final - length)
     return line + [read_raw(fid, length)] + [fid.tell() - length]
 
@@ -289,22 +309,33 @@ def read_code_name_list(fid):
     num_entries = read_ushort(fid)
     return [read_string(fid) for i in range(num_entries)]
 
+def change_named_value(expr, names):
+    if expr.endswith('.'):
+        return names[int(expr[5:-1])] + '.'
+    else:
+        return names[int(expr[5:])]
+    return expr
+
+def concatenate_aliases(codes, names):
+    codes = codes[:]
+    new_codes = []
+    while codes:
+        code = codes.pop(0)
+        if hasattr(code, 'startswith') and code.startswith('NAME '):
+            code = change_named_value(code, names)
+            while code.endswith('.'):
+                code += change_named_value(codes.pop(0), names)
+        new_codes.append(code)
+    return new_codes
+
 def read_code_block(fid):
     lines = read_code_line_area(fid)
     names = read_code_name_list(fid)
-    for line in lines:
+    for line_num, line in enumerate(lines):
         for i, code in enumerate(line):
-            try:
-                if not hasattr(code, 'startswith'):
-                    continue
-                if code.startswith('name '):
-                    line[i] = names[int(code[5:])]
-                elif code.startswith('field '):
-                    line[i] = names[int(code[6:])]
-                elif code.startswith('alias '):
-                    line[i] = names[int(code[6:])] + '.'
-            except:
-                pass
+            if isinstance(code, list):
+                line[i] = concatenate_aliases(code, names)
+        lines[line_num] = concatenate_aliases(line, names)
     return lines
 
 def get_date(fid):
