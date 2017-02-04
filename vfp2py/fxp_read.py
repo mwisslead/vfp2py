@@ -119,6 +119,7 @@ CLAUSES = {
 
 CODES = {
     0x1A: lambda fid: read_func(fid, EXTENDED1),
+    0x1E: 'BOF',
     0x20: 'CHR',
     0x24: 'DATE',
     0x25: 'DAY',
@@ -129,6 +130,7 @@ CODES = {
     0x48: 'MONTH',
     0x4F: 'RECNO',
     0x54: 'ROUND',
+    0x57: 'SELECT',
     0x5A: 'STR',
     0x5D: 'SYS',
     0x62: 'TYPE',
@@ -182,6 +184,7 @@ EXTENDED2 = {
     #This list contains all those functions that are available through the 0xEA (extended function) code:
     0x4E: 'CREATEOBJECT',
     0x5A: 'ISBLANK',
+    0x5E: 'RGB',
     0x68: 'PEMSTATUS',
     0x78: 'MESSAGEBOX',
     0x83: 'HOUR',
