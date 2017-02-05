@@ -413,6 +413,9 @@ def read_class_header(fid):
     unknown1 = read_short(fid)
     return {'name': name, 'parent': parent_name, 'procedures': []}
 
+def read_line_info(fid):
+    return ' '.join('{:02x}'.format(d) for d in fid.read(2))
+
 def fxp_read():
     with open(sys.argv[1], 'rb') as fid:
         identifier, head, footer_pos, name_pos, unknown1, unknown2, unknown3 = struct.unpack('<3s6sllB21sH', fid.read(HEADER_SIZE))
@@ -446,16 +449,19 @@ def fxp_read():
         date = get_date(fid)
         print(date)
 
-        fid.seek(procedure_pos, 0)
+        fid.seek(procedure_pos)
         procedures = [OrderedDict((key, val) for key, val in zip(('name', 'pos', 'class'), ('', 0x4e, -1)))] + [read_procedure_header(fid) for i in range(num_procedures)]
         
         for proc in procedures:
-            fid.seek(proc['pos'], 0)
+            fid.seek(proc['pos'])
             proc['code'] = read_code_block(fid)
             proc.pop('pos')
 
         fid.seek(class_pos, 0)
         classes = [read_class_header(fid) for i in range(num_classes)]
+
+        fid.seek(code_lines_pos)
+        lines = [read_line_info(fid) for i in range(num_code_lines)]
 
         for i, cls in enumerate(classes):
             for proc in procedures:
@@ -470,6 +476,7 @@ def fxp_read():
 
         import pprint
         printer = pprint.PrettyPrinter(depth=10, indent=4)
+        printer.pprint(lines)
         printer.pprint(procedures)
         printer.pprint(classes)
 
