@@ -416,6 +416,12 @@ def read_class_header(fid):
 def read_line_info(fid):
     return ' '.join('{:02x}'.format(d) for d in fid.read(2))
 
+def read_until_newline(fid):
+    string = fid.read(1)
+    while string[-1] != 0:
+        string += fid.read(1)
+    return string
+
 def fxp_read():
     with open(sys.argv[1], 'rb') as fid:
         identifier, head, footer_pos, name_pos, unknown1, unknown2, unknown3 = struct.unpack('<3s6sllB21sH', fid.read(HEADER_SIZE))
@@ -436,6 +442,8 @@ def fxp_read():
 
         procedure_pos += HEADER_SIZE
         class_pos += HEADER_SIZE
+        code_lines_pos += HEADER_SIZE
+        unknown_pos += HEADER_SIZE
     
         print(num_procedures)
         print(num_classes)
@@ -461,7 +469,10 @@ def fxp_read():
         classes = [read_class_header(fid) for i in range(num_classes)]
 
         fid.seek(code_lines_pos)
-        lines = [read_line_info(fid) for i in range(num_code_lines)]
+        line_info = [read_line_info(fid) for i in range(num_code_lines)]
+
+        fid.seek(name_pos)
+        file_names = [read_until_newline(fid) for i in range(3)]
 
         for i, cls in enumerate(classes):
             for proc in procedures:
@@ -476,7 +487,7 @@ def fxp_read():
 
         import pprint
         printer = pprint.PrettyPrinter(depth=10, indent=4)
-        printer.pprint(lines)
+        printer.pprint(line_info)
         printer.pprint(procedures)
         printer.pprint(classes)
 
