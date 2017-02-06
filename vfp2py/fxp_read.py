@@ -478,6 +478,10 @@ def fxp_read():
         unknown1, name_pos2, unknown2, first_name_len, unknown3, unknown4 = struct.unpack('<5sIIIII', fid.read(25))
         print(unknown1, name_pos2, unknown2, first_name_len, unknown3, unknown4)
 
+        fid.seek(unknown_pos)
+        for i in range(num_procedures + num_classes + 1):
+            print(struct.unpack('HHHHHHHH', fid.read(16)))
+
         for i, cls in enumerate(classes):
             for proc in procedures:
                 if proc['class'] == i:
