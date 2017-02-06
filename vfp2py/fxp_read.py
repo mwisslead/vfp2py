@@ -474,6 +474,10 @@ def fxp_read():
         fid.seek(name_pos)
         file_names = [read_until_newline(fid) for i in range(3)]
 
+        fid.seek(footer_pos)
+        unknown1, name_pos2, unknown2, first_name_len, unknown3, unknown4 = struct.unpack('<5sIIIII', fid.read(25))
+        print(unknown1, name_pos2, unknown2, first_name_len, unknown3, unknown4)
+
         for i, cls in enumerate(classes):
             for proc in procedures:
                 if proc['class'] == i:
