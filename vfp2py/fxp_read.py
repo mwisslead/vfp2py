@@ -430,6 +430,10 @@ def read_class_header(fid):
 def read_line_info(fid):
     return ' '.join('{:02x}'.format(d) for d in fid.read(2))
 
+def read_source_info(fid):
+    unknown1, unknown2, unknown3, line_num_start = struct.unpack('IIII', fid.read(16))
+    return line_num_start, unknown1, unknown2, unknown3
+
 def read_until_newline(fid):
     string = fid.read(1)
     while string[-1] != 0:
@@ -452,19 +456,19 @@ def fxp_read():
         print(unknown2)
         print(bin(unknown3))
 
-        num_procedures, num_classes, unknown2, procedure_pos, class_pos, unknown_pos, num_code_lines, code_lines_pos = struct.unpack('<hh4siiiii', fid.read(0x1c))
+        num_procedures, num_classes, unknown2, procedure_pos, class_pos, source_info_pos, num_code_lines, code_lines_pos = struct.unpack('<hh4siiiii', fid.read(0x1c))
 
         procedure_pos += HEADER_SIZE
         class_pos += HEADER_SIZE
         code_lines_pos += HEADER_SIZE
-        unknown_pos += HEADER_SIZE
+        source_info_pos += HEADER_SIZE
     
         print(num_procedures)
         print(num_classes)
         print(unknown2)
         print(procedure_pos)
         print(class_pos)
-        print(unknown_pos)
+        print(source_info_pos)
         print(num_code_lines)
         print(code_lines_pos)
 
@@ -474,11 +478,6 @@ def fxp_read():
         fid.seek(procedure_pos)
         procedures = [OrderedDict((key, val) for key, val in zip(('name', 'pos', 'class'), ('', 0x4e, -1)))] + [read_procedure_header(fid) for i in range(num_procedures)]
         
-        for proc in procedures:
-            fid.seek(proc['pos'])
-            proc['code'] = read_code_block(fid)
-            proc.pop('pos')
-
         fid.seek(class_pos, 0)
         classes = [read_class_header(fid) for i in range(num_classes)]
 
@@ -492,26 +491,37 @@ def fxp_read():
         unknown1, name_pos2, unknown2, first_name_len, unknown3, unknown4 = struct.unpack('<5sIIIII', fid.read(25))
         print(unknown1, name_pos2, unknown2, first_name_len, unknown3, unknown4)
 
-        fid.seek(unknown_pos)
-        for i in range(num_procedures + num_classes + 1):
-            print(struct.unpack('HHHHHHHH', fid.read(16)))
-
-        for i, cls in enumerate(classes):
-            for proc in procedures:
-                if proc['class'] == i:
-                    proc.pop('class')
-                    cls['procedures'].append(proc)
-            for proc in cls['procedures']:
-                procedures.pop(procedures.index(proc))
+        fid.seek(source_info_pos)
+        source_info = [read_source_info(fid) for i in range(num_procedures + num_classes + 1)]
 
         for proc in procedures:
-            proc.pop('class')
+            fid.seek(proc['pos'])
+            proc['code'] = read_code_block(fid)
+            proc.pop('pos')
 
-        import pprint
-        printer = pprint.PrettyPrinter(depth=10, indent=4)
-        printer.pprint(line_info)
-        printer.pprint(procedures)
-        printer.pprint(classes)
+    if len(sys.argv) > 2:
+        with open(sys.argv[2], 'rb') as fid:
+            for item in source_info:
+                fid.seek(item[2])
+                print(item[1])
+                print(fid.read(item[3] - item[2]).decode('utf-8'))
+
+    for i, cls in enumerate(classes):
+        for proc in procedures:
+            if proc['class'] == i:
+                proc.pop('class')
+                cls['procedures'].append(proc)
+        for proc in cls['procedures']:
+            procedures.pop(procedures.index(proc))
+
+    for proc in procedures:
+        proc.pop('class')
+
+    import pprint
+    printer = pprint.PrettyPrinter(depth=10, indent=4)
+    printer.pprint(line_info)
+    printer.pprint(procedures)
+    printer.pprint(classes)
 
 if __name__ == '__main__':
     fxp_read()
