@@ -37,6 +37,9 @@ def read_alias(fid):
 def read_special_alias(fid):
     return 'SPECIAL_NAME {}.'.format(fid.read(1)[0])
 
+def read_special_name(fid):
+    return 'SPECIAL_NAME {}'.format(fid.read(1)[0])
+
 def read_name(fid):
     return 'NAME {}'.format(read_ushort(fid))
 
@@ -76,6 +79,8 @@ class Token(object):
         return repr('{}({})'.format(self.str, self.val))
 
 SPECIAL_NAMES = {
+    0x02: '_MSYSMENU',
+    0x0D: 'M',
     0x39: '_SCREEN',
     0x43: '_VFP',
 }
@@ -128,6 +133,7 @@ COMMANDS = {
     0x5C: 'KEYBOARD',
     0x68: 'CREATE',
     0x6F: 'SELECT',
+    0x73: 'DEFINE',
     0x7C: 'DECLARE',
     0x7E: 'SCAN',
     0x7F: 'SCAN',
@@ -157,6 +163,7 @@ SETCODES = {
     0x0B: 'SET DATE',
     0x24: 'SET MEMOWIDTH',
     0x28: 'SET ORDER',
+    0x29: 'SET PATH',
     0x2A: 'SET PRINTER',
     0x2B: 'SET PROCEDURE',
     0x30: 'SET STATUS',
@@ -165,6 +172,7 @@ SETCODES = {
     0x59: 'SET SYSMENU',
     0x5D: 'SET CURSOR',
     0x62: 'SET LIBRARY',
+    0x7E: 'SET CLASSLIB',
 }
 
 TYPECODES = {
@@ -177,10 +185,12 @@ CLAUSES = {
     0x01: 'ADDITIVE',
     0x02: 'ALIAS',
     0x03: 'ALL',
+    0x05: 'AT',
     0x06: 'BAR',
     0x07: ',',
     0x08: 'BLANK',
     0x0C: 'CLEAR',
+    0x0D: 'COLOR',
     0x10: '=',
     0x12: 'FILE',
     0x13: 'FOR',
@@ -188,10 +198,14 @@ CLAUSES = {
     0x16: 'IN',
     0x17: 'KEY',
     0x1A: 'MACROS',
+    0x1C: 'MENU',
+    0x1D: 'MESSAGE',
     0x1E: 'NEXT',
     0x1F: 'OFF',
     0x20: 'ON',
     0x21: 'PRINTER',
+    0x22: 'PROMPT',
+    0x25: 'SAVE',
     0x28: 'TO',
     0x29: 'TOP',
     0x2B: 'WHILE',
@@ -203,19 +217,23 @@ CLAUSES = {
     0x3A: 'NOWAIT',
     0x48: 'CASE',
     0x4B: 'PROGRAM',
+    0x4E: 'SCHEME',
     0x51: 'AS',
     0x52: 'CLASSLIB',
     0x56: 'DLLS',
     0xBC: 'INTO',
     0xBE: 'PROCEDURE',
     0xC0: 'FREE',
+    0xC1: 'LINE',
     0xC2: 'SHARED',
+    0xC3: 'OF',
     0xCB: 'STATUS',
     0xCC: 'STRUCTURE',
     0xCD: 'SHUTDOWN',
     0xCE: 'TIMEOUT',
     0xD0: 'NOCLEAR',
     0xD1: 'WITH',
+    0xD2: 'NOMARGIN',
     0xD5: 'EVENTS',
     0xFC: read_expr,
     0xFD: 'END EXPR',
@@ -227,10 +245,12 @@ VALUES = {
     0xE1: read_special_alias,
     0xE2: '.',
     0xE9: read_int32,
+    0xEC: read_special_name,
     0xF0: lambda fid: ' '.join('{:02x}'.format(d) for d in (b'\xf1' + fid.read(2))),
     0xF1: lambda fid: ' '.join('{:02x}'.format(d) for d in (b'\xf1' + fid.read(2))),
     0xFF: lambda fid: ' '.join('{:02x}'.format(d) for d in (b'\xf1' + fid.read(2))),
     0xF4: read_alias,
+    0xF5: read_special_alias,
     0xF6: read_field,
     0xF7: read_name,
     0xF8: read_int8,
@@ -241,6 +261,7 @@ VALUES = {
 
 FUNCTIONS = {
     0x00: 'NOP',
+    0x01: '$',
     0x03: 'END PAREN',
     0x04: '*',
     0x06: '+',
@@ -293,10 +314,12 @@ FUNCTIONS = {
     0x66: 'UPPER',
     0x67: 'VAL',
     0x69: 'YEAR',
+    0x76: 'SET',
     0x77: 'CEILING',
     0x91: 'FCLOSE',
     0x95: 'FCREATE',
     0x9B: 'ALLTRIM',
+    0xA1: 'EMPTY',
     0xAA: 'USED',
     0xAB: 'BETWEEN',
     0xB2: 'PADR',
@@ -341,7 +364,9 @@ EXTENDED2 = {
     0xAF: 'BITCLEAR',
     0xBF: 'BINTOC',
     0xCC: 'FILETOSTR',
+    0xCD: 'JUSTPATH',
     0xC6: 'DIRECTORY',
+    0xD5: 'ADDBS',
     0xD9: 'VARTYPE',
     0xF0: 'STREXTRACT'
 }
