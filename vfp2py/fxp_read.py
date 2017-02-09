@@ -6,69 +6,116 @@ from collections import OrderedDict
 
 HEADER_SIZE = 0x29
 
+class FXPName(object):
+    def __init__(self, name):
+        self.name = name
+
+    def __repr__(self):
+        return self.name
+
+class FXPAlias(FXPName):
+    def __repr__(self):
+        return self.name + '.'
+
 def round_sig(x, sig):
     if x == 0:
         return 0.
     return round(x, sig-int(floor(log10(abs(x))))-1)
 
-def read_string(fid):
+def read_string(fid, *args):
     return fid.read(read_ushort(fid)).decode('utf-8')
 
-def read_int8(fid):
+def read_single_quoted_string(fid, *args):
+    return FXPName("'{}'".format(read_string(fid)))
+
+def read_double_quoted_string(fid, *args):
+    return FXPName('"{}"'.format(read_string(fid)))
+
+def read_int8(fid, *args):
     digits = fid.read(1)[0]
     return round_sig(fid.read(1)[0], digits)
 
-def read_int16(fid):
+def read_int16(fid, *args):
     digits = fid.read(1)[0]
     return round_sig(read_short(fid), digits)
 
-def read_int32(fid):
+def read_int32(fid, *args):
     digits = fid.read(1)[0]
     return round_sig(read_int(fid), digits)
 
-def read_double(fid):
+def read_double(fid, *args):
     digits = fid.read(1)[0] - 1
     digits += fid.read(1)[0]
     return round_sig(struct.unpack('<d', fid.read(8))[0], digits)
 
-def read_alias(fid):
-    return 'NAME {}.'.format(read_ushort(fid))
+def read_alias(fid, names, *args):
+    return FXPAlias(names[read_ushort(fid)])
 
-def read_special_alias(fid):
-    return 'SPECIAL_NAME {}.'.format(fid.read(1)[0])
+def read_special_alias(fid, *args):
+    return FXPAlias(SPECIAL_NAMES[fid.read(1)[0]])
 
-def read_special_name(fid):
-    return 'SPECIAL_NAME {}'.format(fid.read(1)[0])
+def read_special_name(fid, *args):
+    return FXPName(SPECIAL_NAMES[fid.read(1)[0]])
 
-def read_name(fid):
-    return 'NAME {}'.format(read_ushort(fid))
-
-def read_field(fid):
-    return 'NAME {}'.format(read_ushort(fid))
+def read_name(fid, names):
+    return FXPName(names[read_ushort(fid)])
 
 def read_raw(fid, length):
     return ' '.join('{:02x}'.format(d) for d in fid.read(length))
 
-def read_expr(fid):
+def read_expr(fid, names, *args):
     codeval = fid.read(1)[0]
     expr = []
-    while codeval != 0xFD:
-        try:
+    while codeval != END_EXPR:
+        if codeval == PARAMETER_MARK:
+            code = codeval
+        elif codeval in FUNCTIONS:
             code = FUNCTIONS[codeval]
-            if callable(code):
+            if codeval == 0xF6:
+                code = code(fid, names)
+                while expr and type(expr[-1]) is FXPAlias:
+                    code = FXPName(repr(expr.pop()) + repr(code))
+                code = repr(code)
+            elif callable(code):
                 code = code(fid)
-        except:
+            parameters = []
+            while expr:
+                parameter = expr.pop()
+                if parameter == PARAMETER_MARK:
+                    break
+                parameters.insert(0, parameter)
+            code += '({})'.format(', '.join(repr(p) for p in parameters))
+            code = FXPName(code)
+        elif codeval in OPERATORS:
+            code = OPERATORS[codeval]
+            parameters = [p for p in reversed([expr.pop() for i in range(code[1])])]
+            if len(parameters) == 1:
+                code = FXPName('({} {})'.format(code[0], repr(parameters[0])))
+            else:
+                code = FXPName('({})'.format((' ' + code[0] + ' ').join(repr(p) for p in parameters)))
+        elif codeval in VALUES:
+            code = VALUES[codeval]
+            if callable(code):
+                code = code(fid, names)
+            if type(code) is FXPName:
+                while expr and type(expr[-1]) is FXPAlias:
+                    code = FXPName(repr(expr.pop()) + repr(code))
+            elif type(code) is FXPAlias:
+                pass
+            elif type(code) in (float, int):
+                code = FXPName(repr(code))
+            else:
+                code = FXPName(code)
+        else:
             code = 'FUNCTION {:02x}'.format(codeval)
         expr.append(code)
         codeval = fid.read(1)[0]
+    if len(expr) == 1:
+        return expr[0]
     return expr
 
 def read_setcode(fid, length):
-    try:
-        return [SETCODES[fid.read(1)[0]]]
-    except:
-        fid.seek(fid.tell() - 1)
-        return ['{:02x}'.format(fid.read(1)[0])]
+    return [SETCODES[fid.read(1)[0]]]
 
 class Token(object):
     def __init__(self, tokenstr, tokenval):
@@ -77,6 +124,9 @@ class Token(object):
 
     def __repr__(self):
         return repr('{}({})'.format(self.str, self.val))
+
+END_EXPR = 0xFD;
+PARAMETER_MARK = 0x43;
 
 SPECIAL_NAMES = {
     0x02: '_MSYSMENU',
@@ -164,6 +214,7 @@ SETCODES = {
     0x02: 'SET BELL',
     0x05: 'SET CENTURY',
     0x0B: 'SET DATE',
+    0x16: 'SET EXACT',
     0x24: 'SET MEMOWIDTH',
     0x28: 'SET ORDER',
     0x29: 'SET PATH',
@@ -173,6 +224,7 @@ SETCODES = {
     0x3E: 'SET CLOCK',
     0x48: 'SET REFRESH',
     0x59: 'SET SYSMENU',
+    0x5A: 'SET NOTIFY',
     0x5D: 'SET CURSOR',
     0x62: 'SET LIBRARY',
     0x7E: 'SET CLASSLIB',
@@ -239,51 +291,56 @@ CLAUSES = {
     0xD1: 'WITH',
     0xD2: 'NOMARGIN',
     0xD5: 'EVENTS',
+    0xF6: read_name, #user define function
     0xFC: read_expr,
-    0xFD: 'END EXPR',
+    END_EXPR: 'END EXPR',
     0xFE: 'END COMMAND'
 }
 
 VALUES = {
-    0xD9: read_string,
+    0x2D: '.F.',
+    0x61: '.T.',
+    0xD9: read_double_quoted_string,
     0xE1: read_special_alias,
     0xE2: '.',
     0xE5: read_name,
     0xE9: read_int32,
     0xEC: read_special_name,
-    0xF0: lambda fid: ' '.join('{:02x}'.format(d) for d in (b'\xf1' + fid.read(2))),
-    0xF1: lambda fid: ' '.join('{:02x}'.format(d) for d in (b'\xf1' + fid.read(2))),
-    0xFF: lambda fid: ' '.join('{:02x}'.format(d) for d in (b'\xf1' + fid.read(2))),
+    0xF0: lambda fid, *args: ' '.join('{:02x}'.format(d) for d in (b'\xf0' + fid.read(2))),
+    0xF1: lambda fid, *args: ' '.join('{:02x}'.format(d) for d in (b'\xf1' + fid.read(2))),
+    0xFF: lambda fid, *args: ' '.join('{:02x}'.format(d) for d in (b'\xff' + fid.read(2))),
     0xF4: read_alias,
     0xF5: read_special_alias,
-    0xF6: read_field,
     0xF7: read_name,
     0xF8: read_int8,
     0xF9: read_int16,
     0xFA: read_double,
-    0xFB: read_string,
+    0xFB: read_single_quoted_string,
+}
+
+OPERATORS = {
+    0x00: ('NOP', 0),
+    0x01: ('$', 2),
+    0x03: ('END PAREN', 0),
+    0x04: ('*', 2),
+    0x06: ('+', 2),
+    0x07: (',', 2),
+    0x08: ('-', 2),
+    0x09: ('AND', 3),
+    0x0A: ('NOT', 1),
+    0x0B: ('OR', 3),
+    0x0C: ('/', 2),
+    0x0D: ('<', 2),
+    0x0E: ('<=', 2),
+    0x0F: ('!=', 2),
+    0x10: ('=', 2),
+    0x11: ('>=', 2),
+    0x12: ('>', 2),
+    0x14: ('==', 2),
+    0x18: ('@', 1),
 }
 
 FUNCTIONS = {
-    0x00: 'NOP',
-    0x01: '$',
-    0x03: 'END PAREN',
-    0x04: '*',
-    0x06: '+',
-    0x07: ',',
-    0x08: '-',
-    0x09: 'AND',
-    0x0A: 'NOT',
-    0x0B: 'OR',
-    0x0C: '/',
-    0x0D: '<',
-    0x0E: '<=',
-    0x0F: '!=',
-    0x10: '=',
-    0x11: '>=',
-    0x12: '>',
-    0x14: '==',
-    0x18: '@',
     0x1A: lambda fid: EXTENDED1[fid.read(1)[0]],
     0x1C: 'ASC',
     0x1E: 'BOF',
@@ -294,13 +351,12 @@ FUNCTIONS = {
     0x25: 'DAY',
     0x2A: 'DTOC',
     0x2B: 'EOF',
-    0x2D: '.F.',
     0x30: 'FILE', 
     0x34: 'FOUND',
     0x37: 'INKEY',
     0x3D: 'LEFT',
     0x3E: 'LEN',
-    0x43: 'MARK PARAMETERS',
+    PARAMETER_MARK: 'MARK PARAMETERS',
     0x46: 'MIN',
     0x48: 'MONTH',
     0x4E: 'RECCOUNT',
@@ -314,7 +370,6 @@ FUNCTIONS = {
     0x5C: 'SUBSTR',
     0x5D: 'SYS',
     0x5E: 'TIME',
-    0x61: '.T.',
     0x62: 'TYPE',
     0x66: 'UPPER',
     0x67: 'VAL',
@@ -325,14 +380,17 @@ FUNCTIONS = {
     0x95: 'FCREATE',
     0x9B: 'ALLTRIM',
     0xA1: 'EMPTY',
+    0xA8: 'STRTRAN',
     0xAA: 'USED',
     0xAB: 'BETWEEN',
     0xB2: 'PADR',
     0xBA: 'CURDIR',
     0xC4: 'PARAMETERS',
     0xCE: 'EVALUATE',
+    0xD1: 'ISNULL',
     0xE4: '.NULL.',
     0xEA: lambda fid: EXTENDED2[fid.read(1)[0]],
+    0xF6: read_name, #user define function
 }
 
 EXTENDED1 = {
@@ -378,7 +436,6 @@ EXTENDED2 = {
 }
 
 CLAUSES.update(VALUES)
-FUNCTIONS.update(VALUES)
 
 def read_short(fid):
     return struct.unpack('<h', fid.read(2))[0]
@@ -392,47 +449,43 @@ def read_int(fid):
 def read_uint(fid):
     return struct.unpack('<I', fid.read(4))[0]
 
-def parse_line(fid, length):
+def parse_line(fid, length, names):
     final = fid.tell() + length
     line = []
-    command = fid.read(1)[0]
-    try:
-        command = COMMANDS[command]
-    except:
-        command = hex(command)
+    command = COMMANDS[fid.read(1)[0]]
     if callable(command):
         line += command(fid, length-1)
     else:
         line.append(command)
     while fid.tell() < final:
-        clause = fid.read(1)[0]
-        try:
-            clause = CLAUSES[clause]
-        except:
-            clause = hex(clause)
-        if callable(clause):
-            clause = clause(fid)
+        clauseval = fid.read(1)[0]
+        clause = CLAUSES[clauseval]
+        if clauseval == 0xF6 or clauseval == 0xF7:
+            clause = clause(fid, names)
+            while line and type(line[-1]) is FXPAlias:
+                clause = FXPName(repr(line.pop()) + repr(clause))
+        elif callable(clause):
+            clause = clause(fid, names)
         line.append(clause)
     fid.seek(final - length)
     return line + [read_raw(fid, length)] + [fid.tell() - length]
 
-def read_code_line_area(fid):
-    tot_length = read_ushort(fid)
+def read_code_line_area(fid, names):
+    final_fpos = fid.tell() + read_ushort(fid)
     d = []
-    while tot_length > 0:
-        length = read_ushort(fid)
+    while fid.tell() < final_fpos:
         try:
-            file_pos = fid.tell()
-            d.append(parse_line(fid, length-2))
-        except Exception as err:
+            start_pos = fid.tell()
+            length = read_ushort(fid)
+            d.append(parse_line(fid, length-2, names))
+        except:
             import traceback
             traceback.print_exc()
-            fid.seek(file_pos)
-            #import pdb
-            #pdb.set_trace()
-            #d.append(parse_line(fid, length-2))
-            d.append(read_raw(fid, length-2))
-        tot_length -= length
+            fid.seek(start_pos)
+            length = read_ushort(fid)
+            line = read_raw(fid, length-2)
+            print(line, file=sys.stderr)
+            d.append(line)
     return d
 
 def read_code_name_list(fid):
@@ -464,14 +517,13 @@ def concatenate_aliases(codes, names):
     return new_codes
 
 def read_code_block(fid):
-    lines = read_code_line_area(fid)
+    start_pos = fid.tell()
+    tot_length = read_ushort(fid)
+    fid.seek(fid.tell() + tot_length)
     names = read_code_name_list(fid)
-    for line_num, line in enumerate(lines):
-        for i, code in enumerate(line):
-            if isinstance(code, list):
-                line[i] = concatenate_aliases(code, names)
-        lines[line_num] = concatenate_aliases(line, names)
-    return lines
+
+    fid.seek(start_pos)
+    return read_code_line_area(fid, names)
 
 def get_date(fid):
     date_bits = read_uint(fid)
