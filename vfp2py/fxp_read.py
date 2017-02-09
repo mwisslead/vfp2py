@@ -88,6 +88,9 @@ def read_expr(fid, names, *args):
             code = FXPName(code)
         elif codeval in OPERATORS:
             code = OPERATORS[codeval]
+            if code[1] == 0:
+                codeval = fid.read(1)[0]
+                continue
             parameters = [p for p in reversed([expr.pop() for i in range(code[1])])]
             if len(parameters) == 1:
                 code = FXPName('({} {})'.format(code[0], repr(parameters[0])))
@@ -97,6 +100,9 @@ def read_expr(fid, names, *args):
             code = VALUES[codeval]
             if callable(code):
                 code = code(fid, names)
+            if codeval in (0xF0, 0xF1):
+                codeval = fid.read(1)[0]
+                continue
             if type(code) is FXPName:
                 while expr and type(expr[-1]) is FXPAlias:
                     code = FXPName(repr(expr.pop()) + repr(code))
@@ -148,7 +154,6 @@ COMMANDS = {
     0x12: 'COUNT',
     0x14: 'DELETE',
     0x18: 'DO',
-    #0x18: lambda fid, length: ['DO', CLAUSES[fid.read(1)[0]]],
     0x1B: 'ELSE',
     0x1C: 'ENDCASE',
     0x1D: 'ENDDO',
@@ -306,8 +311,8 @@ VALUES = {
     0xE5: read_name,
     0xE9: read_int32,
     0xEC: read_special_name,
-    0xF0: lambda fid, *args: ' '.join('{:02x}'.format(d) for d in (b'\xf0' + fid.read(2))),
-    0xF1: lambda fid, *args: ' '.join('{:02x}'.format(d) for d in (b'\xf1' + fid.read(2))),
+    0xF0: lambda fid, *args: '(SHORT CIRCUIT AND IN {})'.format(read_ushort(fid)),
+    0xF1: lambda fid, *args: '(SHORT CIRCUIT OR IN {})'.format(read_ushort(fid)),
     0xFF: lambda fid, *args: ' '.join('{:02x}'.format(d) for d in (b'\xff' + fid.read(2))),
     0xF4: read_alias,
     0xF5: read_special_alias,
@@ -326,9 +331,9 @@ OPERATORS = {
     0x06: ('+', 2),
     0x07: (',', 2),
     0x08: ('-', 2),
-    0x09: ('AND', 3),
+    0x09: ('AND', 2),
     0x0A: ('NOT', 1),
-    0x0B: ('OR', 3),
+    0x0B: ('OR', 2),
     0x0C: ('/', 2),
     0x0D: ('<', 2),
     0x0E: ('<=', 2),
