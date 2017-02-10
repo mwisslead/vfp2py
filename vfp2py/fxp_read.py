@@ -206,6 +206,7 @@ COMMANDS = {
     0x86: '=', #'expression',
     0x8A: 'PUSH',
     0x8B: 'POP',
+    0x96: 'ADD',
     0x99: 'function call',
     0xA2: 'add method',
     0xA3: 'add protected method',
@@ -274,6 +275,7 @@ CLAUSES = {
     0x29: 'TOP',
     0x2B: 'WHILE',
     0x2C: 'WINDOW',
+    0x2E: 'OBJECT',
     0x31: 'TABLE',
     0x32: 'LABEL',
     0x36: 'BOTTOM',
@@ -567,7 +569,7 @@ def read_class_header(fid):
     parent_name = read_string(fid)
     code_pos = read_uint(fid) + HEADER_SIZE
     unknown1 = read_short(fid)
-    return {'name': name, 'parent': parent_name, 'procedures': []}
+    return {'name': name, 'parent': parent_name, 'procedures': [], 'pos': code_pos}
 
 def read_line_info(fid):
     return ' '.join('{:02x}'.format(d) for d in fid.read(2))
@@ -640,6 +642,11 @@ def fxp_read():
             fid.seek(proc['pos'])
             proc['code'] = read_code_block(fid)
             proc.pop('pos')
+
+        for cls in classes:
+            fid.seek(cls['pos'])
+            cls['code'] = read_code_block(fid)
+            cls.pop('pos')
 
     if len(sys.argv) > 2:
         with open(sys.argv[2], 'rb') as fid:
