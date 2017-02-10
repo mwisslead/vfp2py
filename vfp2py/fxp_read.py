@@ -94,11 +94,14 @@ def read_expr(fid, names, *args):
             if code[1] == 0:
                 codeval = fid.read(1)[0]
                 continue
-            parameters = [p for p in reversed([expr.pop() for i in range(code[1])])]
-            if len(parameters) == 1:
-                code = FXPName('({} {})'.format(code[0], repr(parameters[0])))
+            elif code[1] > 0:
+                parameters = [p for p in reversed([expr.pop() for i in range(code[1])])]
+                if len(parameters) == 1:
+                    code = FXPName('({} {})'.format(code[0], repr(parameters[0])))
+                else:
+                    code = FXPName('({})'.format((' ' + code[0] + ' ').join(repr(p) for p in parameters)))
             else:
-                code = FXPName('({})'.format((' ' + code[0] + ' ').join(repr(p) for p in parameters)))
+                code = code[0]
         elif codeval in VALUES:
             code = VALUES[codeval]
             if callable(code):
@@ -193,6 +196,7 @@ COMMANDS = {
     0x6F: 'SELECT',
     0x73: 'DEFINE',
     0x74: 'ACTIVATE',
+    0x7B: 'CLEAR ON',
     0x7C: 'DECLARE',
     0x7E: 'SCAN',
     0x7F: 'SCAN',
@@ -229,6 +233,7 @@ SETCODES = {
     0x2A: 'SET PRINTER',
     0x2B: 'SET PROCEDURE',
     0x30: 'SET STATUS',
+    0x35: 'SET TYPEAHEAD',
     0x3E: 'SET CLOCK',
     0x48: 'SET REFRESH',
     0x59: 'SET SYSMENU',
@@ -236,12 +241,6 @@ SETCODES = {
     0x5D: 'SET CURSOR',
     0x62: 'SET LIBRARY',
     0x7E: 'SET CLASSLIB',
-}
-
-TYPECODES = {
-    0x57: 'SHORT',
-    0xD1: 'INTEGER',
-    0xD6: 'STRING'
 }
 
 CLAUSES = {
@@ -254,12 +253,14 @@ CLAUSES = {
     0x08: 'BLANK',
     0x0C: 'CLEAR',
     0x0D: 'COLOR',
-    0x10: '=',
+    0x10: '(ERROR or =)',
     0x12: 'FILE',
     0x13: 'FOR',
     0x14: 'FORM',
+    0x15: 'FROM',
     0x16: 'IN',
     0x17: 'KEY',
+    0x18: '@',
     0x1A: 'MACROS',
     0x1C: 'MENU',
     0x1D: 'MESSAGE',
@@ -284,6 +285,7 @@ CLAUSES = {
     0x51: 'AS',
     0x52: 'CLASSLIB',
     0x56: 'DLLS',
+    0x57: 'SHORT',
     0xBC: 'INTO',
     0xBE: 'PROCEDURE',
     0xC0: 'FREE',
@@ -296,9 +298,10 @@ CLAUSES = {
     0xCD: 'SHUTDOWN',
     0xCE: 'TIMEOUT',
     0xD0: 'NOCLEAR',
-    0xD1: 'WITH',
+    0xD1: '(WITH OR INTEGER)',
     0xD2: 'NOMARGIN',
     0xD5: 'EVENTS',
+    0xD6: 'STRING',
     0xF6: read_name, #user define function
     0xFC: read_expr,
     END_EXPR: 'END EXPR',
@@ -345,7 +348,7 @@ OPERATORS = {
     0x11: ('>=', 2),
     0x12: ('>', 2),
     0x14: ('==', 2),
-    0x18: ('@', 1),
+    0x18: ('@', -1),
 }
 
 FUNCTIONS = {
