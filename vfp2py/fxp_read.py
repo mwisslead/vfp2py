@@ -8,7 +8,7 @@ HEADER_SIZE = 0x29
 
 class FXPName(object):
     def __init__(self, name):
-        self.name = name
+        self.name = str(name)
 
     def __repr__(self):
         return self.name
@@ -71,7 +71,7 @@ def read_expr(fid, names, *args):
             code = codeval
         elif codeval in FUNCTIONS:
             code = FUNCTIONS[codeval]
-            if codeval == 0xF6:
+            if codeval in (0xE5, 0xF6):
                 code = code(fid, names)
                 while expr and type(expr[-1]) is FXPAlias:
                     code = FXPName(repr(expr.pop()) + repr(code))
@@ -85,7 +85,10 @@ def read_expr(fid, names, *args):
                     break
                 parameters.insert(0, parameter)
             code += '({})'.format(', '.join(repr(p) for p in parameters))
-            code = FXPName(code)
+            if codeval == 0xE5:
+                code = FXPAlias(code)
+            else:
+                code = FXPName(code)
         elif codeval in OPERATORS:
             code = OPERATORS[codeval]
             if code[1] == 0:
@@ -184,7 +187,7 @@ COMMANDS = {
     0x51: 'USE',
     0x52: 'WAIT',
     0x54: 'variable assignment',
-    0x55: 'ENDPROC',
+    0x55: 'ENDPROC\n',
     0x5C: 'KEYBOARD',
     0x68: 'CREATE',
     0x6F: 'SELECT',
@@ -196,7 +199,7 @@ COMMANDS = {
     0x83: 'COMPILE',
     0x84: 'FOR',
     0x85: 'ENDFOR',
-    0x86: 'expression',
+    0x86: '=', #'expression',
     0x8A: 'PUSH',
     0x8B: 'POP',
     0x99: 'function call',
@@ -299,16 +302,16 @@ CLAUSES = {
     0xF6: read_name, #user define function
     0xFC: read_expr,
     END_EXPR: 'END EXPR',
-    0xFE: 'END COMMAND'
+    0xFE: '\n'
 }
 
 VALUES = {
     0x2D: '.F.',
     0x61: '.T.',
+    0xE4: '.NULL.',
     0xD9: read_double_quoted_string,
     0xE1: read_special_alias,
     0xE2: '.',
-    0xE5: read_name,
     0xE9: read_int32,
     0xEC: read_special_name,
     0xF0: lambda fid, *args: '(SHORT CIRCUIT AND IN {})'.format(read_ushort(fid)),
@@ -393,9 +396,9 @@ FUNCTIONS = {
     0xC4: 'PARAMETERS',
     0xCE: 'EVALUATE',
     0xD1: 'ISNULL',
-    0xE4: '.NULL.',
     0xEA: lambda fid: EXTENDED2[fid.read(1)[0]],
-    0xF6: read_name, #user define function
+    0xE5: read_name, #user defined function alias
+    0xF6: read_name, #user defined function
 }
 
 EXTENDED1 = {
@@ -459,9 +462,9 @@ def parse_line(fid, length, names):
     line = []
     command = COMMANDS[fid.read(1)[0]]
     if callable(command):
-        line += command(fid, length-1)
+        line += [FXPName(c) for c in command(fid, length-1)]
     else:
-        line.append(command)
+        line.append(FXPName(command))
     while fid.tell() < final:
         clauseval = fid.read(1)[0]
         clause = CLAUSES[clauseval]
@@ -471,9 +474,18 @@ def parse_line(fid, length, names):
                 clause = FXPName(repr(line.pop()) + repr(clause))
         elif callable(clause):
             clause = clause(fid, names)
+        else:
+            clause = FXPName(clause)
         line.append(clause)
+    if len(line) > 1 and isinstance(line[-2], int):
+        line.pop(-2)
     fid.seek(final - length)
-    return line + [read_raw(fid, length)] + [fid.tell() - length]
+    try:
+        line = [' '.join(repr(l) for l in line)]
+    except:
+        pass
+    line + [read_raw(fid, length)] + [fid.tell() - length]
+    return line[0]
 
 def read_code_line_area(fid, names):
     final_fpos = fid.tell() + read_ushort(fid)
@@ -491,7 +503,7 @@ def read_code_line_area(fid, names):
             line = read_raw(fid, length-2)
             print(line, file=sys.stderr)
             d.append(line)
-    return d
+    return ''.join(d)
 
 def read_code_name_list(fid):
     num_entries = read_ushort(fid)
