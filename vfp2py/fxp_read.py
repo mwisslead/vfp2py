@@ -1,3 +1,6 @@
+from __future__ import print_function
+import io
+
 import sys
 import struct
 from math import floor, log10
@@ -5,6 +8,28 @@ from datetime import datetime
 from collections import OrderedDict
 
 HEADER_SIZE = 0x29
+
+class BinaryFix(object):
+    def __init__(self, name, open_params):
+        self.fid = io.open(name, open_params)
+
+    def read(self, length=None):
+        return bytearray(self.fid.read(length))
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, type, value, traceback):
+        self.fid.close()
+
+    def seek(self, pos, start_pos=0):
+        self.fid.seek(pos, start_pos)
+
+    def tell(self):
+        return self.fid.tell()
+
+def open(name, open_params):
+    return BinaryFix(name, open_params)
 
 class FXPName(object):
     def __init__(self, name):
@@ -321,7 +346,7 @@ VALUES = {
     0xEC: read_special_name,
     0xF0: lambda fid, *args: '(SHORT CIRCUIT AND IN {})'.format(read_ushort(fid)),
     0xF1: lambda fid, *args: '(SHORT CIRCUIT OR IN {})'.format(read_ushort(fid)),
-    0xFF: lambda fid, *args: ' '.join('{:02x}'.format(d) for d in (b'\xff' + fid.read(2))),
+    0xFF: lambda fid, *args: 'ff ' + read_raw(fid, 2),
     0xF4: read_alias,
     0xF5: read_special_alias,
     0xF7: read_name,
@@ -572,7 +597,7 @@ def read_class_header(fid):
     return {'name': name, 'parent': parent_name, 'procedures': [], 'pos': code_pos}
 
 def read_line_info(fid):
-    return ' '.join('{:02x}'.format(d) for d in fid.read(2))
+    return read_raw(fid, 2)
 
 def read_source_info(fid):
     unknown1, unknown2, unknown3, line_num_start = struct.unpack('IIII', fid.read(16))
@@ -582,7 +607,7 @@ def read_until_newline(fid):
     string = fid.read(1)
     while string[-1] != 0:
         string += fid.read(1)
-    return string
+    return string.decode('ascii')
 
 def fxp_read():
     with open(sys.argv[1], 'rb') as fid:
