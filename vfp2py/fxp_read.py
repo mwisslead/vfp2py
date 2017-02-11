@@ -48,7 +48,7 @@ def round_sig(x, sig):
     return round(x, sig-int(floor(log10(abs(x))))-1)
 
 def read_string(fid, *args):
-    return fid.read(read_ushort(fid)).decode('utf-8')
+    return fid.read(read_ushort(fid)).decode('ISO-8859-1')
 
 def read_single_quoted_string(fid, *args):
     return FXPName("'{}'".format(read_string(fid)))
@@ -584,7 +584,7 @@ def get_date(fid):
 
 def read_procedure_header(fid):
     name = read_string(fid)
-    code_pos = read_uint(fid) + HEADER_SIZE
+    code_pos = read_uint(fid)
     unknown = read_short(fid)
     class_num = read_short(fid)
     return OrderedDict((key, val) for key, val in zip(('name', 'pos', 'class'), (name, code_pos, class_num)))
@@ -592,7 +592,7 @@ def read_procedure_header(fid):
 def read_class_header(fid):
     name = read_string(fid)
     parent_name = read_string(fid)
-    code_pos = read_uint(fid) + HEADER_SIZE
+    code_pos = read_uint(fid)
     unknown1 = read_short(fid)
     return {'name': name, 'parent': parent_name, 'procedures': [], 'pos': code_pos}
 
@@ -603,82 +603,71 @@ def read_source_info(fid):
     unknown1, unknown2, unknown3, line_num_start = struct.unpack('IIII', fid.read(16))
     return line_num_start, unknown1, unknown2, unknown3
 
-def read_until_newline(fid):
+def read_until_null(fid):
     string = fid.read(1)
     while string[-1] != 0:
         string += fid.read(1)
-    return string.decode('ascii')
+    if string:
+        string = string[:-1]
+    return string.decode('ISO-8859-1')
 
-def fxp_read():
-    with open(sys.argv[1], 'rb') as fid:
-        identifier, head, footer_pos, name_pos, unknown1, unknown2, unknown3 = struct.unpack('<3s6sllB21sH', fid.read(HEADER_SIZE))
+def read_fxp_file_block(fid):
+    start_pos = fid.tell()
+    num_procedures, num_classes, unknown2, procedure_pos, class_pos, source_info_pos, num_code_lines, code_lines_pos = struct.unpack('<hh4siiiii', fid.read(0x1c))
 
-        print(identifier)
+    procedure_pos += start_pos
+    class_pos += start_pos
+    code_lines_pos += start_pos
+    source_info_pos += start_pos
 
-        if identifier != b'\xfe\xf2\xff':
-            print('bad header')
-            return
+    print(num_procedures)
+    print(num_classes)
+    print(unknown2)
+    print(procedure_pos)
+    print(class_pos)
+    print(source_info_pos)
+    print(num_code_lines)
+    print(code_lines_pos)
 
-        print(footer_pos)
-        print(name_pos)
-        print(bin(unknown1))
-        print(unknown2)
-        print(bin(unknown3))
+    date = get_date(fid)
+    print(date)
 
-        num_procedures, num_classes, unknown2, procedure_pos, class_pos, source_info_pos, num_code_lines, code_lines_pos = struct.unpack('<hh4siiiii', fid.read(0x1c))
+    unknown3 = read_uint(fid)
+    print(unknown3)
+    print(read_raw(fid, 1))
+    first_code_block = fid.tell() - start_pos
 
-        procedure_pos += HEADER_SIZE
-        class_pos += HEADER_SIZE
-        code_lines_pos += HEADER_SIZE
-        source_info_pos += HEADER_SIZE
+    fid.seek(procedure_pos)
+    procedures = [OrderedDict((key, val) for key, val in zip(('name', 'pos', 'class'), ('', first_code_block, -1)))] + [read_procedure_header(fid) for i in range(num_procedures)]
+    print(procedures)
     
-        print(num_procedures)
-        print(num_classes)
-        print(unknown2)
-        print(procedure_pos)
-        print(class_pos)
-        print(source_info_pos)
-        print(num_code_lines)
-        print(code_lines_pos)
+    fid.seek(class_pos, 0)
+    classes = [read_class_header(fid) for i in range(num_classes)]
 
-        date = get_date(fid)
-        print(date)
+    fid.seek(code_lines_pos)
+    line_info = [read_line_info(fid) for i in range(num_code_lines)]
 
-        fid.seek(procedure_pos)
-        procedures = [OrderedDict((key, val) for key, val in zip(('name', 'pos', 'class'), ('', 0x4e, -1)))] + [read_procedure_header(fid) for i in range(num_procedures)]
-        
-        fid.seek(class_pos, 0)
-        classes = [read_class_header(fid) for i in range(num_classes)]
+    fid.seek(source_info_pos)
+    source_info = [read_source_info(fid) for i in range(num_procedures + num_classes + 1)]
 
-        fid.seek(code_lines_pos)
-        line_info = [read_line_info(fid) for i in range(num_code_lines)]
+    next_file = fid.tell()
 
-        fid.seek(name_pos)
-        file_names = [read_until_newline(fid) for i in range(3)]
+    for proc in procedures:
+        fid.seek(proc['pos'] + start_pos)
+        proc['code'] = read_code_block(fid)
+        proc.pop('pos')
 
-        fid.seek(footer_pos)
-        unknown1, name_pos2, unknown2, first_name_len, unknown3, unknown4 = struct.unpack('<5sIIIII', fid.read(25))
-        print(unknown1, name_pos2, unknown2, first_name_len, unknown3, unknown4)
-
-        fid.seek(source_info_pos)
-        source_info = [read_source_info(fid) for i in range(num_procedures + num_classes + 1)]
-
-        for proc in procedures:
-            fid.seek(proc['pos'])
-            proc['code'] = read_code_block(fid)
-            proc.pop('pos')
-
-        for cls in classes:
-            fid.seek(cls['pos'])
-            cls['code'] = read_code_block(fid)
-            cls.pop('pos')
+    for cls in classes:
+        fid.seek(cls['pos'] + start_pos)
+        cls['code'] = read_code_block(fid)
+        cls.pop('pos')
 
     if len(sys.argv) > 2:
         with open(sys.argv[2], 'rb') as fid:
             for item in source_info:
                 fid.seek(item[2])
                 print(item[1])
-                print(fid.read(item[3] - item[2]).decode('utf-8'))
+                print(fid.read(item[3] - item[2]).decode('ISO-8859-1'))
 
     for i, cls in enumerate(classes):
         for proc in procedures:
@@ -696,6 +685,51 @@ def fxp_read():
     printer.pprint(line_info)
     printer.pprint(procedures)
     printer.pprint(classes)
+
+    fid.seek(next_file)
+
+def fxp_read():
+    with open(sys.argv[1], 'rb') as fid:
+        identifier, head, num_files, unknown1, footer_pos, name_pos, unknown2, unknown3, unknown4, unknown5 = struct.unpack('<3sHHHIIB21sBB', fid.read(HEADER_SIZE))
+
+        print(identifier)
+
+        print(head)
+        print(num_files)
+        print(unknown1)
+        print(footer_pos)
+        print(name_pos)
+        print(unknown2)
+        print(unknown3)
+        print(unknown4)
+        print(unknown5)
+
+        if identifier != b'\xfe\xf2\xff':
+            print('bad header')
+            return
+
+        fid.seek(name_pos)
+        file_names = [read_until_null(fid) for i in range(1 + 2*num_files)]
+        print(file_names)
+
+        fid.seek(footer_pos)
+        unknown1, next_file_pos, unknown2, first_name_len, unknown3, unknown4 = struct.unpack('<5sIIIII', fid.read(25))
+        print(unknown1, next_file_pos, unknown2, first_name_len, unknown3, unknown4)
+
+        print(file_names[2].lower())
+        fid.seek(HEADER_SIZE)
+        read_fxp_file_block(fid)
+        fid.seek(next_file_pos)
+
+        file_names = file_names[3:]
+
+        while fid.tell() != name_pos and len(file_names) > 1:
+            print(file_names[1].lower())
+            if file_names[1].lower().endswith('.fxp'):
+                read_fxp_file_block(fid)
+            else:
+                break
+            file_names = file_names[2:]
 
 if __name__ == '__main__':
     fxp_read()
