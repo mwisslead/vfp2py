@@ -194,6 +194,7 @@ COMMANDS = {
     0x23: 'GO',
     0x25: 'IF',
     0x2D: 'LOCATE',
+    0x2E: 'LOOP',
     0x31: 'ON',
     0x32: 'OTHERWISE',
     0x33: 'PACK',
@@ -233,6 +234,7 @@ COMMANDS = {
     0x8B: 'POP',
     0x96: 'ADD',
     0x99: 'function call',
+    0xA1: 'PROTECTED',
     0xA2: 'add method',
     0xA3: 'add protected method',
     0xA6: 'WITH',
@@ -279,6 +281,7 @@ CLAUSES = {
     0x08: 'BLANK',
     0x0C: 'CLEAR',
     0x0D: 'COLOR',
+    0x0F: 'DOUBLE',
     0x10: '(ERROR or =)',
     0x12: 'FILE',
     0x13: 'FOR',
@@ -327,6 +330,7 @@ CLAUSES = {
     0xD0: 'NOCLEAR',
     0xD1: '(WITH OR INTEGER)',
     0xD2: 'NOMARGIN',
+    0xD4: 'LONG',
     0xD5: 'EVENTS',
     0xD6: 'STRING',
     0xF6: read_name, #user define function
@@ -394,7 +398,8 @@ FUNCTIONS = {
     0x37: 'INKEY',
     0x3D: 'LEFT',
     0x3E: 'LEN',
-    PARAMETER_MARK: 'MARK PARAMETERS',
+    0x41: 'LTRIM',
+    PARAMETER_MARK: 'MARK PARAMETERS', #0x43
     0x46: 'MIN',
     0x48: 'MONTH',
     0x4E: 'RECCOUNT',
@@ -421,6 +426,7 @@ FUNCTIONS = {
     0xA8: 'STRTRAN',
     0xAA: 'USED',
     0xAB: 'BETWEEN',
+    0xAD: 'INLIST',
     0xB2: 'PADR',
     0xBA: 'CURDIR',
     0xC4: 'PARAMETERS',
@@ -438,6 +444,7 @@ EXTENDED1 = {
 
 EXTENDED2 = {
     #This list contains all those functions that are available through the 0xEA (extended function) code:
+    0x18: 'ON',
     0x2C: 'DDEINITIATE',
     0x2F: 'DDESETSERVICE',
     0x30: 'DDESETTOPIC',
@@ -470,6 +477,7 @@ EXTENDED2 = {
     0xC6: 'DIRECTORY',
     0xD5: 'ADDBS',
     0xD9: 'VARTYPE',
+    0xEE: 'GETWORDNUM',
     0xF0: 'STREXTRACT'
 }
 
