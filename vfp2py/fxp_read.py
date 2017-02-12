@@ -639,7 +639,6 @@ def read_fxp_file_block(fid):
 
     fid.seek(procedure_pos)
     procedures = [OrderedDict((key, val) for key, val in zip(('name', 'pos', 'class'), ('', first_code_block, -1)))] + [read_procedure_header(fid) for i in range(num_procedures)]
-    print(procedures)
     
     fid.seek(class_pos, 0)
     classes = [read_class_header(fid) for i in range(num_classes)]
@@ -649,8 +648,6 @@ def read_fxp_file_block(fid):
 
     fid.seek(source_info_pos)
     source_info = [read_source_info(fid) for i in range(num_procedures + num_classes + 1)]
-
-    next_file = fid.tell()
 
     for proc in procedures:
         fid.seek(proc['pos'] + start_pos)
@@ -662,8 +659,8 @@ def read_fxp_file_block(fid):
         cls['code'] = read_code_block(fid)
         cls.pop('pos')
 
-    if len(sys.argv) > 2:
-        with open(sys.argv[2], 'rb') as fid:
+    if False:
+        with open(source_file, 'rb') as fid:
             for item in source_info:
                 fid.seek(item[2])
                 print(item[1])
@@ -682,11 +679,8 @@ def read_fxp_file_block(fid):
 
     import pprint
     printer = pprint.PrettyPrinter(depth=10, indent=4)
-    printer.pprint(line_info)
     printer.pprint(procedures)
     printer.pprint(classes)
-
-    fid.seek(next_file)
 
 def fxp_read():
     with open(sys.argv[1], 'rb') as fid:
@@ -708,28 +702,17 @@ def fxp_read():
             print('bad header')
             return
 
-        fid.seek(name_pos)
-        file_names = [read_until_null(fid) for i in range(1 + 2*num_files)]
-        print(file_names)
-
-        fid.seek(footer_pos)
-        unknown1, next_file_pos, unknown2, first_name_len, unknown3, unknown4 = struct.unpack('<5sIIIII', fid.read(25))
-        print(unknown1, next_file_pos, unknown2, first_name_len, unknown3, unknown4)
-
-        print(file_names[2].lower())
-        fid.seek(HEADER_SIZE)
-        read_fxp_file_block(fid)
-        fid.seek(next_file_pos)
-
-        file_names = file_names[3:]
-
-        while fid.tell() != name_pos and len(file_names) > 1:
-            print(file_names[1].lower())
-            if file_names[1].lower().endswith('.fxp'):
+        for i in range(num_files):
+            fid.seek(footer_pos + 25*i)
+            file_type, file_start, file_stop, base_dir_start, file_name_start, unknown1, unknown2 = struct.unpack('<BIIIIII', fid.read(25))
+            print(file_type, file_start, file_stop, base_dir_start, file_name_start, unknown1, unknown2)
+            fid.seek(name_pos + base_dir_start)
+            print(read_until_null(fid))
+            fid.seek(name_pos + file_name_start)
+            print(read_until_null(fid))
+            fid.seek(file_start)
+            if file_type == 0:
                 read_fxp_file_block(fid)
-            else:
-                break
-            file_names = file_names[2:]
 
 if __name__ == '__main__':
     fxp_read()
