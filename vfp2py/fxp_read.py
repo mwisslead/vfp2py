@@ -253,6 +253,7 @@ COMMANDS = {
 SETCODES = {
     0x02: 'SET BELL',
     0x05: 'SET CENTURY',
+    0x0A: 'SET CONSOLE',
     0x0B: 'SET DATE',
     0x16: 'SET EXACT',
     0x24: 'SET MEMOWIDTH',
@@ -268,6 +269,7 @@ SETCODES = {
     0x5A: 'SET NOTIFY',
     0x5D: 'SET CURSOR',
     0x62: 'SET LIBRARY',
+    0x7B: 'SET CPDIALOG',
     0x7E: 'SET CLASSLIB',
 }
 
@@ -475,6 +477,7 @@ EXTENDED2 = {
     0xCC: 'FILETOSTR',
     0xCD: 'JUSTPATH',
     0xC6: 'DIRECTORY',
+    0xD4: 'JUSTFNAME',
     0xD5: 'ADDBS',
     0xD9: 'VARTYPE',
     0xEE: 'GETWORDNUM',
