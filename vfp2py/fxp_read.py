@@ -144,7 +144,7 @@ def read_expr(fid, names, *args):
             else:
                 code = FXPName(code)
         else:
-            code = 'FUNCTION {:02x}'.format(codeval)
+            raise KeyError(codeval)
         expr.append(code)
         codeval = fid.read(1)[0]
     if len(expr) == 1:
@@ -194,7 +194,9 @@ COMMANDS = {
     0x20: 'ERASE',
     0x21: 'EXIT',
     0x23: 'GO',
+    0x24: 'GOTO',
     0x25: 'IF',
+    0x26: 'INDEX',
     0x2D: 'LOCATE',
     0x2E: 'LOOP',
     0x31: 'ON',
@@ -318,6 +320,7 @@ CLAUSES = {
     0x36: 'BOTTOM',
     0x39: 'NOCONSOLE',
     0x3A: 'NOWAIT',
+    0x3B: 'PLAIN',
     0x48: 'CASE',
     0x4B: 'PROGRAM',
     0x4E: 'SCHEME',
@@ -332,6 +335,7 @@ CLAUSES = {
     0xC2: 'SHARED',
     0xC3: 'OF',
     0xC6: 'POPUP',
+    0xCA: 'TAG',
     0xCB: 'STATUS',
     0xCC: 'STRUCTURE',
     0xCD: 'SHUTDOWN',
@@ -358,8 +362,11 @@ VALUES = {
     0xE2: '.',
     0xE9: read_int32,
     0xEC: read_special_name,
+    0xED: read_special_name,
     0xF0: lambda fid, *args: '(SHORT CIRCUIT AND IN {})'.format(read_ushort(fid)),
     0xF1: lambda fid, *args: '(SHORT CIRCUIT OR IN {})'.format(read_ushort(fid)),
+    0xF2: lambda fid, *args: '(SHORT CIRCUIT IIF IN {})'.format(read_ushort(fid)),
+    0xF3: lambda fid, *args: '(SHORT CIRCUIT IIF IN {})'.format(read_ushort(fid)),
     0xFF: lambda fid, *args: 'ff ' + read_raw(fid, 2),
     0xF4: read_alias,
     0xF5: read_special_alias,
@@ -390,11 +397,14 @@ OPERATORS = {
     0x12: ('>', 2),
     0x14: ('==', 2),
     0x18: ('@', -1),
+    0xEB: ('ARRAY_SCOPE', -1),
 }
 
 FUNCTIONS = {
     0x1A: lambda fid: EXTENDED1[fid.read(1)[0]],
+    0x1B: 'ALIAS',
     0x1C: 'ASC',
+    0x1D: 'AT',
     0x1E: 'BOF',
     0x1F: 'CDOW',
     0x20: 'CHR',
@@ -405,13 +415,17 @@ FUNCTIONS = {
     0x2B: 'EOF',
     0x30: 'FILE', 
     0x34: 'FOUND',
+    0x36: 'IIF',
     0x37: 'INKEY',
+    0x38: 'INT',
     0x3D: 'LEFT',
     0x3E: 'LEN',
+    0x40: 'LOWER',
     0x41: 'LTRIM',
     PARAMETER_MARK: 'MARK PARAMETERS', #0x43
     0x46: 'MIN',
     0x48: 'MONTH',
+    0x4A: 'OS',
     0x4E: 'RECCOUNT',
     0x4F: 'RECNO',
     0x51: 'REPLICATE',
@@ -459,17 +473,21 @@ FUNCTIONS = {
 
 EXTENDED1 = {
     0x04: 'BINDEVENT',
+    0x08: 'UNBINDEVENTS',
     0x0F: 'CAST',
 }
 
 EXTENDED2 = {
     #This list contains all those functions that are available through the 0xEA (extended function) code:
     0x18: 'ON',
+    0x19: '', #Some sort of array indicator?
+    0x24: 'FONTMETRIC',
     0x2C: 'DDEINITIATE',
     0x2F: 'DDESETSERVICE',
     0x30: 'DDESETTOPIC',
     0x31: 'DDETERMINATE',
     0x35: 'DDESETOPTION',
+    0x3B: 'CPDBF',
     0x3E: 'CAPSLOCK',
     0x4E: 'CREATEOBJECT',
     0x51: 'HOME',
