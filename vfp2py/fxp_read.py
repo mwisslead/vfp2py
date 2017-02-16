@@ -42,6 +42,16 @@ class FXPAlias(FXPName):
     def __repr__(self):
         return self.name + '.'
 
+class FXPNumber(object):
+    def __init__(self, number, digits, dec_digits=0):
+        self.number = number
+        digits -= dec_digits
+        digits = max(digits, 0)
+        self.format_string = '{{:0{}.{}f}}'.format(digits, dec_digits)
+
+    def __repr__(self):
+        return self.format_string.format(self.number)
+
 def round_sig(x, sig):
     if x == 0:
         return 0.
@@ -58,20 +68,20 @@ def read_double_quoted_string(fid, *args):
 
 def read_int8(fid, *args):
     digits = fid.read(1)[0]
-    return round_sig(fid.read(1)[0], digits)
+    return FXPNumber(fid.read(1)[0], digits)
 
 def read_int16(fid, *args):
     digits = fid.read(1)[0]
-    return round_sig(read_short(fid), digits)
+    return FXPNumber(read_short(fid), digits)
 
 def read_int32(fid, *args):
     digits = fid.read(1)[0]
-    return round_sig(read_int(fid), digits)
+    return FXPNumber(read_int(fid), digits)
 
 def read_double(fid, *args):
     digits = fid.read(1)[0] - 1
-    digits += fid.read(1)[0]
-    return round_sig(struct.unpack('<d', fid.read(8))[0], digits)
+    dec_digits = fid.read(1)[0]
+    return FXPNumber(struct.unpack('<d', fid.read(8))[0], digits, dec_digits)
 
 def read_alias(fid, names, *args):
     return FXPAlias(names[read_ushort(fid)])
