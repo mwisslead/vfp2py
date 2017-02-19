@@ -154,7 +154,7 @@ def read_expr(fid, names, *args):
             else:
                 code = FXPName(code)
         else:
-            raise KeyError(codeval)
+            raise KeyError(hex(codeval))
         expr.append(code)
         codeval = fid.read(1)[0]
     if len(expr) == 1:
@@ -232,6 +232,7 @@ COMMANDS = {
     0x52: 'WAIT',
     0x54: 'variable assignment',
     0x55: 'ENDPROC\n',
+    0x5B: 'FLUSH',
     0x5C: 'KEYBOARD',
     0x5E: 'SCATTER',
     0x5F: 'GATHER',
@@ -413,6 +414,7 @@ OPERATORS = {
     0x12: ('>=', 2),
     0x14: ('==', 2),
     0x18: ('@', -1),
+    0xCC: ('', 1),
     0xEB: ('ARRAY_SCOPE', -1),
 }
 
@@ -442,6 +444,7 @@ FUNCTIONS = {
     0x40: 'LOWER',
     0x41: 'LTRIM',
     PARAMETER_MARK: 'MARK PARAMETERS', #0x43
+    0x44: 'MAX',
     0x46: 'MIN',
     0x47: 'MOD',
     0x48: 'MONTH',
@@ -457,6 +460,7 @@ FUNCTIONS = {
     0x5C: 'SUBSTR',
     0x5D: 'SYS',
     0x5E: 'TIME',
+    0x5F: 'TRANSFORM',
     0x60: 'TRIM',
     0x62: 'TYPE',
     0x66: 'UPPER',
@@ -466,6 +470,7 @@ FUNCTIONS = {
     0x74: 'PROGRAM',
     0x76: 'SET',
     0x77: 'CEILING',
+    0x7C: 'LASTKEY',
     0x90: 'FOPEN',
     0x91: 'FCLOSE',
     0x92: 'FREAD',
@@ -473,6 +478,7 @@ FUNCTIONS = {
     0x95: 'FCREATE',
     0x96: 'FSEEK',
     0x97: 'FGETS',
+    0x99: 'FPUTS',
     0x9B: 'ALLTRIM',
     0x9D: 'CHRTRAN',
     0x9E: 'FILTER',
@@ -514,11 +520,12 @@ EXTENDED2 = {
     #This list contains all those functions that are available through the 0xEA (extended function) code:
     0x10: 'ASORT',
     0x11: 'ASCAN',
-    #0x14: 'AFIELDS',
+    0x14: 'AFIELDS',
     0x18: 'ON',
     0x19: '', #Some sort of array indicator?
     0x24: 'FONTMETRIC',
     0x27: 'GETFONT',
+    0x28: 'AFONT',
     0x2C: 'DDEINITIATE',
     0x2F: 'DDESETSERVICE',
     0x30: 'DDESETTOPIC',
@@ -539,6 +546,8 @@ EXTENDED2 = {
     0x84: 'MINUTE',
     0x85: 'SEC',
     0x86: 'DATETIME',
+    0x93: 'TABLEUPDATE',
+    0x94: 'TABLEREVERT',
     0xA1: 'DODEFAULT',
     0xA7: 'BITLSHIFT',
     0xA8: 'BITRSHIFT',
@@ -551,11 +560,12 @@ EXTENDED2 = {
     0xBF: 'BINTOC',
     0xC0: 'CTOBIN',
     0xCC: 'FILETOSTR',
-    0xCD: 'JUSTPATH',
+    0xCD: 'ADDBS',
     0xC6: 'DIRECTORY',
+    0xD0: 'FORCEEXT',
     0xD3: 'JUSTEXT',
     0xD4: 'JUSTFNAME',
-    0xD5: 'ADDBS',
+    0xD5: 'JUSTPATH',
     0xD9: 'VARTYPE',
     0xED: 'GETWORDCOUNT',
     0xEE: 'GETWORDNUM',
