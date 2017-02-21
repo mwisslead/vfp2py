@@ -164,6 +164,9 @@ def read_expr(fid, names, *args):
 def read_setcode(fid, length):
     return [SETCODES[fid.read(1)[0]]]
 
+def read_oncode(fid, length):
+    return [ONCODES[fid.read(1)[0]]]
+
 class Token(object):
     def __init__(self, tokenstr, tokenval):
         self.str = tokenstr
@@ -209,7 +212,7 @@ COMMANDS = {
     0x26: 'INDEX',
     0x2D: 'LOCATE',
     0x2E: 'LOOP',
-    0x31: 'ON',
+    0x31: read_oncode,
     0x32: 'OTHERWISE',
     0x33: 'PACK',
     0x34: 'PARAMETERS',
@@ -222,6 +225,7 @@ COMMANDS = {
     0x3E: 'REPLACE',
     0x3F: 'REPORT',
     0x42: 'RETURN',
+    0x43: 'RUN',
     0x45: 'SEEK',
     0x46: 'SELECT',
     0x47: read_setcode,
@@ -230,7 +234,8 @@ COMMANDS = {
     0x4B: 'SUM',
     0x51: 'USE',
     0x52: 'WAIT',
-    0x54: 'variable assignment',
+    0x53: 'ZAP',
+    0x54: lambda fid, length: [], #variable assignment
     0x55: 'ENDPROC\n',
     0x5B: 'FLUSH',
     0x5C: 'KEYBOARD',
@@ -240,6 +245,7 @@ COMMANDS = {
     0x6F: 'SELECT',
     0x73: 'DEFINE',
     0x74: 'ACTIVATE',
+    0x7A: 'MOVE',
     0x7B: 'CLEAR ON',
     0x7C: 'DECLARE',
     0x7E: 'SCAN',
@@ -247,12 +253,12 @@ COMMANDS = {
     0x83: 'COMPILE',
     0x84: 'FOR',
     0x85: 'ENDFOR',
-    0x86: '=', #'expression',
+    0x86: '=', #expression,
     0x8A: 'PUSH',
     0x8B: 'POP',
     0x90: 'EXTERNAL',
     0x96: 'ADD',
-    0x99: 'function call',
+    0x99: lambda fid, length: [], #function call
     0xA1: 'PROTECTED',
     0xA2: 'add method',
     0xA3: 'add protected method',
@@ -270,6 +276,7 @@ COMMANDS = {
 }
 
 SETCODES = {
+    0x01: 'SET ALTERNATE',
     0x02: 'SET BELL',
     0x05: 'SET CENTURY',
     0x0A: 'SET CONSOLE',
@@ -284,6 +291,7 @@ SETCODES = {
     0x29: 'SET PATH',
     0x2A: 'SET PRINTER',
     0x2B: 'SET PROCEDURE',
+    0x2E: 'SET SAFETY',
     0x30: 'SET STATUS',
     0x31: 'SET STEP',
     0x35: 'SET TYPEAHEAD',
@@ -297,6 +305,12 @@ SETCODES = {
     0x62: 'SET LIBRARY',
     0x7B: 'SET CPDIALOG',
     0x7E: 'SET CLASSLIB',
+    0x80: 'SET DATASESSION',
+    0x8F: 'SET AUTOINCERROR',
+}
+
+ONCODES = {
+    0x10: 'ERROR',
 }
 
 CLAUSES = {
@@ -311,7 +325,7 @@ CLAUSES = {
     0x0C: 'CLEAR',
     0x0D: 'COLOR',
     0x0F: 'DOUBLE',
-    0x10: '(ERROR or =)',
+    0x10: '=',
     0x12: 'FILE',
     0x13: 'FOR',
     0x14: 'FORM',
@@ -348,6 +362,7 @@ CLAUSES = {
     0x56: 'DLLS',
     0x57: 'SHORT',
     0xBC: 'INTO',
+    0xBD: 'CENTER',
     0xBE: 'PROCEDURE',
     0xC0: 'FREE',
     0xC1: 'LINE',
@@ -423,6 +438,7 @@ OPERATORS = {
 }
 
 FUNCTIONS = {
+    0x19: 'ABS',
     0x1A: lambda fid: EXTENDED1[fid.read(1)[0]],
     0x1B: 'ALIAS',
     0x1C: 'ASC',
@@ -439,10 +455,12 @@ FUNCTIONS = {
     0x29: 'DOW',
     0x2A: 'DTOC',
     0x2B: 'EOF',
+    0x2C: 'ERROR',
     0x2E: 'FCOUNT',
     0x2F: 'FIELD',
     0x30: 'FILE', 
     0x34: 'FOUND',
+    0x35: 'GETENV',
     0x36: 'IIF',
     0x37: 'INKEY',
     0x38: 'INT',
@@ -464,6 +482,7 @@ FUNCTIONS = {
     0x57: 'SELECT',
     0x58: 'SPACE',
     0x5A: 'STR',
+    0x5B: 'STUFF',
     0x5C: 'SUBSTR',
     0x5D: 'SYS',
     0x5E: 'TIME',
@@ -506,6 +525,8 @@ FUNCTIONS = {
     0xB1: 'PADL',
     0xB2: 'PADR',
     0xB3: 'FSIZE',
+    0xB4: 'SROWS',
+    0xB5: 'SCOLS',
     0xB6: 'WCOLS',
     0xB7: 'WROWS',
     0xB8: 'ATC',
@@ -534,9 +555,11 @@ EXTENDED2 = {
     0x10: 'ASORT',
     0x11: 'ASCAN',
     0x14: 'AFIELDS',
+    0x15: 'ADIR',
     0x18: 'ON',
     0x19: '', #Some sort of array indicator?
     0x24: 'FONTMETRIC',
+    0x25: 'SYSMETRIC',
     0x27: 'GETFONT',
     0x28: 'AFONT',
     0x2C: 'DDEINITIATE',
@@ -552,6 +575,7 @@ EXTENDED2 = {
     0x54: 'UNIQUE',
     0x56: 'TAGCOUNT',
     0x5A: 'ISBLANK',
+    0x5D: 'OBJTOCLIENT',
     0x5E: 'RGB',
     0x5F: 'OLDVAL',
     0x67: 'SQLDISCONNECT',
@@ -573,6 +597,7 @@ EXTENDED2 = {
     0x8E: 'CANDIDATE',
     0x93: 'TABLEUPDATE',
     0x94: 'TABLEREVERT',
+    0x9C: 'WEEK',
     0x9F: 'SQLSTRINGCONNECT',
     0xA1: 'DODEFAULT',
     0xA7: 'BITLSHIFT',
