@@ -213,7 +213,7 @@ COMMANDS = {
     0x20: 'ERASE',
     0x21: 'EXIT',
     0x23: 'GO',
-    0x24: 'GOTO',
+    0x24: 'HELP',
     0x25: 'IF',
     0x26: 'INDEX',
     0x2D: 'LOCATE',
@@ -310,6 +310,7 @@ SETCODES = {
     0x43: 'SET BLOCKSIZE',
     0x46: 'SET NEAR',
     0x48: 'SET REFRESH',
+    0x4D: 'SET REPROCESS',
     0x54: 'SET RESOURCE',
     0x59: 'SET SYSMENU',
     0x5A: 'SET NOTIFY',
@@ -323,6 +324,7 @@ SETCODES = {
 
 ONCODES = {
     0x10: 'ON ERROR',
+    0x17: 'ON KEY',
     0xD0: 'ON SELECTION',
 }
 
@@ -368,6 +370,7 @@ CLAUSES = {
     0x3A: 'NOWAIT',
     0x3B: 'PLAIN',
     0x48: 'CASE',
+    0x49: 'ID',
     0x4B: 'PROGRAM',
     0x4E: 'SCHEME',
     0x51: 'AS',
@@ -377,6 +380,7 @@ CLAUSES = {
     0xBC: 'INTO',
     0xBD: 'CENTER',
     0xBE: 'PROCEDURE',
+    0xBF: '(UNKNOWN)',
     0xC0: 'FREE',
     0xC1: 'LINE',
     0xC2: 'SHARED',
@@ -473,6 +477,7 @@ FUNCTIONS = {
     0x2E: 'FCOUNT',
     0x2F: 'FIELD',
     0x30: 'FILE', 
+    0x33: 'FLOCK',
     0x34: 'FOUND',
     0x35: 'GETENV',
     0x36: 'IIF',
@@ -493,6 +498,7 @@ FUNCTIONS = {
     0x4F: 'RECNO',
     0x51: 'REPLICATE',
     0x52: 'RIGHT',
+    0x53: 'RLOCK',
     0x54: 'ROUND',
     0x57: 'SELECT',
     0x58: 'SPACE',
@@ -536,6 +542,7 @@ FUNCTIONS = {
     0xA8: 'STRTRAN',
     0xAA: 'USED',
     0xAB: 'BETWEEN',
+    0xAC: 'CHRSAW',
     0xAD: 'INLIST',
     0xAE: 'ISDIGIT',
     0xAF: 'OCCURS',
@@ -612,7 +619,9 @@ EXTENDED2 = {
     0x6C: 'SQLSETPROP',
     0x74: 'PCOUNT',
     0x78: 'MESSAGEBOX',
+    0x79: 'AUSED',
     0x7A: 'AERROR',
+    0x7F: 'DTOT',
     0x80: 'TTOD',
     0x81: 'TTOC',
     0x82: 'CTOT',
@@ -632,6 +641,7 @@ EXTENDED2 = {
     0x9C: 'WEEK',
     0x9F: 'SQLSTRINGCONNECT',
     0xA1: 'DODEFAULT',
+    0xA2: 'ISEXCLUSIVE',
     0xA6: 'INDBC',
     0xA7: 'BITLSHIFT',
     0xA8: 'BITRSHIFT',
@@ -646,6 +656,7 @@ EXTENDED2 = {
     0xBE: 'STRCONV',
     0xBF: 'BINTOC',
     0xC0: 'CTOBIN',
+    0xC2: 'ISRLOCKED',
     0xCB: 'STRTOFILE',
     0xCC: 'FILETOSTR',
     0xCD: 'ADDBS',
@@ -661,6 +672,7 @@ EXTENDED2 = {
     0xEE: 'GETWORDNUM',
     0xF0: 'STREXTRACT',
     0xF1: 'INPUTBOX',
+    0xF4: 'ASESSIONS',
 }
 
 CLAUSES.update(VALUES)
