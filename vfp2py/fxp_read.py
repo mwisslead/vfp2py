@@ -191,6 +191,7 @@ SPECIAL_NAMES = {
     0x3F: '_MED_PASTE',
     0x3D: '_MED_CUT',
     0x41: '_MED_CLEAR',
+    0x42: '_MED_SP200',
     0x48: '_MED_SLCTA',
 }
 
@@ -248,12 +249,14 @@ COMMANDS = {
     0x53: 'ZAP',
     0x54: lambda fid, length: [], #variable assignment
     0x55: 'ENDPROC\n',
+    0x58: 'RETRY',
     0x5A: 'UNLOCK',
     0x5B: 'FLUSH',
     0x5C: 'KEYBOARD',
     0x5E: 'SCATTER',
     0x5F: 'GATHER',
     0x68: 'CREATE',
+    0x69: 'ALTER',
     0x6F: 'SELECT',
     0x73: 'DEFINE',
     0x74: 'ACTIVATE',
@@ -272,6 +275,7 @@ COMMANDS = {
     0x90: 'EXTERNAL',
     0x96: 'ADD',
     0x99: lambda fid, length: [], #function call
+    0x9E: 'HIDDEN PROCEDURE',
     0xA1: 'PROTECTED',
     0xA2: 'add method',
     0xA3: 'add protected method',
@@ -417,6 +421,7 @@ VALUES = {
     0x61: '.T.',
     0xE4: '.NULL.',
     0xD9: read_double_quoted_string,
+    0xE0: read_name,
     0xE1: read_special_alias,
     0xE2: '.',
     0xE9: read_int32,
@@ -496,6 +501,7 @@ FUNCTIONS = {
     0x41: 'LTRIM',
     PARAMETER_MARK: 'MARK PARAMETERS', #0x43
     0x44: 'MAX',
+    0x45: 'MESSAGE',
     0x46: 'MIN',
     0x47: 'MOD',
     0x48: 'MONTH',
@@ -611,6 +617,8 @@ EXTENDED2 = {
     0x3A: 'CPCURRENT',
     0x3B: 'CPDBF',
     0x3E: 'CAPSLOCK',
+    0x3F: 'NUMLOCK',
+    0x40: 'INSMODE',
     0x4E: 'CREATEOBJECT',
     0x51: 'HOME',
     0x54: 'UNIQUE',
@@ -665,6 +673,7 @@ EXTENDED2 = {
     0xBF: 'BINTOC',
     0xC0: 'CTOBIN',
     0xC2: 'ISRLOCKED',
+    0xC3: 'LOADPICTURE',
     0xC6: 'DIRECTORY',
     0xCB: 'STRTOFILE',
     0xCC: 'FILETOSTR',
