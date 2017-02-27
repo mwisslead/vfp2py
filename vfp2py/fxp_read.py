@@ -807,7 +807,7 @@ def read_procedure_header(fid):
     code_pos = read_uint(fid)
     unknown = read_short(fid)
     class_num = read_short(fid)
-    return OrderedDict((key, val) for key, val in zip(('name', 'pos', 'class'), (name, code_pos, class_num)))
+    return OrderedDict((key, val) for key, val in zip(('name', 'pos', 'class', 'unknown'), (name, code_pos, class_num, unknown)))
 
 def read_class_header(fid):
     name = read_string(fid)
@@ -840,25 +840,18 @@ def read_fxp_file_block(fid):
     code_lines_pos += start_pos
     source_info_pos += start_pos
 
-    print(num_procedures)
-    print(num_classes)
-    print(unknown2)
-    print(procedure_pos)
-    print(class_pos)
-    print(source_info_pos)
-    print(num_code_lines)
-    print(code_lines_pos)
-
     date = get_date(fid)
-    print(date)
 
     unknown3 = read_uint(fid)
-    print(unknown3)
-    print(read_raw(fid, 1))
+    unknown4 = fid.read(1)
+
+    for item in ('start_pos', 'num_procedures', 'num_classes', 'unknown2', 'procedure_pos', 'class_pos', 'source_info_pos', 'num_code_lines', 'code_lines_pos', 'date', 'unknown3', 'unknown4'):
+        print(item + ' = ' + str(eval(item)))
+
     first_code_block = fid.tell() - start_pos
 
     fid.seek(procedure_pos)
-    procedures = [OrderedDict((key, val) for key, val in zip(('name', 'pos', 'class'), ('', first_code_block, -1)))] + [read_procedure_header(fid) for i in range(num_procedures)]
+    procedures = [OrderedDict((key, val) for key, val in zip(('name', 'pos', 'class', 'unknown'), ('', first_code_block, -1, 0)))] + [read_procedure_header(fid) for i in range(num_procedures)]
     
     fid.seek(class_pos, 0)
     classes = [read_class_header(fid) for i in range(num_classes)]
@@ -897,42 +890,42 @@ def read_fxp_file_block(fid):
     for proc in procedures:
         proc.pop('class')
 
-    import pprint
-    printer = pprint.PrettyPrinter(depth=10, indent=4)
-    printer.pprint(procedures)
-    printer.pprint(classes)
+    return procedures, classes
 
 def fxp_read():
     with open(sys.argv[1], 'rb') as fid:
         identifier, head, num_files, unknown1, footer_pos, name_pos, unknown2, unknown3, unknown4, unknown5 = struct.unpack('<3sHHHIIB21sBB', fid.read(HEADER_SIZE))
 
-        print(identifier)
-
-        print(head)
-        print(num_files)
-        print(unknown1)
-        print(footer_pos)
-        print(name_pos)
-        print(unknown2)
-        print(unknown3)
-        print(unknown4)
-        print(unknown5)
+        for item in ('head', 'num_files', 'unknown1', 'footer_pos', 'name_pos', 'unknown2', 'unknown3', 'unknown4', 'unknown5'):
+            print(item + ' = ' + str(eval(item)))
+        print()
 
         if identifier != b'\xfe\xf2\xff':
             print('bad header')
             return
 
+        output = OrderedDict()
         for i in range(num_files):
             fid.seek(footer_pos + 25*i)
             file_type, file_start, file_stop, base_dir_start, file_name_start, unknown1, unknown2 = struct.unpack('<BIIIIII', fid.read(25))
-            print(file_type, file_start, file_stop, base_dir_start, file_name_start, unknown1, unknown2)
             fid.seek(name_pos + base_dir_start)
-            print(read_until_null(fid))
+            filename1 = read_until_null(fid)
             fid.seek(name_pos + file_name_start)
-            print(read_until_null(fid))
+            filename2 = read_until_null(fid)
+            for item in ('file_type', 'file_start', 'file_stop', 'base_dir_start', 'file_name_start', 'unknown1', 'unknown2', 'filename1', 'filename2'):
+                print(item + ' = ' + str(eval(item)))
             fid.seek(file_start)
             if file_type == 0:
-                read_fxp_file_block(fid)
+                output[filename2] = read_fxp_file_block(fid)
+            print()
+
+        for filename in output:
+            import pprint
+            printer = pprint.PrettyPrinter(depth=10, indent=4)
+            procedures, classes = output[filename]
+            printer.pprint(filename)
+            printer.pprint(procedures)
+            printer.pprint(classes)
 
 if __name__ == '__main__':
     fxp_read()
