@@ -737,8 +737,7 @@ def parse_line(fid, length, names):
     line + [read_raw(fid, length)] + [fid.tell() - length]
     return line[0]
 
-def read_code_line_area(fid, names):
-    final_fpos = fid.tell() + read_ushort(fid)
+def read_code_line_area(fid, names, final_fpos):
     d = []
     while fid.tell() < final_fpos:
         try:
@@ -784,13 +783,15 @@ def concatenate_aliases(codes, names):
     return new_codes
 
 def read_code_block(fid):
-    start_pos = fid.tell()
     tot_length = read_ushort(fid)
+    if tot_length == 0:
+        tot_length = read_uint(fid)
+    start_pos = fid.tell()
     fid.seek(fid.tell() + tot_length)
     names = read_code_name_list(fid)
 
     fid.seek(start_pos)
-    return read_code_line_area(fid, names)
+    return read_code_line_area(fid, names, start_pos+tot_length)
 
 def get_date(fid):
     date_bits = read_uint(fid)
