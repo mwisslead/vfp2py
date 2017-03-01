@@ -83,6 +83,14 @@ def read_double(fid, *args):
     dec_digits = fid.read(1)[0]
     return FXPNumber(struct.unpack('<d', fid.read(8))[0], digits, dec_digits)
 
+def read_date(fid, *args):
+    d = struct.unpack('<Q', fid.read(8))[0]
+    if not d:
+        return '{ / / }'
+    d = '{:064b}'.format(d)
+    dt = (int(d[:34], 2) - 2189770124) * 24 * 60 * 60 + int(int(d[34:], 2) / 24855.)
+    return '{{^{}}}'.format(datetime.utcfromtimestamp(dt))
+
 def read_alias(fid, names, *args):
     return FXPAlias(names[read_ushort(fid)])
 
@@ -167,6 +175,10 @@ def read_setcode(fid, length):
 def read_oncode(fid, length):
     return [ONCODES[fid.read(1)[0]]]
 
+def read_text(fid, length):
+    length = read_ushort(fid)
+    return [''.join(chr(x) for x in fid.read(length))]
+
 class Token(object):
     def __init__(self, tokenstr, tokenval):
         self.str = tokenstr
@@ -187,9 +199,11 @@ SPECIAL_NAMES = {
     0x35: '_WINDOWS',
     0x39: '_SCREEN',
     0x43: '_VFP',
+    0x3A: '_MED_UNDO',
+    0x3C: '_MED_SP100',
+    0x3D: '_MED_CUT',
     0x3E: '_MED_COPY',
     0x3F: '_MED_PASTE',
-    0x3D: '_MED_CUT',
     0x41: '_MED_CLEAR',
     0x42: '_MED_SP200',
     0x48: '_MED_SLCTA',
@@ -214,6 +228,7 @@ COMMANDS = {
     0x1C: 'ENDCASE',
     0x1D: 'ENDDO',
     0x1E: 'ENDIF',
+    0x1F: 'ENDTEXT',
     0x20: 'ERASE',
     0x21: 'EXIT',
     0x23: 'GO',
@@ -244,6 +259,7 @@ COMMANDS = {
     0x48: 'SKIP',
     0x4A: 'STORE',
     0x4B: 'SUM',
+    0x4D: 'TEXT',
     0x51: 'USE',
     0x52: 'WAIT',
     0x53: 'ZAP',
@@ -282,6 +298,7 @@ COMMANDS = {
     0xA6: 'WITH',
     0xA7: 'ENDWITH',
     0xA8: 'ERROR',
+    0xAA: 'DEBUGOUT',
     0xAC: 'NODEFAULT',
     0xAE: 'LOCAL',
     0xAF: 'LPARAMETERS',
@@ -290,6 +307,7 @@ COMMANDS = {
     0xB2: 'RMDIR',
     0xB5: 'FOR EACH',
     0xB6: 'ENDFOREACH',
+    0xFB: read_text,
 }
 
 SETCODES = {
@@ -313,6 +331,7 @@ SETCODES = {
     0x31: 'SET STEP',
     0x32: 'SET TALK',
     0x35: 'SET TYPEAHEAD',
+    0x36: 'SET UNIQUE',
     0x3E: 'SET CLOCK',
     0x41: 'SET COMPATIBLE',
     0x43: 'SET BLOCKSIZE',
@@ -386,6 +405,7 @@ CLAUSES = {
     0x52: 'CLASSLIB',
     0x56: 'DLLS',
     0x57: 'SHORT',
+    0x5F: 'PICTRES',
     0xBC: 'INTO',
     0xBD: 'CENTER',
     0xBE: 'PROCEDURE',
@@ -421,12 +441,15 @@ VALUES = {
     0x61: '.T.',
     0xE4: '.NULL.',
     0xD9: read_double_quoted_string,
+    0xDB: '',
     0xE0: read_name,
     0xE1: read_special_alias,
     0xE2: '.',
+    0xE6: read_date,
     0xE9: read_int32,
     0xEC: read_special_name,
     0xED: read_special_name,
+    0xEE: read_date,
     0xF0: lambda fid, *args: '(SHORT CIRCUIT AND IN {})'.format(read_ushort(fid)),
     0xF1: lambda fid, *args: '(SHORT CIRCUIT OR IN {})'.format(read_ushort(fid)),
     0xF2: lambda fid, *args: '(SHORT CIRCUIT IIF IN {})'.format(read_ushort(fid)),
@@ -834,7 +857,7 @@ def read_until_null(fid):
 
 def read_fxp_file_block(fid):
     start_pos = fid.tell()
-    num_procedures, num_classes, unknown2, procedure_pos, class_pos, source_info_pos, num_code_lines, code_lines_pos = struct.unpack('<hh4siiiii', fid.read(0x1c))
+    num_procedures, num_classes, unknown2, procedure_pos, class_pos, source_info_pos, num_code_lines, code_lines_pos = struct.unpack('<hhiiiiii', fid.read(0x1c))
 
     procedure_pos += start_pos
     class_pos += start_pos
