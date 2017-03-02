@@ -969,6 +969,21 @@ def fxp_read():
                         outfid.write(fid.read(file_stop - file_start))
             print()
 
+        if len(sys.argv) > 2:
+            for filename in output:
+                with open(os.path.join(sys.argv[2], os.path.splitext(filename)[0]) + '.prg', 'wb') as outfid:
+                    procedures, classes = output[filename]
+                    for proc in procedures:
+                        if proc['name']:
+                            outfid.write('PROCEDURE {}\n'.format(proc['name']).encode('ISO-8859-1'))
+                        outfid.write(proc['code'].encode('ISO-8859-1'))
+                    for cls in classes:
+                        outfid.write('DEFINE CLASS {} AS {}'.format(cls['name'], cls['parent']).encode('ISO-8859-1'))
+                        outfid.write(cls['code'].encode('ISO-8859-1'))
+                        for proc in cls['procedures']:
+                            outfid.write('PROCEDURE {}\n'.format(proc['name']).encode('ISO-8859-1'))
+                            outfid.write(proc['code'].encode('ISO-8859-1'))
+
         for filename in output:
             import pprint
             printer = pprint.PrettyPrinter(depth=10, indent=4)
