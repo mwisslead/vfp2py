@@ -2,6 +2,7 @@ from __future__ import print_function
 import io
 
 import sys
+import os
 import struct
 from math import floor, log10
 from datetime import datetime
@@ -15,6 +16,9 @@ class BinaryFix(object):
 
     def read(self, length=None):
         return bytearray(self.fid.read(length))
+
+    def write(self, string):
+        self.fid.write(string)
 
     def __enter__(self):
         return self
@@ -918,9 +922,11 @@ def read_fxp_file_block(fid):
 
 def fxp_read():
     with open(sys.argv[1], 'rb') as fid:
-        identifier, head, num_files, unknown1, footer_pos, name_pos, unknown2, unknown3, unknown4, unknown5 = struct.unpack('<3sHHHIIB21sBB', fid.read(HEADER_SIZE))
+        identifier, head, num_files, num_unknown, footer_pos, name_pos, name_len, unknown_string, unknown = struct.unpack('<3sHHHIII18sH', fid.read(HEADER_SIZE))
+        unknown2 = unknown & 0xff
+        unknown3 = (unknown & 0xff00) >> 8
 
-        for item in ('head', 'num_files', 'unknown1', 'footer_pos', 'name_pos', 'unknown2', 'unknown3', 'unknown4', 'unknown5'):
+        for item in ('head', 'num_files', 'num_unknown', 'footer_pos', 'name_pos', 'name_len', 'unknown_string', 'unknown', 'unknown2', 'unknown3'):
             print(item + ' = ' + str(eval(item)))
         print()
 
@@ -928,6 +934,8 @@ def fxp_read():
             print('bad header')
             return
 
+        if len(sys.argv) > 2 and not os.path.exists(sys.argv[2]):
+            os.mkdir(sys.argv[2])
         output = OrderedDict()
         for i in range(num_files):
             fid.seek(footer_pos + 25*i)
@@ -938,9 +946,27 @@ def fxp_read():
             filename2 = read_until_null(fid)
             for item in ('file_type', 'file_start', 'file_stop', 'base_dir_start', 'file_name_start', 'unknown1', 'unknown2', 'filename1', 'filename2'):
                 print(item + ' = ' + str(eval(item)))
-            fid.seek(file_start)
             if file_type == 0:
+                fid.seek(file_start)
                 output[filename2] = read_fxp_file_block(fid)
+                if len(sys.argv) > 2:
+                    with open(os.path.join(sys.argv[2], filename2), 'wb') as outfid:
+                        fid.seek(file_start)
+                        blocklen = file_stop - file_start
+                        filename_blocklen = len(filename1) + len(filename2) + 3
+                        outfid.write(struct.pack('<3sHHHIII18sH', identifier, head, 1, 0, 0x29 + blocklen + filename_blocklen, 0x29 + blocklen, filename_blocklen, unknown_string, unknown))
+                        file_start = outfid.tell()
+                        outfid.write(fid.read(blocklen))
+                        file_stop = outfid.tell()
+                        outfid.write(b'\x00')
+                        outfid.write((filename1 + '\x00').encode('ISO-8859-1'))
+                        outfid.write((filename2 + '\x00').encode('ISO-8859-1'))
+                        outfid.write(struct.pack('<BIIIIII', file_type, file_start, file_stop, 1, 1 + len(filename1) + 1, unknown1, unknown2))
+            else:
+                if len(sys.argv) > 2:
+                    with open(os.path.join(sys.argv[2], filename2), 'wb') as outfid:
+                        fid.seek(file_start)
+                        outfid.write(fid.read(file_stop - file_start))
             print()
 
         for filename in output:
