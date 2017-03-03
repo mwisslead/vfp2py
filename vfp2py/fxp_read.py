@@ -311,6 +311,12 @@ COMMANDS = {
     0xB2: 'RMDIR',
     0xB5: 'FOR EACH',
     0xB6: 'ENDFOREACH',
+    0xB7: 'DOEVENTS',
+    0xBA: 'TRY',
+    0xBB: 'CATCH',
+    0xBC: 'FINALLY',
+    0xBD: 'THROW',
+    0xBE: 'ENDTRY',
     0xFB: read_text,
 }
 
@@ -411,7 +417,7 @@ CLAUSES = {
     0x57: 'SHORT',
     0x5F: 'PICTRES',
     0xBC: 'INTO',
-    0xBD: 'CENTER',
+    0xBD: '(CENTER or CURSOR)',
     0xBE: 'PROCEDURE',
     0xBF: '(UNKNOWN)',
     0xC0: 'FREE',
@@ -419,7 +425,7 @@ CLAUSES = {
     0xC2: 'SHARED',
     0xC3: 'OF',
     0xC4: 'SAY',
-    0xC6: 'POPUP',
+    0xC6: '(POPUP or WHERE)',
     0xC7: 'STEP',
     0xC8: 'READ',
     0xCA: 'TAG',
@@ -617,12 +623,15 @@ FUNCTIONS = {
 EXTENDED1 = {
     0x04: 'BINDEVENT',
     0x08: 'UNBINDEVENTS',
+    0x0A: 'ADDPROPERTY',
     0x0F: 'CAST',
 }
 
 EXTENDED2 = {
     #This list contains all those functions that are available through the 0xEA (extended function) code:
     0x0D: 'ACOPY',
+    0x0E: 'AINS',
+    0x0F: 'ADEL',
     0x10: 'ASORT',
     0x11: 'ASCAN',
     0x13: 'ASUBSCRIPT',
@@ -663,6 +672,7 @@ EXTENDED2 = {
     0x78: 'MESSAGEBOX',
     0x79: 'AUSED',
     0x7A: 'AERROR',
+    0x7E: 'NTOM',
     0x7F: 'DTOT',
     0x80: 'TTOD',
     0x81: 'TTOC',
@@ -696,6 +706,7 @@ EXTENDED2 = {
     0xAF: 'BITCLEAR',
     0xB0: 'AT_C',
     0xB1: 'ATCC',
+    0xB8: 'CHRTRANC',
     0xBE: 'STRCONV',
     0xBF: 'BINTOC',
     0xC0: 'CTOBIN',
@@ -713,11 +724,13 @@ EXTENDED2 = {
     0xD5: 'JUSTPATH',
     0xD6: 'JUSTSTEM',
     0xD9: 'VARTYPE',
+    0xDA: 'ALINES',
     0xED: 'GETWORDCOUNT',
     0xEE: 'GETWORDNUM',
     0xF0: 'STREXTRACT',
     0xF1: 'INPUTBOX',
     0xF4: 'ASESSIONS',
+    0xFD: 'MIN',
 }
 
 CLAUSES.update(VALUES)
