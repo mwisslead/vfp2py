@@ -5,7 +5,7 @@ import sys
 import os
 import struct
 from math import floor, log10
-from datetime import datetime
+from datetime import datetime, timedelta
 from collections import OrderedDict
 
 HEADER_SIZE = 0x29
@@ -87,13 +87,25 @@ def read_double(fid, *args):
     dec_digits = fid.read(1)[0]
     return FXPNumber(struct.unpack('<d', fid.read(8))[0], digits, dec_digits)
 
-def read_date(fid, *args):
-    d = struct.unpack('<Q', fid.read(8))[0]
-    if not d:
+def read_datetimeexpr(fid):
+    days = struct.unpack('<d', fid.read(8))[0]
+    if not days:
+        return None
+    days = timedelta(days - 2440588)
+    days=timedelta(seconds=round(days.total_seconds()))
+    return datetime.utcfromtimestamp(0) + days
+
+def read_datetime(fid, *args):
+    dt = read_datetimeexpr(fid)
+    if not dt:
         return '{ / / }'
-    d = '{:064b}'.format(d)
-    dt = (int(d[:34], 2) - 2189770124) * 24 * 60 * 60 + int(int(d[34:], 2) / 24855.)
-    return '{{^{}}}'.format(datetime.utcfromtimestamp(dt))
+    return '{{^{}}}'.format(dt)
+
+def read_date(fid, *args):
+    dt = read_datetimeexpr(fid)
+    if not dt:
+        return '{ / / }'
+    return '{{^{}}}'.format(dt.date())
 
 def read_alias(fid, names, *args):
     return FXPAlias(names[read_ushort(fid)])
@@ -455,7 +467,7 @@ VALUES = {
     0xE0: read_name,
     0xE1: read_special_alias,
     0xE2: '.',
-    0xE6: read_date,
+    0xE6: read_datetime,
     0xE9: read_int32,
     0xEC: read_special_name,
     0xED: read_special_name,
