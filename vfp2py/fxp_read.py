@@ -191,6 +191,9 @@ def read_setcode(fid, length):
 def read_oncode(fid, length):
     return [ONCODES[fid.read(1)[0]]]
 
+def read_modifycode(fid, length):
+    return [MODIFYCODES[fid.read(1)[0]]]
+
 def read_text(fid, length):
     length = read_ushort(fid)
     return [''.join(chr(x) for x in fid.read(length))]
@@ -253,6 +256,7 @@ COMMANDS = {
     0x26: 'INDEX',
     0x2D: 'LOCATE',
     0x2E: 'LOOP',
+    0x2F: read_modifycode,
     0x31: read_oncode,
     0x32: 'OTHERWISE',
     0x33: 'PACK',
@@ -380,6 +384,10 @@ ONCODES = {
     0xD0: 'ON SELECTION',
 }
 
+MODIFYCODES = {
+    0xBC: 'MODIFY COMMAND',
+}
+
 CLAUSES = {
     0x01: 'ADDITIVE',
     0x02: 'ALIAS',
@@ -424,6 +432,7 @@ CLAUSES = {
     0x3C: 'DESCENDING',
     0x48: 'CASE',
     0x49: 'ID',
+    0x4A: 'NAME',
     0x4B: 'PROGRAM',
     0x4E: 'SCHEME',
     0x51: 'AS',
@@ -452,6 +461,7 @@ CLAUSES = {
     0xD0: 'NOCLEAR',
     0xD1: '(WITH OR INTEGER)',
     0xD2: 'NOMARGIN',
+    0xD3: 'UNIQUE',
     0xD4: 'LONG',
     0xD5: 'EVENTS',
     0xD6: 'STRING',
@@ -582,6 +592,7 @@ FUNCTIONS = {
     0x76: 'SET',
     0x77: 'CEILING',
     0x7C: 'LASTKEY',
+    0x7D: 'LIKE',
     0x81: 'MLINE',
     0x8A: 'SEEK',
     0x8C: 'TAG',
@@ -594,6 +605,7 @@ FUNCTIONS = {
     0x95: 'FCREATE',
     0x96: 'FSEEK',
     0x97: 'FGETS',
+    0x98: 'FFLUSH',
     0x99: 'FPUTS',
     0x9B: 'ALLTRIM',
     0x9D: 'CHRTRAN',
@@ -678,10 +690,12 @@ EXTENDED2 = {
     0x54: 'UNIQUE',
     0x56: 'TAGCOUNT',
     0x57: 'TAGNO',
+    0x58: 'FDATE',
     0x5A: 'ISBLANK',
     0x5D: 'OBJTOCLIENT',
     0x5E: 'RGB',
     0x5F: 'OLDVAL',
+    0x62: 'AMEMBERS',
     0x67: 'SQLDISCONNECT',
     0x68: 'PEMSTATUS',
     0x69: 'SQLEXEC',
