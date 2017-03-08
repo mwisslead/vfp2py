@@ -917,7 +917,7 @@ def read_until_null(fid):
 
 def read_fxp_file_block(fid):
     start_pos = fid.tell()
-    num_procedures, num_classes, unknown2, procedure_pos, class_pos, source_info_pos, num_code_lines, code_lines_pos = struct.unpack('<hhiiiiii', fid.read(0x1c))
+    num_procedures, num_classes, main_codepos, procedure_pos, class_pos, source_info_pos, num_code_lines, code_lines_pos = struct.unpack('<hhiiiiii', fid.read(0x1c))
 
     procedure_pos += start_pos
     class_pos += start_pos
@@ -929,13 +929,11 @@ def read_fxp_file_block(fid):
     unknown3 = read_uint(fid)
     unknown4 = fid.read(1)
 
-    for item in ('start_pos', 'num_procedures', 'num_classes', 'unknown2', 'procedure_pos', 'class_pos', 'source_info_pos', 'num_code_lines', 'code_lines_pos', 'date', 'unknown3', 'unknown4'):
+    for item in ('start_pos', 'num_procedures', 'num_classes', 'main_codepos', 'procedure_pos', 'class_pos', 'source_info_pos', 'num_code_lines', 'code_lines_pos', 'date', 'unknown3', 'unknown4'):
         print(item + ' = ' + str(eval(item)))
 
-    first_code_block = fid.tell() - start_pos
-
     fid.seek(procedure_pos)
-    procedures = [OrderedDict((key, val) for key, val in zip(('name', 'pos', 'class', 'unknown'), ('', first_code_block, -1, 0)))] + [read_procedure_header(fid) for i in range(num_procedures)]
+    procedures = [OrderedDict((key, val) for key, val in zip(('name', 'pos', 'class', 'unknown'), ('', main_codepos, -1, 0)))] + [read_procedure_header(fid) for i in range(num_procedures)]
     
     fid.seek(class_pos, 0)
     classes = [read_class_header(fid) for i in range(num_classes)]
@@ -1004,7 +1002,10 @@ def fxp_read():
                 print(item + ' = ' + str(eval(item)))
             if file_type == 0:
                 fid.seek(file_start)
-                output[filename2] = read_fxp_file_block(fid)
+                try:
+                    output[filename2] = read_fxp_file_block(fid)
+                except:
+                    pass
                 if len(sys.argv) > 2:
                     with open(os.path.join(sys.argv[2], filename2), 'wb') as outfid:
                         fid.seek(file_start)
