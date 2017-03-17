@@ -198,6 +198,10 @@ def read_text(fid, length):
     length = read_ushort(fid)
     return [''.join(chr(x) for x in fid.read(length))]
 
+def read_subcommand(fid, length):
+    length = read_ushort(fid)
+    return parse_line(fid, length, ['BAD']*10)
+
 class Token(object):
     def __init__(self, tokenstr, tokenval):
         self.str = tokenstr
@@ -230,6 +234,7 @@ SPECIAL_NAMES = {
 
 COMMANDS = {
     #Commands are identified by a single byte as shown in the following list:
+    0x00: 'SELECT',
     0x01: lambda fid, length: ['RAW CODE: ' + fid.read(length).decode('ISO-8859-1')],
     0x02: '?',
     0x03: '??',
@@ -326,6 +331,7 @@ COMMANDS = {
     0x68: 'CREATE',
     0x69: 'ALTER',
     0x6F: 'SELECT',
+    0x70: 'UPDATE',
     0x71: 'DELETE',
     0x72: 'INSERT',
     0x73: 'DEFINE',
@@ -399,6 +405,7 @@ SETCODES = {
     0x0E: 'SET DEFAULT',
     0x0F: 'SET DELETED',
     0x16: 'SET EXACT',
+    0x18: 'SET FIELDS',
     0x1A: 'SET FILTER',
     0x1F: 'SET HELP',
     0x21: 'SET INDEX',
@@ -407,6 +414,7 @@ SETCODES = {
     0x29: 'SET PATH',
     0x2A: 'SET PRINTER',
     0x2B: 'SET PROCEDURE',
+    0x2D: 'SET RELATION',
     0x2E: 'SET SAFETY',
     0x30: 'SET STATUS',
     0x31: 'SET STEP',
@@ -415,23 +423,29 @@ SETCODES = {
     0x36: 'SET UNIQUE',
     0x3E: 'SET CLOCK',
     0x41: 'SET COMPATIBLE',
+    0x42: 'SET AUTOSAVE',
     0x43: 'SET BLOCKSIZE',
     0x46: 'SET NEAR',
     0x48: 'SET REFRESH',
     0x4D: 'SET REPROCESS',
+    0x4E: 'SET SKIP',
     0x54: 'SET RESOURCE',
     0x59: 'SET SYSMENU',
     0x5A: 'SET NOTIFY',
     0x5D: 'SET CURSOR',
     0x60: 'SET TEXTMERGE',
+    0x61: 'SET OPTIMIZE',
     0x62: 'SET LIBRARY',
+    0x64: 'SET ANSI',
     0x6B: 'SET COLLATE',
     0x6D: 'SET NOCPTRANS',
+    0x77: 'SET NULL',
     0x79: 'SET TAG',
     0x7B: 'SET CPDIALOG',
     0x7E: 'SET CLASSLIB',
     0x7F: 'SET DATABASE',
     0x80: 'SET DATASESSION',
+    0x84: 'SET OLEOBJECT',
     0x8F: 'SET AUTOINCERROR',
 }
 
@@ -496,6 +510,7 @@ CLAUSES = {
     0x49: 'ID',
     0x4A: 'NAME',
     0x4B: 'PROGRAM',
+    0x4C: 'QUERY',
     0x4E: 'SCHEME',
     0x4F: 'CLASS',
     0x51: 'AS',
@@ -506,20 +521,20 @@ CLAUSES = {
     0xBB: 'XL5',
     0xBC: '(INTO or ACTIVATE or COMMAND or PAD)',
     0xBD: '(CENTER or CURSOR or TRANSACTION or APP)',
-    0xBE: '(PROCEDURE or DELIMITED or EXE)',
+    0xBE: '(PROCEDURE or DELIMITED or EXE or DISTINCT)',
     0xBF: '(UNKNOWN)',
-    0xC0: 'FREE',
-    0xC1: '(LINE or TRIGGER)',
-    0xC2: '(SHARED or DATABASE)',
+    0xC0: '(FREE or LOCAL)',
+    0xC1: '(LINE or TRIGGER or GLOBAL)',
+    0xC2: '(SHARED or DATABASE or DROP)',
     0xC3: '(OF or REPLACE)',
     0xC4: '(SAY or VIEWS)',
     0xC5: 'VALUES',
     0xC6: '(POPUP or WHERE or DLL)',
     0xC7: '(STEP or XLS)',
-    0xC8: '(READ or MARGIN)',
-    0xCA: 'TAG',
-    0xCB: '(STATUS or RECOMPILE)',
-    0xCC: '(STRUCTURE or RELATIVE)',
+    0xC8: '(READ or MARGIN or RPD)',
+    0xCA: '(TAG or SET)',
+    0xCB: '(STATUS or RECOMPILE or PRIMARY or WRK)',
+    0xCC: '(STRUCTURE or RELATIVE or FOREIGN)',
     0xCD: 'SHUTDOWN',
     0xCE: '(TIMEOUT or UPDATE)',
     0xCF: 'SHADOW',
@@ -547,6 +562,7 @@ VALUES = {
     0xE1: read_special_alias,
     0xE2: '.',
     0xE6: read_datetime,
+    0xE8: read_subcommand,
     0xE9: read_int32,
     0xEC: read_special_name,
     0xED: read_special_name,
@@ -563,6 +579,7 @@ VALUES = {
     0xF9: read_int16,
     0xFA: read_double,
     0xFB: read_single_quoted_string,
+    0xFC: read_expr,
 }
 
 OPERATORS = {
@@ -671,9 +688,11 @@ FUNCTIONS = {
     0x7C: 'LASTKEY',
     0x7D: 'LIKE',
     0x7F: 'CDX',
+    0x80: 'MEMLINES',
     0x81: 'MLINE',
     0x82: 'ORDER',
     0x83: 'PAYMENT',
+    0x86: 'RAND',
     0x89: 'RTOD',
     0x8A: 'SEEK',
     0x8B: 'SIGN',
@@ -693,6 +712,8 @@ FUNCTIONS = {
     0x9B: 'ALLTRIM',
     0x9D: 'CHRTRAN',
     0x9E: 'FILTER',
+    0x9F: 'RELATION',
+    0xA0: 'TARGET',
     0xA1: 'EMPTY',
     0xA2: 'FEOF',
     0xA5: 'RAT',
@@ -729,8 +750,8 @@ FUNCTIONS = {
     0xCE: 'EVALUATE',
     0xD1: 'ISNULL',
     0xD2: 'NVL',
-    0xEA: lambda fid: EXTENDED2[fid.read(1)[0]],
     0xE5: read_name, #user defined function alias
+    0xEA: lambda fid: EXTENDED2[fid.read(1)[0]],
     0xF6: read_name, #user defined function
 }
 
@@ -749,6 +770,7 @@ EXTENDED2 = {
     0x0F: 'ADEL',
     0x10: 'ASORT',
     0x11: 'ASCAN',
+    0x12: 'AELEMENT',
     0x13: 'ASUBSCRIPT',
     0x14: 'AFIELDS',
     0x15: 'ADIR',
@@ -807,6 +829,7 @@ EXTENDED2 = {
     0x6D: 'SQLTABLES',
     0x6E: 'FLDLIST',
     0x70: 'KEYMATCH',
+    0x73: 'ISREADONLY',
     0x74: 'PCOUNT',
     0x78: 'MESSAGEBOX',
     0x79: 'AUSED',
@@ -843,6 +866,7 @@ EXTENDED2 = {
     0x9F: 'SQLSTRINGCONNECT',
     0xA1: 'DODEFAULT',
     0xA2: 'ISEXCLUSIVE',
+    0xA3: 'TXNLEVEL',
     0xA4: 'DBUSED',
     0xA6: 'INDBC',
     0xA7: 'BITLSHIFT',
