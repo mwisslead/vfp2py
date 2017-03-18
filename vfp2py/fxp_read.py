@@ -128,6 +128,11 @@ def read_expr(fid, names, *args):
     while codeval != END_EXPR:
         if codeval == PARAMETER_MARK:
             code = codeval
+        elif codeval == SQL_SUBQUERY:
+            length = read_ushort(fid)
+            final = fid.tell() + length
+            fid.read(1)
+            code = FXPName('(SELECT {})'.format(parse_subline(fid, length, final, names, [])))
         elif codeval in FUNCTIONS:
             code = FUNCTIONS[codeval]
             if codeval in (0xE5, 0xF6):
@@ -198,10 +203,6 @@ def read_text(fid, length):
     length = read_ushort(fid)
     return [''.join(chr(x) for x in fid.read(length))]
 
-def read_subcommand(fid, length):
-    length = read_ushort(fid)
-    return parse_line(fid, length, ['BAD']*10)
-
 class Token(object):
     def __init__(self, tokenstr, tokenval):
         self.str = tokenstr
@@ -212,6 +213,7 @@ class Token(object):
 
 END_EXPR = 0xFD;
 PARAMETER_MARK = 0x43;
+SQL_SUBQUERY = 0xE8
 
 SPECIAL_NAMES = {
     0x02: '_MSYSMENU',
@@ -562,7 +564,7 @@ VALUES = {
     0xE1: read_special_alias,
     0xE2: '.',
     0xE6: read_datetime,
-    0xE8: read_subcommand,
+    SQL_SUBQUERY: 'SQL SUBQUERY', #0xE8
     0xE9: read_int32,
     0xEC: read_special_name,
     0xED: read_special_name,
@@ -929,14 +931,7 @@ def read_int(fid):
 def read_uint(fid):
     return struct.unpack('<I', fid.read(4))[0]
 
-def parse_line(fid, length, names):
-    final = fid.tell() + length
-    line = []
-    command = COMMANDS[fid.read(1)[0]]
-    if callable(command):
-        line += [FXPName(c) for c in command(fid, length-1)]
-    else:
-        line.append(FXPName(command))
+def parse_subline(fid, length, final, names, line):
     while fid.tell() < final:
         clauseval = fid.read(1)[0]
         clause = CLAUSES[clauseval]
@@ -958,6 +953,16 @@ def parse_line(fid, length, names):
         pass
     line + [read_raw(fid, length)] + [fid.tell() - length]
     return line[0]
+
+def parse_line(fid, length, names):
+    final = fid.tell() + length
+    line = []
+    command = COMMANDS[fid.read(1)[0]]
+    if callable(command):
+        line += [FXPName(c) for c in command(fid, length-1)]
+    else:
+        line.append(FXPName(command))
+    return parse_subline(fid, length, final, names, line)
 
 def read_code_line_area(fid, names, final_fpos):
     d = []
