@@ -113,8 +113,14 @@ def read_alias(fid, names, *args):
 def read_special_alias(fid, *args):
     return FXPAlias(SPECIAL_NAMES[fid.read(1)[0]])
 
-def read_special_name(fid, *args):
-    return FXPName(SPECIAL_NAMES[fid.read(1)[0]])
+def read_system_alias(fid, *args):
+    return FXPAlias(SYSTEM_NAMES[fid.read(1)[0]])
+
+def read_system_name(fid, *args):
+    return FXPName(SYSTEM_NAMES[fid.read(1)[0]])
+
+def read_menu_system_name(fid, *args):
+    return FXPName(MENU_SYSTEM_NAMES[fid.read(1)[0]])
 
 def read_name(fid, names):
     return FXPName(names[read_ushort(fid)])
@@ -216,17 +222,67 @@ PARAMETER_MARK = 0x43;
 SQL_SUBQUERY = 0xE8
 
 SPECIAL_NAMES = {
+    0x0D: 'M',
+}
+
+SYSTEM_NAMES = {
+    0x05: '_PAGENO',
+    0x19: '_DBLCLICK',
+    0x1A: '_CALCVALUE',
+    0x1B: '_CALCMEM',
+    0x1C: '_DIARYDATE',
+    0x1D: '_CLIPTEXT',
+    0x1E: '_TEXT',
+    0x1F: '_PRETEXT',
+    0x20: '_TALLY',
+    0x22: '_MLINE',
+    0x23: '_THROTTLE',
+    0x24: '_GENMENU',
+    0x2F: '_STARTUP',
+    0x31: '_BEAUTIFY',
+    0x32: '_DOS',
+    0x33: '_MAC',
+    0x34: '_UNIX',
+    0x35: '_WINDOWS',
+    0x36: '_SPELLCHK',
+    0x37: '_SHELL',
+    0x39: '_SCREEN',
+    0x3A: '_BUILDER',
+    0x3B: '_CONVERTER',
+    0x3C: '_WIZARD',
+    0x3D: '_TRIGGERLEVEL',
+    0x3E: '_ASCIICOLS',
+    0x3F: '_ASCIIROWS',
+    0x40: '_BROWSER',
+    0x41: '_SCCTEXT',
+    0x42: '_COVERAGE',
+    0x43: '_VFP',
+    0x44: '_GALLERY',
+    0x45: '_GETEXPR',
+    0x46: '_INCLUDE',
+    0x47: '_GENHTML',
+    0x49: '_SAMPLES',
+    0x4A: '_TASKLIST',
+    0x4B: '_ObjectBrowser',
+    0x4D: '_FOXCODE',
+    0x4E: '_FoxTask',
+    0x4F: '_CODESENSE',
+    0x50: '_INCSEEK',
+    0x51: '_PAGETOTAL',
+    0x52: '_FOXREF',
+    0x53: '_TOOLBOX',
+    0x54: '_TASKPANE',
+    0x55: '_REPORTBUILDER',
+    0x56: '_REPORTPREVIEW',
+    0x57: '_REPORTOUTPUT',
+}
+
+MENU_SYSTEM_NAMES = {
     0x02: '_MSYSMENU',
     0x05: '_MSM_EDIT',
-    0x0D: 'M',
-    0x1D: '_CLIPTEXT',
-    0x20: '_TALLY',
     0x23: '_MFILE',
     0x24: '_MFI_NEW',
-    0x32: '_DOS',
-    0x35: '_WINDOWS',
-    0x39: '_SCREEN',
-    0x43: '_VFP',
+    0x39: '_MEDIT',
     0x3A: '_MED_UNDO',
     0x3C: '_MED_SP100',
     0x3D: '_MED_CUT',
@@ -570,13 +626,13 @@ VALUES = {
     0xD9: read_double_quoted_string,
     0xDB: '',
     0xE0: read_name,
-    0xE1: read_special_alias,
+    0xE1: read_system_alias,
     0xE2: '.',
     0xE6: read_datetime,
     SQL_SUBQUERY: 'SQL SUBQUERY', #0xE8
     0xE9: read_int32,
-    0xEC: read_special_name,
-    0xED: read_special_name,
+    0xEC: read_menu_system_name,
+    0xED: read_system_name,
     0xEE: read_date,
     0xF0: lambda fid, *args: '(SHORT CIRCUIT AND IN {})'.format(read_ushort(fid)),
     0xF1: lambda fid, *args: '(SHORT CIRCUIT OR IN {})'.format(read_ushort(fid)),
