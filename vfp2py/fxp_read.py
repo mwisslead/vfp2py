@@ -608,6 +608,7 @@ SETCODES = {
     0x80: 'SET DATASESSION',
     0x84: 'SET OLEOBJECT',
     0x8F: 'SET AUTOINCERROR',
+    0xFE: 'SET\n',
 }
 
 ONCODES = {
@@ -836,6 +837,7 @@ FUNCTIONS = {
     0x5F: 'TRANSFORM',
     0x60: 'TRIM',
     0x62: 'TYPE',
+    0x64: 'UPDATED',
     0x66: 'UPPER',
     0x67: 'VAL',
     0x68: 'VERSION',
@@ -862,6 +864,7 @@ FUNCTIONS = {
     0x83: 'PAYMENT',
     0x85: 'PROMPT',
     0x86: 'RAND',
+    0x87: 'VARREAD',
     0x89: 'RTOD',
     0x8A: 'SEEK',
     0x8B: 'SIGN',
@@ -930,13 +933,17 @@ FUNCTIONS = {
 }
 
 EXTENDED1 = {
+    0x02: 'XMLTOCURSOR',
     0x03: 'GETINTERFACE',
     0x04: 'BINDEVENT',
+    0x05: 'RAISEEVENT',
     0x08: 'UNBINDEVENTS',
+    0x09: 'AEVENTS',
     0x0A: 'ADDPROPERTY',
     0x0E: 'ICASE',
     0x0C: 'EVL',
     0x0F: 'CAST',
+    0x11: 'SETRESULTSET',
 }
 
 EXTENDED2 = {
@@ -984,12 +991,14 @@ EXTENDED2 = {
     0x31: 'DDETERMINATE',
     0x33: 'GETDIR',
     0x35: 'DDESETOPTION',
+    0x38: 'RGBSCHEME',
     0x3A: 'CPCURRENT',
     0x3B: 'CPDBF',
     0x3C: 'IDXCOLLATE',
     0x3E: 'CAPSLOCK',
     0x3F: 'NUMLOCK',
     0x40: 'INSMODE',
+    0x41: 'SOUNDEX',
     0x43: 'COS',
     0x44: 'SIN',
     0x45: 'TAN',
@@ -1116,6 +1125,7 @@ EXTENDED2 = {
     0xE2: 'CREATEOBJECTEX',
     0xE3: 'COMARRAY',
     0xE4: 'EXECSCRIPT',
+    0xE5: 'XMLUPDATEGRAM',
     0xE7: 'ATAGINFO',
     0xE8: 'ASTACKINFO',
     0xE9: 'EVENTHANDLER',
@@ -1127,6 +1137,7 @@ EXTENDED2 = {
     0xF0: 'STREXTRACT',
     0xF1: 'INPUTBOX',
     0xF2: 'APROCINFO',
+    0xF3: 'WDOCKABLE',
     0xF4: 'ASESSIONS',
     0xFD: 'MIN',
 }
