@@ -709,9 +709,9 @@ CLAUSES = {
     0xD5: '(EVENTS or CSV)',
     0xD6: '(STRING or SHEET or NORM)',
     0xE5: read_name, #user defined function alias
-    0xF6: read_name, #user define function
+    0xF6: read_name, #user defined function
     0xFC: read_expr,
-    END_EXPR: 'END EXPR',
+    END_EXPR: 'END EXPR', #0xFD
     0xFE: '\n'
 }
 
@@ -734,7 +734,6 @@ VALUES = {
     0xF1: lambda fid, *args: '(SHORT CIRCUIT OR IN {})'.format(read_ushort(fid)),
     0xF2: lambda fid, *args: '(SHORT CIRCUIT IIF IN {})'.format(read_ushort(fid)),
     0xF3: lambda fid, *args: '(SHORT CIRCUIT IIF IN {})'.format(read_ushort(fid)),
-    0xFF: lambda fid, *args: 'ff ' + read_raw(fid, 2),
     0xF4: read_alias,
     0xF5: read_special_alias,
     0xF7: read_name,
@@ -743,6 +742,7 @@ VALUES = {
     0xFA: read_double,
     0xFB: read_single_quoted_string,
     0xFC: read_expr,
+    0xFF: lambda fid, *args: 'ff ' + read_raw(fid, 2),
 }
 
 OPERATORS = {
@@ -822,6 +822,7 @@ FUNCTIONS = {
     0x4A: 'OS',
     0x4B: 'PCOL',
     0x4C: 'PROW',
+    0x4D: 'READKEY',
     0x4E: 'RECCOUNT',
     0x4F: 'RECNO',
     0x50: 'RECSIZE',
@@ -938,6 +939,7 @@ FUNCTIONS = {
 }
 
 EXTENDED1 = {
+    0x00: 'DISPLAYPATH',
     0x02: 'XMLTOCURSOR',
     0x03: 'GETINTERFACE',
     0x04: 'BINDEVENT',
@@ -956,6 +958,7 @@ EXTENDED1 = {
     0x13: 'CLEARRESULTSET',
     0x15: 'ISMEMOFETCHED',
     0x16: 'GETAUTOINCVALUE',
+    0x17: 'MAKETRANSACTABLE',
     0x19: 'ISPEN',
 }
 
@@ -1014,6 +1017,7 @@ EXTENDED2 = {
     0x34: 'DDEABORTTRANS',
     0x35: 'DDESETOPTION',
     0x38: 'RGBSCHEME',
+    0x39: 'CPCONVERT',
     0x3A: 'CPCURRENT',
     0x3B: 'CPDBF',
     0x3C: 'IDXCOLLATE',
@@ -1021,6 +1025,7 @@ EXTENDED2 = {
     0x3F: 'NUMLOCK',
     0x40: 'INSMODE',
     0x41: 'SOUNDEX',
+    0x42: 'DIFFERENCE',
     0x43: 'COS',
     0x44: 'SIN',
     0x45: 'TAN',
@@ -1051,6 +1056,7 @@ EXTENDED2 = {
     0x60: 'ASELOBJ',
     0x61: 'ACLASS',
     0x62: 'AMEMBERS',
+    0x63: 'COMPOBJ',
     0x64: 'SQLCANCEL',
     0x65: 'SQLCOLUMNS',
     0x66: 'SQLCONNECT',
@@ -1064,6 +1070,7 @@ EXTENDED2 = {
     0x6E: 'FLDLIST',
     0x6F: 'PRTINFO',
     0x70: 'KEYMATCH',
+    0x71: 'OBJVAR',
     0x72: 'NORMALIZE',
     0x73: 'ISREADONLY',
     0x74: 'PCOUNT',
@@ -1072,6 +1079,7 @@ EXTENDED2 = {
     0x7A: 'AERROR',
     0x7B: 'SQLCOMMIT',
     0x7C: 'SQLROLLBACK',
+    0x7D: 'MTON',
     0x7E: 'NTOM',
     0x7F: 'DTOT',
     0x80: 'TTOD',
@@ -1136,6 +1144,7 @@ EXTENDED2 = {
     0xC7: 'CREATEOFFLINE',
     0xC8: 'DROPOFFLINE',
     0xC9: 'AGETCLASS',
+    0xCA: 'AVCXCLASSES',
     0xCB: 'STRTOFILE',
     0xCC: 'FILETOSTR',
     0xCD: 'ADDBS',
@@ -1155,11 +1164,13 @@ EXTENDED2 = {
     0xDB: 'NEWOBJECT',
     0xDC: 'AMOUSEOBJ',
     0xDD: 'COMCLASSINFO',
+    0xE0: 'ANETRESOURCES',
     0xE1: 'AGETFILEVERSION',
     0xE2: 'CREATEOBJECTEX',
     0xE3: 'COMARRAY',
     0xE4: 'EXECSCRIPT',
     0xE5: 'XMLUPDATEGRAM',
+    0xE6: 'COMPROP',
     0xE7: 'ATAGINFO',
     0xE8: 'ASTACKINFO',
     0xE9: 'EVENTHANDLER',
