@@ -56,6 +56,18 @@ class FXPNumber(object):
     def __repr__(self):
         return self.format_string.format(self.number)
 
+class FXPCurrency(object):
+    def __init__(self, number, digits, dec_digits=0):
+        self.number = number
+        self.dec_digits = dec_digits
+        digits -= dec_digits
+        digits = max(digits, 0)
+        self.digits = digits
+
+    def __repr__(self):
+        base = 10**self.dec_digits
+        return '${}.{}'.format(self.number // base, self.number % base)
+
 def round_sig(x, sig):
     if x == 0:
         return 0.
@@ -86,6 +98,11 @@ def read_double(fid, *args):
     digits = fid.read(1)[0] - 1
     dec_digits = fid.read(1)[0]
     return FXPNumber(struct.unpack('<d', fid.read(8))[0], digits, dec_digits)
+
+def read_currency(fid, *args):
+    digits = fid.read(1)[0] - 1
+    dec_digits = fid.read(1)[0]
+    return FXPCurrency(struct.unpack('<q', fid.read(8))[0], digits, dec_digits)
 
 def read_datetimeexpr(fid):
     days = struct.unpack('<d', fid.read(8))[0]
@@ -721,6 +738,7 @@ VALUES = {
     0xE4: '.NULL.',
     0xD9: read_double_quoted_string,
     0xDB: '',
+    0xDE: read_currency,
     0xE0: read_name,
     0xE1: read_system_alias,
     0xE2: '.',
