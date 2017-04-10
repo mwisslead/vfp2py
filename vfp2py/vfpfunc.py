@@ -443,14 +443,12 @@ def rgb(red, green, blue):
 def space(num):
     return ' ' * int(num)
 
-def strtofile(string, filename, additive=False, flag=0):
+def strtofile(string, filename, flag=0):
+    flag = int(flag)
     if flag not in (0, 1, 2, 4):
         raise ValueError('invalid flag')
 
-    if additive or flag == 1:
-        mode = 'ab'
-    else:
-        mode = 'wb'
+    mode = 'ab' if flag == 1 else 'wb'
 
     with open(filename, mode) as fid:
         if flag == 2:
