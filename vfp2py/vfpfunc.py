@@ -443,6 +443,24 @@ def rgb(red, green, blue):
 def space(num):
     return ' ' * int(num)
 
+def strtofile(string, filename, additive=False, flag=0):
+    if flag not in (0, 1, 2, 4):
+        raise ValueError('invalid flag')
+
+    if additive or flag == 1:
+        mode = 'ab'
+    else:
+        mode = 'wb'
+
+    with open(filename, mode) as fid:
+        if flag == 2:
+            fid.write(string.encode('utf-16'))
+        elif flag == 4:
+            fid.write(b'\xef\xbb\xbf')
+            fid.write(string.encode('utf-8'))
+        else:
+            fid.write(string)
+
 def strtran(string, old, new='', start=0, maxreplace=None, flags=0):
     retstr = ''
     while start > 0:
