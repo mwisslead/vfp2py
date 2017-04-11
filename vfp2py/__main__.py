@@ -287,7 +287,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             return ''
         comment = self.andfix.sub('', comment)
         comment = self.frontfix.sub(repl, comment)
-        return CodeStr(self.endfix.sub(repl, comment))
+        return [CodeStr(self.endfix.sub(repl, comment))]
 
     def visitCmdStmt(self, ctx):
         return self.visit(ctx.cmd()) if ctx.cmd() else self.visit(ctx.setup())
@@ -313,7 +313,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
 
         comments = []
         for comment in ctx.lineComment():
-            comments.append([self.visit(comment), comment.start.line])
+            comments.append(self.visit(comment) + [comment.start.line])
 
         funcs = OrderedDict()
         for funcdef in ctx.funcDef():
@@ -479,7 +479,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         retval = []
         for elem in ctx.caseElement():
             if elem.lineComment():
-                retval.append(self.visit(elem.lineComment()))
+                retval += self.visit(elem.lineComment())
             else:
                 expr, lines = self.visit(elem.singleCase())
                 if n == 0:
