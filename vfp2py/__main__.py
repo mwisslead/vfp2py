@@ -660,11 +660,12 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
                 return self.make_func_code('datetime.now')
             elif funcname == 'time':
                 return self.make_func_code('datetime.now().time().strftime', '%H:%M:%S')
-        if funcname in ('year', 'month', 'day', 'hour', 'minute', 'sec'):
+        if funcname in ('year', 'month', 'day', 'hour', 'minute', 'sec', 'cdow'):
             funcname = {
-                'sec': 'second'
+                'sec': 'second',
+                'cdow': "strftime('%A')",
             }.get(funcname, funcname)
-            return self.add_args_to_code('{}.{}', [args[0], funcname])
+            return self.add_args_to_code('{}.{}', [args[0], CodeStr(funcname)])
         if funcname == 'dtoc':
             if len(args) == 1 or args[1] == 1:
                 if len(args) > 1 and args[1] == 1:
