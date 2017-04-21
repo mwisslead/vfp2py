@@ -475,6 +475,9 @@ def strtran(string, old, new='', start=0, maxreplace=None, flags=0):
         retstr += string.replace(old, new)
     return retstr
 
+def stuff(string, start, num_replaced, repl):
+    return string[:start-1] + repl + string[start-1+num_replaced:]
+
 def substr(string, start, chars):
     return string[start-1:start-1+chars]
 
