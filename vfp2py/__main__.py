@@ -631,6 +631,9 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
     def func_call(self, funcname, args):
         if funcname in self.function_list:
             return self.make_func_code(funcname, *args)
+        funcname = {
+            'stuffc': 'stuff',
+        }.get(funcname, funcname)
         if funcname == 'chr' and len(args) == 1 and isinstance(args[0], int):
             return chr(args[0])
         if funcname == 'space' and len(args) == 1 and isinstance(args[0], int):
