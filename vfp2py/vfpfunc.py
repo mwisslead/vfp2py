@@ -315,6 +315,12 @@ def alltrim(string):
 def asc(string):
     return ord(string[0])
 
+def atline(search, string):
+    try:
+        return next(i+1 for i, line in enumerate(string.split('\r')) if line.find(search) >= 0)
+    except StopIteration:
+        return 0
+
 def capslock(on=None):
     pass
 
