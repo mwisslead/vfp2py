@@ -315,9 +315,12 @@ def alltrim(string):
 def asc(string):
     return ord(string[0])
 
+def _atline_generator(search, string):
+    return (i+1 for i, line in enumerate(string.split('\r')) if line.find(search) >= 0)
+
 def atline(search, string):
     try:
-        return next(i+1 for i, line in enumerate(string.split('\r')) if line.find(search) >= 0)
+        return next(_atline_generator(search, string))
     except StopIteration:
         return 0
 
@@ -436,6 +439,12 @@ def program(level):
 
 def quit(message=None, flags=None, title=None):
     sys.exit()
+
+def ratline(search, string):
+    t = 0
+    for t in _atline_generator(search, string):
+        pass
+    return t
 
 def reccount():
     return db.reccount()
