@@ -315,14 +315,11 @@ def alltrim(string):
 def asc(string):
     return ord(string[0])
 
-def _atline_generator(search, string):
-    return (i+1 for i, line in enumerate(string.split('\r')) if line.find(search) >= 0)
-
 def atline(search, string):
-    try:
-        return next(_atline_generator(search, string))
-    except StopIteration:
+    found = string.find(search)
+    if found == -1:
         return 0
+    return string[:found].count('\r') + 1
 
 def capslock(on=None):
     pass
@@ -441,10 +438,10 @@ def quit(message=None, flags=None, title=None):
     sys.exit()
 
 def ratline(search, string):
-    t = 0
-    for t in _atline_generator(search, string):
-        pass
-    return t
+    found = string.rfind(search)
+    if found == -1:
+        return 0
+    return string[:found].count('\r') + 1
 
 def reccount():
     return db.reccount()
