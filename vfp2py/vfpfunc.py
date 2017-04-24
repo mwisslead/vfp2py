@@ -372,6 +372,15 @@ def filetostr(filename):
     with open(filename) as fid:
         return fid.read().decode('ISO-8859-1')
 
+def getwordcount(string, delim=None):
+    return len(string.split(delim))
+
+def getwordnum(string, index, delim=None):
+    str_list = string.split(delim)
+    if 0 <= index <= len(str_list):
+        return str_list[index-1]
+    return ''
+
 def home(location=0):
     pass
 
