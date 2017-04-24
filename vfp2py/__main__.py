@@ -688,6 +688,8 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         if funcname == 'between':
             return self.add_args_to_code('({} <= {} <= {})', [args[i] for i in (1, 0, 2)])
         if funcname == 'nvl':
+            return self.add_args_to_code('({} if {} is not None else {})', [args[0], args[0], args[1]])
+        if funcname == 'evl':
             return self.add_args_to_code('({} or {})', args)
         if funcname == 'sign':
             return self.add_args_to_code('1 if {} > 0 else (-1 if {} < 0 else 0)', [args[0], args[0]])
