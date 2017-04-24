@@ -760,9 +760,13 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             return self.add_args_to_code(op[funcname], [self.to_int(arg) for arg in args])
         if funcname == 'str':
             funcname = 'num_to_str'
-        if funcname == 'file':
+        if funcname in ('file', 'directory'):
             self.imports.append('import os')
-            return self.make_func_code('os.path.isfile', *args)
+            funcname = {
+                'file': 'os.path.isfile',
+                'directory': 'os.path.isdir',
+            }[funcname]
+            return self.make_func_code(funcname, *args)
         if funcname == 'used':
             self.imports.append('from vfp2py import vfpfunc')
             return self.make_func_code('vfpfunc.used', *args)
