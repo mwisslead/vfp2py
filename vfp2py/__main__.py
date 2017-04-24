@@ -4,7 +4,7 @@ import sys
 import os
 import ntpath
 import time
-import datetime
+import datetime as dt
 import re
 import tempfile
 from collections import OrderedDict
@@ -22,7 +22,7 @@ import autopep8
 
 from vfp2py import *
 
-STDLIBS = ['import sys', 'import os', 'import math', 'import datetime']
+STDLIBS = ['import sys', 'import os', 'import math', 'import datetime as dt']
 SEARCH_PATH = ['.']
 
 if sys.version_info >= (3,):
@@ -662,13 +662,13 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             args[1:] = [self.to_int(arg) for arg in args[1:]]
             return self.add_args_to_code('({} * {})', args)
         if funcname in ('date', 'datetime', 'time') and len(args) == 0:
-            self.imports.append('from datetime import datetime')
+            self.imports.append('import datetime as dt')
             if funcname == 'date':
-                return self.make_func_code('datetime.now().date')
+                return self.make_func_code('dt.datetime.now().date')
             elif funcname == 'datetime':
-                return self.make_func_code('datetime.now')
+                return self.make_func_code('dt.datetime.now')
             elif funcname == 'time':
-                return self.make_func_code('datetime.now().time().strftime', '%H:%M:%S')
+                return self.make_func_code('dt.datetime.now().time().strftime', '%H:%M:%S')
         if funcname in ('year', 'month', 'day', 'hour', 'minute', 'sec', 'cdow', 'cmonth'):
             funcname = {
                 'sec': 'second',
@@ -969,10 +969,10 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             if len(y) != 4:
                 raise Exception('year must be 2 or 4 digits in date constant: ' + ctx.getText())
             try:
-                return datetime.date(int(y), int(m), int(d))
+                return dt.date(int(y), int(m), int(d))
             except ValueError as e:
                 raise Exception('invalid date constant: ' + ctx.getText())
-        return datetime.dateime(1, 1, 1, 0, 0, 0)
+        return dt.dateime(1, 1, 1, 0, 0, 0)
 
     def visitString(self, ctx):
         return self.create_string(ctx.getText()[1:-1])
