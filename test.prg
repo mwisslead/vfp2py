@@ -163,6 +163,8 @@ RUN /N2 ls -al
 
 local x
 ?SIGN(x)
+?NVL(x, 0)
+?EVL(x, 0)
 release x
 
 FUNCTION test
