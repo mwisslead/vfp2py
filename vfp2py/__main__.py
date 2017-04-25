@@ -22,7 +22,7 @@ import autopep8
 
 from vfp2py import *
 
-STDLIBS = ['import sys', 'import os', 'import math', 'import datetime as dt']
+STDLIBS = ['import sys', 'import os', 'import math', 'import datetime as dt', 'import subprocess']
 SEARCH_PATH = ['.']
 
 if sys.version_info >= (3,):
@@ -57,7 +57,7 @@ class Tic():
 
 class CodeStr(unicode):
     def __repr__(self):
-        return self.encode('ISO-8859-1')
+        return unicode(self)
 
     def __add__(self, val):
         return CodeStr('{} + {}'.format(self, repr(val)))
@@ -572,8 +572,8 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
 
     def visitAssign(self, ctx):
         value = self.visit(ctx.expr())
-	while isinstance(value, CodeStr):
-	    if not (value.startswith('(') and value.endswith(')')):
+        while isinstance(value, CodeStr):
+            if not (value.startswith('(') and value.endswith(')')):
                 break
             value = CodeStr(value[1:-1])
         args = []
@@ -1779,7 +1779,7 @@ def convert_file(infile, outfile):
     output_tree = visitor.visit(tree)
     output = add_indents(output_tree, 0)
     with open(outfile, 'wb') as fid:
-        fid.write(output)
+        fid.write(output.encode('utf-8'))
     autopep8.main([__file__, '--in-place', outfile])
 
 def main(argv=None):
