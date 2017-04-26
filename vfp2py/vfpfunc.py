@@ -371,6 +371,9 @@ def fdate(filename, datetype=0):
     mod_date = datetime.datetime.fromtimestamp(os.path.getmtime(filename))
     return mod_date if datetype else mod_date.date()
 
+def ftime(filename):
+    return fdate(filename, 1).time()
+
 def file(string):
      return os.path.isfile(string.lower())
 
