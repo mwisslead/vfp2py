@@ -365,6 +365,12 @@ def dtoc(dateval, index_format=False):
 def error(txt):
     raise Exception(txt)
 
+def fdate(filename, datetype=0):
+    if datetype not in (0, 1):
+        raise ValueError('datetype is invalid')
+    mod_date = datetime.datetime.fromtimestamp(os.path.getmtime(filename))
+    return mod_date if datetype else mod_date.date()
+
 def file(string):
      return os.path.isfile(string.lower())
 
