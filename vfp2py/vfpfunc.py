@@ -212,6 +212,10 @@ class _Database_Context(object):
         except:
             return 0
 
+    def recsize(self, workarea=None):
+        table = self._get_table(workarea)
+        return table.record_length
+
     def bof(self, workarea=None):
         table_info = self._get_table_info(workarea)
         return table_info['recno'] == 0
@@ -466,6 +470,9 @@ def reccount():
 
 def recno():
     return db.recno()
+
+def recsize(workarea=None):
+    return db.recsize(workarea)
 
 def rgb(red, green, blue):
     return (red, green, blue)
