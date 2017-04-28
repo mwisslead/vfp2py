@@ -1,7 +1,7 @@
 from __future__ import division
 
 import builtins
-import datetime
+import datetime as dt
 import os
 import sys
 import types
@@ -338,7 +338,7 @@ def chrtran(expr, fchrs, rchrs):
      return ''.join(rchrs[fchrs.index(c)] if c in fchrs else c for c in expr)
 
 def ctod(string):
-    return datetime.datetime.strptime(string, '%m/%d/%Y').date()
+    return dt.datetime.strptime(string, '%m/%d/%Y').date()
 
 def ddeinitiate(a, b):
     pass
@@ -372,7 +372,7 @@ def error(txt):
 def fdate(filename, datetype=0):
     if datetype not in (0, 1):
         raise ValueError('datetype is invalid')
-    mod_date = datetime.datetime.fromtimestamp(os.path.getmtime(filename))
+    mod_date = dt.datetime.fromtimestamp(os.path.getmtime(filename))
     return mod_date if datetype else mod_date.date()
 
 def ftime(filename):
@@ -455,6 +455,12 @@ def num_to_str(num, length=10, decimals=0):
 
 def program(level):
     pass
+
+def quarter(datetime, start_month=1):
+    if not datetime:
+        return 0
+    month = (datetime.month - start_month) % 12
+    return (month - (month % 3)) // 3 + 1
 
 def quit(message=None, flags=None, title=None):
     sys.exit()
