@@ -483,6 +483,10 @@ def recsize(workarea=None):
 def rgb(red, green, blue):
     return (red, green, blue)
 
+def seconds():
+    now = dt.datetime.now()
+    return (now - dt.datetime.combine(now, dt.time(0, 0))).seconds
+
 def space(num):
     return ' ' * int(num)
 
