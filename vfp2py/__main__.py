@@ -782,6 +782,9 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             return self.add_args_to_code('{} == {}', [args[0], None])
         if funcname == 'inlist':
             return self.add_args_to_code('({} in {})', [args[0], tuple(args[1:])])
+        if funcname == 'pythonfunctioncall' and len(args) == 3:
+            self.imports.append('import {}'.format(args[0]))
+            return self.make_func_code('{}.{}'.format(args[0], args[1]), *args[2])
         if funcname == 'createobject':
             if len(args) > 0 and self.string_type(args[0]) and args[0].lower() in self.class_list:
                 return self.make_func_code(args[0].lower(), *args[1:])
