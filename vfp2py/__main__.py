@@ -785,6 +785,8 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         if funcname == 'createobject':
             if len(args) > 0 and self.string_type(args[0]) and args[0].lower() in self.class_list:
                 return self.make_func_code(args[0].lower(), *args[1:])
+            elif len(args) > 0 and self.string_type(args[0]) and args[0].lower() == 'pythontuple':
+                return tuple(args[1:])
             else:
                 return self.make_func_code('vfpfunc.create_object', *args)
         if funcname in ('fcreate', 'fopen'):
