@@ -10,9 +10,6 @@ import ctypes.util
 
 import dbf
 
-PRIVATE_SCOPES = []
-LOCAL_SCOPES = []
-
 class MainWindow(object):
     pass
 
@@ -230,21 +227,31 @@ class _Database_Context(object):
 
 class _Variable(object):
     def __init__(self, db):
+        self.public_scopes = []
+        self.local_scopes = []
+
         self.db = db
 
     def _get_scope(self, key):
-        if len(LOCAL_SCOPES) > 0 and key in LOCAL_SCOPES[-1]:
-            return LOCAL_SCOPES[-1]
-        for scope in reversed(PRIVATE_SCOPES):
+        if len(self.local_scopes) > 0 and key in self.local_scopes[-1]:
+            return self.local_scopes[-1]
+        for scope in reversed(self.public_scopes):
             if key in scope:
                 return scope
 
+    def __contains__(self, key):
+        try:
+            self[key]
+            return True
+        except:
+            return False
+
     def __getitem__(self, key):
         scope = self._get_scope(key)
-        table_info = self.db._get_table_info()
         if scope is not None:
             return scope[key]
-        elif table_info['name'] is not None and key in table_info['table'].field_names:
+        table_info = self.db._get_table_info()
+        if table_info['name'] is not None and key in table_info['table'].field_names:
             return table_info['table'][table_info['recno']-1][key]
         else:
             raise NameError('name {} is not defined'.format(key))
@@ -252,7 +259,7 @@ class _Variable(object):
     def __setitem__(self, key, val):
         scope = self._get_scope(key)
         if scope is None:
-            scope = LOCAL_SCOPES[-1]
+            scope = self.local_scopes[-1]
         scope[key] = val
 
     def __delitem__(self, key):
@@ -261,11 +268,19 @@ class _Variable(object):
 
     def add_private(self, *keys):
         for key in keys:
-            PRIVATE_SCOPES[-1][key] = False
+            self.public_scopes[-1][key] = False
 
     def add_public(self, *keys):
         for key in keys:
-            PRIVATE_SCOPES[0][key] = False
+            self.public_scopes[0][key] = False
+
+    def pushscope(self):
+        self.public_scopes.append({})
+        self.local_scopes.append({})
+
+    def popscope(self):
+        self.public_scopes.pop()
+        self.local_scopes.pop()
 
 class _Function(object):
     def __init__(self):
@@ -274,7 +289,7 @@ class _Function(object):
     def __getitem__(self, key):
         if key in self.functions:
             return self.functions[key]['func']
-        for scope in PRIVATE_SCOPES:
+        for scope in variable.public_scopes:
             if key in scope and isinstance(scope[key], Array):
                 return scope[key]
         raise Exception('{} is not a procedure'.format(key))
@@ -583,22 +598,26 @@ def create_object(objtype, *args):
     pass
 
 def pushscope():
-    global PRIVATE_SCOPES, LOCAL_SCOPES
-    PRIVATE_SCOPES.append({})
-    LOCAL_SCOPES.append({})
+    variable.pushscope()
 
 def popscope():
-    global PRIVATE_SCOPES, LOCAL_SCOPES
-    PRIVATE_SCOPES.pop()
-    LOCAL_SCOPES.pop()
+    variable.popscope()
 
-def release(varname, publics=False, skeleton=None, like=True):
-    if varname:
-        pass #pop the variable from locals
+def release(mode='Normal', skeleton=None):
+    if mode == 'Extended':
+        pass
+    elif mode == 'Like':
+        pass
+    elif mode == 'Except':
+        pass
     else:
-        pass #pop all variables locals
-    if publics:
-        pass #pop all public variables
+        var_names = []
+        for var in variable.local_scopes[-1]:
+            var_names.append(var)
+        for var in variable.public_scopes[-1]:
+            var_names.append(var)
+        for var in var_names:
+            del variable[var]
 
 def clearall():
     pass
@@ -606,9 +625,9 @@ def clearall():
 def array(arrayname, dim1, dim2=1, public=False):
     arr = Array(dim1, dim2)
     if public:
-        PRIVATE_SCOPES[0][arrayname] = arr
+        variable.public_scopes[0][arrayname] = arr
     else:
-        PRIVATE_SCOPES[-1][arrayname] = arr
+        variable.public_scopes[-1][arrayname] = arr
 
 db = _Database_Context()
 variable = _Variable(db)
