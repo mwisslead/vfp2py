@@ -255,6 +255,10 @@ class _Variable(object):
             scope = LOCAL_SCOPES[-1]
         scope[key] = val
 
+    def __delitem__(self, key):
+        scope = self._get_scope(key)
+        del scope[key]
+
     def add_private(self, *keys):
         for key in keys:
             PRIVATE_SCOPES[-1][key] = False
