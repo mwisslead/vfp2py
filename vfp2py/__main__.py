@@ -1164,15 +1164,17 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         if scoped_args:
             for arg in scoped_args:
                 self.scope.pop(arg)
-            retval.append(CodeStr('#Released {}'.format(', '.join(scoped_args))))
+            retval.append(CodeStr('del {}'.format(', '.join(scoped_args))))
         if args is not None:
             if ctx.PROCEDURE():
                 retval.append(self.make_func_code('vfpfunc.function.release_procedure', *args))
-            if ctx.POPUPS():
+            elif ctx.POPUPS():
                 kwargs = {}
                 if ctx.EXTENDED():
                     kwargs['extended'] = True
                 retval.append(self.make_func_code('vfpfunc.function.release_popups', *args, **kwargs))
+            elif ctx.ALL():
+                retval.append(self.make_func_code('vfpfunc.release'))
             else:
                 thisargs = [arg for arg in args if arg in ('this', 'thisform')]
                 args = [arg for arg in args if arg not in ('this', 'thisform')]
@@ -1182,7 +1184,8 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
                     if arg == 'thisform':
                         retval.append(self.make_func_code('self.parentform.release()'))
                 if args:
-                    retval.append(self.make_func_code('vfpfunc.release', *args))
+                    args = [self.add_args_to_code('vfpfunc.variable[{}]', arg) for arg in args]
+                    retval.append(CodeStr('del {}'.format(', '.join(args))))
         return retval
 
     def visitCloseStmt(self, ctx):
