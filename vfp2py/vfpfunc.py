@@ -36,20 +36,20 @@ class Array(object):
     def __init__(self, dim1, dim2=0):
         self.columns = bool(dim2)
         if not dim2:
-            dim2=1
-        self.dim1 = dim1
-        self.data = [False]*int(dim1*dim2)
+            dim2 = 1
+        self.dim1 = int(dim1)
+        self.data = [False]*self.dim1*int(dim2)
 
     def _get_index(self, inds):
         if not isinstance(inds, tuple):
             inds = (inds, 1)
         if len(inds) < 2:
             inds = (inds[0], 1)
-        dim1, dim2 = inds
-        ind = self.dim1*(dim2-1) + dim1 - 1
+        ind1, ind2 = [int(ind) - 1 for ind in inds]
+        ind = self.dim1*ind2 + ind1
         if ind < 0:
             raise IndexError('invalid indices')
-        return int(ind)
+        return ind
 
     def __getitem__(self, inds):
         return self.data[self._get_index(inds)]
@@ -66,10 +66,14 @@ class Array(object):
     def alen(self, arr_attr=0):
         if arr_attr == 2 and not self.columns:
             return 0
-        return int(len(self)/{0: 1, 1: len(self)/self.dim1, 2: self.dim1}[arr_attr])
+        return {
+            0: len(self),
+            1: self.dim1,
+            2: len(self) // self.dim1,
+        }[arr_attr]
 
     def __iter__(self):
-        return (d for d in self.data)
+        return iter(self.data)
 
 
 class _Database_Context(object):
