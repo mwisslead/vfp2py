@@ -552,10 +552,16 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
 
     def visitDeclaration(self, ctx):
         if ctx.ARRAY() or ctx.DIMENSION() or ctx.DEFINE():
-            func = 'vfpfunc.array'
-            value = self.visit(ctx.arrayIndex())
-            kwargs = {'public': True} if ctx.PUBLIC() else {}
             name = self.visit(ctx.identifier())
+            value = self.visit(ctx.arrayIndex())
+            if ctx.LOCAL():
+                self.scope[name] = False
+                array = self.make_func_code('vfpfunc.Array', *value)
+                return [
+                    self.add_args_to_code('{} = {}', [name, array])
+                ]
+            func = 'vfpfunc.array'
+            kwargs = {'public': True} if ctx.PUBLIC() else {}
             self.used_scope = True
             return self.make_func_code(func, *([str(name)] + value), **kwargs)
         else:
