@@ -433,18 +433,18 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
                     return_value = CodeStr(line[7:])
                     if 'vfpfunc.variable[' in return_value or 'vfpfunc.function[' in return_value:
                         newbody.append(self.add_args_to_code('function_return_value = {}', [return_value]))
-                        newbody.append(CodeStr('vfpfunc.popscope()'))
+                        newbody.append(CodeStr('vfpfunc.variable.popscope()'))
                         newbody.append(CodeStr('return function_return_value'))
                     else:
-                        newbody.append(CodeStr('vfpfunc.popscope()'))
+                        newbody.append(CodeStr('vfpfunc.variable.popscope()'))
                         newbody.append(line)
                 else:
                     newbody.append(line)
             return newbody
-        body = [CodeStr('vfpfunc.pushscope()')] + fix_returns(body)
+        body = [CodeStr('vfpfunc.variable.pushscope()')] + fix_returns(body)
         if isinstance(body[-1], CodeStr) and body[-1].startswith('return '):
             return body
-        body.append(CodeStr('vfpfunc.popscope()'))
+        body.append(CodeStr('vfpfunc.variable.popscope()'))
         return body
 
     def visitFuncDef(self, ctx):
@@ -1187,7 +1187,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
                     kwargs['extended'] = True
                 retval.append(self.make_func_code('vfpfunc.function.release_popups', *args, **kwargs))
             elif ctx.ALL():
-                retval.append(self.make_func_code('vfpfunc.release'))
+                retval.append(self.make_func_code('vfpfunc.variable.release'))
             else:
                 thisargs = [arg for arg in args if arg in ('this', 'thisform')]
                 args = [arg for arg in args if arg not in ('this', 'thisform')]

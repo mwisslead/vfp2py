@@ -312,6 +312,23 @@ class _Variable(object):
         self.public_scopes.pop()
         self.local_scopes.pop()
 
+    def release(self, mode='Normal', skeleton=None):
+        if mode == 'Extended':
+            pass
+        elif mode == 'Like':
+            pass
+        elif mode == 'Except':
+            pass
+        else:
+            var_names = []
+            for var in self.local_scopes[-1]:
+                var_names.append(var)
+            for var in self.public_scopes[-1]:
+                var_names.append(var)
+            for var in var_names:
+                del self[var]
+
+
 class _Function(object):
     def __init__(self):
         self.functions = {}
@@ -627,28 +644,6 @@ def call_if_callable(expr):
 def create_object(objtype, *args):
     pass
 
-def pushscope():
-    variable.pushscope()
-
-def popscope():
-    variable.popscope()
-
-def release(mode='Normal', skeleton=None):
-    if mode == 'Extended':
-        pass
-    elif mode == 'Like':
-        pass
-    elif mode == 'Except':
-        pass
-    else:
-        var_names = []
-        for var in variable.local_scopes[-1]:
-            var_names.append(var)
-        for var in variable.public_scopes[-1]:
-            var_names.append(var)
-        for var in var_names:
-            del variable[var]
-
 def clearall():
     pass
 
@@ -663,6 +658,6 @@ db = _Database_Context()
 variable = _Variable(db)
 function = _Function()
 error_func = None
-pushscope()
+variable.pushscope()
 variable.add_public('_vfp')
 variable['_vfp'] = MainWindow()
