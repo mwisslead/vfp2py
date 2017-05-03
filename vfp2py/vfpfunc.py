@@ -33,12 +33,26 @@ class Label(Custom):
     pass
 
 class Array(object):
-    def __init__(self, dim1, dim2=0):
+    def __init__(self, dim1, dim2=0, offset=0):
         self.columns = bool(dim2)
+        self.offset = offset
         if not dim2:
             dim2 = 1
         self.dim1 = int(dim1)
         self.data = [False]*self.dim1*int(dim2)
+
+
+    def _subarray(self, inds):
+        def modify_slice(ind):
+            def modify_slice_ind(slice_ind):
+                return slice_ind - 1 if slice_ind is not None else None
+            return slice(modify_slice_ind(ind.start), modify_slice_ind(ind.stop), ind.step)
+
+        ind = modify_slice(inds)
+        data = self.data[ind]
+        new_array = Array(len(data), 1, ind.start)
+        new_array.data = data
+        return new_array
 
     def _get_index(self, inds):
         if not isinstance(inds, tuple):
@@ -46,12 +60,14 @@ class Array(object):
         if len(inds) < 2:
             inds = (inds[0], 1)
         ind1, ind2 = [int(ind) - 1 for ind in inds]
-        ind = self.dim1*ind2 + ind1
+        ind = (len(self) // self.dim1)*ind1 + ind2 - self.offset
         if ind < 0:
             raise IndexError('invalid indices')
         return ind
 
     def __getitem__(self, inds):
+        if isinstance(inds, slice):
+            return self._subarray(inds)
         return self.data[self._get_index(inds)]
 
     def __setitem__(self, inds, val):
@@ -72,8 +88,18 @@ class Array(object):
             2: len(self) // self.dim1,
         }[arr_attr]
 
+    def index(self, val):
+        try:
+            return self.data.index(val) + 1 + self.offset
+        except ValueError:
+            return 0
+
     def __iter__(self):
         return iter(self.data)
+
+    def __repr__(self):
+        dims = (self.dim1,) if self.dim1 == len(self) else (self.dim1, len(self) // self.dim1)
+        return '{}({})'.format(type(self).__name__, ', '.join(str(dim) for dim in dims))
 
 
 class _Database_Context(object):
