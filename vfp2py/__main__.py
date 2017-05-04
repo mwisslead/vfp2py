@@ -457,7 +457,10 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         return name, parameters, body
 
     def visitPrintStmt(self, ctx):
-        return [self.make_func_code('print', *(self.visit(ctx.args()) if ctx.args() else []))]
+        kwargs = {}
+        if len([child for child in ctx.children if child.getText() == '?']) > 1:
+            kwargs['end'] = ''
+        return [self.make_func_code('print', *(self.visit(ctx.args()) if ctx.args() else []), **kwargs)]
 
     def visitIfStart(self, ctx):
         return self.visit(ctx.expr())
