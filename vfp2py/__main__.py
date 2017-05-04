@@ -1121,6 +1121,10 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
     def visitOnShutdown(self, ctx):
         return self.on_event(ctx, 'vfpfunc.shutdown_func')
 
+    def visitRaiseError(self, ctx):
+        expr = [self.visit(ctx.expr())] if ctx.expr() else []
+        return self.make_func_code('raise Exception', *expr)
+
     def visitIdentifier(self, ctx):
         altermap = {
             'class': 'classtype'
