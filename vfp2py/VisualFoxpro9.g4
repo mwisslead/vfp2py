@@ -205,7 +205,7 @@ otherCmds
  | ACTIVATE MENU identifier NOWAIT? (PAD identifier)? #activateMenu
  | DEACTIVATE (MENU|POPUP) (ALL | parameters) #deactivate
 
- | ERROR expr #raiseError
+ | ERROR expr? #raiseError
  | THROW expr #throwError
 
  | CREATE (TABLE|DBF) specialExpr FREE? '(' identifier identifier arrayIndex (',' identifier identifier arrayIndex)* ')' #createTable
@@ -245,7 +245,7 @@ dllArg
  ;
 
 printStmt
- : '?' args?
+ : '?' '?'? args?
  ;
 
 waitCmd
