@@ -8,6 +8,7 @@ import types
 import ctypes
 import ctypes.util
 import traceback
+import re
 
 import dbf
 
@@ -524,8 +525,20 @@ def num_to_str(num, length=10, decimals=0):
                 return '*' * length
             return string[:length-len(exp)] + exp
 
-def program(level):
-    pass
+def program(level=None):
+    trace = traceback.extract_stack()[:-1]
+    if level is None:
+        level = -1
+    elif level < 0:
+        return len(trace) - 1
+    elif level == 0:
+        level = 1
+    if level >= len(trace):
+        return ''
+    prg = trace[level][2]
+    if prg == '_program_main':
+        prg = re.sub(r'.py$', '', trace[level][0])
+    return prg.upper()
 
 def quarter(datetime, start_month=1):
     if not datetime:
