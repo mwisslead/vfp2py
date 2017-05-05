@@ -7,6 +7,7 @@ import sys
 import types
 import ctypes
 import ctypes.util
+import traceback
 
 import dbf
 
@@ -475,8 +476,11 @@ def isblank(expr):
 def lineno(flag):
     pass
 
-def message(flag):
-    pass
+def message(flag=None):
+    exc_type, exc_obj, exc_tb = sys.exc_info()
+    if flag is None:
+        return exc_obj.message
+    return traceback.extract_tb(exc_tb)[0][3]
 
 def messagebox(message, flags, title):
     print(message)
