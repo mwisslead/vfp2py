@@ -473,8 +473,9 @@ def isblank(expr):
     except:
         return expr is None
 
-def lineno(flag):
-    pass
+def lineno(flag=None):
+    exc_type, exc_obj, exc_tb = sys.exc_info()
+    return exc_tb.tb_lineno
 
 def message(flag=None):
     exc_type, exc_obj, exc_tb = sys.exc_info()
