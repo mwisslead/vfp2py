@@ -1447,7 +1447,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             args = ('TO', self.visit(ctx.specialExpr()[0])) if ctx.TO() else ('ON' if ctx.ON() else 'OFF',)
             return self.make_func_code('vfpfunc.set', setword, *args)
         elif setword in ('cursor', 'deleted', 'exact', 'near', 'status', 'status bar', 'unique'):
-            return self.make_func_code('vfpfunc.set', setword, not ctx.OFF())
+            return self.make_func_code('vfpfunc.set', setword, 'ON' if ctx.ON() else 'OFF')
         elif setword == 'century':
             if ctx.TO():
                 args = [None] + [self.visit(expr) for expr in ctx.expr()]

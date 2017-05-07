@@ -12,7 +12,16 @@ import re
 
 import dbf
 
-SET_PROPS = {}
+SET_PROPS = {
+    'bell': ['ON', ''],
+    'cursor': ['ON'],
+    'deleted': ['OFF'],
+    'exact': ['OFF'],
+    'near': ['OFF'],
+    'status': ['OFF'],
+    'status bar': ['ON'],
+    'unique': ['OFF'],
+}
 
 class MainWindow(object):
     pass
@@ -650,19 +659,20 @@ def select(tablename=None):
 
 def set(setword, *args, **kwargs):
     setword = setword.lower()
-    if setword in SET_PROPS:
-        settings = SET_PROPS[setword]
-    else:
-        settings = []
+    settings = SET_PROPS[setword]
+    if not args:
+        return settings[0]
     if setword == 'bell':
-        if not settings:
-            settings = ['ON', '']
-        if not args:
-            return settings[0]
+        if args[0].lower() not in ('to', 'on', 'off'):
+            raise ValueError('Bad argument: {}'.format(args[0]))
         if args[0] == 'TO':
             settings[1] = '' if len(args) == 1 else args[1]
         else:
-            settings[0] = args[0]
+            settings[0] = args[0].upper()
+    elif setword in ('cursor', 'deleted', 'exact', 'near', 'status', 'status bar', 'unique'):
+        if args[0].lower() not in ('on', 'off'):
+            raise ValueError('Bad argument: {}'.format(args[0]))
+        settings[0] = args[0].upper()
     SET_PROPS[setword] = settings
 
 def do_command(command, module, *args, **kwargs):
