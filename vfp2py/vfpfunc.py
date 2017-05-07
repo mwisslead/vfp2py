@@ -12,6 +12,8 @@ import re
 
 import dbf
 
+SET_PROPS = {}
+
 class MainWindow(object):
     pass
 
@@ -646,8 +648,22 @@ def select(tablename=None):
             pass
         return db.current_table + 1
 
-def set(setitem, *args, **kwargs):
-    pass
+def set(setword, *args, **kwargs):
+    setword = setword.lower()
+    if setword in SET_PROPS:
+        settings = SET_PROPS[setword]
+    else:
+        settings = []
+    if setword == 'bell':
+        if not settings:
+            settings = ['ON', '']
+        if not args:
+            return settings[0]
+        if args[0] == 'TO':
+            settings[1] = '' if len(args) == 1 else args[1]
+        else:
+            settings[0] = args[0]
+    SET_PROPS[setword] = settings
 
 def do_command(command, module, *args, **kwargs):
     mod = __import__(module)
