@@ -18,6 +18,7 @@ SET_PROPS = {
     'deleted': ['OFF'],
     'exact': ['OFF'],
     'near': ['OFF'],
+    'refresh': [0, 5],
     'status': ['OFF'],
     'status bar': ['ON'],
     'unique': ['OFF'],
@@ -673,6 +674,8 @@ def set(setword, *args, **kwargs):
         if args[0].lower() not in ('on', 'off'):
             raise ValueError('Bad argument: {}'.format(args[0]))
         settings[0] = args[0].upper()
+    elif setword == 'refresh':
+        settings = args
     SET_PROPS[setword] = settings
 
 def do_command(command, module, *args, **kwargs):
