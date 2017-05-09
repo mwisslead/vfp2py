@@ -152,6 +152,8 @@ class _Database_Context(object):
 
     def use(self, tablename, workarea, opentype):
         if tablename is None:
+            if workarea is 0:
+                return
             table = self.open_tables[self._table_index(workarea)]['table']
             table.close()
             self.open_tables[self.current_table] = {'name': None}
