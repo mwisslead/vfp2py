@@ -663,8 +663,8 @@ def select(tablename=None):
 def set(setword, *args, **kwargs):
     setword = setword.lower()
     settings = SET_PROPS[setword]
-    if not args:
-        return settings[0]
+    if not kwargs.get('set_value', False):
+        return settings[args[0]] if args else settings[0]
     if setword == 'bell':
         if args[0].lower() not in ('to', 'on', 'off'):
             raise ValueError('Bad argument: {}'.format(args[0]))
