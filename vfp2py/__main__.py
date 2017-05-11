@@ -1424,25 +1424,22 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         if ctx.BAR():
             setword += ' bar'
         if setword == 'printer':
-            args=['printer']
-            if ctx.ON():
-                args.append(1)
-                if ctx.PROMPT():
-                    args.append(True)
-            elif ctx.OFF():
-                args.append(0)
-            elif ctx.TO():
+            if ctx.TO():
                 if ctx.DEFAULT():
-                    args.append(['Default', None])
+                    kwargs.update({'Default': True})
                 elif ctx.NAME():
-                    args.append(['Name', self.visit(ctx.specialExpr()[0])])
+                    kwargs.update({'Name': self.visit(ctx.specialExpr()[0])})
                 elif ctx.specialExpr():
-                    args.append(['File', self.visit(ctx.specialExpr()[0])])
-                    args.append(ctx.ADDITIVE() != None)
+                    kwargs.update({'File': self.visit(ctx.specialExpr()[0])})
+                    if ctx.ADDITIVE():
+                        kwargs.update({'additive': True})
+            else:
+                args = ('ON' if ctx.ON() else 'OFF',)
+                kwargs.update({'prompt': True} if ctx.PROMPT() else {})
         elif setword == 'typeahead':
             args = (self.visit(ctx.expr()[0]),)
         elif setword == 'procedure':
-            kwargs = {'additive': True} if ctx.ADDITIVE() else {}
+            kwargs.update({'additive': True} if ctx.ADDITIVE() else {})
             args = [self.visit(expr) for expr in ctx.specialExpr()]
         elif setword == 'bell':
             args = ('TO', self.visit(ctx.specialExpr()[0])) if ctx.TO() else ('ON' if ctx.ON() else 'OFF',)
@@ -1461,9 +1458,8 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
                 args += ['default']
         elif setword == 'date':
             self.enable_scope(False)
-            date_format = str(self.visit(ctx.identifier()))
+            args = (str(self.visit(ctx.identifier())),)
             self.enable_scope(True)
-            args = (date_format,)
         elif setword == 'refresh':
             args = [self.visit(expr) for expr in ctx.expr()]
             if len(args) < 2:
