@@ -1420,6 +1420,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
     def visitSetCmd(self, ctx):
         setword = ctx.setword.text.lower()
         kwargs = {'set_value': True}
+        args = ()
         if ctx.BAR():
             setword += ' bar'
         if setword == 'printer':
@@ -1468,7 +1469,11 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             if len(args) < 2:
                 args.append(5)
         elif setword == 'notify':
-            args = (not not ctx.CURSOR(), not ctx.OFF())
+            arg = 'ON' if ctx.ON() else 'OFF'
+            if ctx.CURSOR():
+                kwargs.update({'cursor': arg})
+            else:
+                args = (arg,)
         elif setword == 'clock':
             args = [x.symbol.text.lower() for x in (ctx.ON(), ctx.OFF(), ctx.TO(), ctx.STATUS()) if x]
             if ctx.expr():
