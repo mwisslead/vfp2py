@@ -1419,6 +1419,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
 
     def visitSetCmd(self, ctx):
         setword = ctx.setword.text.lower()
+        kwargs = {'set_value': True}
         if ctx.BAR():
             setword += ' bar'
         if setword == 'printer':
@@ -1437,62 +1438,58 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
                 elif ctx.specialExpr():
                     args.append(['File', self.visit(ctx.specialExpr()[0])])
                     args.append(ctx.ADDITIVE() != None)
-            return self.make_func_code('vfpfunc.set', *args)
         elif setword == 'typeahead':
-            return self.make_func_code('vfpfunc.set', 'typeahead', self.visit(ctx.expr()[0]))
+            args = (self.visit(ctx.expr()[0]),)
         elif setword == 'procedure':
             kwargs = {'additive': True} if ctx.ADDITIVE() else {}
-            return self.make_func_code('vfpfunc.function.set_procedure', *[self.visit(expr) for expr in ctx.specialExpr()], **kwargs)
+            args = [self.visit(expr) for expr in ctx.specialExpr()]
         elif setword == 'bell':
             args = ('TO', self.visit(ctx.specialExpr()[0])) if ctx.TO() else ('ON' if ctx.ON() else 'OFF',)
-            return self.make_func_code('vfpfunc.set', setword, *args)
         elif setword in ('cursor', 'deleted', 'exact', 'near', 'status', 'status bar', 'unique'):
-            return self.make_func_code('vfpfunc.set', setword, 'ON' if ctx.ON() else 'OFF')
+            args = ('ON' if ctx.ON() else 'OFF',)
         elif setword == 'century':
             if ctx.TO():
                 args = [None] + [self.visit(expr) for expr in ctx.expr()]
             else:
                 args = [not ctx.OFF()]
-            return self.make_func_code('vfpfunc.set', setword, *args)
         elif setword == 'sysmenu':
             args = [x.symbol.text.lower() for x in (ctx.ON(), ctx.OFF(), ctx.TO(), ctx.SAVE(), ctx.NOSAVE()) if x]
             if ctx.expr():
                 args += [self.visit(ctx.expr()[0])]
             elif ctx.DEFAULT():
                 args += ['default']
-            return self.make_func_code('vfpfunc.set', setword, *args)
         elif setword == 'date':
             self.enable_scope(False)
             date_format = str(self.visit(ctx.identifier()))
             self.enable_scope(True)
-            return self.make_func_code('vfpfunc.set', setword, date_format)
+            args = (date_format,)
         elif setword == 'refresh':
             args = [self.visit(expr) for expr in ctx.expr()]
             if len(args) < 2:
                 args.append(5)
-            return self.make_func_code('vfpfunc.set', setword, *args)
         elif setword == 'notify':
-            return self.make_func_code('vfpfunc.set', setword, not not ctx.CURSOR(), not ctx.OFF())
+            args = (not not ctx.CURSOR(), not ctx.OFF())
         elif setword == 'clock':
             args = [x.symbol.text.lower() for x in (ctx.ON(), ctx.OFF(), ctx.TO(), ctx.STATUS()) if x]
             if ctx.expr():
                 args += [self.visit(expr) for expr in ctx.expr()]
-            return self.make_func_code('vfpfunc.set', setword, *args)
         elif setword == 'memowidth':
-            return self.make_func_code('vfpfunc.set', setword, self.visit(ctx.expr()[0]))
+            args = (self.visit(ctx.expr()[0]),)
         elif setword == 'library':
-            kwargs = {'additive': True} if ctx.ADDITIVE() else {}
-            return self.make_func_code('vfpfunc.function.set_library', *[self.visit(expr) for expr in ctx.specialExpr()], **kwargs)
+            kwargs.update({'additive': True} if ctx.ADDITIVE() else {})
+            args = [self.visit(expr) for expr in ctx.specialExpr()]
         elif setword == 'filter':
             args = [self.visit(expr) for expr in ctx.specialExpr()]
-            return self.make_func_code('vfpfunc.set', setword, *args)
         elif setword == 'order':
             order = self.visit(ctx.specialExpr(0))
             of_expr = self.visit(ctx.ofExpr) if ctx.ofExpr else None
             in_expr = self.visit(ctx.inExpr) if ctx.inExpr else None
-            kwargs = {'descending': True} if ctx.DESCENDING() else {}
+            kwargs.update({'descending': True} if ctx.DESCENDING() else {})
             kwargs.update({'tag': True} if ctx.TAG() else {})
-            return self.make_func_code('vfpfunc.set', setword, order, of_expr, in_expr, **kwargs)
+            args = (order, of_expr, in_expr)
+        else:
+            return
+        return self.make_func_code('vfpfunc.set', setword, *args, **kwargs)
 
     def visitShellRun(self, ctx):
         if ctx.identifier():
