@@ -297,6 +297,7 @@ setCmd
  | setword=FILTER TO (specialExpr (IN specialExpr)?)?
  | setword=LIBRARY TO (specialExpr ADDITIVE?)
  | setword=MEMOWIDTH TO expr
+ | setword=MULTILOCKS (ON | OFF)
  | setword=NEAR (ON | OFF)
  | setword=NOTIFY CURSOR? (ON | OFF)
  | setword=ORDER TO (specialExpr | TAG? specialExpr (OF ofExpr=specialExpr)? (IN inExpr=specialExpr)? (ASCENDING | DESCENDING)?)?
@@ -711,6 +712,7 @@ THROW: T H R O W;
 EACH: E A C H;
 CAST: C A S T;
 RUN: R U N;
+MULTILOCKS: M U L T I L O C K S;
 
 ID : [A-Za-z_] [a-zA-Z0-9_]*;
 
