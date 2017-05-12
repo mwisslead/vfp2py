@@ -1447,9 +1447,16 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             args = ('ON' if ctx.ON() else 'OFF',)
         elif setword == 'century':
             if ctx.TO():
-                args = [None] + [self.visit(expr) for expr in ctx.expr()]
+                if len(ctx.expr()) > 0:
+                    kwargs.update({'century': self.visit(ctx.expr()[0])})
+                else:
+                    kwargs.update({'century': 19})
+                if len(ctx.expr()) > 1:
+                    kwargs.update({'rollover': self.visit(ctx.expr()[1])})
+                else:
+                    kwargs.update({'rollover': 67})
             else:
-                args = [not ctx.OFF()]
+                args = ('ON' if ctx.ON() else 'OFF',)
         elif setword == 'sysmenu':
             args = [x.symbol.text.lower() for x in (ctx.ON(), ctx.OFF(), ctx.TO(), ctx.SAVE(), ctx.NOSAVE()) if x]
             if ctx.expr():

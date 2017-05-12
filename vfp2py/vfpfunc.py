@@ -14,6 +14,7 @@ import dbf
 
 SET_PROPS = {
     'bell': ['ON', ''],
+    'century': ['OFF', 19, 67, 2029],
     'cursor': ['ON'],
     'deleted': ['OFF'],
     'exact': ['OFF'],
@@ -673,6 +674,13 @@ def set(setword, *args, **kwargs):
             settings[1] = '' if len(args) == 1 else args[1]
         else:
             settings[0] = args[0].upper()
+    elif setword == 'century':
+        if len(args) > 0:
+            settings[0] = args[0]
+        if 'century' in kwargs:
+            settings[1] = kwargs['century']
+        if 'rollover' in kwargs:
+            settings[2] = kwargs['rollover']
     elif setword == 'notify':
         if 'cursor' in kwargs:
             settings[1] = kwargs['cursor']
