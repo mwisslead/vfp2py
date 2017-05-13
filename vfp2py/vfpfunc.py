@@ -30,13 +30,19 @@ class MainWindow(object):
     pass
 
 class Custom(object):
-    def __init__(self, **kwargs):
-        self.init()
+    def __init__(self, *args, **kwargs):
+        self.init(*args, **kwargs)
 
-    def init(self):
-        pass
+    def __setattr__(self, name, value):
+        super(type(self), self).__setattr__(name, value)
 
-    def add_object(self, obj):
+    def __getitem__(self, name):
+        return getattr(self, name)
+
+    def __setitem__(self, name, value):
+        setattr(self, name, value)
+
+    def init(self, *args, **kwargs):
         pass
 
 class Form(Custom):

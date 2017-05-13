@@ -334,20 +334,26 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         if assignments and 'init' not in funcs:
             funcs['init'] = [[CodeStr('self')], [], float('inf')]
 
-        funcbody = funcs['init'][1]
-        if funcbody:
-            funcs['init'][1] = [funcbody[0]] + assignments + funcbody[1:]
-        else:
-            self.used_scope = assign_scope
-            funcs['init'][1] = self.modify_func_body(assignments)
+        try:
+            funcbody = funcs['init'][1]
+            if funcbody:
+                funcs['init'][1] = [funcbody[0]] + assignments + funcbody[1:]
+            else:
+                self.used_scope = assign_scope
+                funcs['init'][1] = self.modify_func_body(assignments)
+        except KeyError:
+            pass
 
         classname, supername = self.visit(ctx.classDefStart())
         retval = [CodeStr('class {}({}):'.format(classname, supername))]
-        for funcname in funcs:
-            parameters, funcbody, line_number = funcs[funcname]
-            while comments and comments[0][1] < line_number:
-                retval.append([comments.pop(0)[0]])
-            retval.append([CodeStr('def {}({}):'.format(funcname, ', '.join([str(repr(p)) + '=False' for p in parameters]))), funcbody])
+        if funcs:
+            for funcname in funcs:
+                parameters, funcbody, line_number = funcs[funcname]
+                while comments and comments[0][1] < line_number:
+                    retval.append([comments.pop(0)[0]])
+                retval.append([CodeStr('def {}({}):'.format(funcname, ', '.join([str(repr(p)) + '=False' for p in parameters]))), funcbody])
+        else:
+            retval.append([CodeStr('pass')])
         while comments:
             retval.append([comments.pop(0)[0]])
 
@@ -393,7 +399,6 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         kwargs = {key: self.visit(expr) for key, expr in zip(keywords, ctx.expr())}
         funcname = self.add_args_to_code('self.{} = {}', (name, objtype))
         retval = [self.make_func_code(funcname, **kwargs)]
-        retval.append(self.add_args_to_code('self.add_object(self.{})', [name]))
         return retval
 
     def visitNodefault(self, ctx):
@@ -581,10 +586,6 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
 
     def visitAssign(self, ctx):
         value = self.visit(ctx.expr())
-        while isinstance(value, CodeStr):
-            if not (value.startswith('(') and value.endswith(')')):
-                break
-            value = CodeStr(value[1:-1])
         args = []
         for var in ctx.idAttr():
             trailer = self.visit(var.trailer()) if var.trailer() else []
@@ -1817,7 +1818,7 @@ def convert_file(infile, outfile):
     output = add_indents(output_tree, 0)
     with open(outfile, 'wb') as fid:
         fid.write(output.encode('utf-8'))
-    autopep8.main([__file__, '--in-place', outfile])
+    autopep8.main([__file__, '--max-line-length', '2000', '--in-place', outfile])
 
 def main(argv=None):
     args = parse_args(argv)
