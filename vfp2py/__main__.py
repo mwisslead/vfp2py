@@ -1444,7 +1444,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             args = [self.visit(expr) for expr in ctx.specialExpr()]
         elif setword == 'bell':
             args = ('TO', self.visit(ctx.specialExpr()[0])) if ctx.TO() else ('ON' if ctx.ON() else 'OFF',)
-        elif setword in ('cursor', 'deleted', 'exact', 'near', 'status', 'status bar', 'unique'):
+        elif setword in ('cursor', 'deleted', 'exact', 'multilocks', 'near', 'status', 'status bar', 'unique'):
             args = ('ON' if ctx.ON() else 'OFF',)
         elif setword == 'century':
             if ctx.TO():

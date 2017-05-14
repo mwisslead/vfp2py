@@ -18,6 +18,7 @@ SET_PROPS = {
     'cursor': ['ON'],
     'deleted': ['OFF'],
     'exact': ['OFF'],
+    'multilocks': ['OFF'],
     'near': ['OFF'],
     'notify': ['ON', 'ON'],
     'refresh': [0, 5],
@@ -692,7 +693,7 @@ def set(setword, *args, **kwargs):
             settings[1] = kwargs['cursor']
         else:
             settings[0] = args[0]
-    elif setword in ('cursor', 'deleted', 'exact', 'near', 'status', 'status bar', 'unique'):
+    elif setword in ('cursor', 'deleted', 'exact', 'multilocks', 'near', 'status', 'status bar', 'unique'):
         if args[0].lower() not in ('on', 'off'):
             raise ValueError('Bad argument: {}'.format(args[0]))
         settings[0] = args[0].upper()
