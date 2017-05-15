@@ -223,7 +223,7 @@ otherCmds
  | PACK DATABASE #packDatabase
  | REINDEX COMPACT? #reindex
  | SEEK expr #seekRecord
- | (GO | GOTO) (TOP | BOTTOM | RECORD? expr) (IN idAttr)? #goRecord
+ | (GO | GOTO) (TOP | BOTTOM | RECORD? expr) (IN specialExpr)? #goRecord
  | COPY STRUCTURE? TO specialExpr #copyTo
  | ZAP (IN expr)? #zapTable
 

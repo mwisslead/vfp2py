@@ -1287,10 +1287,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             record = -1
         else:
             record = self.visit(ctx.expr())
-        if ctx.idAttr():
-            name = self.visit(ctx.idAttr)
-        else:
-            name = None
+        name = self.visit(ctx.specialExpr()) if ctx.specialExpr() else None
         return self.make_func_code('vfpfunc.db.goto', name, record)
 
     def visitUse(self, ctx):
