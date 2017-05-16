@@ -207,6 +207,10 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         self.function_list = []
         self.used_scope = False
 
+    def visit(self, ctx):
+        if ctx:
+            return super(type(self), self).visit(ctx)
+
     def enable_scope(self, enabled):
         self._scope_count = max(self._scope_count + 1 - 2*int(enabled), 0)
         if enabled and self._scope_count == 0:
@@ -1282,7 +1286,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             record = -1
         else:
             record = self.visit(ctx.expr())
-        name = self.visit(ctx.specialExpr()) if ctx.specialExpr() else None
+        name = self.visit(ctx.specialExpr())
         return make_func_code('vfpfunc.db.goto', name, record)
 
     def visitUse(self, ctx):
@@ -1369,8 +1373,8 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             pack = 'memo'
         else:
             pack = 'both'
-        tablename = self.visit(ctx.tableName) if ctx.tableName else None
-        workarea = self.visit(ctx.workArea) if ctx.workArea else None
+        tablename = self.visit(ctx.tableName)
+        workarea = self.visit(ctx.workArea)
         return make_func_code('vfpfunc.db.pack', pack, tablename, workarea)
 
     def visitIndexOn(self, ctx):
@@ -1391,7 +1395,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         return make_func_code('vfpfunc.db.pack_database')
 
     def visitZapTable(self, ctx):
-        return make_func_code('vfpfunc.db.zap', self.visit(ctx.expr()) if ctx.expr() else None)
+        return make_func_code('vfpfunc.db.zap', self.visit(ctx.expr()))
 
     def visitScopeClause(self, ctx):
         if ctx.ALL():
