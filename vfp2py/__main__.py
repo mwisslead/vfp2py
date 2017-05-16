@@ -1570,7 +1570,6 @@ class MultichannelTokenStream(antlr4.CommonTokenStream):
     def enableChannel(self, channel):
         if channel not in self.channels:
             self.channels.append(channel)
-            self.channels = sorted(self.channels)
 
     def disableChannel(self, channel):
         if channel in self.channels:
