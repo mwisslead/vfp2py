@@ -161,6 +161,29 @@ def get_list(should_be_list):
     except TypeError:
         return [should_be_list]
 
+def make_func_code(funcname, *args, **kwargs):
+    args = [repr(x) for x in args]
+    args += ['{}={}'.format(key, repr(kwargs[key])) for key in kwargs]
+    return CodeStr('{}({})'.format(funcname, ', '.join(args)))
+
+def to_int(expr):
+    try:
+        return int(expr)
+    except:
+        return make_func_code('int', expr)
+
+def string_type(val):
+    return isinstance(val, (str, unicode)) and not isinstance(val, CodeStr)
+
+def create_string(val):
+    try:
+        return str(val)
+    except UnicodeEncodeError: #can this happen?
+        return val
+
+def add_args_to_code(codestr, args):
+    return CodeStr(codestr.format(*[repr(arg) for arg in args]))
+
 class PythonConvertVisitor(VisualFoxpro9Visitor):
     def __init__(self, filename):
         super(PythonConvertVisitor, self).__init__()
@@ -183,34 +206,6 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         self.class_list = []
         self.function_list = []
         self.used_scope = False
-
-    @staticmethod
-    def make_func_code(funcname, *args, **kwargs):
-        args = [repr(x) for x in args]
-        args += ['{}={}'.format(key, repr(kwargs[key])) for key in kwargs]
-        return CodeStr('{}({})'.format(funcname, ', '.join(args)))
-
-    @staticmethod
-    def to_int(expr):
-        try:
-            return int(expr)
-        except:
-            return PythonConvertVisitor.make_func_code('int', expr)
-
-    @staticmethod
-    def string_type(val):
-        return isinstance(val, (str, unicode)) and not isinstance(val, CodeStr)
-
-    @staticmethod
-    def create_string(val):
-        try:
-            return str(val)
-        except UnicodeEncodeError: #can this happen?
-            return val
-
-    @staticmethod
-    def add_args_to_code(codestr, args):
-        return CodeStr(codestr.format(*[repr(arg) for arg in args]))
 
     def enable_scope(self, enabled):
         self._scope_count = max(self._scope_count + 1 - 2*int(enabled), 0)
@@ -397,8 +392,8 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         keywords = [self.visit(idAttr) for idAttr in ctx.idAttr()[1:]]
         self.enable_scope(True)
         kwargs = {key: self.visit(expr) for key, expr in zip(keywords, ctx.expr())}
-        funcname = self.add_args_to_code('self.{} = {}', (name, objtype))
-        retval = [self.make_func_code(funcname, **kwargs)]
+        funcname = add_args_to_code('self.{} = {}', (name, objtype))
+        retval = [make_func_code(funcname, **kwargs)]
         return retval
 
     def visitNodefault(self, ctx):
@@ -437,7 +432,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
                 elif isinstance(line, CodeStr) and line.startswith('return '):
                     return_value = CodeStr(line[7:])
                     if 'vfpfunc.variable[' in return_value or 'vfpfunc.function[' in return_value:
-                        newbody.append(self.add_args_to_code('function_return_value = {}', [return_value]))
+                        newbody.append(add_args_to_code('function_return_value = {}', [return_value]))
                         newbody.append(CodeStr('vfpfunc.variable.popscope()'))
                         newbody.append(CodeStr('return function_return_value'))
                     else:
@@ -465,7 +460,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         kwargs = {}
         if len([child for child in ctx.children if child.getText() == '?']) > 1:
             kwargs['end'] = ''
-        return [self.make_func_code('print', *(self.visit(ctx.args()) if ctx.args() else []), **kwargs)]
+        return [make_func_code('print', *(self.visit(ctx.args()) if ctx.args() else []), **kwargs)]
 
     def visitIfStart(self, ctx):
         return self.visit(ctx.expr())
@@ -517,11 +512,11 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         self.scope[loopvar] = False
         if ctx.EACH():
             iterator = self.visit(ctx.expr(0))
-            return self.add_args_to_code('for {} in {}:', (loopvar, iterator))
-        loop_start = self.to_int(self.visit(ctx.loopStart))
-        loop_stop = self.to_int(self.visit(ctx.loopStop)) + 1
+            return add_args_to_code('for {} in {}:', (loopvar, iterator))
+        loop_start = to_int(self.visit(ctx.loopStart))
+        loop_stop = to_int(self.visit(ctx.loopStop)) + 1
         if ctx.loopStep:
-            loop_step = self.to_int(self.visit(ctx.loopStep))
+            loop_step = to_int(self.visit(ctx.loopStep))
             return CodeStr('for {} in range({}, {}, {}):'.format(loopvar, loop_start, loop_stop, loop_step))
         else:
             return CodeStr('for {} in range({}, {}):'.format(loopvar, loop_start, loop_stop))
@@ -543,13 +538,13 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
 
     def visitScanStmt(self, ctx):
         lines = self.visit(ctx.lines())
-        lines.append(self.make_func_code('vfpfunc.db.skip', None, 1))
+        lines.append(make_func_code('vfpfunc.db.skip', None, 1))
         if ctx.FOR():
             condition = self.visit(ctx.expr())
-            lines = [self.add_args_to_code('if not {}:', [condition]), [CodeStr('continue')]] + lines
+            lines = [add_args_to_code('if not {}:', [condition]), [CodeStr('continue')]] + lines
         save_variable_name = CodeStr(random_variable(length=10) + '_current_record')
         save_recno = CodeStr('{} = {}'.format(save_variable_name, 'vfpfunc.db.recno()'))
-        return_recno = self.make_func_code('vfpfunc.db.goto', None, CodeStr(save_variable_name))
+        return_recno = make_func_code('vfpfunc.db.goto', None, CodeStr(save_variable_name))
         return [save_recno, CodeStr('while not vfpfunc.db.eof():'), lines, return_recno]
 
     def visitBreakLoop(self, ctx):
@@ -564,14 +559,14 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             value = self.visit(ctx.arrayIndex())
             if ctx.LOCAL():
                 self.scope[name] = False
-                array = self.make_func_code('vfpfunc.Array', *value)
+                array = make_func_code('vfpfunc.Array', *value)
                 return [
-                    self.add_args_to_code('{} = {}', [name, array])
+                    add_args_to_code('{} = {}', [name, array])
                 ]
             func = 'vfpfunc.array'
             kwargs = {'public': True} if ctx.PUBLIC() else {}
             self.used_scope = True
-            return self.make_func_code(func, *([str(name)] + value), **kwargs)
+            return make_func_code(func, *([str(name)] + value), **kwargs)
         else:
             self.enable_scope(False)
             names = self.visit(ctx.parameters())
@@ -582,7 +577,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
                 return CodeStr(' = '.join([repr(arg) for arg in (names + [False])]) + ' #LOCAL Declaration')
             self.used_scope = True
             func = 'vfpfunc.variable.add_public' if ctx.PUBLIC() else 'vfpfunc.variable.add_private'
-            return self.make_func_code(func, *[str(name) for name in names])
+            return make_func_code(func, *[str(name) for name in names])
 
     def visitAssign(self, ctx):
         value = self.visit(ctx.expr())
@@ -640,7 +635,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
 
     def func_call(self, funcname, args):
         if funcname in self.function_list:
-            return self.make_func_code(funcname, *args)
+            return make_func_code(funcname, *args)
         funcname = {
             'stuffc': 'stuff',
         }.get(funcname, funcname)
@@ -649,67 +644,67 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         if funcname == 'space' and len(args) == 1 and isinstance(args[0], int):
             return ' '*args[0]
         if funcname == 'asc':
-            return self.make_func_code('ord', CodeStr(str(repr(args[0])) + '[0]'))
+            return make_func_code('ord', CodeStr(str(repr(args[0])) + '[0]'))
         if funcname == 'len':
-            return self.make_func_code('len', *args)
+            return make_func_code('len', *args)
         if funcname == 'alen':
             if len(args) == 1:
-                return self.make_func_code('len', *args)
+                return make_func_code('len', *args)
             else:
-                args[1] = self.to_int(args[1])
-                return self.add_args_to_code('{}.alen({})', args)
+                args[1] = to_int(args[1])
+                return add_args_to_code('{}.alen({})', args)
         if funcname == 'ascan':
             if len(args) == 3:
-                args = [self.add_args_to_code('{}[{}:]', [args[0], args[2]]), args[1]]
+                args = [add_args_to_code('{}[{}:]', [args[0], args[2]]), args[1]]
             elif len(args) == 4:
-                args = [self.add_args_to_code('{}[{}:({} + {})]', [args[0], args[2], args[2], args[3]]), args[1]]
+                args = [add_args_to_code('{}[{}:({} + {})]', [args[0], args[2], args[2], args[3]]), args[1]]
             if len(args) == 2:
-                return self.add_args_to_code('{}.index({})', args)
+                return add_args_to_code('{}.index({})', args)
         if funcname == 'empty':
-            return self.add_args_to_code('(not {} if {} is not None else False)', args + args)
+            return add_args_to_code('(not {} if {} is not None else False)', args + args)
         if funcname == 'occurs':
-            return self.add_args_to_code('{}.count({})', reversed(args))
+            return add_args_to_code('{}.count({})', reversed(args))
         if funcname in ('at', 'rat'):
             funcname = {
                 'at': 'find',
                 'rat': 'rfind',
             }[funcname]
-            return self.add_args_to_code('({}.{}({}) + 1)', [args[1], CodeStr(funcname), args[0]])
+            return add_args_to_code('({}.{}({}) + 1)', [args[1], CodeStr(funcname), args[0]])
         if funcname in ('repli', 'replicate'):
-            args[1:] = [self.to_int(arg) for arg in args[1:]]
-            return self.add_args_to_code('({} * {})', args)
+            args[1:] = [to_int(arg) for arg in args[1:]]
+            return add_args_to_code('({} * {})', args)
         if funcname in ('date', 'datetime', 'time') and len(args) == 0:
             self.imports.append('import datetime as dt')
             if funcname == 'date':
-                return self.make_func_code('dt.datetime.now().date')
+                return make_func_code('dt.datetime.now().date')
             elif funcname == 'datetime':
-                return self.make_func_code('dt.datetime.now')
+                return make_func_code('dt.datetime.now')
             elif funcname == 'time':
-                return self.make_func_code('dt.datetime.now().time().strftime', '%H:%M:%S')
+                return make_func_code('dt.datetime.now().time().strftime', '%H:%M:%S')
         if funcname in ('year', 'month', 'day', 'hour', 'minute', 'sec', 'cdow', 'cmonth'):
             funcname = {
                 'sec': 'second',
                 'cdow': "strftime('%A')",
                 'cmonth': "strftime('%B')",
             }.get(funcname, funcname)
-            return self.add_args_to_code('{}.{}', [args[0], CodeStr(funcname)])
+            return add_args_to_code('{}.{}', [args[0], CodeStr(funcname)])
         if funcname == 'dtoc':
             if len(args) == 1 or args[1] == 1:
                 if len(args) > 1 and args[1] == 1:
                     args[1] = '%Y%m%d'
                 else:
                     args.append('%m/%d/%Y')
-                return self.make_func_code('{}.{}'.format(args[0], 'strftime'), args[1])
+                return make_func_code('{}.{}'.format(args[0], 'strftime'), args[1])
         if funcname == 'iif' and len(args) == 3:
-            return self.add_args_to_code('({} if {} else {})', [args[i] for i in (1, 0, 2)])
+            return add_args_to_code('({} if {} else {})', [args[i] for i in (1, 0, 2)])
         if funcname == 'between':
-            return self.add_args_to_code('({} <= {} <= {})', [args[i] for i in (1, 0, 2)])
+            return add_args_to_code('({} <= {} <= {})', [args[i] for i in (1, 0, 2)])
         if funcname == 'nvl':
-            return self.add_args_to_code('({} if {} is not None else {})', [args[0], args[0], args[1]])
+            return add_args_to_code('({} if {} is not None else {})', [args[0], args[0], args[1]])
         if funcname == 'evl':
-            return self.add_args_to_code('({} or {})', args)
+            return add_args_to_code('({} or {})', args)
         if funcname == 'sign':
-            return self.add_args_to_code('1 if {} > 0 else (-1 if {} < 0 else 0)', [args[0], args[0]])
+            return add_args_to_code('1 if {} > 0 else (-1 if {} < 0 else 0)', [args[0], args[0]])
         if funcname in ('alltrim', 'ltrim', 'rtrim', 'lower', 'upper', 'padr', 'padl', 'padc'):
             funcname = {
                 'alltrim': 'strip',
@@ -720,42 +715,42 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
                 'padc': 'center',
             }.get(funcname, funcname)
             funcname = '{}.{}'.format(repr(args[0]), funcname)
-            return self.make_func_code(funcname, *args[1:])
+            return make_func_code(funcname, *args[1:])
         if funcname == 'strtran':
             args = args[:6]
             if len(args) > 3:
-                args[3:] = [self.to_int(arg) for arg in args[3:]]
+                args[3:] = [to_int(arg) for arg in args[3:]]
             if len(args) == 6 and int(args[5]) in (0, 2):
                 args.pop()
             if len(args) == 2:
                 args.append('')
-            str_replace = self.add_args_to_code('{}.replace', [args[0]])
+            str_replace = add_args_to_code('{}.replace', [args[0]])
             if len(args) == 3:
-                return self.make_func_code(str_replace, *args[1:])
+                return make_func_code(str_replace, *args[1:])
             elif len(args) == 4 and args[3] < 2:
                 args.pop()
-                return self.make_func_code(str_replace, *args[1:])
+                return make_func_code(str_replace, *args[1:])
             elif len(args) == 5 and args[3] < 2:
                 args[3] = args[4]
                 args.pop()
-                return self.make_func_code(str_replace, *args[1:])
+                return make_func_code(str_replace, *args[1:])
         if funcname == 'right':
-            args[1] = self.to_int(args[1])
-            return self.add_args_to_code('{}[-{}:]', args)
+            args[1] = to_int(args[1])
+            return add_args_to_code('{}[-{}:]', args)
         if funcname == 'left' and len(args) == 2:
-            args[1] = self.to_int(args[1])
-            return self.add_args_to_code('{}[:{}]', args)
+            args[1] = to_int(args[1])
+            return add_args_to_code('{}[:{}]', args)
         if funcname == 'substr':
-            args[1:] = [self.to_int(arg) for arg in args[1:]]
+            args[1:] = [to_int(arg) for arg in args[1:]]
             args[1] -= 1
             if len(args) < 3:
-                return self.add_args_to_code('{}[{}:]', args)
+                return add_args_to_code('{}[{}:]', args)
             if args[2] == 1:
-                return self.add_args_to_code('{}[{}]', args[:2])
+                return add_args_to_code('{}[{}]', args[:2])
             args[2] += args[1]
-            return self.add_args_to_code('{}[{}:{}]', args)
+            return add_args_to_code('{}[{}:{}]', args)
         if funcname == 'proper':
-            return self.add_args_to_code('{}.title()', args)
+            return add_args_to_code('{}.title()', args)
         if funcname in ('ceiling', 'exp', 'log', 'log10', 'sin', 'cos', 'tan', 'asin', 'acos', 'atan', 'atan2', 'pi', 'sqrt'):
             self.imports.append('import math')
             if funcname == 'pi':
@@ -765,7 +760,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
                 'atn2': 'atan2'
             }.get(funcname, funcname)
             funcname = 'math.' + funcname
-            return self.make_func_code(funcname, *args)
+            return make_func_code(funcname, *args)
         if funcname in ('bitand', 'bitclear', 'bitlshift', 'bitnot', 'bitor', 'bitrshift', 'bitset', 'bittest', 'bitxor'):
             op = {
                 'bitand': '({} & {})',
@@ -778,7 +773,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
                 'bittest': '(({} & (1 << {})) > 0)',
                 'bitxor': '({} ^ {})'
             }
-            return self.add_args_to_code(op[funcname], [self.to_int(arg) for arg in args])
+            return add_args_to_code(op[funcname], [to_int(arg) for arg in args])
         if funcname == 'str':
             funcname = 'num_to_str'
         if funcname in ('file', 'directory'):
@@ -787,48 +782,48 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
                 'file': 'os.path.isfile',
                 'directory': 'os.path.isdir',
             }[funcname]
-            return self.make_func_code(funcname, *args)
+            return make_func_code(funcname, *args)
         if funcname == 'used':
             self.imports.append('from vfp2py import vfpfunc')
-            return self.make_func_code('vfpfunc.used', *args)
+            return make_func_code('vfpfunc.used', *args)
         if funcname in ('abs', 'round', 'max', 'min'):
-            return self.make_func_code(funcname, *args)
+            return make_func_code(funcname, *args)
         if funcname == 'int':
-            return self.to_int(args[0])
+            return to_int(args[0])
         if funcname == 'isnull':
-            return self.add_args_to_code('{} == {}', [args[0], None])
+            return add_args_to_code('{} == {}', [args[0], None])
         if funcname == 'inlist':
-            return self.add_args_to_code('({} in {})', [args[0], tuple(args[1:])])
+            return add_args_to_code('({} in {})', [args[0], tuple(args[1:])])
         if funcname == 'pythonfunctioncall' and len(args) == 3:
             self.imports.append('import {}'.format(args[0]))
-            return self.make_func_code('{}.{}'.format(args[0], args[1]), *args[2])
+            return make_func_code('{}.{}'.format(args[0], args[1]), *args[2])
         if funcname == 'createobject':
-            if len(args) > 0 and self.string_type(args[0]) and args[0].lower() in self.class_list:
-                return self.make_func_code(args[0].lower(), *args[1:])
-            elif len(args) > 0 and self.string_type(args[0]) and args[0].lower() == 'pythontuple':
+            if len(args) > 0 and string_type(args[0]) and args[0].lower() in self.class_list:
+                return make_func_code(args[0].lower(), *args[1:])
+            elif len(args) > 0 and string_type(args[0]) and args[0].lower() == 'pythontuple':
                 return tuple(args[1:])
             else:
-                return self.make_func_code('vfpfunc.create_object', *args)
+                return make_func_code('vfpfunc.create_object', *args)
         if funcname in ('fcreate', 'fopen'):
             opentypes = ('w', 'r') if funcname == 'fcreate' else ('r', 'w', 'r+')
             if len(args) > 1 and args[1] <= len(opentypes):
-                args[1] = self.to_int(args[1])
+                args[1] = to_int(args[1])
                 if isinstance(args[1], int):
                     args[1] = opentypes[args[1]]
                 else:
-                    args[1] = self.add_args_to_code({}[{}]).format(opentypes, args[1])
+                    args[1] = add_args_to_code({}[{}]).format(opentypes, args[1])
             else:
                 args.append(opentypes[0])
-            return self.make_func_code('open', *args)
+            return make_func_code('open', *args)
         if funcname == 'fclose':
-            return self.add_args_to_code('{}.close()', args)
+            return add_args_to_code('{}.close()', args)
         if funcname in ('fputs', 'fwrite'):
             if len(args) == 3:
-                args[2] = self.to_int(args[2])
-                args[1] = self.add_args_to_code('{}[:{}]', args[1:])
+                args[2] = to_int(args[2])
+                args[1] = add_args_to_code('{}[:{}]', args[1:])
             if funcname == 'fputs':
                 args[1] += '\r\n'
-            return self.add_args_to_code('{}.write({})', args)
+            return add_args_to_code('{}.write({})', args)
         if funcname in ('fgets', 'fread'):
             if funcname == 'fgets':
                 code = '{}.readline({}).strip(\'\\r\\n\')'
@@ -837,10 +832,10 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             if len(args) < 2:
                 args.append(CodeStr(''))
             else:
-                args[1] = self.to_int(args[1])
-            return self.add_args_to_code(code, args)
+                args[1] = to_int(args[1])
+            return add_args_to_code(code, args)
         if funcname == 'justpath':
-            return self.make_func_code('os.path.dirname', *args)
+            return make_func_code('os.path.dirname', *args)
         if funcname == 'sys':
             funcname = 'vfp_sys'
         if funcname in ('bof', 'eof', 'deleted'):
@@ -850,7 +845,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             funcname = 'vfpfunc.' + funcname
         else:
             funcname = self.scopeId(funcname, 'func')
-        return self.make_func_code(funcname, *args)
+        return make_func_code(funcname, *args)
 
     def scopeId(self, identifier, vartype):
         if not self.has_scope() or identifier in self.scope:
@@ -862,9 +857,9 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         self.imports.append('from vfp2py import vfpfunc')
         self.used_scope = True
         if vartype == 'val':
-            return self.add_args_to_code('vfpfunc.variable[{}]', [str(identifier)])
+            return add_args_to_code('vfpfunc.variable[{}]', [str(identifier)])
         elif vartype == 'func':
-            return self.add_args_to_code('vfpfunc.function[{}]', [str(identifier)])
+            return add_args_to_code('vfpfunc.function[{}]', [str(identifier)])
 
     def createIdAttr(self, identifier, trailer):
         if trailer and len(trailer) == 1 and isinstance(trailer[0], list):
@@ -875,7 +870,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         else:
             trailer = CodeStr('')
         identifier = self.scopeId(identifier, 'val')
-        return self.add_args_to_code('{}{}', (identifier, trailer))
+        return add_args_to_code('{}{}', (identifier, trailer))
 
     def convert_trailer_args(self, trailers):
         retval = ''
@@ -917,13 +912,13 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             atom = self.withid
 
         if trailer and len(trailer) > 0 and not isinstance(trailer[-1], list) and isinstance(atom, CodeStr) and isinstance(ctx.parentCtx, VisualFoxpro9Parser.CmdContext):
-            return self.make_func_code('vfpfunc.call_if_callable', self.createIdAttr(atom, trailer))
+            return make_func_code('vfpfunc.call_if_callable', self.createIdAttr(atom, trailer))
         if isinstance(atom, CodeStr):
             return self.createIdAttr(atom, trailer)
         elif trailer:
             for i, t in enumerate(trailer):
                 if isinstance(t, list):
-                    trailer[i] = self.add_args_to_code('({})', t)
+                    trailer[i] = add_args_to_code('({})', t)
                 else:
                     trailer[i] = '.' + trailer[i]
             return CodeStr(''.join([repr(self.visit(ctx.atom()))] + trailer))
@@ -942,7 +937,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             funcname = 'mkdir'
         if ctx.RD() or ctx.RMDIR():
             funcname = 'rmdir'
-        return self.make_func_code('os.' + funcname, self.visit(ctx.specialExpr()))
+        return make_func_code('os.' + funcname, self.visit(ctx.specialExpr()))
 
     def visitSpecialExpr(self, ctx):
         if ctx.pathname():
@@ -954,11 +949,11 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             start, stop = ctx.getSourceInterval()
             raw_expr = ''.join(t.text for t in ctx.parser._input.tokens[start:stop+1])
             if raw_expr.lower() == expr and isinstance(ctx.expr(), VisualFoxpro9Parser.AtomExprContext) and (not ctx.expr().trailer() or not any(isinstance(arg, list) for arg in self.visit(ctx.expr().trailer()))):
-                return self.create_string(raw_expr).lower()
+                return create_string(raw_expr).lower()
             return self.visit(ctx.expr())
 
     def visitPathname(self, ctx):
-        return self.create_string(ctx.getText()).lower()
+        return create_string(ctx.getText()).lower()
 
     def visitNumber(self, ctx):
         num = ctx.NUMBER_LITERAL().getText()
@@ -1001,7 +996,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         return dt.dateime(1, 1, 1, 0, 0, 0)
 
     def visitString(self, ctx):
-        return self.create_string(ctx.getText()[1:-1])
+        return create_string(ctx.getText()[1:-1])
 
     def visitPower(self, ctx):
         return self.operationExpr(ctx, '**')
@@ -1024,7 +1019,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         exprs = self.walkAdditions(ctx)
         exprs2 = [exprs[0]]
         for expr in exprs[1:]:
-            if self.string_type(expr) and self.string_type(exprs2[-1]):
+            if string_type(expr) and string_type(exprs2[-1]):
                 exprs2[-1] += expr
             elif expr:
                 exprs2.append(expr)
@@ -1052,7 +1047,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         return CodeStr('({} {} {})'.format(repr(left), symbols[operation], repr(right)))
 
     def visitSubExpr(self, ctx):
-        return self.add_args_to_code('({})', [self.visit(ctx.expr())])
+        return add_args_to_code('({})', [self.visit(ctx.expr())])
 
     def visitFuncDo(self, ctx):
         self.enable_scope(False)
@@ -1061,20 +1056,20 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         if ctx.FORM():
             func = func.lower()
             func = func.replace('.', '_')
-            return self.make_func_code('{}._program_main'.format(func))
+            return make_func_code('{}._program_main'.format(func))
         args = self.visit(ctx.args()) if ctx.args() else []
         if func.endswith('.mpr'):
             func = func[:-4]
             args = [func] + args
             self.imports.append('from vfp2py import vfpfunc')
-            return self.make_func_code('vfpfunc.mprfile', *args)
+            return make_func_code('vfpfunc.mprfile', *args)
         namespace = self.visit(ctx.specialExpr()[1]) if ctx.IN() else None
         if (not namespace or os.path.splitext(namespace)[0] == self.filename) and func in self.function_list:
-            return self.make_func_code(func, *args)
+            return make_func_code(func, *args)
         if not namespace:
             namespace = func
             func = '_program_main'
-        return self.make_func_code('vfpfunc.do_command', func, namespace, *args)
+        return make_func_code('vfpfunc.do_command', func, namespace, *args)
 
     def visitDoForm(self, ctx):
         self.enable_scope(False)
@@ -1088,7 +1083,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         if ctx.ALL():
             return CodeStr('vfpfunc.clearall()')
         elif ctx.DLLS():
-            return self.make_func_code('vfpfunc.cleardlls', *self.visit(ctx.args()))
+            return make_func_code('vfpfunc.cleardlls', *self.visit(ctx.args()))
         elif ctx.MACROS():
             return CodeStr('vfpfunc.clearmacros()')
         elif ctx.EVENTS():
@@ -1104,7 +1099,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         funcname = str(self.visit(ctx.identifier()[0]))
         alias = str(self.visit(ctx.alias)) if ctx.alias else None
         self.enable_scope(True)
-        return self.make_func_code('vfpfunc.function.dll_declare', dll_name, funcname, alias)
+        return make_func_code('vfpfunc.function.dll_declare', dll_name, funcname, alias)
 
     def visitReadEvent(self, ctx):
         return CodeStr('vfpfunc.read_events()')
@@ -1127,7 +1122,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
 
     def visitRaiseError(self, ctx):
         expr = [self.visit(ctx.expr())] if ctx.expr() else []
-        return self.make_func_code('raise Exception', *expr)
+        return make_func_code('raise Exception', *expr)
 
     def visitIdentifier(self, ctx):
         altermap = {
@@ -1158,10 +1153,10 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         else:
             filename = None
         if ctx.RECYCLE():
-            return self.make_func_code('vfpfunc.delete_file', filename, True)
+            return make_func_code('vfpfunc.delete_file', filename, True)
         else:
             self.imports.append('import os')
-            return self.make_func_code('os.remove', filename)
+            return make_func_code('os.remove', filename)
 
     def visitFile(self, ctx):
         return ctx.getText()
@@ -1188,36 +1183,36 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             retval.append(CodeStr('del {}'.format(', '.join(scoped_args))))
         if args is not None:
             if ctx.PROCEDURE():
-                retval.append(self.make_func_code('vfpfunc.function.release_procedure', *args))
+                retval.append(make_func_code('vfpfunc.function.release_procedure', *args))
             elif ctx.POPUPS():
                 kwargs = {}
                 if ctx.EXTENDED():
                     kwargs['extended'] = True
-                retval.append(self.make_func_code('vfpfunc.function.release_popups', *args, **kwargs))
+                retval.append(make_func_code('vfpfunc.function.release_popups', *args, **kwargs))
             elif ctx.ALL():
-                retval.append(self.make_func_code('vfpfunc.variable.release'))
+                retval.append(make_func_code('vfpfunc.variable.release'))
             else:
                 thisargs = [arg for arg in args if arg in ('this', 'thisform')]
                 args = [arg for arg in args if arg not in ('this', 'thisform')]
                 for arg in thisargs:
                     if arg == 'this':
-                        retval.append(self.make_func_code('self.release()'))
+                        retval.append(make_func_code('self.release()'))
                     if arg == 'thisform':
-                        retval.append(self.make_func_code('self.parentform.release()'))
+                        retval.append(make_func_code('self.parentform.release()'))
                 if args:
-                    args = [self.add_args_to_code('vfpfunc.variable[{}]', arg) for arg in args]
+                    args = [add_args_to_code('vfpfunc.variable[{}]', arg) for arg in args]
                     retval.append(CodeStr('del {}'.format(', '.join(args))))
         return retval
 
     def visitCloseStmt(self, ctx):
         allflag = not not ctx.ALL()
         if ctx.TABLES():
-            return self.make_func_code('vfpfunc.db.close_tables', allflag)
+            return make_func_code('vfpfunc.db.close_tables', allflag)
         if ctx.INDEXES():
-            return self.make_func_code('vfpfunc.db.close_indexes', allflag)
+            return make_func_code('vfpfunc.db.close_indexes', allflag)
         if ctx.DATABASES():
-            return self.make_func_code('vfpfunc.db.close_databases', allflag)
-        return self.make_func_code('vfpfunc.db.close_all')
+            return make_func_code('vfpfunc.db.close_databases', allflag)
+        return make_func_code('vfpfunc.db.close_all')
 
     def visitWaitCmd(self, ctx):
         message = repr(self.visit(ctx.message) if ctx.message else '')
@@ -1248,7 +1243,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         self.enable_scope(False)
         args = self.visit(ctx.parameters()) if not ctx.ALL() else []
         self.enable_scope(True)
-        return self.make_func_code(func, *[str(arg) for arg in args])
+        return make_func_code(func, *[str(arg) for arg in args])
 
     def visitCreateTable(self, ctx):
         if ctx.TABLE():
@@ -1266,11 +1261,11 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
                 setupstring.append('{} {}({})'.format(id1, id2, ', '.join(str(int(i)) for i in size)))
         setupstring = '; '.join(setupstring)
         free = 'free' if ctx.FREE() else ''
-        return self.make_func_code(func, tablename, setupstring, free)
+        return make_func_code(func, tablename, setupstring, free)
 
     def visitSelect(self, ctx):
         if ctx.tablename:
-            return self.make_func_code('vfpfunc.db.select', self.visit(ctx.tablename))
+            return make_func_code('vfpfunc.db.select', self.visit(ctx.tablename))
         else:
             args = [arg for arg in self.visit(ctx.specialArgs())] if ctx.specialArgs() else ('*',)
             from_table = self.visit(ctx.fromExpr) if ctx.fromExpr else None
@@ -1278,7 +1273,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             where_expr = self.visit(ctx.whereExpr) if ctx.whereExpr else None
             order_by = self.visit(ctx.orderbyid) if ctx.orderbyid else None
             distinct = 'distinct' if ctx.DISTINCT() else None
-            return self.make_func_code('vfpfunc.db.sqlselect', args, from_table, into_table, where_expr, order_by, distinct)
+            return make_func_code('vfpfunc.db.sqlselect', args, from_table, into_table, where_expr, order_by, distinct)
 
     def visitGoRecord(self, ctx):
         if ctx.TOP():
@@ -1288,7 +1283,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         else:
             record = self.visit(ctx.expr())
         name = self.visit(ctx.specialExpr()) if ctx.specialExpr() else None
-        return self.make_func_code('vfpfunc.db.goto', name, record)
+        return make_func_code('vfpfunc.db.goto', name, record)
 
     def visitUse(self, ctx):
         shared = ctx.SHARED()
@@ -1311,7 +1306,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
                 workarea = int(workarea)
         else:
             workarea = None
-        return self.make_func_code('vfpfunc.db.use', name, workarea, opentype)
+        return make_func_code('vfpfunc.db.use', name, workarea, opentype)
 
     def visitAppend(self, ctx):
         if ctx.FROM():
@@ -1322,7 +1317,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
                 tablename = self.visit(ctx.idAttr())
             else:
                 tablename = None
-            return self.make_func_code('vfpfunc.db.append', tablename, menupopup)
+            return make_func_code('vfpfunc.db.append', tablename, menupopup)
 
     def visitReplace(self, ctx):
         value = self.visit(ctx.expr(0))
@@ -1333,7 +1328,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         self.enable_scope(False)
         field = self.visit(ctx.specialExpr())
         self.enable_scope(True)
-        return self.make_func_code('vfpfunc.db.replace', field, value, scope)
+        return make_func_code('vfpfunc.db.replace', field, value, scope)
 
     def visitSkipRecord(self, ctx):
         if len(ctx.expr()) > 1:
@@ -1341,12 +1336,12 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         else:
             table = None
         skipnum = self.visit(ctx.expr()[0])
-        return self.make_func_code('vfpfunc.db.skip', table, skipnum)
+        return make_func_code('vfpfunc.db.skip', table, skipnum)
 
     def visitCopyTo(self, ctx):
         copyTo = self.visit(ctx.specialExpr())
         if ctx.STRUCTURE():
-            return self.make_func_code('vfpfunc.db.copy_structure', copyTo)
+            return make_func_code('vfpfunc.db.copy_structure', copyTo)
 
     def visitDeleteRecord(self, ctx):
         kwargs = OrderedDict()
@@ -1360,12 +1355,12 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         else:
             name = None
         if ctx.forExpr:
-            kwargs['for_cond'] = self.add_args_to_code('lambda: {}', [self.visit(ctx.forExpr)])
+            kwargs['for_cond'] = add_args_to_code('lambda: {}', [self.visit(ctx.forExpr)])
         if ctx.whileExpr:
-            kwargs['while_cond'] = self.add_args_to_code('lambda: {}', [self.visit(ctx.whileExpr)])
+            kwargs['while_cond'] = add_args_to_code('lambda: {}', [self.visit(ctx.whileExpr)])
         if ctx.RECALL():
             kwargs['recall'] = True
-        return self.make_func_code('vfpfunc.db.delete_record', scopetype, num, **kwargs)
+        return make_func_code('vfpfunc.db.delete_record', scopetype, num, **kwargs)
 
     def visitPack(self, ctx):
         if ctx.DBF():
@@ -1376,7 +1371,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             pack = 'both'
         tablename = self.visit(ctx.tableName) if ctx.tableName else None
         workarea = self.visit(ctx.workArea) if ctx.workArea else None
-        return self.make_func_code('vfpfunc.db.pack', pack, tablename, workarea)
+        return make_func_code('vfpfunc.db.pack', pack, tablename, workarea)
 
     def visitIndexOn(self, ctx):
         field = self.visit(ctx.specialExpr()[0])
@@ -1387,16 +1382,16 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             raise Exception('Invalid statement: {}'.format(self.getCtxText(ctx)))
         order = 'descending' if ctx.DESCENDING() else 'ascending'
         unique_flag = not not ctx.UNIQUE()
-        return self.make_func_code('vfpfunc.db.index_on', field, indexname, order, tag_flag, compact_flag, unique_flag)
+        return make_func_code('vfpfunc.db.index_on', field, indexname, order, tag_flag, compact_flag, unique_flag)
 
     def visitReindex(self, ctx):
-        return self.make_func_code('vfpfunc.db.reindex', not not ctx.COMPACT())
+        return make_func_code('vfpfunc.db.reindex', not not ctx.COMPACT())
 
     def visitPackDatabase(self, ctx):
-        return self.make_func_code('vfpfunc.db.pack_database')
+        return make_func_code('vfpfunc.db.pack_database')
 
     def visitZapTable(self, ctx):
-        return self.make_func_code('vfpfunc.db.zap', self.visit(ctx.expr()) if ctx.expr() else None)
+        return make_func_code('vfpfunc.db.zap', self.visit(ctx.expr()) if ctx.expr() else None)
 
     def visitScopeClause(self, ctx):
         if ctx.ALL():
@@ -1413,7 +1408,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             formname = self.visit(ctx.specialExpr())
         else:
             formname = None
-        return self.make_func_code('vfpfunc.report_form', formname)
+        return make_func_code('vfpfunc.report_form', formname)
 
     def visitSetCmd(self, ctx):
         setword = ctx.setword.text.lower()
@@ -1495,7 +1490,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             args = (order, of_expr, in_expr)
         else:
             return
-        return self.make_func_code('vfpfunc.set', setword, *args, **kwargs)
+        return make_func_code('vfpfunc.set', setword, *args, **kwargs)
 
     def visitShellRun(self, ctx):
         if ctx.identifier():
@@ -1507,12 +1502,12 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             command += ''.join(tok.text for tok in tokens) + ' '
         command = [t for t in command.split() if t]
         self.imports.append('import subprocess')
-        return self.make_func_code('subprocess.call', command)
+        return make_func_code('subprocess.call', command)
 
     def visitReturnStmt(self, ctx):
         if not ctx.expr():
             return [CodeStr('return')]
-        return [self.add_args_to_code('return {}', [self.visit(ctx.expr())])]
+        return [add_args_to_code('return {}', [self.visit(ctx.expr())])]
 
 def convert(codestr):
     input_stream = antlr4.InputStream(codestr)
