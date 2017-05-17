@@ -947,16 +947,20 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         if ctx.pathname():
             return self.visit(ctx.pathname())
         elif ctx.expr():
-            self.enable_scope(False)
             expr = self.visit(ctx.expr())
-            self.enable_scope(True)
-            start, stop = ctx.getSourceInterval()
-            raw_expr = ''.join(t.text for t in ctx.parser._input.tokens[start:stop+1])
-            if raw_expr.lower() == expr and isinstance(ctx.expr(), VisualFoxpro9Parser.AtomExprContext) and (not ctx.expr().trailer() or not any(isinstance(arg, list) for arg in self.visit(ctx.expr().trailer()))):
-                return create_string(raw_expr).lower()
-            return self.visit(ctx.expr())
+            if string_type(expr):
+                expr = expr.lower()
+            return expr
 
     def visitPathname(self, ctx):
+        start, stop = ctx.getSourceInterval()
+        if not all(t.text.strip() for t in ctx.parser._input.tokens[start:stop+1]):
+            data = ''.join(t.text for t in ctx.parser._input.tokens[start:stop+1])
+            input_stream = antlr4.InputStream(data)
+            lexer = VisualFoxpro9Lexer(input_stream)
+            stream = MultichannelTokenStream(lexer)
+            parser = VisualFoxpro9Parser(stream)
+            return self.visit(parser.expr())
         return create_string(ctx.getText()).lower()
 
     def visitNumber(self, ctx):
