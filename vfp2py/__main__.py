@@ -842,6 +842,8 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             return make_func_code('os.path.dirname', *args)
         if funcname == 'sys':
             funcname = 'vfp_sys'
+        if funcname == 'set' and len(args) > 0 and string_type(args[0]):
+            args[0] = args[0].lower()
         if funcname in ('bof', 'eof', 'deleted'):
             funcname = 'vfpfunc.db.' + funcname
         elif funcname in dir(vfpfunc):
