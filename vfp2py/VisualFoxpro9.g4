@@ -402,6 +402,7 @@ pathElement
 
 specialExpr
  : '(' expr ')'
+ | constant
  | pathname
  | expr
  ;

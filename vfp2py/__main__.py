@@ -944,13 +944,10 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         return make_func_code('os.' + funcname, self.visit(ctx.specialExpr()))
 
     def visitSpecialExpr(self, ctx):
-        if ctx.pathname():
-            return self.visit(ctx.pathname())
-        elif ctx.expr():
-            expr = self.visit(ctx.expr())
-            if string_type(expr):
-                expr = expr.lower()
-            return expr
+        expr = self.visit(ctx.pathname() or ctx.constant() or ctx.expr())
+        if string_type(expr):
+            expr = expr.lower()
+        return expr
 
     def visitPathname(self, ctx):
         start, stop = ctx.getSourceInterval()
