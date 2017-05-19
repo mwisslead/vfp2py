@@ -1303,16 +1303,10 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             opentype = 'exclusive'
         else:
             opentype = None
-        if ctx.name:
-            name = self.visit(ctx.name)
-        else:
-            name = None
-        if ctx.workArea:
-            workarea = self.visit(ctx.workArea)
-            if isinstance(workarea, float):
-                workarea = int(workarea)
-        else:
-            workarea = None
+        name = self.visit(ctx.name)
+        workarea = self.visit(ctx.workArea)
+        if isinstance(workarea, float):
+            workarea = int(workarea)
         return make_func_code('vfpfunc.db.use', name, workarea, opentype)
 
     def visitAppend(self, ctx):
@@ -1320,29 +1314,20 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             pass #NEED TO ADD - APPEND FROM
         else:
             menupopup = not ctx.BLANK()
-            if ctx.IN():
-                tablename = self.visit(ctx.idAttr())
-            else:
-                tablename = None
+            tablename = self.visit(ctx.specialExpr())
             return make_func_code('vfpfunc.db.append', tablename, menupopup)
 
     def visitReplace(self, ctx):
         value = self.visit(ctx.expr(0))
-        if ctx.scopeClause():
-            scope = self.visit(ctx.scopeClause())
-        else:
-            scope = None
+        scope = self.visit(ctx.scopeClause())
         self.enable_scope(False)
         field = self.visit(ctx.specialExpr())
         self.enable_scope(True)
         return make_func_code('vfpfunc.db.replace', field, value, scope)
 
     def visitSkipRecord(self, ctx):
-        if len(ctx.expr()) > 1:
-            table = self.visit(ctx.expr()[1])
-        else:
-            table = None
-        skipnum = self.visit(ctx.expr()[0])
+        table = self.visit(ctx.specialExpr())
+        skipnum = self.visit(ctx.expr())
         return make_func_code('vfpfunc.db.skip', table, skipnum)
 
     def visitCopyTo(self, ctx):
@@ -1352,15 +1337,8 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
 
     def visitDeleteRecord(self, ctx):
         kwargs = OrderedDict()
-        if ctx.scopeClause():
-            scopetype, num = self.visit(ctx.scopeClause())
-        else:
-            scopetype = 'next'
-            num = 1
-        if ctx.IN():
-            name = self.visit(ctx.inExpr)
-        else:
-            name = None
+        scopetype, num = self.visit(ctx.scopeClause()) or ('next', 1)
+        name = self.visit(ctx.inExpr)
         if ctx.forExpr:
             kwargs['for_cond'] = add_args_to_code('lambda: {}', [self.visit(ctx.forExpr)])
         if ctx.whileExpr:
@@ -1370,7 +1348,9 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         return make_func_code('vfpfunc.db.delete_record', scopetype, num, **kwargs)
 
     def visitPack(self, ctx):
-        if ctx.DBF():
+        if ctx.DATABASE():
+            return make_func_code('vfpfunc.db.pack_database')
+        elif ctx.DBF():
             pack = 'dbf'
         elif ctx.MEMO():
             pack = 'memo'
@@ -1394,11 +1374,8 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
     def visitReindex(self, ctx):
         return make_func_code('vfpfunc.db.reindex', not not ctx.COMPACT())
 
-    def visitPackDatabase(self, ctx):
-        return make_func_code('vfpfunc.db.pack_database')
-
     def visitZapTable(self, ctx):
-        return make_func_code('vfpfunc.db.zap', self.visit(ctx.expr()))
+        return make_func_code('vfpfunc.db.zap', self.visit(ctx.specialExpr()))
 
     def visitScopeClause(self, ctx):
         if ctx.ALL():

@@ -210,22 +210,21 @@ otherCmds
 
  | CREATE (TABLE|DBF) specialExpr FREE? '(' identifier identifier arrayIndex (',' identifier identifier arrayIndex)* ')' #createTable
  | SELECT (tablename=specialExpr | (DISTINCT? (specialArgs | '*') (FROM fromExpr=specialExpr)? (WHERE whereExpr=expr)? (INTO TABLE intoExpr=specialExpr)? (ORDER BY orderbyid=identifier)?)) #select
- | USE (SHARED | EXCL | EXCLUSIVE)? name=specialExpr? (IN workArea=specialExpr)? (SHARED | EXCL | EXCLUSIVE)? (ALIAS identifier)? #use
+ | USE (SHARED | EXCL | EXCLUSIVE)? (IN workArea=specialExpr | name=specialExpr IN workArea=specialExpr | name=specialExpr)? (SHARED | EXCL | EXCLUSIVE)? (ALIAS identifier)? #use
  | LOCATE (FOR expr)? (WHILE expr)? NOOPTIMIZE? #locate
  | REPLACE scopeClause? specialExpr WITH expr (FOR expr)? #replace
- | INDEX ON specialExpr (TAG | TO) specialExpr COMPACT? (ASCENDING | DESCENDING)? ( UNIQUE | CANDIDATE)? ADDITIVE? #indexOn
+ | INDEX ON specialExpr (TAG | TO) specialExpr COMPACT? (ASCENDING | DESCENDING)? (UNIQUE | CANDIDATE)? ADDITIVE? #indexOn
  | COUNT scopeClause? ((FOR expr) | (WHILE expr) | (TO expr))* NOOPTIMIZE? #count
  | SUM scopeClause? expr (FOR expr | TO idAttr | NOOPTIMIZE)+ #sum
- | (RECALL | DELETE) scopeClause? (FOR forExpr=expr)? (WHILE whileExpr=expr)? (IN inExpr=expr)? NOOPTIMIZE? #deleteRecord
- | APPEND (BLANK? (IN idAttr)? NOMENU? | FROM specialExpr) #append
- | SKIPKW expr (IN expr)? #skipRecord
- | PACK (MEMO | DBF)? tableName=specialExpr? (IN workArea=specialExpr)? #pack
- | PACK DATABASE #packDatabase
+ | (RECALL | DELETE) scopeClause? (FOR forExpr=expr)? (WHILE whileExpr=expr)? (IN inExpr=specialExpr NOOPTIMIZE | IN inExpr=specialExpr)? #deleteRecord
+ | APPEND (BLANK | BLANK? (IN specialExpr NOMENU | IN specialExpr) | FROM specialExpr)? #append
+ | SKIPKW expr (IN specialExpr)? #skipRecord
+ | PACK (DATABASE | (MEMO | DBF)? (IN workArea=specialExpr | tableName=specialExpr IN workArea=specialExpr | tableName=specialExpr)?) #pack
  | REINDEX COMPACT? #reindex
  | SEEK expr #seekRecord
  | (GO | GOTO) (TOP | BOTTOM | RECORD? expr) (IN specialExpr)? #goRecord
  | COPY STRUCTURE? TO specialExpr #copyTo
- | ZAP (IN expr)? #zapTable
+ | ZAP (IN specialExpr)? #zapTable
 
  | CLOSE ((DATABASES | INDEXES | TABLES) ALL? | ALL) #closeStmt
  | READ EVENTS #readEvent
