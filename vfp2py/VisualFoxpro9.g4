@@ -346,7 +346,7 @@ expr
  | expr op=('=='|NOTEQUALS|'='|'#'|'>'|'>='|'<'|'<='|'$') expr #comparison
  | expr op=(OR|AND) expr #booleanOperation
  | constant #constantExpr
- | CAST '(' expr AS identifier ')' #castExpr
+ | CAST '(' expr AS datatype ')' #castExpr
  | PERIOD? atom trailer? #atomExpr
  ;
 

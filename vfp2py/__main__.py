@@ -910,6 +910,17 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
     def visitIdAttr2(self, ctx):
         return CodeStr('.'.join(([self.withid] if ctx.startPeriod else []) + [self.visit(identifier) for identifier in ctx.identifier()]))
 
+    def visitCastExpr(self, ctx):
+        func = {
+            'i': 'int',
+            'int': 'int',
+            'integer': 'int',
+            'l': 'bool',
+            'logical': 'bool',
+        }[ctx.datatype().getText().lower()]
+        expr = self.visit(ctx.expr())
+        return make_func_code(func, expr)
+
     def visitAtomExpr(self, ctx):
         atom = self.visit(ctx.atom())
         trailer = self.visit(ctx.trailer()) if ctx.trailer() else None
