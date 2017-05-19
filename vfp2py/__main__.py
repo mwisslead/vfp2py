@@ -920,11 +920,37 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
 
     def visitDatatype(self, ctx):
         name_map = {
+            'w': 'blob',
+            'blob': 'blob',
+            'c': 'character',
+            'char': 'character',
+            'character': 'character',
+            'y': 'currency',
+            'currency': 'currency',
+            'd': 'date',
+            'date': 'date',
+            't': 'datetime',
+            'datetime': 'datetime',
+            'b': 'double',
+            'double': 'double',
+            'f': 'float',
+            'float': 'float',
+            'g': 'general',
+            'general': 'general',
             'i': 'integer',
             'int': 'integer',
             'integer': 'integer',
             'l': 'logical',
             'logical': 'logical',
+            'm': 'memo',
+            'memo': 'memo',
+            'n': 'numeric',
+            'num': 'numeric',
+            'numeric': 'numeric',
+            'q': 'varbinary',
+            'varbinary': 'varbinary',
+            'v': 'varchar',
+            'varchar': 'varchar',
         }
         dtype = self.visit(ctx.identifier())
         try:
