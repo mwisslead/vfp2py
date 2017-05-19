@@ -912,14 +912,25 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
 
     def visitCastExpr(self, ctx):
         func = {
-            'i': 'int',
-            'int': 'int',
             'integer': 'int',
-            'l': 'bool',
             'logical': 'bool',
-        }[ctx.datatype().getText().lower()]
+        }[self.visit(ctx.datatype())]
         expr = self.visit(ctx.expr())
         return make_func_code(func, expr)
+
+    def visitDatatype(self, ctx):
+        name_map = {
+            'i': 'integer',
+            'int': 'integer',
+            'integer': 'integer',
+            'l': 'logical',
+            'logical': 'logical',
+        }
+        dtype = self.visit(ctx.identifier())
+        try:
+            return name_map[dtype]
+        except KeyError:
+            raise ValueError("invalid datatype '{}'".format(dtype))
 
     def visitAtomExpr(self, ctx):
         atom = self.visit(ctx.atom())
