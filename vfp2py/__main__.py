@@ -1358,8 +1358,10 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         return make_func_code('vfpfunc.db.use', name, workarea, opentype)
 
     def visitAppend(self, ctx):
+        self.imports.append('from vfp2py import vfpfunc')
         if ctx.FROM():
-            pass #NEED TO ADD - APPEND FROM
+            sourcename = self.visit(ctx.specialExpr())
+            return make_func_code('vfpfunc.db.append_from', None, sourcename)
         else:
             menupopup = not ctx.BLANK()
             tablename = self.visit(ctx.specialExpr())

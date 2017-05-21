@@ -182,6 +182,15 @@ class _Database_Context(object):
         table.append()
         table_info['recno'] = len(table)
 
+    def append_from(self, tablename, from_source, from_type='dbf'):
+        table = self._get_table(tablename)
+        if from_type == 'dbf':
+            from_table = dbf.Table(from_source)
+            from_table.open()
+            for record in from_table:
+                table.append(record)
+            from_table.close()
+
     def replace(self, field, value, scope):
         field = field.lower().split('.')
         if len(field) > 1:
