@@ -97,7 +97,7 @@ forStart
  ;
 
 forEnd
- : (ENDFOR | NEXT idAttr? lineEnd)
+ : (ENDFOR | NEXT idAttr?)
  ;
 
 forStmt
