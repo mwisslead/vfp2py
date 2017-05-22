@@ -1230,7 +1230,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
                     scoped_args.append(arg)
                 else:
                     final_args.append(str(arg))
-            args = final_args if final_args else None
+            args = final_args or None
         retval = []
         if scoped_args:
             for arg in scoped_args:
@@ -1255,7 +1255,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
                     if arg == 'thisform':
                         retval.append(make_func_code('self.parentform.release()'))
                 if args:
-                    args = [add_args_to_code('vfpfunc.variable[{}]', arg) for arg in args]
+                    args = [add_args_to_code('vfpfunc.variable[{}]', [arg]) for arg in args]
                     retval.append(CodeStr('del {}'.format(', '.join(args))))
         return retval
 
