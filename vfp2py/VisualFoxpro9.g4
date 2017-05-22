@@ -217,7 +217,8 @@ otherCmds
  | COUNT scopeClause? ((FOR expr) | (WHILE expr) | (TO expr))* NOOPTIMIZE? #count
  | SUM scopeClause? expr (FOR expr | TO idAttr | NOOPTIMIZE)+ #sum
  | (RECALL | DELETE) scopeClause? (FOR forExpr=expr)? (WHILE whileExpr=expr)? (IN inExpr=specialExpr NOOPTIMIZE | IN inExpr=specialExpr)? #deleteRecord
- | APPEND (BLANK | BLANK? (IN specialExpr NOMENU | IN specialExpr) | FROM specialExpr)? #append
+ | APPEND FROM (specialExpr FOR expr | specialExpr) #appendFrom
+ | APPEND BLANK? (IN specialExpr NOMENU | IN specialExpr)? #append
  | SKIPKW expr (IN specialExpr)? #skipRecord
  | PACK (DATABASE | (MEMO | DBF)? (IN workArea=specialExpr | tableName=specialExpr IN workArea=specialExpr | tableName=specialExpr)?) #pack
  | REINDEX COMPACT? #reindex

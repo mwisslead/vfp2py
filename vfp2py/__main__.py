@@ -1357,15 +1357,19 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             workarea = int(workarea)
         return make_func_code('vfpfunc.db.use', name, workarea, opentype)
 
+    def visitAppendFrom(self, ctx):
+        self.imports.append('from vfp2py import vfpfunc')
+        sourcename = self.visit(ctx.specialExpr())
+        kwargs = {}
+        if ctx.FOR():
+            kwargs['for_cond'] = add_args_to_code('lambda: {}', [self.visit(ctx.expr())])
+        return make_func_code('vfp_db.append_from', None, sourcename, **kwargs)
+
     def visitAppend(self, ctx):
         self.imports.append('from vfp2py import vfpfunc')
-        if ctx.FROM():
-            sourcename = self.visit(ctx.specialExpr())
-            return make_func_code('vfpfunc.db.append_from', None, sourcename)
-        else:
-            menupopup = not ctx.BLANK()
-            tablename = self.visit(ctx.specialExpr())
-            return make_func_code('vfpfunc.db.append', tablename, menupopup)
+        menupopup = not ctx.BLANK()
+        tablename = self.visit(ctx.specialExpr())
+        return make_func_code('vfpfunc.db.append', tablename, menupopup)
 
     def visitReplace(self, ctx):
         value = self.visit(ctx.expr(0))
