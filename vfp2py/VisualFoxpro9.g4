@@ -363,9 +363,8 @@ atom
  ;
 
 trailer
- : '(' args? ')' trailer?
- | '[' args? ']' trailer?
- | '.' identifier trailer?
+ : ('(' args? ')' | '[' args? ']') trailer? #funcCallTrailer
+ | '.' identifier trailer? #identTrailer
  ;
 
 pathname

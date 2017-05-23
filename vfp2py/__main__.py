@@ -887,21 +887,21 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
                 retval += '.' + trailer
         return CodeStr(retval)
 
-    def visitTrailer(self, ctx):
-        trailer = self.visit(ctx.trailer()) if ctx.trailer() else []
-        if ctx.args():
-            retval = [[x for x in self.visit(ctx.args())]]
-        elif ctx.identifier():
-            self.enable_scope(False)
-            retval = [self.visit(ctx.identifier())]
-            self.enable_scope(True)
-        else:
-            retval = [[]]
+    def visitFuncCallTrailer(self, ctx):
+        trailer = self.visit(ctx.trailer()) or []
+        retval = [[x for x in self.visit(ctx.args()) or []]]
+        return retval + trailer
+
+    def visitIdentTrailer(self, ctx):
+        trailer = self.visit(ctx.trailer()) or []
+        self.enable_scope(False)
+        retval = [self.visit(ctx.identifier())]
+        self.enable_scope(True)
         return retval + trailer
 
     def visitIdAttr(self, ctx):
         identifier = self.visit(ctx.identifier())
-        trailer = self.visit(ctx.trailer()) if ctx.trailer() else None
+        trailer = self.visit(ctx.trailer())
         if ctx.PERIOD() and self.withid:
             trailer = [identifier] + (trailer if trailer else [])
             identifier = self.withid
