@@ -806,6 +806,12 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
                 return make_func_code(args[0].lower(), *args[1:])
             elif len(args) > 0 and string_type(args[0]) and args[0].lower() == 'pythontuple':
                 return tuple(args[1:])
+            elif len(args) > 0 and string_type(args[0]) and args[0].lower() == 'pythonlist':
+                if len(args) > 1 and isinstance(args[1], list):
+                    return add_args_to_code('{}.data[:]', args[1])
+                return []
+            elif len(args) > 0 and string_type(args[0]) and args[0].lower() == 'pythondictionary':
+                return {}
             else:
                 return make_func_code('vfpfunc.create_object', *args)
         if funcname in ('fcreate', 'fopen'):
@@ -871,7 +877,11 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         if trailer and len(trailer) == 1 and isinstance(trailer[0], list):
             args = trailer[0]
             return self.func_call(identifier, args)
-        if trailer:
+        elif trailer and len(trailer) > 1 and trailer[-2] == 'setitem' and isinstance(trailer[-1], list) and len(trailer[-1]) == 2:
+            return add_args_to_code('{}[{}] = {}', [self.createIdAttr(identifier, trailer[:-2])] + trailer[-1])
+        elif trailer and len(trailer) > 1 and trailer[-2] == 'getitem' and isinstance(trailer[-1], list) and len(trailer[-1]) == 1:
+            return add_args_to_code('{}[{}]', [self.createIdAttr(identifier, trailer[:-2])] +  trailer[-1])
+        elif trailer:
             trailer = self.convert_trailer_args(trailer)
         else:
             trailer = CodeStr('')
