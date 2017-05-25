@@ -976,7 +976,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             atom = self.withid
 
         if trailer and len(trailer) > 0 and not isinstance(trailer[-1], list) and isinstance(atom, CodeStr) and isinstance(ctx.parentCtx, VisualFoxpro9Parser.CmdContext):
-            return make_func_code('vfpfunc.call_if_callable', self.createIdAttr(atom, trailer))
+            return make_func_code(self.createIdAttr(atom, trailer))
         if isinstance(atom, CodeStr):
             return self.createIdAttr(atom, trailer)
         elif trailer:
@@ -1134,6 +1134,17 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         if not namespace:
             namespace = func
             func = '_program_main'
+        if string_type(namespace):
+            self.imports.append('import ' + namespace)
+            mod = CodeStr(namespace)
+        else:
+            mod = make_func_code('__import__', namespace)
+        if string_type(func):
+            func = CodeStr(func)
+            func = add_args_to_code('{}.{}', (mod, func))
+        else:
+            func = make_func_code('getattr', mod, func)
+        return make_func_code(func, *args)
         return make_func_code('vfpfunc.do_command', func, namespace, *args)
 
     def visitDoForm(self, ctx):

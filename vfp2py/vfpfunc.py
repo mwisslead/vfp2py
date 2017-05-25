@@ -710,16 +710,6 @@ def set(setword, *args, **kwargs):
         settings = args
     SET_PROPS[setword] = settings
 
-def do_command(command, module, *args, **kwargs):
-    mod = __import__(module)
-    cmd = getattr(mod, command)
-    cmd(*args, **kwargs)
-
-def call_if_callable(expr):
-    if callable(expr):
-        return expr()
-    return expr
-
 def create_object(objtype, *args):
     pass
 

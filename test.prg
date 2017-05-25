@@ -508,6 +508,29 @@ SET MULTILOCKS ON
 
 LOCAL A, B
 ??createobject('PythonTuple', A, B)
+LOCAL ARRAY xcarvar[1]
+LOCAL xcarvar_list, pydict
+xcarvar_list = CREATEOBJECT('PythonList', @xcarvar)
+xcarvar_list.callmethod('append', 1)
+?xcarvar_list.repr()
+xcarvar_list.setitem(0, 0)
+?xcarvar_list.getitem(0)
+xcarvar_list = CREATEOBJECT('PythonList')
+pydict = CREATEOBJECT('PythonDictionary')
+pydict.setitem('test', .null.)
+?pydict.getitem('test')
+RELEASE xcarvar_list, pydict
+
+local prog_file, func_name, someobject
+prog_file = 'helpers'
+func_name = 'helper_func'
+do helper_func in helpers with 'message1'
+do (func_name) in helpers with 'message2'
+do helper_func in (prog_file) with 'message3'
+do (func_name) in (prog_file) with 'message4'
+
+someobject.method_name
+release prog_file, func_name, someobject
 
 FUNCTION test
    parameters a, b
