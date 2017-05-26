@@ -551,6 +551,32 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         return_recno = make_func_code('vfpfunc.db.goto', None, CodeStr(save_variable_name))
         return [save_recno, CodeStr('while not vfpfunc.db.eof():'), lines, return_recno]
 
+    def visitTryStmt(self, ctx):
+        try_lines = self.visit(ctx.tryLines)
+        finally_lines = self.visit(ctx.finallyLines) or []
+        if not ctx.CATCH():
+            return try_lines + finally_lines
+
+        identifier = self.visit(ctx.identifier())
+        if identifier:
+            self.scope[identifier] = False
+
+        try_lines = [CodeStr('try:'), try_lines]
+
+        if identifier:
+            catch_lines = [CodeStr('except Exception as {}:'.format(identifier))]
+            catch_lines.append(make_func_code('#vfpfunc.pyexception_to_foxexception', identifier))
+        else:
+            catch_lines = [CodeStr('except:')]
+        catch_lines.append(self.visit(ctx.catchLines))
+
+        finally_lines = [CodeStr('finally:'), finally_lines] if finally_lines else []
+
+        if ctx.identifier():
+            del self.scope[identifier]
+
+        return try_lines + catch_lines + finally_lines
+
     def visitBreakLoop(self, ctx):
         return CodeStr('break')
 

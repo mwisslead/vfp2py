@@ -532,6 +532,38 @@ do (func_name) in (prog_file) with 'message4'
 someobject.method_name
 release prog_file, func_name, someobject
 
+LOCAL OLD_SELECT, A
+OLD_SELECT = SELECT()
+
+TRY
+   a = 3
+ENDTRY
+
+
+TRY
+   a = 3
+catch
+   a = 4
+endtry
+
+TRY
+   a = 3
+catch
+   a = 4
+finally
+   a = 5
+endtry
+
+TRY
+   USE nonexistant
+CATCH TO err
+   MESSAGEBOX(err.message)
+FINALLY
+   USE IN SELECT('NONEXISTANT')
+   SELECT(OLD_SELECT)
+endtry
+RELEASE OLD_SELECT, A
+
 FUNCTION test
    parameters a, b
    ?a, b
