@@ -1161,6 +1161,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             namespace = func
             func = '_program_main'
         if string_type(namespace):
+            namespace = ntpath.normpath(ntpath.splitext(namespace)[0]).replace(ntpath.sep, '.')
             self.imports.append('import ' + namespace)
             mod = CodeStr(namespace)
         else:
@@ -1170,8 +1171,10 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             func = add_args_to_code('{}.{}', (mod, func))
         else:
             func = make_func_code('getattr', mod, func)
-        return make_func_code(func, *args)
-        return make_func_code('vfpfunc.do_command', func, namespace, *args)
+        if string_type(namespace) and string_type(func):
+            return make_func_code(func, *args)
+        else:
+            return [CodeStr('#NOTE: function call here may not work'), make_func_code(func, *args)]
 
     def visitDoForm(self, ctx):
         self.enable_scope(False)
