@@ -1169,12 +1169,12 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         if string_type(func):
             func = CodeStr(func)
             func = add_args_to_code('{}.{}', (mod, func))
+            if string_type(namespace):
+                return make_func_code(func, *args)
         else:
             func = make_func_code('getattr', mod, func)
-        if string_type(namespace) and string_type(func):
-            return make_func_code(func, *args)
-        else:
-            return [CodeStr('#NOTE: function call here may not work'), make_func_code(func, *args)]
+
+        return add_args_to_code('{} #{}', [make_func_code(func, *args), CodeStr('NOTE: function call here may not work')])
 
     def visitDoForm(self, ctx):
         self.enable_scope(False)
