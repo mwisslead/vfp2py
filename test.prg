@@ -564,6 +564,10 @@ FINALLY
 endtry
 RELEASE OLD_SELECT, A
 
+?strconv('abcdef', 13)
+?strconv('YWJjZGVm', 14)
+?strconv(strconv('abcdef', 13), 14)
+
 FUNCTION test
    parameters a, b
    ?a, b

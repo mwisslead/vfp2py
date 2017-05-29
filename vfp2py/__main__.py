@@ -22,7 +22,7 @@ import autopep8
 
 from vfp2py import *
 
-STDLIBS = ['import sys', 'import os', 'import math', 'import datetime as dt', 'import subprocess']
+STDLIBS = ['import sys', 'import os', 'import math', 'import datetime as dt', 'import subprocess', 'import base64']
 SEARCH_PATH = ['.']
 
 if sys.version_info >= (3,):
@@ -764,6 +764,12 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
                 args[3] = args[4]
                 args.pop()
                 return make_func_code(str_replace, *args[1:])
+        if funcname == 'strconv' and len(args) == 2:
+            self.imports.append('import base64')
+            if args[1] == 13:
+                return make_func_code('base64.b64encode', args[0])
+            if args[1] == 14:
+                return make_func_code('base64.b64decode', args[0])
         if funcname == 'right':
             args[1] = to_int(args[1])
             return add_args_to_code('{}[-{}:]', args)
