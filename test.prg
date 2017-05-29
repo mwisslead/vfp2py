@@ -413,6 +413,8 @@ local myval, lower_val, upper_val
 ?nvl(myval, 0)
 ?justpath('.')
 ?justpath('./')
+?justpath('c:\test\test.prg')
+?justfname('c:\test\test.prg')
 ?proper('Visual FoxPro')
 ?quarter(date())
 use in select('test')

@@ -876,8 +876,13 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             else:
                 args[1] = to_int(args[1])
             return add_args_to_code(code, args)
-        if funcname == 'justpath':
-            return make_func_code('os.path.dirname', *args)
+        if funcname in ('justpath', 'justfname'):
+            self.imports.append('import os')
+            funcname = {
+                'justpath': 'os.path.dirname',
+                'justfname': 'os.path.basename',
+            }[funcname]
+            return make_func_code(funcname, *args)
         if funcname == 'sys':
             funcname = 'vfp_sys'
         if funcname == 'set' and len(args) > 0 and string_type(args[0]):
