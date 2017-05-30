@@ -655,6 +655,9 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         symbol = symbol_dict[ctx.op.type]
         return CodeStr('{} {} {}'.format(repr(left), symbol, repr(right)))
 
+    def visitBooleanOperation(self, ctx):
+        return self.visitComparison(ctx)
+
     def visitUnaryNegation(self, ctx):
         if ctx.op.type == VisualFoxpro9Lexer.PLUS_SIGN:
             return CodeStr('{}'.format(repr(self.visit(ctx.expr()))))
