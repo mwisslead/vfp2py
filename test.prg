@@ -411,13 +411,27 @@ local myval, lower_val, upper_val
 ?directory('vfp2py')
 ?evl(myval, 'Default')
 ?nvl(myval, 0)
-?justpath('.')
-?justpath('./')
-?justpath('c:\test\test.prg')
-?justfname('c:\test\test.prg')
 ?proper('Visual FoxPro')
 ?quarter(date())
 use in select('test')
+
+?justpath('.')
+?justpath('./')
+
+LOCAL MYFILE, mydir
+MYFILE = 'c:\test\test.prg'
+MYDIR = 'c:\test\test.prg\dir'
+
+?justdrive(MYFILE)
+?justpath(MYFILE)
+?justfname(MYFILE)
+?juststem(myfile)
+?JUSTEXT(myfile)
+
+?juststem(mydir)
+?JUSTEXT(mydir)
+
+RELEASE MYFILE, MYDIR
 
 PUBLIC X, Y, Z
 LOCAL W

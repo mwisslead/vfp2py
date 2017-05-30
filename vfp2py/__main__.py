@@ -892,6 +892,9 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         if funcname == 'juststem':
             self.imports.append('import os')
             return add_args_to_code('os.path.splitext(os.path.basename({}))[0]', args)
+        if funcname == 'justext':
+            self.imports.append('import os')
+            return add_args_to_code('os.path.splitext({})[1][1:]', args)
         if funcname == 'sys':
             funcname = 'vfp_sys'
         if funcname == 'set' and len(args) > 0 and string_type(args[0]):
