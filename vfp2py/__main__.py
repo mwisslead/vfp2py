@@ -879,6 +879,9 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             else:
                 args[1] = to_int(args[1])
             return add_args_to_code(code, args)
+        if funcname == 'fseek':
+            funcname = '{}.seek'.format(args[0])
+            return make_func_code(funcname, *args[1:])
         if funcname == 'justdrive':
             self.imports.append('import os')
             return add_args_to_code('os.path.splitdrive({})[0]', args)
