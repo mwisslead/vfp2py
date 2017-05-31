@@ -714,13 +714,18 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
                 return make_func_code('dt.datetime.now')
             elif funcname == 'time':
                 return make_func_code('dt.datetime.now().time().strftime', '%H:%M:%S')
-        if funcname in ('year', 'month', 'day', 'hour', 'minute', 'sec', 'cdow', 'cmonth'):
+        if funcname in ('year', 'month', 'day', 'hour', 'minute', 'sec', 'dow', 'cdow', 'cmonth'):
             funcname = {
                 'sec': 'second',
+                'dow': 'weekday()',
                 'cdow': "strftime('%A')",
                 'cmonth': "strftime('%B')",
             }.get(funcname, funcname)
-            return add_args_to_code('{}.{}', [args[0], CodeStr(funcname)])
+            retval = add_args_to_code('{}.{}', [args[0], CodeStr(funcname)])
+            if funcname in ('weekday()'):
+                self.imports.append('from vfp2py import vfpfunc')
+                return make_func_code('vfpfunc.dow_fix', retval, *args[1:])
+            return retval
         if funcname == 'dtoc':
             if len(args) == 1 or args[1] == 1:
                 if len(args) > 1 and args[1] == 1:

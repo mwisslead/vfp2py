@@ -461,6 +461,9 @@ def delete_file(string, recycle=False):
 def directory(path, flag):
     return os.path.isdir(directory)
 
+def dow_fix(weekday, firstday=0):
+    return (weekday + 2 - (firstday or 1)) % 7 + 1
+
 def dtoc(dateval, index_format=False):
     if index_format == 1:
         return dateval.strftime('%Y%m%d')

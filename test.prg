@@ -314,6 +314,7 @@ x = 1 - 5
 ?buf2dword(repli(chr(0), 16))
 x = 'Someone'
 MESSAGEBOX(''+SPACE(10)+'The DLL is Missing!'+CHR(13)+''+CHR(13)+' Contact '+ALLTRIM(X)+'  at  '+ALLTRIM('your phone number')+' '+CHR(13)+''+CHR(13)+''+SPACE(10)+'For a Replacement File.',64,'File Missing')
+
 local fhandle
 fhandle = fcreate('file.txt')
 fputs(fhandle, 'hello')
@@ -323,11 +324,14 @@ fwrite(fhandle, 'hello', 3)
 fclose(fhandle)
 fhandle = fopen('file.txt')
 ?fgets(fhandle)
-?
 ?fread(fhandle, len('hello' + CHR(13) + CHR(10)))
+?fseek(fhandle, 10)
+?fseek(fhandle, 10, 2)
 fclose(fhandle)
 fhandle = fopen('file.txt', 2)
 fclose(fhandle)
+RELEASE FHANDLE
+
 ?year(date())
 ?int(3.5)
 ?int('3')
@@ -403,6 +407,10 @@ now = datetime()
 ?cdow(today)
 ?cmonth(today)
 ?sec(now)
+?dow(now)
+?dow(now, 3)
+release today, now
+
 local myval, lower_val, upper_val
 ?between(myval, lower_val, upper_val)
 ?sqrt(5)
