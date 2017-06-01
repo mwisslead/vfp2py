@@ -225,6 +225,7 @@ otherCmds
  | (RECALL | DELETE) scopeClause? (FOR forExpr=expr)? (WHILE whileExpr=expr)? (IN inExpr=specialExpr NOOPTIMIZE | IN inExpr=specialExpr)? #deleteRecord
  | APPEND FROM (specialExpr FOR expr | specialExpr) #appendFrom
  | APPEND BLANK? (IN specialExpr NOMENU | IN specialExpr)? #append
+ | INSERT INTO specialExpr (FROM (ARRAY expr | MEMVAR | NAME expr) | ('(' args ')')? VALUES '(' args ')') #insert
  | SKIPKW expr (IN specialExpr)? #skipRecord
  | PACK (DATABASE | (MEMO | DBF)? (IN workArea=specialExpr | tableName=specialExpr IN workArea=specialExpr | tableName=specialExpr)?) #pack
  | REINDEX COMPACT? #reindex
@@ -458,6 +459,9 @@ identifier
  | FINALLY
  | ENDTRY
  | BROWSE
+ | INSERT
+ | VALUES
+ | MEMVAR
  |ID
  ;
 
@@ -726,6 +730,9 @@ CATCH: C A T C H;
 FINALLY: F I N A L L Y;
 ENDTRY: E N D T R Y;
 BROWSE: B R O W S E;
+INSERT: I N S E R T;
+VALUES: V A L U E S;
+MEMVAR: M E M V A R;
 
 ID : [A-Za-z_] [a-zA-Z0-9_]*;
 
