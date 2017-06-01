@@ -232,6 +232,7 @@ otherCmds
  | (GO | GOTO) (TOP | BOTTOM | RECORD? expr) (IN specialExpr)? #goRecord
  | COPY STRUCTURE? TO specialExpr #copyTo
  | ZAP (IN specialExpr)? #zapTable
+ | BROWSE (~NL)* #browse
 
  | CLOSE ((DATABASES | INDEXES | TABLES) ALL? | ALL) #closeStmt
  | READ EVENTS #readEvent
@@ -456,6 +457,7 @@ identifier
  | CATCH
  | FINALLY
  | ENDTRY
+ | BROWSE
  |ID
  ;
 
@@ -723,6 +725,7 @@ TRY: T R Y;
 CATCH: C A T C H;
 FINALLY: F I N A L L Y;
 ENDTRY: E N D T R Y;
+BROWSE: B R O W S E;
 
 ID : [A-Za-z_] [a-zA-Z0-9_]*;
 
