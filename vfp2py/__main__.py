@@ -1438,6 +1438,18 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             workarea = int(workarea)
         return make_func_code('vfpfunc.db.use', name, workarea, opentype)
 
+    def visitLocate(self, ctx):
+        self.imports.append('from vfp2py import vfpfunc')
+        kwargs = OrderedDict()
+        if ctx.FOR() and ctx.WHILE():
+            raise Exception('cannont have both FOR and WHILE in LOCATE command')
+        if ctx.FOR():
+            kwargs['for_cond'] = add_args_to_code('lambda: {}', [self.visit(ctx.expr(0))])
+        if ctx.WHILE():
+            kwargs['while_cond'] = add_args_to_code('lambda: {}', [self.visit(ctx.expr(0))])
+        kwargs['nooptimize'] = ctx.NOOPTIMIZE()
+        return make_func_code('vfpfunc.db.locate', **kwargs)
+
     def visitAppendFrom(self, ctx):
         self.imports.append('from vfp2py import vfpfunc')
         sourcename = self.visit(ctx.specialExpr())
