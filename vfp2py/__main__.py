@@ -1607,6 +1607,8 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             kwargs.update({'descending': True} if ctx.DESCENDING() else {})
             kwargs.update({'tag': True} if ctx.TAG() else {})
             args = (order, of_expr, in_expr)
+        elif setword == 'index':
+            args = (self.visit(ctx.specialExpr(0)),)
         else:
             return
         return make_func_code('vfpfunc.set', setword, *args, **kwargs)
