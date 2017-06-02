@@ -303,6 +303,7 @@ setCmd
  | setword=DELETED (ON | OFF)
  | setword=EXACT (ON | OFF)
  | setword=FILTER TO (specialExpr (IN specialExpr)?)?
+ | setword=INDEX TO specialExpr?
  | setword=LIBRARY TO (specialExpr ADDITIVE?)
  | setword=MEMOWIDTH TO expr
  | setword=MULTILOCKS (ON | OFF)
