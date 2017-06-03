@@ -213,6 +213,12 @@ class _Database_Context(object):
         table_info = self._get_table_info(tablename)
         table_info['recno'] += int(skipnum)
 
+    def goto(self, tablename, num):
+        table_info = self._get_table_info(tablename)
+        if num == -1:
+            num = len(table_info['table']) - 1
+        table_info['recno'] = num + 1
+
     def delete_record(self, tablename, scope, num, for_cond=None, while_cond=None, recall=False):
         save_current_table = self.current_table
         if not for_cond:
