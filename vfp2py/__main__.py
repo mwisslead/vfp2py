@@ -1464,6 +1464,24 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         tablename = self.visit(ctx.specialExpr())
         return make_func_code('vfpfunc.db.append', tablename, menupopup)
 
+    def visitInsert(self, ctx):
+        self.imports.append('from vfp2py import vfpfunc')
+        table = self.visit(ctx.specialExpr())
+        if ctx.ARRAY() or ctx.NAME():
+            values = self.visit(ctx.expr())
+        elif ctx.MEMVAR():
+            values = ('memvar', make_func_code('locals'))
+        else:
+            values = self.visit(ctx.args())
+            fields = self.visit(ctx.specialArgs())
+            if fields:
+                if len(fields) != len(values):
+                    raise Exception('number of fields must match number of values')
+                values = {field: value for field, value in zip(fields, values)}
+            else:
+                values = tuple(values)
+        return make_func_code('vfpfunc.db.insert', table, values)
+
     def visitReplace(self, ctx):
         value = self.visit(ctx.expr(0))
         scope = self.visit(ctx.scopeClause())

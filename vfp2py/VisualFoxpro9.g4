@@ -225,7 +225,7 @@ otherCmds
  | (RECALL | DELETE) scopeClause? (FOR forExpr=expr)? (WHILE whileExpr=expr)? (IN inExpr=specialExpr NOOPTIMIZE | IN inExpr=specialExpr)? #deleteRecord
  | APPEND FROM (specialExpr FOR expr | specialExpr) #appendFrom
  | APPEND BLANK? (IN specialExpr NOMENU | IN specialExpr)? #append
- | INSERT INTO specialExpr (FROM (ARRAY expr | MEMVAR | NAME expr) | ('(' args ')')? VALUES '(' args ')') #insert
+ | INSERT INTO specialExpr (FROM (ARRAY expr | MEMVAR | NAME expr) | ('(' specialArgs ')')? VALUES '(' args ')') #insert
  | SKIPKW expr (IN specialExpr)? #skipRecord
  | PACK (DATABASE | (MEMO | DBF)? (IN workArea=specialExpr | tableName=specialExpr IN workArea=specialExpr | tableName=specialExpr)?) #pack
  | REINDEX COMPACT? #reindex
