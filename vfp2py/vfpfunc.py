@@ -35,8 +35,8 @@ class Custom(object):
     def __init__(self, *args, **kwargs):
         self.init(*args, **kwargs)
 
-    def __setattr__(self, name, value):
-        super(type(self), self).__setattr__(name, value)
+#    def __setattr__(self, name, value):
+#        super(type(self), self).__setattr__(name, value)
 
     def __getitem__(self, name):
         return getattr(self, name)
@@ -208,6 +208,20 @@ class _Database_Context(object):
         recno = table_info['recno']
         record = table[recno-1]
         dbf.write(record, **{field: value})
+
+    def insert(self, tablename, values):
+        table = self._get_table(tablename)
+        if isinstance(values, Array):
+            for i in range(1,values.alen(1)+1):
+                table.append(tuple(values[i, j] for j in range(1,values.alen(2)+1)))
+            return
+        elif isinstance(values, Custom):
+            values = {field: getattr(values, field) for field in table.field_names if hasattr(values, field)}
+        elif isinstance(values, tuple) and len(values) == 2 and isinstance(values[0], str) and values[0] == 'memvar':
+            local = values[1]
+            values = {field: variable[field] for field in table.field_names if field in variable}
+            values.update({field: local[field] for field in table.field_names if field in local})
+        table.append(values)
 
     def skip(self, tablename, skipnum):
         table_info = self._get_table_info(tablename)
