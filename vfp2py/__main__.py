@@ -25,8 +25,28 @@ from vfp2py import *
 STDLIBS = ['import sys', 'import os', 'import math', 'import datetime as dt', 'import subprocess', 'import base64']
 SEARCH_PATH = ['.']
 
+class RedirectedBuiltin(object):
+    def __init__(self, name):
+        self.name = name
+        self.func = getattr(__builtins__, name)
+
+    def __call__(self, *args, **kwargs):
+        try:
+            return self.func(*args, **kwargs)
+        except:
+            return make_func_code(self.name, *args, **kwargs)
+
+for func in ('chr', 'int', 'str'):
+    globals()[func] = RedirectedBuiltin(func)
+
 if sys.version_info >= (3,):
     unicode=str
+
+def isinstance(obj, istype):
+    if not __builtins__.isinstance(istype, tuple):
+        istype = (istype,)
+    istype = tuple(x.func if __builtins__.isinstance(x, RedirectedBuiltin) else x for x in istype)
+    return __builtins__.isinstance(obj, istype)
 
 def import_key(module):
     if module in STDLIBS:
@@ -64,6 +84,9 @@ class CodeStr(unicode):
 
     def __sub__(self, val):
         return CodeStr('{} - {}'.format(self, repr(val)))
+
+    def __mul__(self, val):
+        return CodeStr('{} * {}'.format(self, repr(val)))
 
 class PreprocessVisitor(VisualFoxpro9Visitor):
     def __init__(self):
@@ -165,12 +188,6 @@ def make_func_code(funcname, *args, **kwargs):
     args = [repr(x) for x in args]
     args += ['{}={}'.format(key, repr(kwargs[key])) for key in kwargs]
     return CodeStr('{}({})'.format(funcname, ', '.join(args)))
-
-def to_int(expr):
-    try:
-        return int(expr)
-    except:
-        return make_func_code('int', expr)
 
 def string_type(val):
     return isinstance(val, (str, unicode)) and not isinstance(val, CodeStr)
@@ -517,10 +534,10 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         if ctx.EACH():
             iterator = self.visit(ctx.expr(0))
             return add_args_to_code('for {} in {}:', (loopvar, iterator))
-        loop_start = to_int(self.visit(ctx.loopStart))
-        loop_stop = to_int(self.visit(ctx.loopStop)) + 1
+        loop_start = int(self.visit(ctx.loopStart))
+        loop_stop = int(self.visit(ctx.loopStop)) + 1
         if ctx.loopStep:
-            loop_step = to_int(self.visit(ctx.loopStep))
+            loop_step = int(self.visit(ctx.loopStep))
             return CodeStr('for {} in range({}, {}, {}):'.format(loopvar, loop_start, loop_stop, loop_step))
         else:
             return CodeStr('for {} in range({}, {}):'.format(loopvar, loop_start, loop_stop))
@@ -672,10 +689,10 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         funcname = {
             'stuffc': 'stuff',
         }.get(funcname, funcname)
-        if funcname == 'chr' and len(args) == 1 and isinstance(args[0], int):
-            return chr(args[0])
-        if funcname == 'space' and len(args) == 1 and isinstance(args[0], int):
-            return ' '*args[0]
+        if funcname == 'chr' and len(args) == 1:
+            return chr(int(args[0]))
+        if funcname == 'space' and len(args) == 1:
+            return int(args[0]) * ' '
         if funcname == 'asc':
             return make_func_code('ord', CodeStr(str(repr(args[0])) + '[0]'))
         if funcname == 'len':
@@ -684,7 +701,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             if len(args) == 1:
                 return make_func_code('len', *args)
             else:
-                args[1] = to_int(args[1])
+                args[1] = int(args[1])
                 return add_args_to_code('{}.alen({})', args)
         if funcname == 'ascan':
             if len(args) == 3:
@@ -704,7 +721,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             }[funcname]
             return add_args_to_code('({}.{}({}) + 1)', [args[1], CodeStr(funcname), args[0]])
         if funcname in ('repli', 'replicate'):
-            args[1:] = [to_int(arg) for arg in args[1:]]
+            args[1:] = [int(arg) for arg in args[1:]]
             return add_args_to_code('({} * {})', args)
         if funcname in ('date', 'datetime', 'time') and len(args) == 0:
             self.imports.append('import datetime as dt')
@@ -757,7 +774,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         if funcname == 'strtran':
             args = args[:6]
             if len(args) > 3:
-                args[3:] = [to_int(arg) for arg in args[3:]]
+                args[3:] = [int(arg) for arg in args[3:]]
             if len(args) == 6 and int(args[5]) in (0, 2):
                 args.pop()
             if len(args) == 2:
@@ -779,13 +796,13 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             if args[1] == 14:
                 return make_func_code('base64.b64decode', args[0])
         if funcname == 'right':
-            args[1] = to_int(args[1])
+            args[1] = int(args[1])
             return add_args_to_code('{}[-{}:]', args)
         if funcname == 'left' and len(args) == 2:
-            args[1] = to_int(args[1])
+            args[1] = int(args[1])
             return add_args_to_code('{}[:{}]', args)
         if funcname == 'substr':
-            args[1:] = [to_int(arg) for arg in args[1:]]
+            args[1:] = [int(arg) for arg in args[1:]]
             args[1] -= 1
             if len(args) < 3:
                 return add_args_to_code('{}[{}:]', args)
@@ -817,7 +834,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
                 'bittest': '(({} & (1 << {})) > 0)',
                 'bitxor': '({} ^ {})'
             }
-            return add_args_to_code(op[funcname], [to_int(arg) for arg in args])
+            return add_args_to_code(op[funcname], [int(arg) for arg in args])
         if funcname == 'str':
             funcname = 'num_to_str'
         if funcname in ('file', 'directory'):
@@ -833,7 +850,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         if funcname in ('abs', 'round', 'max', 'min'):
             return make_func_code(funcname, *args)
         if funcname == 'int':
-            return to_int(args[0])
+            return int(args[0])
         if funcname == 'isnull':
             return add_args_to_code('{} == {}', [args[0], None])
         if funcname == 'inlist':
@@ -857,7 +874,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         if funcname in ('fcreate', 'fopen'):
             opentypes = ('w', 'r') if funcname == 'fcreate' else ('r', 'w', 'r+')
             if len(args) > 1 and args[1] <= len(opentypes):
-                args[1] = to_int(args[1])
+                args[1] = int(args[1])
                 if isinstance(args[1], int):
                     args[1] = opentypes[args[1]]
                 else:
@@ -869,7 +886,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             return add_args_to_code('{}.close()', args)
         if funcname in ('fputs', 'fwrite'):
             if len(args) == 3:
-                args[2] = to_int(args[2])
+                args[2] = int(args[2])
                 args[1] = add_args_to_code('{}[:{}]', args[1:])
             if funcname == 'fputs':
                 args[1] += '\r\n'
@@ -882,7 +899,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             if len(args) < 2:
                 args.append(CodeStr(''))
             else:
-                args[1] = to_int(args[1])
+                args[1] = int(args[1])
             return add_args_to_code(code, args)
         if funcname == 'fseek':
             funcname = '{}.seek'.format(args[0])
