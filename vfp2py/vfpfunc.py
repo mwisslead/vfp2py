@@ -611,15 +611,6 @@ def ratline(search, string):
         return 0
     return string[:found].count('\r') + 1
 
-def reccount():
-    return db.reccount()
-
-def recno():
-    return db.recno()
-
-def recsize(workarea=None):
-    return db.recsize(workarea)
-
 def rgb(red, green, blue):
     return (red, green, blue)
 

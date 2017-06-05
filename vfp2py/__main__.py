@@ -907,11 +907,12 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             funcname = 'vfp_sys'
         if funcname == 'set' and len(args) > 0 and string_type(args[0]):
             args[0] = args[0].lower()
-        if funcname in ('bof', 'eof', 'deleted', 'found'):
-            funcname = 'vfpfunc.db.' + funcname
-        elif funcname in dir(vfpfunc):
+        if funcname in dir(vfpfunc):
             self.imports.append('from vfp2py import vfpfunc')
             funcname = 'vfpfunc.' + funcname
+        elif funcname in dir(vfpfunc.db):
+            self.imports.append('from vfp2py import vfpfunc')
+            funcname = 'vfpfunc.db.' + funcname
         else:
             funcname = self.scopeId(funcname, 'func')
         return make_func_code(funcname, *args)
