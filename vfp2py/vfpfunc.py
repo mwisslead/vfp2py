@@ -153,6 +153,7 @@ class _Database_Context(object):
     def create_table(self, tablename, setup_string, free):
         if free == 'free':
             dbf.Table(tablename, setup_string)
+            self.use(tablename, 0, 'shared')
 
     def select(self, tablename):
         self.current_table = self._table_index(tablename)
