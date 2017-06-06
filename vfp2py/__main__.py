@@ -686,9 +686,6 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
     def func_call(self, funcname, args):
         if funcname in self.function_list:
             return make_func_code(funcname, *args)
-        funcname = {
-            'stuffc': 'stuff',
-        }.get(funcname, funcname)
         if funcname == 'chr' and len(args) == 1:
             return chr(int(args[0]))
         if funcname == 'space' and len(args) == 1:
@@ -835,15 +832,6 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
                 'bitxor': '({} ^ {})'
             }
             return add_args_to_code(op[funcname], [int(arg) for arg in args])
-        if funcname == 'str':
-            funcname = 'num_to_str'
-        if funcname in ('file', 'directory'):
-            self.imports.append('import os')
-            funcname = {
-                'file': 'os.path.isfile',
-                'directory': 'os.path.isdir',
-            }[funcname]
-            return make_func_code(funcname, *args)
         if funcname == 'used':
             self.imports.append('from vfp2py import vfpfunc')
             return make_func_code('vfpfunc.used', *args)
@@ -904,26 +892,25 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         if funcname == 'fseek':
             funcname = '{}.seek'.format(args[0])
             return make_func_code(funcname, *args[1:])
-        if funcname == 'justdrive':
+        if funcname in ('file', 'directory', 'justdrive', 'justpath', 'juststem', 'justext'):
             self.imports.append('import os')
-            return add_args_to_code('os.path.splitdrive({})[0]', args)
-        if funcname in ('justpath', 'justfname'):
-            self.imports.append('import os')
-            funcname = {
-                'justpath': 'os.path.dirname',
-                'justfname': 'os.path.basename',
+            operation = {
+                'file': [make_func_code, ['os.path.isfile'] + args],
+                'directory': [make_func_code, ['os.path.isdir'] + args],
+                'justdrive': [add_args_to_code, ('os.path.splitdrive({})[0]', args)],
+                'justpath': [make_func_code, ['os.path.dirname'] + args],
+                'justfname': [make_func_code, ['os.path.basename'] + args],
+                'juststem': [add_args_to_code, ('os.path.splitext(os.path.basename({}))[0]', args)],
+                'justext': [add_args_to_code, ('os.path.splitext({})[1][1:]', args)],
             }[funcname]
-            return make_func_code(funcname, *args)
-        if funcname == 'juststem':
-            self.imports.append('import os')
-            return add_args_to_code('os.path.splitext(os.path.basename({}))[0]', args)
-        if funcname == 'justext':
-            self.imports.append('import os')
-            return add_args_to_code('os.path.splitext({})[1][1:]', args)
-        if funcname == 'sys':
-            funcname = 'vfp_sys'
+            return operation[0](*operation[1])
         if funcname == 'set' and len(args) > 0 and string_type(args[0]):
             args[0] = args[0].lower()
+        funcname = {
+            'sys': 'vfp_sys',
+            'stuffc': 'stuff',
+            'str': 'num_to_str',
+        }.get(funcname, funcname)
         if funcname in dir(vfpfunc):
             self.imports.append('from vfp2py import vfpfunc')
             funcname = 'vfpfunc.' + funcname
