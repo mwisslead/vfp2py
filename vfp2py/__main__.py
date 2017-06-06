@@ -1461,7 +1461,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         kwargs = {}
         if ctx.FOR():
             kwargs['for_cond'] = add_args_to_code('lambda: {}', [self.visit(ctx.expr())])
-        return make_func_code('vfp_db.append_from', None, sourcename, **kwargs)
+        return make_func_code('vfpfunc.db.append_from', None, sourcename, **kwargs)
 
     def visitAppend(self, ctx):
         self.imports.append('from vfp2py import vfpfunc')
