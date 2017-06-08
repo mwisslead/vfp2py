@@ -178,6 +178,13 @@ class _Database_Context(object):
         self.open_tables[workarea] = {'name': tablename, 'table': table, 'recno': 0}
         self.current_table = workarea
 
+    def used(self, tablename):
+        try:
+            table = self._get_table(tablename)
+            return True
+        except:
+            return False
+
     def append(self, tablename, editwindow):
         table_info = self._get_table_info(tablename)
         table = table_info['table']
