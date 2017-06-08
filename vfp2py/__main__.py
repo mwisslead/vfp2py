@@ -832,9 +832,6 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
                 'bitxor': '({} ^ {})'
             }
             return add_args_to_code(op[funcname], [int(arg) for arg in args])
-        if funcname == 'used':
-            self.imports.append('from vfp2py import vfpfunc')
-            return make_func_code('vfpfunc.used', *args)
         if funcname in ('abs', 'round', 'max', 'min'):
             return make_func_code(funcname, *args)
         if funcname == 'int':
