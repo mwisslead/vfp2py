@@ -757,7 +757,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             return add_args_to_code('({} or {})', args)
         if funcname == 'sign':
             return add_args_to_code('1 if {} > 0 else (-1 if {} < 0 else 0)', [args[0], args[0]])
-        if funcname in ('alltrim', 'ltrim', 'rtrim', 'lower', 'upper', 'padr', 'padl', 'padc'):
+        if funcname in ('alltrim', 'ltrim', 'rtrim', 'lower', 'upper', 'padr', 'padl', 'padc', 'proper'):
             funcname = {
                 'alltrim': 'strip',
                 'ltrim': 'lstrip',
@@ -765,6 +765,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
                 'padr': 'ljust',
                 'padl': 'rjust',
                 'padc': 'center',
+                'proper': 'title',
             }.get(funcname, funcname)
             funcname = '{}.{}'.format(repr(args[0]), funcname)
             return make_func_code(funcname, *args[1:])
@@ -807,8 +808,6 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
                 return add_args_to_code('{}[{}]', args[:2])
             args[2] += args[1]
             return add_args_to_code('{}[{}:{}]', args)
-        if funcname == 'proper':
-            return add_args_to_code('{}.title()', args)
         if funcname in ('ceiling', 'exp', 'log', 'log10', 'sin', 'cos', 'tan', 'asin', 'acos', 'atan', 'atan2', 'pi', 'sqrt'):
             self.imports.append('import math')
             if funcname == 'pi':
