@@ -716,7 +716,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
                 'at': 'find',
                 'rat': 'rfind',
             }[funcname]
-            return add_args_to_code('({}.{}({}) + 1)', [args[1], CodeStr(funcname), args[0]])
+            return add_args_to_code('{}.{}({})', [args[1], CodeStr(funcname), args[0]]) + 1
         if funcname in ('repli', 'replicate'):
             args[1:] = [int(arg) for arg in args[1:]]
             return add_args_to_code('({} * {})', args)
