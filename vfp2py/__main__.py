@@ -1468,10 +1468,8 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
     def visitInsert(self, ctx):
         self.imports.append('from vfp2py import vfpfunc')
         table = self.visit(ctx.specialExpr())
-        if ctx.ARRAY() or ctx.NAME():
+        if ctx.ARRAY() or ctx.NAME() or ctx.MEMVAR():
             values = self.visit(ctx.expr())
-        elif ctx.MEMVAR():
-            values = ('memvar', make_func_code('locals'))
         else:
             values = self.visit(ctx.args())
             fields = self.visit(ctx.specialArgs())

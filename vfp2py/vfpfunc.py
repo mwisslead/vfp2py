@@ -8,6 +8,7 @@ import types
 import ctypes
 import ctypes.util
 import traceback
+import inspect
 import re
 
 import dbf
@@ -218,18 +219,21 @@ class _Database_Context(object):
         dbf.write(record, **{field: value})
 
     def insert(self, tablename, values):
-        table = self._get_table(tablename)
+        table_info = self._get_table_info(tablename)
+        table = table_info['table']
         if isinstance(values, Array):
             for i in range(1,values.alen(1)+1):
                 table.append(tuple(values[i, j] for j in range(1,values.alen(2)+1)))
-            return
-        elif isinstance(values, Custom):
-            values = {field: getattr(values, field) for field in table.field_names if hasattr(values, field)}
-        elif isinstance(values, tuple) and len(values) == 2 and isinstance(values[0], str) and values[0] == 'memvar':
-            local = values[1]
-            values = {field: variable[field] for field in table.field_names if field in variable}
-            values.update({field: local[field] for field in table.field_names if field in local})
-        table.append(values)
+        else:
+            if isinstance(values, Custom):
+                values = {field: getattr(values, field) for field in table.field_names if hasattr(values, field)}
+            elif values is None:
+                local = inspect.stack()[1][0].f_locals
+                scope = variable.current_scope()
+                values = {field: scope[field] for field in table.field_names if field in scope}
+                values.update({field: local[field] for field in table.field_names if field in local})
+            table.append(values)
+        table_info['recno'] = len(table)
 
     def skip(self, tablename, skipnum):
         table_info = self._get_table_info(tablename)
@@ -391,6 +395,12 @@ class _Variable(object):
             for var in var_names:
                 del self[var]
 
+    def current_scope(self):
+        scope = {}
+        for public_scope in self.public_scopes:
+            scope.update(public_scope)
+        scope.update(self.local_scopes[-1])
+        return scope
 
 class _Function(object):
     def __init__(self):
