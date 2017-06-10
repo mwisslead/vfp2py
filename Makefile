@@ -4,7 +4,8 @@ Antlr=java -jar ${AntlrJar}
 PyVer=$(shell python -c 'import sys; print(sys.version_info[0])')
 
 test: ${AntlrJar} vfp2py/VisualFoxpro9Lexer.py vfp2py/VisualFoxpro9Parser.py vfp2py/VisualFoxpro9Visitor.py
-	python -m vfp2py test.prg test.py
+	make -C testbed
+	nosetests
 
 %Lexer.py %Parser.py %Visitor.py: %.g4
 	${Antlr} -visitor -no-listener -Dlanguage=Python${PyVer} $^
@@ -16,3 +17,4 @@ antlr%.jar:
 
 clean:
 	rm -rf vfp2py/VisualFoxpro9*.py vfp2py/*.tokens vfp2py/*.pyc vfp2py/__pycache__
+	make -C testbed clean

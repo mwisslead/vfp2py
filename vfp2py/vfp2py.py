@@ -1897,6 +1897,25 @@ def convert_project(infile, directory):
     with open(os.path.join(directory, 'setup.py'), 'wb') as fid:
         pass
 
+def prg2py(data):
+    tokens = preprocess_code(data).tokens
+    data = 'procedure _program_main\n' + ''.join(token.text.replace('\r', '') for token in tokens)
+    input_stream = antlr4.InputStream(data)
+    lexer = VisualFoxpro9Lexer(input_stream)
+    stream = MultichannelTokenStream(lexer)
+    parser = VisualFoxpro9Parser(stream)
+    tree = parser.prg()
+    visitor = PythonConvertVisitor('')
+    output_tree = visitor.visit(tree)
+    output = add_indents(output_tree, 0)
+    outfile = 'autopep8_tmp.py'
+    with open(outfile, 'wb') as fid:
+        fid.write(output.encode('utf-8'))
+    autopep8.main([__file__, '--max-line-length', '2000', '--in-place', outfile])
+    with open(outfile, 'rb') as fid:
+        output = fid.read().decode('utf-8')
+    return output
+
 def convert_file(infile, outfile):
     tic = Tic()
     if infile.lower().endswith('.pjx'):

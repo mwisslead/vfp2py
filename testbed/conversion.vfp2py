@@ -1,0 +1,1595 @@
+Functions.
+@begin=vfp@
+LOCAL STRING_VAL, INT_VAL, BOOL_VAL, NULL_VAL
+STRING_VAL = 'str'
+int_val = 3
+BOOL_VAL = .F.
+NULL_VAL = NULL
+?CHR(3)
+?CHR(INT_VAL)
+?SPACE(3)
+?SPACE(INT_VAL)
+RELEASE STRING_VAL, INT_VAL, BOOL_VAL, NULL_VAL
+@end=vfp@
+
+@begin=python@
+from __future__ import division, print_function
+
+
+def _program_main():
+    string_val = int_val = bool_val = null_val = False  # LOCAL Declaration
+    string_val = 'str'
+    int_val = 3
+    bool_val = False
+    null_val = None
+    print('\x03')
+    print(chr(int(int_val)))
+    print('   ')
+    print(int(int_val) * ' ')
+    del string_val, int_val, bool_val, null_val
+@end=python@
+
+Preprocessor Directives
+@begin=vfp@
+   *comment with spaces
+#DEFINE cantbewrong
+#DEFINE SPACE CHR
+#IFDEF cantbewrong
+#IF FILE ( 'test.h' )
+   ***comment***
+   # include  test.h
+   # include  'test.h'
+   # include  'test' + '.h'
+   STORE 5 to  x && set x to 5
+#ELSE
+#ENDIF
+   x = 'test' + CHR(13) + CHR(10)
+   x = space(5)
+   x = '' + CHR(13) + CHR(10)
+#ELSE
+_SCREEN.LOGO.TOP = (_SCREEN.HEIGHT-_SCREEN.LOGO.HEIGHT)/2-3
+
+WAIT WINDOW space(3) + 'please wait' + CHR(32) NOWAIT TIMEOUT 1.3
+#ENDIF
+@end=vfp@
+
+@begin=python@
+from __future__ import division, print_function
+
+from vfp2py import vfpfunc
+
+
+def _program_main():
+    vfpfunc.variable.pushscope()
+    # comment with spaces
+    ###comment###
+    vfpfunc.variable['x'] = '\n'
+    vfpfunc.variable['x'] = '\n'
+    vfpfunc.variable['x'] = '\n'
+    # set x to 5
+    vfpfunc.variable['x'] = 5
+    vfpfunc.variable['x'] = 'test\r\n'
+    vfpfunc.variable['x'] = '\x05'
+    vfpfunc.variable['x'] = '\r\n'
+    vfpfunc.variable.popscope()
+@end=python@
+
+ON ERROR
+ON ERROR DO test
+SET TYPEAHEAD TO 0
+?LEFT('Hello, World', 5)
+WAIT WINDOW space(3) + 'please wait' + CHR(32) NOWAIT TIMEOUT 1.3
+md test - test
+MD test+test
+md (test+test)
+*com;
+ment
+NOTE note;
+comment
+x = 5*2**3**4
+x = (1+2)*3
+None = .nUlL.
+Bool = .Y.
+somedate = { / / }
+if x > 5
+else
+   ?'hello'
+   ?'goodbye'
+ENDif
+
+if x > 5
+**do nothing
+else
+endif
+
+delete file test . txt
+delete file test.txt
+delete file x
+delete file (x)
+delete file '' + x
+
+_screen.refresh
+test.prg()
+test.prg(1)
+
+if .f.
+else
+DO CASE
+   CASE X == 1 && case 1
+      do case
+         case x == 1
+
+      endcase
+      X = 2
+   CASE X == 2 && case 2
+      X = 3
+   CASE X == 2 && case 2 again
+      X = 3
+   CASE X == 2
+      X = 3
+   CASE X == 2
+      X = 3
+   CASE X == 2
+      X = 3
+ENDCASE
+endif
+
+do case
+endcase
+
+do case
+endcase &&empty case end with comment
+
+t=u(v(w(x(y(z)))))
+
+*** CREATE REPORT TABLE
+CREATE TABLE REPORT FREE (NAME C(50), ST C(2), QUANTITY N(5, 0), RECEIVED L(1))
+USE REPORT IN 0 SHARED
+SELECT REPORT
+APPEND BLANK
+
+REPLACE REPORT.NAME WITH 'Michael'
+REPLACE REPORT.ST WITH 'IA'
+REPLACE REPORT.QUANTITY WITH 4
+REPLACE REPORT.RECEIVED WITH .F.
+
+GO TOP
+
+FOR X = 1 TO REPORT.QUANITY
+    SET PRINTER TO ALLTRIM('printer')
+    REPORT FORM TEST.FRX TO PRINTER NOCONSOLE
+    SET PRINTER TO
+    EXIT
+ENDFOR
+
+FOR X = 1 TO REPORT.QUANITY
+ENDFOR
+
+LOCAL ARRAY ITEMS[3, 5]
+FOR EACH ITEM IN ITEMS
+    EXIT
+ENDFOR
+RELEASE ITEMS
+
+&&Demo using local to generate cleaner code since no way to know if variable is local otherwise.
+LOCAL ITEM
+WITH item
+   DO WHILE .value <= 3
+      .value = .value + 1
+      .test
+   ENDDO
+ENDWITH
+RELEASE ITEM, X
+***ITEM no long a local***
+ITEM.VALUE = 3
+
+tablename = 'REPORT'
+
+USE (tablename) IN 0 SHARED
+
+IF USED('REPORT')
+   SELECT REPORT
+   USE IN REPORT
+ENDIF
+
+DO test
+DO test in test
+DO prg\test.prg
+DO test.mpr
+
+IF FILE('DBFTABLE.DBF')
+   USE DBFTABLE IN 0 SHARED
+   SELECT DBFTABLE
+   COPY STRUCTURE TO 'DBFTEMP.DBF'
+   IF USED('DBFTABLE')
+      SELECT DBFTABLE
+      USE IN DBFTABLE
+   ENDIF
+   IF USED('DBFTEMP')
+      SELECT DBFTEMP
+      USE IN DBFTEMP
+   ENDIF
+ENDIF
+
+DEACTIVATE MENU test
+DEACTIVATE POPUP ALL
+RELEASE ALL
+RELEASE test1
+RELEASE test1, test2, test3
+RELEASE POPUPS popup1
+RELEASE POPUPS popup1 EXTENDED
+
+RUN /N2 ls -al
+
+local x
+?SIGN(x)
+?NVL(x, 0)
+?EVL(x, 0)
+release x
+local empty_test, x
+?1 + + 3 - - 3
+?empty_test # 'string'
+empty_test = .NULL.
+?exp(tan(PI()/4))
+?EMPTY(0)
+?EMPTY(.NULL.)
+?EMPTY('test')
+?EMPTY('')
+?EMPTY(empty_test)
+?SUBSTR('string', 2)
+?SUBSTR('string', 2, 3)
+QUIT
+
+CREATE TABLE REPORT FREE (NAME C(50), ST C(2), QUANTITY N(5, 0), RECEIVED L(1))
+CREATE TABLE REPORT2 FREE (NAME C(50), ST C(2), QUANTITY N(5, 0), RECEIVED L(1))
+USE REPORT IN 0 SHARED
+USE REPORT2 IN 0 SHARED
+SELECT REPORT2
+APPEND BLANK
+REPLACE NAME WITH 'MICHAEL'
+REPLACE ST WITH 'IA'
+REPLACE QUANTITY WITH 122
+REPLACE RECEIVED WITH .T.
+SELECT REPORT
+APPEND BLANK
+REPLACE NAME WITH 'MICHAEL'
+REPLACE ST WITH 'IA'
+REPLACE QUANTITY WITH 122
+REPLACE RECEIVED WITH .T.
+?RECNO()
+APPEND BLANK
+REPLACE NAME WITH 'PAUL'
+REPLACE ST WITH 'IL'
+REPLACE QUANTITY WITH 37
+REPLACE RECEIVED WITH .F.
+APPEND BLANK
+REPLACE NAME WITH 'JOE'
+REPLACE ST WITH 'IA'
+REPLACE QUANTITY WITH 537
+REPLACE RECEIVED WITH .T.
+APPEND BLANK
+REPLACE ('NAME') WITH 'SUBEXPR'
+APPEND BLANK
+REPLACE REPORT.NAME WITH 'TABLE SPECIFIED'
+
+INSERT INTO REPORT VALUES ('AMANDA', 'CA', 108, .F.)
+INSERT INTO REPORT (NAME, ST, RECEIVED) VALUES ('Robert', 'AZ', .T.)
+LOCAL ARRAY INSERT_TEST[2, 4]
+INSERT_TEST[1, 1] = 'NAME1'
+INSERT_TEST[1, 2] = 'ST'
+INSERT_TEST[1, 3] = 0
+INSERT_TEST[2, 1] = 'NAME2'
+INSERT_TEST[2, 2] = 'ST'
+INSERT_TEST[2, 3] = 0
+INSERT INTO REPORT FROM ARRAY INSERT_TEST
+RELEASE INSERT_TEST
+LOCAL INSERT_TEST
+INSERT_TEST = CREATEOBJECT('INSERT_TEST_OBJECT')
+INSERT_TEST.NAME = 'NAME3'
+INSERT_TEST.ST = 'ST'
+INSERT_TEST.QUANTITY = 0
+INSERT INTO REPORT FROM NAME INSERT_TEST
+INSERT INTO REPORT FROM MEMVAR
+release insert_test
+
+GO TOP
+LOCATE FOR ST = 'IA'
+WHILE FOUND()
+   CONTINUE
+ENDDO
+
+LOCAL SEARCH_FOR
+SEARCH_FOR = 'PAUL'
+SEEK ALLTRIM(SEARCH_FOR)
+RELEASE SEARCH_FOR
+
+?RECNO()
+?eof()
+SKIP -5
+?recno()
+?eof()
+?bof()
+?RECNO()
+?RECCOUNT()
+SKIP 2
+DELETE REST FOR RECEIVED = .T.
+?DELETED()
+PACK
+INDEX ON NAME TAG NAME UNIQUE
+REINDEX
+ZAP
+ZAP IN REPORT2
+CLOSE TABLES
+?RECCOUNT()
+X = 'Hello Variable Scope'
+?X
+DO FORM SPLASH.SCX
+local x
+x = 'hi'
+USE (this.tablename) in 0 shared
+?inlist(x, 'hello', 'hola', 'aloha')
+?inlist(x, 'hello')
+?tan(pi()/4)
+?bitclear(15, 3) &&should be 7
+?bitset(7, 3) &&should be 15
+?bittest(15, 3)
+?bittest(7, 3)
+
+SET STATUS ON
+SET STATUS BAR ON
+SET BELL ON
+SET BELL OFF
+SET BELL TO 'string'
+SET CENTURY ON
+SET CENTURY TO 19 ROLLOVER 99
+SET SYSMENU ON
+SET SYSMENU OFF
+SET SYSMENU TO
+SET SYSMENU TO 'string'
+SET SYSMENU TO DEFAULT
+SET SYSMENU SAVE
+SET SYSMENU NOSAVE
+SET DATE AMERICAN
+SET DATE TO DATEFORMAT
+SET EXACT ON
+SET EXACT OFF
+SET NOTIFY ON
+SET NOTIFY OFF
+SET NOTIFY CURSOR ON
+SET FILTER TO
+SET FILTER TO FILTER_VAL
+SET ORDER TO ORDER_VAL
+
+ON SHUTDOWN
+ON SHUTDOWN DO SHUTDOWN IN SHUTDOWN
+ON SHUTDOWN QUIT
+PUSH KEY CLEAR
+PUSH KEY
+POP KEY ALL
+POP KEY
+ON KEY LABEL F12 ?'KEY PRESSED'
+public publicvar
+do helper_func in helpers with 'helper_func message with do'
+set procedure to helpers
+helper_func('helper_func message with standard call')
+release procedure helpers
+declare integer printf in c as c_printf string
+declare integer printf in c string
+c_printf('hello c_printf' + CHR(10))
+printf('hello printf' + CHR(10))
+private test
+local obj, x
+x = 1
+dimension testarr(3, 7)
+?alen(testarr)
+?alen(testarr, 0)
+?alen(testarr, 1)
+?alen(testarr, 2)
+dimension testarr(1, x+4)
+testarr(1, 4) = 'Caption from array'
+obj = createobject('testclass')
+obj2 = createobject('test' + 'class2')
+obj.show
+?test
+testarr(1, 3) = 4
+?testarr(1, 3)
+x = testarr(1, 3)
+?(publicvar)
+x = 0
+?substr(publicvar, 2, x + 2)
+x = 1 - 5
+?asc(publicvar)
+?buf2dword(repli(chr(0), 16))
+x = 'Someone'
+MESSAGEBOX(''+SPACE(10)+'The DLL is Missing!'+CHR(13)+''+CHR(13)+' Contact '+ALLTRIM(X)+'  at  '+ALLTRIM('your phone number')+' '+CHR(13)+''+CHR(13)+''+SPACE(10)+'For a Replacement File.',64,'File Missing')
+
+local fhandle
+fhandle = fcreate('file.txt')
+fputs(fhandle, 'hello')
+fputs(fhandle, 'hello', 3)
+fwrite(fhandle, 'hello')
+fwrite(fhandle, 'hello', 3)
+fclose(fhandle)
+fhandle = fopen('file.txt')
+?fgets(fhandle)
+?fread(fhandle, len('hello' + CHR(13) + CHR(10)))
+?fseek(fhandle, 10)
+?fseek(fhandle, 10, 2)
+fclose(fhandle)
+fhandle = fopen('file.txt', 2)
+fclose(fhandle)
+RELEASE FHANDLE
+
+?year(date())
+?int(3.5)
+?int('3')
+?int(x)
+?isnull(.null.)
+?isnull(x)
+?right('testing', 5)
+?max(1, 2, 3, 3, 2, 1)
+?min(1, 2, 3, 3, 2, 1)
+?x + '' + x
+?strtran('testing', 'sting')
+?strtran('testing', 'sting', 'eth')
+?strtran('testtesttest', 'test', 'fart', 1)
+?strtran('testtesttest', 'test', 'fart', 2)
+?strtran('testtesttest', 'test', 'fart', 1, 2)
+?strtran('testtesttest', 'test', 'fart', 2, 2)
+?strtran('testtesttest', 'test', 'fart', 1, 2, 0)
+?sys(16)
+?isblank(.null.)
+?str(3278.24, 6, 1)
+?str(5, 2)
+?str(12, 2)
+
+USE TABLE_NAME IN 0 SHARED
+USE IN TABLE_NAME
+USE
+
+APPEND
+APPEND BLANK
+APPEND IN specialExpr NOMENU
+APPEND IN specialExpr
+APPEND BLANK IN specialExpr
+APPEND FROM TABLE_NAME
+
+GOTO 5 IN TABLE_NAME
+GOTO 6
+
+PACK
+
+PACK IN (TABLE_NAME)
+PACK IN  TABLE_NAME
+PACK IN 'string'
+PACK IN 'stri' + 'ng'
+
+PACK DBF IN TABLE_NAME
+
+PACK MEMO IN TABLE_NAME + '.DBF'
+PACK MEMO IN (TABLE_NAME+DBFENDING)
+PACK MEMO IN TABLE_NAME + DBFENDING
+
+PACK TEST
+PACK TEST IN TABLE_NAME
+PACK DBF TEST IN TABLE_NAME
+
+PACK DATABASE
+
+SKIP TEST
+SKIP TEST IN TEST
+
+INDEX ON INDEX_FIELD TO INDEX_ALIAS ADDITIVE
+
+REPLACE ALL TEST.FIELD_NAME WITH X FOR Y > 3
+
+DELETE ALL IN TABLE_NAME NOOPTIMIZE
+DELETE ALL IN TABLE_NAME
+
+ZAP
+ZAP IN TABLE_NAME
+
+local today, now
+today = date()
+now = datetime()
+?cdow(today)
+?cmonth(today)
+?sec(now)
+?dow(now)
+?dow(now, 3)
+release today, now
+
+local myval, lower_val, upper_val
+?between(myval, lower_val, upper_val)
+?sqrt(5)
+?stuff('testing', 4, 0, 'ter')
+?stuffc('testing', 4, 0, 'ter')
+?directory('vfp2py')
+?evl(myval, 'Default')
+?nvl(myval, 0)
+?proper('Visual FoxPro')
+?quarter(date())
+use in select('test')
+
+?justpath('.')
+?justpath('./')
+
+LOCAL MYFILE, mydir
+MYFILE = 'c:\test\test.prg'
+MYDIR = 'c:\test\test.prg\dir'
+
+?justdrive(MYFILE)
+?justpath(MYFILE)
+?justfname(MYFILE)
+?juststem(myfile)
+?JUSTEXT(myfile)
+
+?juststem(mydir)
+?JUSTEXT(mydir)
+
+RELEASE MYFILE, MYDIR
+
+PUBLIC X, Y, Z
+LOCAL W
+W = 32
+RELEASE W, X, Y, Z
+RELEASE ALL
+
+LOCAL ARRAY T[3, 4]
+T[2, 1] = 5
+T[3, 2] = 5
+?ASCAN(T, 5)
+?ASCAN(T, 5, 9)
+?ASCAN(T, 5, 6, 3)
+
+ON ERROR DO ERROR_HANDLER IN TEST5 WITH MESSAGE(), MESSAGE(1), LINENO()
+ERROR('test')
+ON ERROR ??
+ERROR
+ON ERROR
+ERROR
+
+LOCAL X, N
+X = 3
+N = 4
+
+SET BELL ON
+?SET('BELL')
+?SET('BELL', 1)
+SET BELL TO C:\FOLDER
+?SET('BELL')
+?SET('BELL', 1)
+SET CURSOR ON
+?SET("CURSOR")
+SET DELETED ON
+?SET("DELETED")
+SET EXACT ON
+?SET("EXACT")
+SET NEAR ON
+?SET("NEAR")
+SET STATUS ON
+?SET("STATUS")
+SET STATUS BAR ON
+?SET("STATUS BAR")
+SET UNIQUE ON
+?SET("UNIQUE")
+
+SET REFRESH TO (X)
+?SET("REFRESH")
+SET REFRESH TO (X), (N)
+?SET("REFRESH")
+
+?'NOTIFY'
+?SET('NOTIFY')
+?SET('NOTIFY', 1)
+SET NOTIFY OFF
+?SET('NOTIFY')
+?SET('NOTIFY', 1)
+SET NOTIFY CURSOR OFF
+?SET('NOTIFY')
+?SET('NOTIFY', 1)
+
+SET PRINTER ON
+SET PRINTER ON PROMPT
+SET PRINTER OFF
+SET PRINTER TO 'test'
+SET PRINTER TO 'test' ADDITIVE
+SET PRINTER TO NAME 'test'
+SET PRINTER TO DEFAULT
+SET PRINTER TO
+
+SET CENTURY ON
+SET CENTURY OFF
+SET CENTURY TO
+SET CENTURY TO 20
+SET CENTURY TO 20 ROLLOVER 39
+?SET('CENTURY')
+?SET('CENTURY', 1)
+?SET('CENTURY', 2)
+?SET('CENTURY', 3)
+
+?SET('MULTILOCKS')
+SET MULTILOCKS ON
+?SET('MULTILOCKS')
+
+?SET('INDEX')
+SET INDEX TO
+?SET('INDEX')
+SET INDEX TO IDX_FLD
+?SET('INDEX')
+
+?CAST(.F. AS I)
+?CAST(.F. AS INT)
+?CAST(.F. AS INTEGER)
+?CAST(2 AS L)
+?CAST(2 AS LOGICAL)
+
+LOCAL A, B
+??createobject('PythonTuple', A, B)
+LOCAL ARRAY xcarvar[1]
+LOCAL xcarvar_list, pydict
+xcarvar_list = CREATEOBJECT('PythonList', @xcarvar)
+xcarvar_list.callmethod('append', 1)
+?xcarvar_list.repr()
+xcarvar_list.setitem(0, 0)
+?xcarvar_list.getitem(0)
+xcarvar_list = CREATEOBJECT('PythonList')
+pydict = CREATEOBJECT('PythonDictionary')
+pydict.setitem('test', .null.)
+?pydict.getitem('test')
+RELEASE xcarvar_list, pydict
+
+local prog_file, func_name, someobject
+prog_file = 'helpers'
+func_name = 'helper_func'
+do helper_func in helpers with 'message1'
+do (func_name) in helpers with 'message2'
+do helper_func in (prog_file) with 'message3'
+do (func_name) in (prog_file) with 'message4'
+
+someobject.method_name
+release prog_file, func_name, someobject
+
+LOCAL OLD_SELECT, A
+OLD_SELECT = SELECT()
+
+TRY
+   a = 3
+ENDTRY
+
+
+TRY
+   a = 3
+catch
+   a = 4
+endtry
+
+TRY
+   a = 3
+catch
+   a = 4
+finally
+   a = 5
+endtry
+
+TRY
+   USE nonexistant
+CATCH TO err
+   MESSAGEBOX(err.message)
+FINALLY
+   USE IN SELECT('NONEXISTANT')
+   SELECT(OLD_SELECT)
+endtry
+RELEASE OLD_SELECT, A
+
+?strconv('abcdef', 13)
+?strconv('YWJjZGVm', 14)
+?strconv(strconv('abcdef', 13), 14)
+
+FUNCTION test
+   parameters a, b
+   ?a, b
+
+FUNCTION REPLACE_TEST(TABLENAME, FIELD_VAL)
+   IF FILE(TABLENAME + '.DBF')
+      USE (TABLENAME) IN 0 SHARED
+      SELECT (TABLENAME)
+      SELECT('TABLENAME')
+      SELECT * FROM (TABLENAME) WHERE ALLTRIM(CUSTNAME) = ALLTRIM(CUSTNAME_VALUE) INTO TABLE PATHNAME+'TEMPCUSTOMER.DBF'
+      REPLACE ALL TEST WITH .T. FOR FIELD1 = FIELDVAL
+      GO TOP
+      SKIP -3
+      SKIP 1
+      GO BOTTOM
+      GO 15
+      DELETE ALL
+      DELETE
+      DELETE NEXT 1
+      DELETE NEXT 10
+      DELETE NEXT (THREE)
+      SKIP -1
+      RECALL
+      SCAN
+         ?CUSTNAME
+      ENDSCAN
+      SCAN FOR CUSTNAME = 'FRED'
+         ?CUSTNAME
+      ENDSCAN
+      DELETE RECORD RECNUMBER+1
+      DELETE RECORD (RECNUMBER+1)
+      DELETE REST
+      DELETE REST FOR FIELD1='3'
+      DELETE REST WHILE FIELD1='3'
+      USE IN SELECT(TABLENAME)
+      USE IN SELECT('tablename')
+      USE IN TABLENAME
+      USE IN (TABLENAME)
+      USE IN 'TABLENAME'
+   ENDIF
+   RETURN
+
+DEFINE CLASS test as custom
+   x = 3 && x is a thing in this class
+   procedure init
+      parameters initx, inity
+      this.x = initx
+
+   function athing(test)
+      NODEFAULT
+      return this.x
+   endfunc
+   && comment
+ENDDEFINE
+
+DEFINE CLASS test2 as form
+   add object test as t with prop = 'hello'
+   add object cbox as combobox
+   x = 3
+ENDDEFINE
+
+define class testclass as custom
+   caption = testarr(1, 4)
+
+   add object btn1 as commandbutton with caption='button 1'
+   btn1.caption = 'click'
+
+   add object lb_lb as label with top=28, left=11, caption='caption'
+
+   procedure btn1.click
+      ?'button 1 clicked'
+   endproc
+
+   procedure test1
+
+   *show function
+   procedure show
+      test = 'hello world'
+      ?test
+      ?testproc()
+      return
+
+   procedure init
+      publicvar = 'testclass visited'
+      ?3
+
+   procedure test2(ok)
+   procedure test3
+
+enddefine
+
+procedure testproc
+   ?test
+   x = 'testproc returned this value'
+   if x < 0
+      return 0
+   endif
+   return x
+
+procedure testproc2
+   return
+   return
+endproc
+
+FUNCTION  buf2dword (lcBuffer)
+RETURN;
+    Asc(SUBSTR(lcBuffer, 1,1)) + ;
+    Asc(SUBSTR(lcBuffer, 2,1)) * 256 +;
+    Asc(SUBSTR(lcBuffer, 3,1)) * 65536 +;
+    Asc(SUBSTR(lcBuffer, 4,1)) * 16777216
+
+FUNCTION ERROR_HANDLER(MSG, CODE, LINE)
+   ?'line ' + LINE + ':' + CODE
+   ?MSG
+
+define class insert_test_object as custom
+   name = ''
+   st = ''
+   quantity = 0
+   received = .f.
+enddefine
+
+from __future__ import division, print_function
+
+import os
+import math
+import datetime as dt
+import subprocess
+import base64
+
+import test5
+
+import shutdown
+
+import helpers
+
+import prg.test
+
+from vfp2py import vfpfunc
+
+
+def _program_main():
+    vfpfunc.variable.pushscope()
+    string_val = int_val = bool_val = null_val = False  # LOCAL Declaration
+    string_val = 'str'
+    int_val = 3
+    bool_val = False
+    null_val = None
+    print('\x03')
+    print(chr(int(int_val)))
+    print('   ')
+    print(int(int_val) * ' ')
+    del string_val, int_val, bool_val, null_val
+
+    # comment with spaces
+    ###comment###
+    vfpfunc.variable['x'] = '\n'
+    vfpfunc.variable['x'] = '\n'
+    vfpfunc.variable['x'] = '\n'
+    # set x to 5
+    vfpfunc.variable['x'] = 5
+    vfpfunc.variable['x'] = 'test\r\n'
+    vfpfunc.variable['x'] = '\x05'
+    vfpfunc.variable['x'] = '\r\n'
+
+    vfpfunc.error_func = None
+    vfpfunc.error_func = lambda: test()
+    vfpfunc.set(u'typeahead', 0, set_value=True)
+    print('Hello, World'[:5])
+    vfpfunc.wait('\x03please wait ', to=None, window=[-1, -1], nowait=True, noclear=True, timeout=int(u'1.3'))
+    os.mkdir((vfpfunc.variable['test'] - vfpfunc.variable['test']))
+    os.mkdir('test+test')
+    os.mkdir((vfpfunc.variable['test'] + vfpfunc.variable['test']))
+    # com
+    # ment
+    # NOTE note
+    # comment
+    vfpfunc.variable['x'] = (5 * ((2 ** 3) ** 4))
+    vfpfunc.variable['x'] = (((1 + 2)) * 3)
+    vfpfunc.variable['none'] = None
+    vfpfunc.variable['bool'] = True
+    vfpfunc.variable['somedate'] = None
+
+    if vfpfunc.variable['x'] > 5:
+        pass
+    else:
+        print('hello')
+        print('goodbye')
+
+    if vfpfunc.variable['x'] > 5:
+        # do nothing
+        pass
+    else:
+        pass
+
+    os.remove(vfpfunc.variable['test'].txt)
+    os.remove('test.txt')
+    os.remove('x')
+    os.remove(vfpfunc.variable['x'])
+    os.remove((vfpfunc.variable['x']))
+
+    vfpfunc.variable['vfp_screen'].refresh()
+    vfpfunc.variable['test'].prg()
+    vfpfunc.variable['test'].prg(1)
+
+    if False:
+        pass
+    else:
+        # case 1
+        if vfpfunc.variable['x'] == 1:
+            if vfpfunc.variable['x'] == 1:
+                pass
+            vfpfunc.variable['x'] = 2
+        # case 2
+        elif vfpfunc.variable['x'] == 2:
+            vfpfunc.variable['x'] = 3
+        # case 2 again
+        elif vfpfunc.variable['x'] == 2:
+            vfpfunc.variable['x'] = 3
+        elif vfpfunc.variable['x'] == 2:
+            vfpfunc.variable['x'] = 3
+        elif vfpfunc.variable['x'] == 2:
+            vfpfunc.variable['x'] = 3
+        elif vfpfunc.variable['x'] == 2:
+            vfpfunc.variable['x'] = 3
+
+    if True:
+        pass
+
+    # empty case end with comment
+    if True:
+        pass
+
+    vfpfunc.variable['t'] = vfpfunc.function['u'](vfpfunc.function['v'](vfpfunc.function['w'](vfpfunc.function['x'](vfpfunc.function['y'](vfpfunc.variable['z'])))))
+
+    # CREATE REPORT TABLE
+    vfpfunc.db.create_table('report', 'name c(50); st c(2); quantity n(5, 0); received l', 'free')
+    vfpfunc.db.use('report', 0, 'shared')
+    vfpfunc.db.select('report')
+    vfpfunc.db.append(None, False)
+
+    vfpfunc.db.replace('report.name', 'Michael', None)
+    vfpfunc.db.replace('report.st', 'IA', None)
+    vfpfunc.db.replace('report.quantity', 4, None)
+    vfpfunc.db.replace('report.received', False, None)
+
+    vfpfunc.db.goto(None, 0)
+
+    for x in range(1, int(vfpfunc.variable['report'].quanity) + 1):
+        vfpfunc.set(u'printer', File='printer'.strip(), set_value=True)
+        vfpfunc.report_form('test.frx')
+        vfpfunc.set(u'printer', set_value=True)
+        break
+
+    for x in range(1, int(vfpfunc.variable['report'].quanity) + 1):
+        pass
+
+    items = vfpfunc.Array(3, 5)
+    for item in items:
+        break
+    del items
+
+    #&&Demo using local to generate cleaner code since no way to know if variable is local otherwise.
+    item = False  # LOCAL Declaration
+    while item.value <= 3:
+        item.value = (item.value + 1)
+        item.test()
+    del item, x
+    ###ITEM no long a local###
+    vfpfunc.variable['item'].value = 3
+
+    vfpfunc.variable['tablename'] = 'REPORT'
+
+    vfpfunc.db.use(vfpfunc.variable['tablename'], 0, 'shared')
+
+    if vfpfunc.db.used('REPORT'):
+        vfpfunc.db.select('report')
+        vfpfunc.db.use(None, 'report', None)
+
+    test()
+    test()
+    prg.test._program_main()
+    vfpfunc.mprfile('test')
+
+    if os.path.isfile('DBFTABLE.DBF'):
+        vfpfunc.db.use('dbftable', 0, 'shared')
+        vfpfunc.db.select('dbftable')
+        vfpfunc.db.copy_structure('dbftemp.dbf')
+        if vfpfunc.db.used('DBFTABLE'):
+            vfpfunc.db.select('dbftable')
+            vfpfunc.db.use(None, 'dbftable', None)
+        if vfpfunc.db.used('DBFTEMP'):
+            vfpfunc.db.select('dbftemp')
+            vfpfunc.db.use(None, 'dbftemp', None)
+
+    vfpfunc.deactivate_menu('test')
+    vfpfunc.deactivate_popup()
+    vfpfunc.variable.release()
+    del vfpfunc.variable['test1']
+    del vfpfunc.variable['test1'], vfpfunc.variable['test2'], vfpfunc.variable['test3']
+    vfpfunc.function.release_popups('popup1')
+    vfpfunc.function.release_popups('popup1', extended=True)
+
+    subprocess.call([u'ls', u'-', u'al'])
+
+    x = False  # LOCAL Declaration
+    print(1 if x > 0 else (-1 if x < 0 else 0))
+    print((x if x is not None else 0))
+    print((x or 0))
+    del x
+    empty_test = x = False  # LOCAL Declaration
+    print(((1 + 3) - -3))
+    print(empty_test != 'string')
+    empty_test = None
+    print(math.exp(math.tan((math.pi / 4))))
+    print((not 0 if 0 is not None else False))
+    print((not None if None is not None else False))
+    print((not 'test' if 'test' is not None else False))
+    print((not '' if '' is not None else False))
+    print((not empty_test if empty_test is not None else False))
+    print('string'[1:])
+    print('string'[1:4])
+    vfpfunc.quit()
+
+    vfpfunc.db.create_table('report', 'name c(50); st c(2); quantity n(5, 0); received l', 'free')
+    vfpfunc.db.create_table('report2', 'name c(50); st c(2); quantity n(5, 0); received l', 'free')
+    vfpfunc.db.use('report', 0, 'shared')
+    vfpfunc.db.use('report2', 0, 'shared')
+    vfpfunc.db.select('report2')
+    vfpfunc.db.append(None, False)
+    vfpfunc.db.replace('name', 'MICHAEL', None)
+    vfpfunc.db.replace('st', 'IA', None)
+    vfpfunc.db.replace('quantity', 122, None)
+    vfpfunc.db.replace('received', True, None)
+    vfpfunc.db.select('report')
+    vfpfunc.db.append(None, False)
+    vfpfunc.db.replace('name', 'MICHAEL', None)
+    vfpfunc.db.replace('st', 'IA', None)
+    vfpfunc.db.replace('quantity', 122, None)
+    vfpfunc.db.replace('received', True, None)
+    print(vfpfunc.db.recno())
+    vfpfunc.db.append(None, False)
+    vfpfunc.db.replace('name', 'PAUL', None)
+    vfpfunc.db.replace('st', 'IL', None)
+    vfpfunc.db.replace('quantity', 37, None)
+    vfpfunc.db.replace('received', False, None)
+    vfpfunc.db.append(None, False)
+    vfpfunc.db.replace('name', 'JOE', None)
+    vfpfunc.db.replace('st', 'IA', None)
+    vfpfunc.db.replace('quantity', 537, None)
+    vfpfunc.db.replace('received', True, None)
+    vfpfunc.db.append(None, False)
+    vfpfunc.db.replace('name', 'SUBEXPR', None)
+    vfpfunc.db.append(None, False)
+    vfpfunc.db.replace('report.name', 'TABLE SPECIFIED', None)
+
+    vfpfunc.db.insert('report', ('AMANDA', 'CA', 108, False))
+    vfpfunc.db.insert('report', {'received': True, 'name': 'Robert', 'st': 'AZ'})
+    insert_test = vfpfunc.Array(2, 4)
+    insert_test[1, 1] = 'NAME1'
+    insert_test[1, 2] = 'ST'
+    insert_test[1, 3] = 0
+    insert_test[2, 1] = 'NAME2'
+    insert_test[2, 2] = 'ST'
+    insert_test[2, 3] = 0
+    vfpfunc.db.insert('report', insert_test)
+    del insert_test
+    insert_test = False  # LOCAL Declaration
+    insert_test = insert_test_object()
+    insert_test.name = 'NAME3'
+    insert_test.st = 'ST'
+    insert_test.quantity = 0
+    vfpfunc.db.insert('report', insert_test)
+    vfpfunc.db.insert('report', None)
+    del insert_test
+
+    vfpfunc.db.goto(None, 0)
+    vfpfunc.db.locate(for_cond=lambda: vfpfunc.variable['st'] == 'IA', nooptimize=None)
+    while vfpfunc.db.found():
+        # FIX ME: CONTINUE
+        pass
+
+    search_for = False  # LOCAL Declaration
+    search_for = 'PAUL'
+    search_for.strip()
+    del search_for
+
+    print(vfpfunc.db.recno())
+    print(vfpfunc.db.eof())
+    vfpfunc.db.skip(None, -5)
+    print(vfpfunc.db.recno())
+    print(vfpfunc.db.eof())
+    print(vfpfunc.db.bof())
+    print(vfpfunc.db.recno())
+    print(vfpfunc.db.reccount())
+    vfpfunc.db.skip(None, 2)
+    vfpfunc.db.delete_record('rest', -1, for_cond=lambda: vfpfunc.variable['received'] == True)
+    print(vfpfunc.db.deleted())
+    vfpfunc.db.pack('both', None, None)
+    vfpfunc.db.index_on('name', 'name', 'ascending', True, False, True)
+    vfpfunc.db.reindex(False)
+    vfpfunc.db.zap(None)
+    vfpfunc.db.zap('report2')
+    vfpfunc.db.close_tables(False)
+    print(vfpfunc.db.reccount())
+    x = 'Hello Variable Scope'
+    print(x)
+    splash_scx._program_main()
+    x = False  # LOCAL Declaration
+    x = 'hi'
+    vfpfunc.db.use(self.tablename, 0, 'shared')
+    print((x in ('hello', 'hola', 'aloha')))
+    print((x in ('hello',)))
+    print(math.tan((math.pi / 4)))
+    # should be 7
+    print((15 & ((1 << 3) ^ 0xffffffff)))
+    # should be 15
+    print((7 | (1 << 3)))
+    print(((15 & (1 << 3)) > 0))
+    print(((7 & (1 << 3)) > 0))
+
+    vfpfunc.set(u'status', 'ON', set_value=True)
+    vfpfunc.set(u'status bar', 'ON', set_value=True)
+    vfpfunc.set(u'bell', 'ON', set_value=True)
+    vfpfunc.set(u'bell', 'OFF', set_value=True)
+    vfpfunc.set(u'bell', 'TO', 'string', set_value=True)
+    vfpfunc.set(u'century', 'ON', set_value=True)
+    vfpfunc.set(u'century', set_value=True, rollover=99, century=19)
+    vfpfunc.set(u'sysmenu', u'on', set_value=True)
+    vfpfunc.set(u'sysmenu', u'off', set_value=True)
+    vfpfunc.set(u'sysmenu', u'to', set_value=True)
+    vfpfunc.set(u'sysmenu', u'to', 'string', set_value=True)
+    vfpfunc.set(u'sysmenu', u'to', 'default', set_value=True)
+    vfpfunc.set(u'sysmenu', u'save', set_value=True)
+    vfpfunc.set(u'sysmenu', u'nosave', set_value=True)
+    vfpfunc.set(u'date', 'american', set_value=True)
+    vfpfunc.set(u'date', 'dateformat', set_value=True)
+    vfpfunc.set(u'exact', 'ON', set_value=True)
+    vfpfunc.set(u'exact', 'OFF', set_value=True)
+    vfpfunc.set(u'notify', 'ON', set_value=True)
+    vfpfunc.set(u'notify', 'OFF', set_value=True)
+    vfpfunc.set(u'notify', cursor='ON', set_value=True)
+    vfpfunc.set(u'filter', set_value=True)
+    vfpfunc.set(u'filter', 'filter_val', set_value=True)
+    vfpfunc.set(u'order', 'order_val', None, None, set_value=True)
+
+    vfpfunc.shutdown_func = None
+    vfpfunc.shutdown_func = lambda: shutdown.shutdown()
+    vfpfunc.shutdown_func = lambda: vfpfunc.quit()
+    # FIX ME: PUSH KEY CLEAR
+    # FIX ME: PUSH KEY
+    # FIX ME: POP KEY ALL
+    # FIX ME: POP KEY
+    vfpfunc.on_key['f12'] = lambda: print('KEY PRESSED')
+    vfpfunc.variable.add_public('publicvar')
+    helpers.helper_func('helper_func message with do')
+    vfpfunc.set(u'procedure', 'helpers', set_value=True)
+    vfpfunc.function['helper_func']('helper_func message with standard call')
+    vfpfunc.function.release_procedure('helpers')
+    vfpfunc.function.dll_declare('c', 'printf', 'c_printf')
+    vfpfunc.function.dll_declare('c', 'printf', None)
+    vfpfunc.function['c_printf']('hello c_printf\n')
+    vfpfunc.function['printf']('hello printf\n')
+    vfpfunc.variable.add_private('test')
+    obj = x = False  # LOCAL Declaration
+    x = 1
+    vfpfunc.array('testarr', 3, 7)
+    print(len(vfpfunc.variable['testarr']))
+    print(vfpfunc.variable['testarr'].alen(0))
+    print(vfpfunc.variable['testarr'].alen(1))
+    print(vfpfunc.variable['testarr'].alen(2))
+    vfpfunc.array('testarr', 1, (x + 4))
+    vfpfunc.function['testarr'][1, 4] = 'Caption from array'
+    obj = testclass()
+    vfpfunc.variable['obj2'] = vfpfunc.create_object('testclass2')
+    obj.show()
+    print(vfpfunc.variable['test'])
+    vfpfunc.function['testarr'][1, 3] = 4
+    print(vfpfunc.function['testarr'](1, 3))
+    x = vfpfunc.function['testarr'](1, 3)
+    print((vfpfunc.variable['publicvar']))
+    x = 0
+    print(vfpfunc.variable['publicvar'][1:int((x + 2)) + 1])
+    x = (1 - 5)
+    print(ord(vfpfunc.variable['publicvar'][0]))
+    print(buf2dword(('\x00' * 16)))
+    x = 'Someone'
+    vfpfunc.messagebox(('\nThe DLL is Missing!\r\r Contact ' + x.strip() + '  at  ' + 'your phone number'.strip() + ' \r\r\nFor a Replacement File.'), 64, 'File Missing')
+
+    fhandle = False  # LOCAL Declaration
+    fhandle = open('file.txt', 'w')
+    fhandle.write('hello\r\n')
+    fhandle.write('hello'[:3] + '\r\n')
+    fhandle.write('hello')
+    fhandle.write('hello'[:3])
+    fhandle.close()
+    fhandle = open('file.txt', 'r')
+    print(fhandle.readline().strip('\r\n'))
+    print(fhandle.read(int(len('hello\r\n'))))
+    print(fhandle.seek(10))
+    print(fhandle.seek(10, 2))
+    fhandle.close()
+    fhandle = open('file.txt', 'r+')
+    fhandle.close()
+    del fhandle
+
+    print(dt.datetime.now().date().year)
+    print(int(int(u'3.5')))
+    print(3)
+    print(int(x))
+    print(None == None)
+    print(x == None)
+    print('testing'[-5:])
+    print(max(1, 2, 3, 3, 2, 1))
+    print(min(1, 2, 3, 3, 2, 1))
+    print((x + x))
+    print('testing'.replace('sting', ''))
+    print('testing'.replace('sting', 'eth'))
+    print('testtesttest'.replace('test', 'fart'))
+    print(vfpfunc.strtran('testtesttest', 'test', 'fart', 2))
+    print('testtesttest'.replace('test', 'fart', 2))
+    print(vfpfunc.strtran('testtesttest', 'test', 'fart', 2, 2))
+    print('testtesttest'.replace('test', 'fart', 2))
+    print(vfpfunc.vfp_sys(16))
+    print(vfpfunc.isblank(None))
+    print(vfpfunc.num_to_str(int(u'3278.24'), 6, 1))
+    print(vfpfunc.num_to_str(5, 2))
+    print(vfpfunc.num_to_str(12, 2))
+
+    vfpfunc.db.use('table_name', 0, 'shared')
+    vfpfunc.db.use(None, 'table_name', None)
+    vfpfunc.db.use(None, None, None)
+
+    vfpfunc.db.append(None, True)
+    vfpfunc.db.append(None, False)
+    vfpfunc.db.append('specialexpr', True)
+    vfpfunc.db.append('specialexpr', True)
+    vfpfunc.db.append('specialexpr', False)
+    vfpfunc.db.append_from(None, 'table_name')
+
+    vfpfunc.db.goto('table_name', 5)
+    vfpfunc.db.goto(None, 6)
+
+    vfpfunc.db.pack('both', None, None)
+
+    vfpfunc.db.pack('both', None, vfpfunc.variable['table_name'])
+    vfpfunc.db.pack('both', None, 'table_name')
+    vfpfunc.db.pack('both', None, 'string')
+    vfpfunc.db.pack('both', None, 'string')
+
+    vfpfunc.db.pack('dbf', None, 'table_name')
+
+    vfpfunc.db.pack('memo', None, (vfpfunc.variable['table_name'] + '.DBF'))
+    vfpfunc.db.pack('memo', None, (vfpfunc.variable['table_name'] + vfpfunc.variable['dbfending']))
+    vfpfunc.db.pack('memo', None, (vfpfunc.variable['table_name'] + vfpfunc.variable['dbfending']))
+
+    vfpfunc.db.pack('both', 'test', None)
+    vfpfunc.db.pack('both', 'test', 'table_name')
+    vfpfunc.db.pack('dbf', 'test', 'table_name')
+
+    vfpfunc.db.pack_database()
+
+    vfpfunc.db.skip(None, vfpfunc.variable['test'])
+    vfpfunc.db.skip('test', vfpfunc.variable['test'])
+
+    vfpfunc.db.index_on('index_field', 'index_alias', 'ascending', False, False, False)
+
+    vfpfunc.db.replace('test.field_name', x, ('all', -1))
+
+    vfpfunc.db.delete_record('all', -1)
+    vfpfunc.db.delete_record('all', -1)
+
+    vfpfunc.db.zap(None)
+    vfpfunc.db.zap('table_name')
+
+    today = now = False  # LOCAL Declaration
+    today = dt.datetime.now().date()
+    now = dt.datetime.now()
+    print(today.strftime('%A'))
+    print(today.strftime('%B'))
+    print(now.second)
+    print(vfpfunc.dow_fix(now.weekday()))
+    print(vfpfunc.dow_fix(now.weekday(), 3))
+    del today, now
+
+    myval = lower_val = upper_val = False  # LOCAL Declaration
+    print((lower_val <= myval <= upper_val))
+    print(math.sqrt(5))
+    print(vfpfunc.stuff('testing', 4, 0, 'ter'))
+    print(vfpfunc.stuff('testing', 4, 0, 'ter'))
+    print(os.path.isdir('vfp2py'))
+    print((myval or 'Default'))
+    print((myval if myval is not None else 0))
+    print('Visual FoxPro'.title())
+    print(vfpfunc.quarter(dt.datetime.now().date()))
+    vfpfunc.db.use(None, vfpfunc.select('test'), None)
+
+    print(os.path.dirname('.'))
+    print(os.path.dirname('./'))
+
+    myfile = mydir = False  # LOCAL Declaration
+    myfile = 'c:\\test\\test.prg'
+    mydir = 'c:\\test\\test.prg\\dir'
+
+    print(os.path.splitdrive(myfile)[0])
+    print(os.path.dirname(myfile))
+    print(vfpfunc.function['justfname'](myfile))
+    print(os.path.splitext(os.path.basename(myfile))[0])
+    print(os.path.splitext(myfile)[1][1:])
+
+    print(os.path.splitext(os.path.basename(mydir))[0])
+    print(os.path.splitext(mydir)[1][1:])
+
+    del myfile, mydir
+
+    vfpfunc.variable.add_public('x', 'y', 'z')
+    w = False  # LOCAL Declaration
+    w = 32
+    del w, x
+    del vfpfunc.variable['y'], vfpfunc.variable['z']
+    vfpfunc.variable.release()
+
+    t = vfpfunc.Array(3, 4)
+    t[2, 1] = 5
+    t[3, 2] = 5
+    print(t[:].index(5))
+    print(t[9:].index(5))
+    print(t[6:9].index(5))
+
+    vfpfunc.error_func = lambda: test5.error_handler(vfpfunc.message(), vfpfunc.message(1), vfpfunc.lineno())
+    raise Exception(('test'))
+    vfpfunc.error_func = lambda: print(end='')
+    raise Exception()
+    vfpfunc.error_func = None
+    raise Exception()
+
+    x = n = False  # LOCAL Declaration
+    x = 3
+    n = 4
+
+    vfpfunc.set(u'bell', 'ON', set_value=True)
+    print(vfpfunc.set('bell'))
+    print(vfpfunc.set('bell', 1))
+    vfpfunc.set(u'bell', 'TO', 'c:\\folder', set_value=True)
+    print(vfpfunc.set('bell'))
+    print(vfpfunc.set('bell', 1))
+    vfpfunc.set(u'cursor', 'ON', set_value=True)
+    print(vfpfunc.set('cursor'))
+    vfpfunc.set(u'deleted', 'ON', set_value=True)
+    print(vfpfunc.set('deleted'))
+    vfpfunc.set(u'exact', 'ON', set_value=True)
+    print(vfpfunc.set('exact'))
+    vfpfunc.set(u'near', 'ON', set_value=True)
+    print(vfpfunc.set('near'))
+    vfpfunc.set(u'status', 'ON', set_value=True)
+    print(vfpfunc.set('status'))
+    vfpfunc.set(u'status bar', 'ON', set_value=True)
+    print(vfpfunc.set('status bar'))
+    vfpfunc.set(u'unique', 'ON', set_value=True)
+    print(vfpfunc.set('unique'))
+
+    vfpfunc.set(u'refresh', (x), 5, set_value=True)
+    print(vfpfunc.set('refresh'))
+    vfpfunc.set(u'refresh', (x), (n), set_value=True)
+    print(vfpfunc.set('refresh'))
+
+    print('NOTIFY')
+    print(vfpfunc.set('notify'))
+    print(vfpfunc.set('notify', 1))
+    vfpfunc.set(u'notify', 'OFF', set_value=True)
+    print(vfpfunc.set('notify'))
+    print(vfpfunc.set('notify', 1))
+    vfpfunc.set(u'notify', cursor='OFF', set_value=True)
+    print(vfpfunc.set('notify'))
+    print(vfpfunc.set('notify', 1))
+
+    vfpfunc.set(u'printer', 'ON', set_value=True)
+    vfpfunc.set(u'printer', 'ON', prompt=True, set_value=True)
+    vfpfunc.set(u'printer', 'OFF', set_value=True)
+    vfpfunc.set(u'printer', File='test', set_value=True)
+    vfpfunc.set(u'printer', additive=True, File='test', set_value=True)
+    vfpfunc.set(u'printer', Name='test', set_value=True)
+    vfpfunc.set(u'printer', Default=True, set_value=True)
+    vfpfunc.set(u'printer', set_value=True)
+
+    vfpfunc.set(u'century', 'ON', set_value=True)
+    vfpfunc.set(u'century', 'OFF', set_value=True)
+    vfpfunc.set(u'century', set_value=True, rollover=67, century=19)
+    vfpfunc.set(u'century', set_value=True, rollover=67, century=20)
+    vfpfunc.set(u'century', set_value=True, rollover=39, century=20)
+    print(vfpfunc.set('century'))
+    print(vfpfunc.set('century', 1))
+    print(vfpfunc.set('century', 2))
+    print(vfpfunc.set('century', 3))
+
+    print(vfpfunc.set('multilocks'))
+    vfpfunc.set(u'multilocks', 'ON', set_value=True)
+    print(vfpfunc.set('multilocks'))
+
+    print(vfpfunc.set('index'))
+    vfpfunc.set(u'index', None, set_value=True)
+    print(vfpfunc.set('index'))
+    vfpfunc.set(u'index', 'idx_fld', set_value=True)
+    print(vfpfunc.set('index'))
+
+    print(int(False))
+    print(int(False))
+    print(int(False))
+    print(bool(2))
+    print(bool(2))
+
+    a = b = False  # LOCAL Declaration
+    print((a, b), end='')
+    xcarvar = vfpfunc.Array(1)
+    xcarvar_list = pydict = False  # LOCAL Declaration
+    xcarvar_list = xcarvar.data[:]
+    xcarvar_list.callmethod('append', 1)
+    print(xcarvar_list.repr())
+    xcarvar_list[0] = 0
+    print(xcarvar_list[0])
+    xcarvar_list = []
+    pydict = {}
+    pydict['test'] = None
+    print(pydict['test'])
+    del xcarvar_list, pydict
+
+    prog_file = func_name = someobject = False  # LOCAL Declaration
+    prog_file = 'helpers'
+    func_name = 'helper_func'
+    helpers.helper_func('message1')
+    getattr(helpers, func_name)('message2')  # NOTE: function call here may not work
+    __import__(prog_file).helper_func('message3')  # NOTE: function call here may not work
+    getattr(__import__(prog_file), func_name)('message4')  # NOTE: function call here may not work
+
+    someobject.method_name()
+    del prog_file, func_name, someobject
+
+    old_select = a = False  # LOCAL Declaration
+    old_select = vfpfunc.select()
+
+    a = 3
+
+    try:
+        a = 3
+    except:
+        a = 4
+
+    try:
+        a = 3
+    except:
+        a = 4
+    finally:
+        a = 5
+
+    try:
+        vfpfunc.db.use('nonexistant', None, None)
+    except Exception as err:
+        # vfpfunc.pyexception_to_foxexception(err)
+        vfpfunc.messagebox(err.message)
+    finally:
+        vfpfunc.db.use(None, vfpfunc.select('NONEXISTANT'), None)
+        vfpfunc.db.select(old_select)
+    del old_select, a
+
+    print(base64.b64encode('abcdef'))
+    print(base64.b64decode('YWJjZGVm'))
+    print(base64.b64decode(base64.b64encode('abcdef')))
+    vfpfunc.variable.popscope()
+
+
+def test(a=False, b=False):
+    print(a, b)
+
+
+def replace_test(tablename=False, field_val=False):
+    vfpfunc.variable.pushscope()
+    if os.path.isfile((tablename + '.DBF')):
+        vfpfunc.db.use(tablename, 0, 'shared')
+        vfpfunc.db.select(tablename)
+        vfpfunc.db.select('tablename')
+        vfpfunc.db.sqlselect(('*',), tablename, (vfpfunc.variable['pathname'] + 'TEMPCUSTOMER.DBF'), vfpfunc.variable['custname'].strip() == vfpfunc.variable['custname_value'].strip(), None, None)
+        vfpfunc.db.replace('test', True, ('all', -1))
+        vfpfunc.db.goto(None, 0)
+        vfpfunc.db.skip(None, -3)
+        vfpfunc.db.skip(None, 1)
+        vfpfunc.db.goto(None, -1)
+        vfpfunc.db.goto(None, 15)
+        vfpfunc.db.delete_record('all', -1)
+        vfpfunc.db.delete_record('next', 1)
+        vfpfunc.db.delete_record('next', 1)
+        vfpfunc.db.delete_record('next', 10)
+        vfpfunc.db.delete_record('next', (vfpfunc.variable['three']))
+        vfpfunc.db.skip(None, -1)
+        vfpfunc.db.delete_record('next', 1, recall=True)
+        _am83rjd7qm_current_record = vfpfunc.db.recno()
+        while not vfpfunc.db.eof():
+            print(vfpfunc.variable['custname'])
+            vfpfunc.db.skip(None, 1)
+        vfpfunc.db.goto(None, _am83rjd7qm_current_record)
+        _5hziiare0x_current_record = vfpfunc.db.recno()
+        while not vfpfunc.db.eof():
+            if not vfpfunc.variable['custname'] == 'FRED':
+                continue
+            print(vfpfunc.variable['custname'])
+            vfpfunc.db.skip(None, 1)
+        vfpfunc.db.goto(None, _5hziiare0x_current_record)
+        vfpfunc.db.delete_record('record', (vfpfunc.variable['recnumber'] + 1))
+        vfpfunc.db.delete_record('record', ((vfpfunc.variable['recnumber'] + 1)))
+        vfpfunc.db.delete_record('rest', -1)
+        vfpfunc.db.delete_record('rest', -1, for_cond=lambda: vfpfunc.variable['field1'] == '3')
+        vfpfunc.db.delete_record('rest', -1, while_cond=lambda: vfpfunc.variable['field1'] == '3')
+        vfpfunc.db.use(None, 'select(tablename)', None)
+        vfpfunc.db.use(None, vfpfunc.select('tablename'), None)
+        vfpfunc.db.use(None, 'tablename', None)
+        vfpfunc.db.use(None, tablename, None)
+        vfpfunc.db.use(None, 'tablename', None)
+    vfpfunc.variable.popscope()
+
+
+class test(vfpfunc.Custom):
+
+    def init(self=False, initx=False, inity=False):
+        vfpfunc.variable.pushscope()
+        # x is a thing in this class
+        self.x = 3
+        self.this.x = vfpfunc.variable['initx']
+        #&& comment
+        vfpfunc.variable.popscope()
+
+    def athing(self=False, test=False):
+        return self.x
+
+
+class test2(vfpfunc.Form):
+
+    def init(self=False):
+        self.test = t(prop='hello')
+        self.cbox = vfpfunc.Combobox()
+        self.x = 3
+
+
+class testclass(vfpfunc.Custom):
+
+    def test1(self=False):
+        pass
+
+    def show(self=False):
+        vfpfunc.variable.pushscope()
+        vfpfunc.variable['test'] = 'hello world'
+        print(vfpfunc.variable['test'])
+        print(testproc())
+        vfpfunc.variable.popscope()
+
+    def init(self=False):
+        vfpfunc.variable.pushscope()
+        self.caption = vfpfunc.function['testarr'](1, 4)
+        self.btn1 = vfpfunc.CommandButton(caption='button 1')
+        self.btn1.caption = 'click'
+        self.lb_lb = vfpfunc.Label(caption='caption', top=28, left=11)
+        # show function
+
+        def btn1_click(self):
+            print('button 1 clicked')
+        self.btn1.click = btn1_click
+        vfpfunc.variable['publicvar'] = 'testclass visited'
+        print(3)
+        vfpfunc.variable.popscope()
+
+    def test2(self=False, ok=False):
+        pass
+
+    def test3(self=False):
+        pass
+
+
+def testproc():
+    vfpfunc.variable.pushscope()
+    print(vfpfunc.variable['test'])
+    vfpfunc.variable['x'] = 'testproc returned this value'
+    if vfpfunc.variable['x'] < 0:
+        vfpfunc.variable.popscope()
+        return 0
+    function_return_value = vfpfunc.variable['x']
+    vfpfunc.variable.popscope()
+    return function_return_value
+
+
+def testproc2():
+    pass
+
+
+def buf2dword(lcbuffer=False):
+    return (ord(lcbuffer[0][0]) + (ord(lcbuffer[1][0]) * 256) + (ord(lcbuffer[2][0]) * 65536) + (ord(lcbuffer[3][0]) * 16777216))
+
+
+def error_handler(msg=False, code=False, line=False):
+    print(('line ' + line + ':' + code))
+    print(msg)
+
+
+class insert_test_object(vfpfunc.Custom):
+
+    def init(self=False):
+        self.name = ''
+        self.st = ''
+        self.quantity = 0
+        self.received = False
