@@ -20,14 +20,48 @@ def add_indent(code, level):
 
 
 def docstring(string):
-    return "'''{}'''".format(string.replace('\\', '\\\\').replace('\'', '\\\''))
+    return "'''\n{}'''".format(string.replace('\\', '\\\\').replace('\'', '\\\''))
 
 
 class TestsGenVisitor(conversionVisitor):
     '''Visitor that extracts conversion sections'''
 
     def visitConversionTests(self, ctx):
-        return [self.visit(test) for test in ctx.conversionTest()]
+        t = '''
+!       from __future__ import print_function
+!       
+!       import difflib
+!       
+!       import vfp2py
+        '''.split('!       ')[1:]
+        for i, test in enumerate(ctx.conversionTest()):
+            foxlines, pylines = self.visit(test)
+            test_func = '''
+!           
+!           
+!           def Test{}():
+!               input_str = {}.strip()
+!               output_str = {}.strip()
+!               test_output_str = {}.strip()
+!               try:
+!                   assert test_output_str == output_str
+!               except AssertionError:
+!                   diff = difflib.unified_diff(test_output_str.splitlines(1), output_str.splitlines(1))
+!                   print(''.join(diff))
+!                   raise
+            '''
+            special_directive = test.FoxStart().symbol.text[13:].strip()
+            if special_directive == 'lines':
+                test_output = 'vfp2py.vfp2py.prg2py(input_str, parser_start=\'lines\', prepend_data=\'\')'
+            else:
+                test_output = 'vfp2py.vfp2py.prg2py(input_str)'
+            test_func = test_func.format(i, docstring(foxlines), docstring(pylines), test_output)
+            t += test_func.split('!           ')[1:]
+
+        t = [l.rstrip() for l in t]
+
+        return add_indent(t, 0)
+
 
     def visitConversionTest(self, ctx):
         foxlines = ''.join(tok.symbol.text for tok in ctx.FoxLine())
@@ -44,34 +78,7 @@ def generate_tests(filename):
     parser = conversion(stream)
     tree = parser.conversionTests()
     visitor = TestsGenVisitor()
-    tests = visitor.visit(tree)
-    t = ['from __future__ import print_function',
-         '',
-         'import difflib',
-         '',
-         'import vfp2py',
-         '', 
-         '',
-         'CMP = difflib.Differ().compare',
-    ]
-    for i, test in enumerate(tests):
-        t += ['', '', 'def Test{}():'.format(i)]
-        func_body = []
-        func_body.append('input_str = {}'.format(docstring(test[0])))
-        func_body.append('output_str = {}'.format(docstring(test[1])))
-        func_body.append('test_output_str = vfp2py.vfp2py.prg2py(input_str)')
-        func_body.append('try:')
-        func_body.append(['assert test_output_str == output_str'])
-        func_body.append('except AssertionError:')
-        except_block = []
-        except_block.append('diff = CMP(test_output_str.splitlines(1), output_str.splitlines(1))')
-        except_block.append('print(\'\'.join(diff))')
-        except_block.append('raise')
-        func_body.append(except_block)
-        t.append(func_body)
-
-    
-    return add_indent(t, 0)
+    return visitor.visit(tree)
 
 
 def parse_args(argv=None):

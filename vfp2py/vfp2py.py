@@ -221,7 +221,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
                              }
         self.filename = filename
         self.imports = []
-        self.scope = None
+        self.scope = {}
         self._saved_scope = None
         self._scope_count = 0
         self.withid = ''
@@ -261,6 +261,8 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         return ''.join(t.text for t in ctx.parser._input.tokens[start:stop+1])
 
     def visitPrg(self, ctx):
+        self.scope = None
+
         if ctx.classDef():
             self.class_list = [self.visit(classDef.classDefStart().identifier()[0]) for classDef in ctx.classDef()]
         if ctx.funcDef():
@@ -1897,24 +1899,16 @@ def convert_project(infile, directory):
     with open(os.path.join(directory, 'setup.py'), 'wb') as fid:
         pass
 
-def prg2py(data):
+def prg2py(data, parser_start='prg', prepend_data='procedure _program_main\n'):
     tokens = preprocess_code(data).tokens
-    data = 'procedure _program_main\n' + ''.join(token.text.replace('\r', '') for token in tokens)
+    data = prepend_data + ''.join(token.text.replace('\r', '') for token in tokens)
     input_stream = antlr4.InputStream(data)
     lexer = VisualFoxpro9Lexer(input_stream)
     stream = MultichannelTokenStream(lexer)
     parser = VisualFoxpro9Parser(stream)
-    tree = parser.prg()
     visitor = PythonConvertVisitor('')
-    output_tree = visitor.visit(tree)
-    output = add_indents(output_tree, 0)
-    outfile = 'autopep8_tmp.py'
-    with open(outfile, 'wb') as fid:
-        fid.write(output.encode('utf-8'))
-    autopep8.main([__file__, '--max-line-length', '2000', '--in-place', outfile])
-    with open(outfile, 'rb') as fid:
-        output = fid.read().decode('utf-8')
-    return output
+    output_tree = visitor.visit(getattr(parser, parser_start)())
+    return add_indents(output_tree, 0)
 
 def convert_file(infile, outfile):
     tic = Tic()

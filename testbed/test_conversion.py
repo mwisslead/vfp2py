@@ -5,11 +5,9 @@ import difflib
 import vfp2py
 
 
-CMP = difflib.Differ().compare
-
-
 def Test0():
-    input_str = '''LOCAL STRING_VAL, INT_VAL, BOOL_VAL, NULL_VAL
+    input_str = '''
+LOCAL STRING_VAL, INT_VAL, BOOL_VAL, NULL_VAL
 STRING_VAL = \'str\'
 int_val = 3
 BOOL_VAL = .F.
@@ -19,33 +17,31 @@ NULL_VAL = NULL
 ?SPACE(3)
 ?SPACE(INT_VAL)
 RELEASE STRING_VAL, INT_VAL, BOOL_VAL, NULL_VAL
-'''
-    output_str = '''from __future__ import division, print_function
-
-
-def _program_main():
-    string_val = int_val = bool_val = null_val = False  # LOCAL Declaration
-    string_val = \'str\'
-    int_val = 3
-    bool_val = False
-    null_val = None
-    print(\'\\x03\')
-    print(chr(int(int_val)))
-    print(\'   \')
-    print(int(int_val) * \' \')
-    del string_val, int_val, bool_val, null_val
-'''
-    test_output_str = vfp2py.vfp2py.prg2py(input_str)
+'''.strip()
+    output_str = '''
+string_val = int_val = bool_val = null_val = False #LOCAL Declaration
+string_val = \'str\'
+int_val = 3
+bool_val = False
+null_val = None
+print(\'\\x03\')
+print(chr(int(int_val)))
+print(\'   \')
+print(int(int_val) * \' \')
+del string_val, int_val, bool_val, null_val
+'''.strip()
+    test_output_str = vfp2py.vfp2py.prg2py(input_str, parser_start='lines', prepend_data='').strip()
     try:
         assert test_output_str == output_str
     except AssertionError:
-        diff = CMP(test_output_str.splitlines(1), output_str.splitlines(1))
+        diff = difflib.unified_diff(test_output_str.splitlines(1), output_str.splitlines(1))
         print(''.join(diff))
         raise
 
 
 def Test1():
-    input_str = '''   *comment with spaces
+    input_str = '''
+   *comment with spaces
 #DEFINE cantbewrong
 #DEFINE SPACE CHR
 #IFDEF cantbewrong
@@ -65,15 +61,14 @@ _SCREEN.LOGO.TOP = (_SCREEN.HEIGHT-_SCREEN.LOGO.HEIGHT)/2-3
 
 WAIT WINDOW space(3) + \'please wait\' + CHR(32) NOWAIT TIMEOUT 1.3
 #ENDIF
-'''
-    output_str = '''from __future__ import division, print_function
+'''.strip()
+    output_str = '''
+from __future__ import division, print_function
 
 from vfp2py import vfpfunc
-
-
 def _program_main():
     vfpfunc.variable.pushscope()
-    # comment with spaces
+    #comment with spaces
     ###comment###
     vfpfunc.variable[\'x\'] = \'\\n\'
     vfpfunc.variable[\'x\'] = \'\\n\'
@@ -84,12 +79,12 @@ def _program_main():
     vfpfunc.variable[\'x\'] = \'\\x05\'
     vfpfunc.variable[\'x\'] = \'\\r\\n\'
     vfpfunc.variable.popscope()
-'''
-    test_output_str = vfp2py.vfp2py.prg2py(input_str)
+'''.strip()
+    test_output_str = vfp2py.vfp2py.prg2py(input_str).strip()
     try:
         assert test_output_str == output_str
     except AssertionError:
-        diff = CMP(test_output_str.splitlines(1), output_str.splitlines(1))
+        diff = difflib.unified_diff(test_output_str.splitlines(1), output_str.splitlines(1))
         print(''.join(diff))
         raise
 

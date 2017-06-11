@@ -1,6 +1,6 @@
 lexer grammar conversionLexer;
 
-FoxStart: '@begin=vfp@' '\r'? '\n' -> pushMode(Fox);
+FoxStart: '@begin=vfp@' '&&lines'? '\r'? '\n' -> pushMode(Fox);
 PyStart: '@begin=python@' '\r'? '\n' -> pushMode(Py);
 Line: .*? '\r'? '\n' -> skip;
 
