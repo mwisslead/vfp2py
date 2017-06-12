@@ -57,6 +57,24 @@ class CommandButton(Custom):
 class Label(Custom):
     pass
 
+class Textbox(Custom):
+    pass
+
+class Checkbox(Custom):
+    pass
+
+class Combobox(Custom):
+    pass
+
+class Spinner(Custom):
+    pass
+
+class Shape(Custom):
+    pass
+
+class Commandbutton(Custom):
+    pass
+
 class Array(object):
     def __init__(self, dim1, dim2=0, offset=0):
         self.columns = bool(dim2)
