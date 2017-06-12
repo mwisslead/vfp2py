@@ -1,4 +1,4 @@
-from __future__ import division
+from __future__ import print_function, division
 
 import builtins
 import datetime as dt
@@ -321,6 +321,17 @@ class _Database_Context(object):
     def deleted(self, workarea=None):
         table_info = self._get_table_info(workarea)
         dbf.is_deleted(table_info['table'][table_info['recno']])
+
+    def browse(self):
+        table_info = self._get_table_info()
+        table = table_info['table']
+        print('Tablename:', table_info['name'])
+        print(table.field_names)
+        for i, record in enumerate(table):
+            if table_info['recno'] == i+1:
+                print('->', record[:])
+            else:
+                print(record[:])
 
 class _Variable(object):
     def __init__(self, db):

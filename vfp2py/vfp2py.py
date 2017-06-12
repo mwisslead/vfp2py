@@ -1548,6 +1548,10 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
     def visitZapTable(self, ctx):
         return make_func_code('vfpfunc.db.zap', self.visit(ctx.specialExpr()))
 
+    def visitBrowse(self, ctx):
+        self.imports.append('from vfp2py import vfpfunc')
+        return make_func_code('vfpfunc.db.browse')
+
     def visitScopeClause(self, ctx):
         if ctx.ALL():
             return 'all', -1
