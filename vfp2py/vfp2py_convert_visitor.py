@@ -968,14 +968,8 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             return float(num)
 
     def visitBoolean(self, ctx):
-        if ctx.T():
-            return True
-        if ctx.Y():
-            return True
-        if ctx.F():
-            return False
-        if ctx.N():
-            return False
+        if ctx.T() or ctx.Y() or ctx.F() or ctx.N():
+            return not (ctx.F() or ctx.N())
         raise Exception('Can\'t convert boolean:' + ctx.getText())
 
     def visitNull(self, ctx):
