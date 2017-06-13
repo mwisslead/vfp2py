@@ -3,7 +3,7 @@ AntlrJar=antlr-4.7-complete.jar
 Antlr=java -jar ${AntlrJar}
 PyVer=$(shell python -c 'import sys; print(sys.version_info[0])')
 
-test: ${AntlrJar} vfp2py/VisualFoxpro9Lexer.py vfp2py/VisualFoxpro9Parser.py vfp2py/VisualFoxpro9Visitor.py
+test: ${AntlrJar} vfp2py/VisualFoxpro9Lexer.py vfp2py/VisualFoxpro9Parser.py vfp2py/VisualFoxpro9Visitor.py vfp2py/vfp2py.py vfp2py/vfpfunc.py
 	make -C testbed
 	nosetests
 
