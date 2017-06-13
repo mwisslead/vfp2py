@@ -88,3 +88,21 @@ def _program_main():
         print(''.join(diff))
         raise
 
+
+def Test2():
+    input_str = '''
+DEFINE CLASS TESTCLASS AS COMMANDBUTTON
+ENDDEFINE
+'''.strip()
+    output_str = '''
+class Testclass(vfpfunc.Commandbutton):
+    pass
+'''.strip()
+    test_output_str = vfp2py.vfp2py.prg2py(input_str, parser_start='classDef', prepend_data='').strip()
+    try:
+        assert test_output_str == output_str
+    except AssertionError:
+        diff = difflib.unified_diff(test_output_str.splitlines(1), output_str.splitlines(1))
+        print(''.join(diff))
+        raise
+

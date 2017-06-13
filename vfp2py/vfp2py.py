@@ -209,16 +209,6 @@ def add_args_to_code(codestr, args):
 class PythonConvertVisitor(VisualFoxpro9Visitor):
     def __init__(self, filename):
         super(PythonConvertVisitor, self).__init__()
-        self.vfpclassnames = {'custom': 'vfpfunc.Custom',
-                              'form': 'vfpfunc.Form',
-                              'label': 'vfpfunc.Label',
-                              'textbox': 'vfpfunc.Textbox',
-                              'checkbox': 'vfpfunc.Checkbox',
-                              'combobox': 'vfpfunc.Combobox',
-                              'spinner': 'vfpfunc.Spinner',
-                              'shape': 'vfpfunc.Shape',
-                              'commandbutton': 'vfpfunc.CommandButton'
-                             }
         self.filename = filename
         self.imports = []
         self.scope = {}
@@ -383,14 +373,15 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         return retval
 
     def visitClassDefStart(self, ctx):
-        names = [self.visit(identifier) for identifier in ctx.identifier()]
-        classname = names[0]
-        if classname in self.vfpclassnames:
+        names = [CodeStr(self.visit(identifier).title()) for identifier in ctx.identifier()]
+        if len(names) < 2:
+            names.append('Custom')
+        classname, supername = names
+        if hasattr(vfpfunc, classname):
             raise Exception(classname + ' is a reserved classname')
-        supername = names[1] if len(names) > 0 else 'custom'
-        if supername in self.vfpclassnames:
+        if hasattr(vfpfunc, supername):
             self.imports.append('from vfp2py import vfpfunc')
-            supername = self.vfpclassnames[supername]
+            supername = add_args_to_code('{}.{}', (CodeStr('vfpfunc'), supername))
         return classname, supername
 
     def visitClassDefAssign(self, ctx):
@@ -413,10 +404,9 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
     def visitClassDefAddObject(self, ctx):
         self.enable_scope(False)
         name = self.visit(ctx.identifier())
-        objtype = self.visit(ctx.idAttr()[0])
-        if objtype in self.vfpclassnames:
+        objtype = CodeStr(self.visit(ctx.idAttr()[0]).title())
+        if hasattr(vfpfunc, objtype):
             self.imports.append('from vfp2py import vfpfunc')
-            objtype = CodeStr(self.vfpclassnames[objtype])
         keywords = [self.visit(idAttr) for idAttr in ctx.idAttr()[1:]]
         self.enable_scope(True)
         kwargs = {key: self.visit(expr) for key, expr in zip(keywords, ctx.expr())}

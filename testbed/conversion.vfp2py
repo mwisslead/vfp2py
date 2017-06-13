@@ -68,6 +68,16 @@ def _program_main():
     vfpfunc.variable.popscope()
 @end=python@
 
+@begin=vfp@&&classDef
+DEFINE CLASS TESTCLASS AS COMMANDBUTTON
+ENDDEFINE
+@end=vfp@
+
+@begin=python@
+class Testclass(vfpfunc.Commandbutton):
+    pass
+@end=python@
+
 ON ERROR
 ON ERROR DO test
 SET TYPEAHEAD TO 0
