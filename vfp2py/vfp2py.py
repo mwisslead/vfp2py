@@ -142,18 +142,6 @@ def add_indents(struct, num_indents):
             retval.append('')
     return '\n'.join(retval)
 
-def convert(codestr):
-    input_stream = antlr4.InputStream(codestr)
-    lexer = VisualFoxpro9Lexer(input_stream)
-    stream = antlr4.CommonTokenStream(lexer)
-    parser = VisualFoxpro9Parser(stream)
-    tree = parser.expr()
-    visitor = PythonConvertVisitor()
-    return visitor.visit(tree)
-
-def evaluateCode(codestr):
-    return eval(convert(codestr))
-
 def preprocess_code(data):
     input_stream = antlr4.InputStream(data)
     lexer = VisualFoxpro9Lexer(input_stream)
@@ -375,16 +363,19 @@ def convert_project(infile, directory):
     with open(os.path.join(directory, 'setup.py'), 'wb') as fid:
         pass
 
-def prg2py(data, parser_start='prg', prepend_data='procedure _program_main\n'):
-    tokens = preprocess_code(data).tokens
-    data = prepend_data + ''.join(token.text.replace('\r', '') for token in tokens)
+def prg2py_after_preproc(data, parser_start, input_filename):
     input_stream = antlr4.InputStream(data)
     lexer = VisualFoxpro9Lexer(input_stream)
     stream = MultichannelTokenStream(lexer)
     parser = VisualFoxpro9Parser(stream)
-    visitor = PythonConvertVisitor('')
+    visitor = PythonConvertVisitor(input_filename)
     output_tree = visitor.visit(getattr(parser, parser_start)())
     return add_indents(output_tree, 0)
+
+def prg2py(data, parser_start='prg', prepend_data='procedure _program_main\n', input_filename=''):
+    tokens = preprocess_code(data).tokens
+    data = prepend_data + ''.join(token.text.replace('\r', '') for token in tokens)
+    return prg2py_after_preproc(data, parser_start, input_filename)
 
 def convert_file(infile, outfile):
     tic = Tic()
@@ -433,17 +424,8 @@ def convert_file(infile, outfile):
         pass
     with open(fid.name, 'wb') as fid:
         fid.write(data.encode('utf-8'))
-    input_stream = antlr4.InputStream(data)
-    lexer = VisualFoxpro9Lexer(input_stream)
-    stream = MultichannelTokenStream(lexer)
-    parser = VisualFoxpro9Parser(stream)
+    output = prg2py_after_preproc(data, 'prg', os.path.splitext(os.path.basename(infile))[0])
     print(tic.toc())
-    tic.tic()
-    tree = parser.prg()
-    print(tic.toc())
-    visitor = PythonConvertVisitor(os.path.splitext(os.path.basename(infile))[0])
-    output_tree = visitor.visit(tree)
-    output = add_indents(output_tree, 0)
     with open(outfile, 'wb') as fid:
         fid.write(output.encode('utf-8'))
     autopep8.main([__file__, '--max-line-length', '2000', '--in-place', outfile])
