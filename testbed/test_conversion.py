@@ -7,11 +7,15 @@ import vfp2py
 
 def Test0():
     input_str = '''
-LOCAL STRING_VAL, INT_VAL, BOOL_VAL, NULL_VAL
+LOCAL STRING_VAL, FLOAT_VAL, INT_VAL, BOOL_VAL, NULL_VAL, NULLDATE_VAL, DATE_VAL, DATETIME_VAL
 STRING_VAL = \'str\'
+float_val = 3.0
 int_val = 3
 BOOL_VAL = .F.
 NULL_VAL = NULL
+NULLDATE_VAL = { / / }
+DATE_VAL = {^2017-5-6}
+DATETIME_VAL = {^2017-5-6 5P}
 ?CHR(3)
 ?CHR(INT_VAL)
 ?SPACE(3)
@@ -19,11 +23,15 @@ NULL_VAL = NULL
 RELEASE STRING_VAL, INT_VAL, BOOL_VAL, NULL_VAL
 '''.strip()
     output_str = '''
-string_val = int_val = bool_val = null_val = False #LOCAL Declaration
+string_val = float_val = int_val = bool_val = null_val = nulldate_val = date_val = datetime_val = False #LOCAL Declaration
 string_val = \'str\'
+float_val = 3.0
 int_val = 3
 bool_val = False
 null_val = None
+nulldate_val = None
+date_val = dt.date(2017, 5, 6)
+datetime_val = dt.datetime(2017, 5, 6, 17)
 print(\'\\x03\')
 print(chr(int(int_val)))
 print(\'   \')

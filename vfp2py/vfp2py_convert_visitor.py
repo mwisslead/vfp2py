@@ -958,14 +958,17 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             return self.visit(parser.expr())
         return create_string(ctx.getText()).lower()
 
-    def visitNumber(self, ctx):
-        num = ctx.NUMBER_LITERAL().getText()
+    def convert_number(self, num_literal):
+        num = num_literal.getText()
         if num[-1:].lower() == 'e':
             num += '0'
         try:
-            return int(num)
+            return int(num).real
         except:
             return float(num)
+
+    def visitNumber(self, ctx):
+        return self.convert_number(ctx.NUMBER_LITERAL())
 
     def visitBoolean(self, ctx):
         if ctx.T() or ctx.Y() or ctx.F() or ctx.N():
@@ -976,21 +979,17 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         return None
 
     def visitDate(self, ctx):
-        if ctx.NULLDATE_LITERAL():
+        if not ctx.NUMBER_LITERAL():
             return None
-        raise Exception('Date constants not implemented for none null dates')
-        innerstr = ctx.getText()[1:-1]
-        if ctx.DATE_LITERAL():
-            m, d, y = innerstr.split('/')
-            if len(y) == 2:
-                y = '19'+y
-            if len(y) != 4:
-                raise Exception('year must be 2 or 4 digits in date constant: ' + ctx.getText())
-            try:
-                return dt.date(int(y), int(m), int(d))
-            except ValueError as e:
-                raise Exception('invalid date constant: ' + ctx.getText())
-        return dt.dateime(1, 1, 1, 0, 0, 0)
+        numbers = [self.convert_number(num) for num in ctx.NUMBER_LITERAL()]
+        am_pm = (self.visit(ctx.identifier()) or '').lower()
+        if any(not isinstance(num, int) for num in numbers) or am_pm not in ('', 'a', 'am', 'p', 'pm'):
+            raise ValueError('invalid date/datetime')
+        if am_pm in ('p', 'pm'):
+            numbers[3] += 12
+        if len(numbers) < 4:
+            return make_func_code('dt.date', *numbers)
+        return make_func_code('dt.datetime', *numbers)
 
     def visitString(self, ctx):
         return create_string(ctx.getText()[1:-1])

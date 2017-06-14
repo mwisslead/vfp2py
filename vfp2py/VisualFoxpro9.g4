@@ -419,7 +419,7 @@ constant
  : NUMBER_LITERAL #number
  | '.' (T | F | Y | N) '.' #boolean
  | ('.' NULL '.' | NULL) #null
- | (NULLDATE_LITERAL | DATE_LITERAL | TIME_LITERAL | DATETIME_LITERAL) #date
+ | '{' ( '/' '/'  | '^' NUMBER_LITERAL '-' NUMBER_LITERAL '-' NUMBER_LITERAL (','? NUMBER_LITERAL (':' NUMBER_LITERAL (':' NUMBER_LITERAL)?)? identifier)? ) '}' #date
  | STRING_LITERAL #string
  ;
 
@@ -470,11 +470,6 @@ NUMBER_LITERAL : ([0-9]* '.')? [0-9]+ ([Ee] [+\-]? [0-9]+)?
                | [0-9]+ '.'
                | '0' [Xx] [0-9A-Fa-f]*
                ;
-
-NULLDATE_LITERAL : '{' WS+ '/' WS+ '/' WS+ '}';
-DATE_LITERAL : '{' [0-9]+ '/' [0-9]+ '/' [0-9]+ '}';
-TIME_LITERAL : '{' [0-9]+ ':' [0-9]+ ':' [0-9]+ ( 'AM' | 'PM' )?'}';
-DATETIME_LITERAL : '{' [0-9]+ '/' [0-9]+ '/' [0-9]+ WS+ [0-9]+ ':' [0-9]+ ':' [0-9]+ ( 'AM' | 'PM' )?'}';
 
 SEMICOLON: ';';
 AMPERSAND: '&';
