@@ -1,8 +1,3 @@
-AntlrJar=../antlr-4.7-complete.jar
-
-Antlr=java -jar ${AntlrJar}
-PyVer=$(shell python -c 'import sys; print(sys.version_info[0])')
-
 all: conversion.vfp2py conversionLexer.py conversion.py conversionVisitor.py test_conversion.py conversionLexer.g4 conversion.g4
 
 test_conversion.py: __main__.py conversion.vfp2py
