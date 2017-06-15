@@ -86,6 +86,20 @@ class Testclass(vfpfunc.Commandbutton):
     pass
 @end=python@
 
+@begin=vfp@&&lines
+DO A
+DO A+B
+DO A + B
+DO ALLTRIM(A)
+@end=vfp@
+
+@begin=python@
+a._program_main()
+__import__('a+b')._program_main() #NOTE: function call here may not work
+__import__((a + b))._program_main() #NOTE: function call here may not work
+__import__(a.strip())._program_main() #NOTE: function call here may not work
+@end=python@
+
 ON ERROR
 ON ERROR DO test
 SET TYPEAHEAD TO 0

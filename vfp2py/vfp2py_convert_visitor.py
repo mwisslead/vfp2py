@@ -7,6 +7,8 @@ import os
 import ntpath
 import datetime as dt
 import re
+import tokenize
+import keyword
 from collections import OrderedDict
 
 import random
@@ -14,6 +16,7 @@ import string
 
 import antlr4
 
+from VisualFoxpro9Lexer import VisualFoxpro9Lexer
 from VisualFoxpro9Parser import VisualFoxpro9Parser
 from VisualFoxpro9Visitor import VisualFoxpro9Visitor
 
@@ -949,13 +952,19 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
 
     def visitPathname(self, ctx):
         start, stop = ctx.getSourceInterval()
-        if not all(t.text.strip() for t in ctx.parser._input.tokens[start:stop+1]):
-            data = ''.join(t.text for t in ctx.parser._input.tokens[start:stop+1])
-            input_stream = antlr4.InputStream(data)
-            lexer = VisualFoxpro9Lexer(input_stream)
-            stream = MultichannelTokenStream(lexer)
-            parser = VisualFoxpro9Parser(stream)
-            return self.visit(parser.expr())
+        tokens = ctx.parser._input.tokens[start:stop+1]
+        data = ''.join(t.text for t in tokens)
+        input_stream = antlr4.InputStream(data)
+        lexer = VisualFoxpro9Lexer(input_stream)
+        stream = antlr4.CommonTokenStream(lexer)
+        parser = VisualFoxpro9Parser(stream)
+        exprctx = parser.expr()
+        if len(ctx.children) != stop - start + 1:
+            return self.visit(exprctx)
+        if isinstance(exprctx, VisualFoxpro9Parser.AtomExprContext) and \
+            isinstance(exprctx.trailer(), VisualFoxpro9Parser.FuncCallTrailerContext):
+            return self.visit(exprctx)
+
         return create_string(ctx.getText()).lower()
 
     def convert_number(self, num_literal):
@@ -1065,11 +1074,13 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         if not namespace:
             namespace = func
             func = '_program_main'
-        if string_type(namespace):
+        if string_type(namespace) and re.match(tokenize.Name + '$', namespace) and not keyword.iskeyword(namespace):
             namespace = ntpath.normpath(ntpath.splitext(namespace)[0]).replace(ntpath.sep, '.')
             self.imports.append('import ' + namespace)
             mod = CodeStr(namespace)
         else:
+            if string_type(namespace):
+                namespace = CodeStr(repr(namespace))
             mod = make_func_code('__import__', namespace)
         if string_type(func):
             func = CodeStr(func)
