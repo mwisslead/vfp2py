@@ -5,7 +5,7 @@ PyVer=$(shell python -c 'import sys; print(sys.version_info[0])')
 all: ${AntlrJar}
 	make -C vfp2py Antlr="${Antlr}" PyVer=${PyVer}
 	make -C testbed Antlr="${Antlr}" PyVer=${PyVer}
-	nosetests
+	python setup.py test
 
 antlr%.jar:
 	wget http://www.antlr.org/download/$@
