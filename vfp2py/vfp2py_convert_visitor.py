@@ -14,8 +14,6 @@ from collections import OrderedDict
 import random
 import string
 
-from VisualFoxpro9Lexer import VisualFoxpro9Lexer
-from VisualFoxpro9Parser import VisualFoxpro9Parser
 from VisualFoxpro9Visitor import VisualFoxpro9Visitor
 
 import vfpfunc
@@ -140,7 +138,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         defs = []
 
         for child in ctx.children:
-            if isinstance(child, VisualFoxpro9Parser.FuncDefContext):
+            if isinstance(child, ctx.parser.FuncDefContext):
                 self.used_scope = False
                 funcname, parameters, funcbody = self.visit(child)
                 defs += [CodeStr('def {}({}):'.format(funcname, ', '.join([str(repr(p)) + '=False' for p in parameters]))), funcbody]
@@ -196,7 +194,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         self.used_scope = False
         for stmt in ctx.classDefProperty():
             assignment = self.visit(stmt)
-            if isinstance(stmt, VisualFoxpro9Parser.ClassDefLineCommentContext) and assignment:
+            if isinstance(stmt, ctx.parser.ClassDefLineCommentContext) and assignment:
                 assignments.append(assignment)
             else:
                 assignments += assignment
@@ -530,17 +528,17 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         return [self.visit(c) for c in ctx.specialExpr()]
 
     def visitComparison(self, ctx):
-        symbol_dict = {VisualFoxpro9Lexer.GREATERTHAN: '>',
-                       VisualFoxpro9Lexer.GTEQ: '>=',
-                       VisualFoxpro9Lexer.LESSTHAN: '<',
-                       VisualFoxpro9Lexer.LTEQ: '<=',
-                       VisualFoxpro9Lexer.NOTEQUALS: '!=',
-                       VisualFoxpro9Lexer.HASH: '!=',
-                       VisualFoxpro9Lexer.EQUALS: '==',
-                       VisualFoxpro9Lexer.DOUBLEEQUALS: '==',
-                       VisualFoxpro9Lexer.DOLLAR: 'in',
-                       VisualFoxpro9Lexer.OR: 'or',
-                       VisualFoxpro9Lexer.AND: 'and'
+        symbol_dict = {ctx.parser.GREATERTHAN: '>',
+                       ctx.parser.GTEQ: '>=',
+                       ctx.parser.LESSTHAN: '<',
+                       ctx.parser.LTEQ: '<=',
+                       ctx.parser.NOTEQUALS: '!=',
+                       ctx.parser.HASH: '!=',
+                       ctx.parser.EQUALS: '==',
+                       ctx.parser.DOUBLEEQUALS: '==',
+                       ctx.parser.DOLLAR: 'in',
+                       ctx.parser.OR: 'or',
+                       ctx.parser.AND: 'and'
                       }
         left = self.visit(ctx.expr(0))
         right = self.visit(ctx.expr(1))
@@ -551,7 +549,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         return self.visitComparison(ctx)
 
     def visitUnaryNegation(self, ctx):
-        if ctx.op.type == VisualFoxpro9Lexer.PLUS_SIGN:
+        if ctx.op.type == ctx.parser.PLUS_SIGN:
             return CodeStr('{}'.format(repr(self.visit(ctx.expr()))))
         return CodeStr('-{}'.format(repr(self.visit(ctx.expr()))))
 
@@ -908,7 +906,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             trailer = [atom] + (trailer if trailer else [])
             atom = self.withid
 
-        if trailer and len(trailer) > 0 and not isinstance(trailer[-1], list) and isinstance(atom, CodeStr) and isinstance(ctx.parentCtx, VisualFoxpro9Parser.CmdContext):
+        if trailer and len(trailer) > 0 and not isinstance(trailer[-1], list) and isinstance(atom, CodeStr) and isinstance(ctx.parentCtx, ctx.parser.CmdContext):
             return make_func_code(self.createIdAttr(atom, trailer))
         if isinstance(atom, CodeStr):
             return self.createIdAttr(atom, trailer)
@@ -982,14 +980,14 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
     def walkAdditions(self, ctx):
         retval = []
         for expr in ctx.expr():
-            if isinstance(expr, VisualFoxpro9Parser.AdditionContext):
+            if isinstance(expr, ctx.parser.AdditionContext):
                 retval += self.walkAdditions(expr)
             else:
                 retval.append(self.visit(expr))
         return retval
 
     def visitAddition(self, ctx):
-        if ctx.op.type == VisualFoxpro9Parser.MINUS_SIGN:
+        if ctx.op.type == ctx.parser.MINUS_SIGN:
             return self.operationExpr(ctx, ctx.op.type)
         exprs = self.walkAdditions(ctx)
         exprs2 = [exprs[0]]
@@ -1014,10 +1012,10 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         symbols = {
             '**': '**',
             '%': '%',
-            VisualFoxpro9Parser.ASTERISK: '*',
-            VisualFoxpro9Parser.FORWARDSLASH: '/',
-            VisualFoxpro9Parser.PLUS_SIGN: '+',
-            VisualFoxpro9Parser.MINUS_SIGN: '-'
+            ctx.parser.ASTERISK: '*',
+            ctx.parser.FORWARDSLASH: '/',
+            ctx.parser.PLUS_SIGN: '+',
+            ctx.parser.MINUS_SIGN: '-'
         }
         return CodeStr('({} {} {})'.format(repr(left), symbols[operation], repr(right)))
 

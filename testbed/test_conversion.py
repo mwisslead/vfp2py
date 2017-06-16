@@ -16,6 +16,7 @@ NULL_VAL = NULL
 NULLDATE_VAL = { / / }
 DATE_VAL = {^2017-5-6}
 DATETIME_VAL = {^2017-5-6 5P}
+?(float_val + INT_VAL) / 3 - INT_VAL
 ?CHR(3)
 ?CHR(INT_VAL)
 ?SPACE(3)
@@ -32,6 +33,7 @@ null_val = None
 nulldate_val = None
 date_val = dt.date(2017, 5, 6)
 datetime_val = dt.datetime(2017, 5, 6, 17)
+print(((((float_val + int_val)) / 3) - int_val))
 print(\'\\x03\')
 print(chr(int(int_val)))
 print(\'   \')
