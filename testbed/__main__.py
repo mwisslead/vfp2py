@@ -46,7 +46,7 @@ class TestsGenVisitor(conversionVisitor):
 !               try:
 !                   assert test_output_str == output_str
 !               except AssertionError:
-!                   diff = difflib.unified_diff(test_output_str.splitlines(1), output_str.splitlines(1))
+!                   diff = difflib.unified_diff((test_output_str + '\\n').splitlines(1), (output_str + '\\n').splitlines(1))
 !                   print(''.join(diff))
 !                   raise
             '''

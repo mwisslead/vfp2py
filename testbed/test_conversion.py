@@ -42,7 +42,7 @@ del string_val, int_val, bool_val, null_val
     try:
         assert test_output_str == output_str
     except AssertionError:
-        diff = difflib.unified_diff(test_output_str.splitlines(1), output_str.splitlines(1))
+        diff = difflib.unified_diff((test_output_str + '\n').splitlines(1), (output_str + '\n').splitlines(1))
         print(''.join(diff))
         raise
 
@@ -92,7 +92,7 @@ def _program_main():
     try:
         assert test_output_str == output_str
     except AssertionError:
-        diff = difflib.unified_diff(test_output_str.splitlines(1), output_str.splitlines(1))
+        diff = difflib.unified_diff((test_output_str + '\n').splitlines(1), (output_str + '\n').splitlines(1))
         print(''.join(diff))
         raise
 
@@ -110,7 +110,7 @@ class Testclass(vfpfunc.Commandbutton):
     try:
         assert test_output_str == output_str
     except AssertionError:
-        diff = difflib.unified_diff(test_output_str.splitlines(1), output_str.splitlines(1))
+        diff = difflib.unified_diff((test_output_str + '\n').splitlines(1), (output_str + '\n').splitlines(1))
         print(''.join(diff))
         raise
 
@@ -132,7 +132,7 @@ __import__(a.strip())._program_main() #NOTE: function call here may not work
     try:
         assert test_output_str == output_str
     except AssertionError:
-        diff = difflib.unified_diff(test_output_str.splitlines(1), output_str.splitlines(1))
+        diff = difflib.unified_diff((test_output_str + '\n').splitlines(1), (output_str + '\n').splitlines(1))
         print(''.join(diff))
         raise
 
