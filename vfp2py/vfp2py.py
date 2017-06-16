@@ -142,10 +142,27 @@ def add_indents(struct, num_indents):
             retval.append('')
     return '\n'.join(retval)
 
+class TreeCleanVisitor(VisualFoxpro9Visitor):
+    def visitPathname(self, ctx):
+        start, stop = ctx.getSourceInterval()
+        tokens = ctx.parser._input.tokens[start:stop+1]
+        data = ''.join(t.text for t in tokens)
+        input_stream = antlr4.InputStream(data)
+        lexer = VisualFoxpro9Lexer(input_stream)
+        stream = antlr4.CommonTokenStream(lexer)
+        parser = VisualFoxpro9Parser(stream)
+        exprctx = parser.expr()
+        if len(ctx.children) != stop - start + 1 or (isinstance(exprctx, ctx.parser.AtomExprContext) and \
+            isinstance(exprctx.trailer(), ctx.parser.FuncCallTrailerContext)):
+            ctx.parentCtx.removeLastChild()
+            ctx.parentCtx.addChild(exprctx)
+            ctx = exprctx
+        self.visitChildren(ctx)
+
 def preprocess_code(data):
     input_stream = antlr4.InputStream(data)
     lexer = VisualFoxpro9Lexer(input_stream)
-    stream = MultichannelTokenStream(lexer)
+    stream = antlr4.CommonTokenStream(lexer)
     parser = VisualFoxpro9Parser(stream)
     tree = parser.preprocessorCode()
     visitor = PreprocessVisitor()
@@ -159,37 +176,6 @@ def preprocess_file(filename):
     fid.close()
 
     return preprocess_code(data)
-
-class MultichannelTokenStream(antlr4.CommonTokenStream):
-    def __init__(self, lexer, channel=antlr4.Token.DEFAULT_CHANNEL):
-        super(MultichannelTokenStream, self).__init__(lexer)
-        self.channels = [channel]
-
-    def nextTokenOnChannel(self, i, channel):
-        self.sync(i)
-        if i>=len(self.tokens):
-            return -1
-        token = self.tokens[i]
-        while token.channel not in self.channels:
-            if token.type==antlr4.Token.EOF:
-                return -1
-            i += 1
-            self.sync(i)
-            token = self.tokens[i]
-        return i
-
-    def previousTokenOnChannel(self, i, channel):
-        while i>=0 and self.tokens[i].channel not in self.channels:
-            i -= 1
-        return i
-
-    def enableChannel(self, channel):
-        if channel not in self.channels:
-            self.channels.append(channel)
-
-    def disableChannel(self, channel):
-        if channel in self.channels:
-            self.channels.remove(channel)
 
 def find_file_ignore_case(filename, directories):
     for directory in directories:
@@ -366,10 +352,11 @@ def convert_project(infile, directory):
 def prg2py_after_preproc(data, parser_start, input_filename):
     input_stream = antlr4.InputStream(data)
     lexer = VisualFoxpro9Lexer(input_stream)
-    stream = MultichannelTokenStream(lexer)
+    stream = antlr4.CommonTokenStream(lexer)
     parser = VisualFoxpro9Parser(stream)
-    visitor = PythonConvertVisitor(input_filename)
-    output_tree = visitor.visit(getattr(parser, parser_start)())
+    tree = getattr(parser, parser_start)()
+    TreeCleanVisitor().visit(tree)
+    output_tree = PythonConvertVisitor(input_filename).visit(tree)
     return add_indents(output_tree, 0)
 
 def prg2py(data, parser_start='prg', prepend_data='procedure _program_main\n', input_filename=''):

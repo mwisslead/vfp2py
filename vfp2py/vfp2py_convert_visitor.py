@@ -14,8 +14,6 @@ from collections import OrderedDict
 import random
 import string
 
-import antlr4
-
 from VisualFoxpro9Lexer import VisualFoxpro9Lexer
 from VisualFoxpro9Parser import VisualFoxpro9Parser
 from VisualFoxpro9Visitor import VisualFoxpro9Visitor
@@ -934,26 +932,10 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
 
     def visitSpecialExpr(self, ctx):
         expr = self.visit(ctx.pathname() or ctx.constant() or ctx.expr())
-        if string_type(expr):
-            expr = expr.lower()
-        return expr
+        return expr.lower() if string_type(expr) else expr
 
     def visitPathname(self, ctx):
-        start, stop = ctx.getSourceInterval()
-        tokens = ctx.parser._input.tokens[start:stop+1]
-        data = ''.join(t.text for t in tokens)
-        input_stream = antlr4.InputStream(data)
-        lexer = VisualFoxpro9Lexer(input_stream)
-        stream = antlr4.CommonTokenStream(lexer)
-        parser = VisualFoxpro9Parser(stream)
-        exprctx = parser.expr()
-        if len(ctx.children) != stop - start + 1:
-            return self.visit(exprctx)
-        if isinstance(exprctx, VisualFoxpro9Parser.AtomExprContext) and \
-            isinstance(exprctx.trailer(), VisualFoxpro9Parser.FuncCallTrailerContext):
-            return self.visit(exprctx)
-
-        return create_string(ctx.getText()).lower()
+        return create_string(ctx.getText())
 
     def convert_number(self, num_literal):
         num = num_literal.getText()
