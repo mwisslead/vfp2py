@@ -69,12 +69,6 @@ class CodeStr(unicode):
     def __mul__(self, val):
         return CodeStr('{} * {}'.format(self, repr(val)))
 
-def get_list(should_be_list):
-    try:
-        return list(should_be_list)
-    except TypeError:
-        return [should_be_list]
-
 def make_func_code(funcname, *args, **kwargs):
     args = [repr(x) for x in args]
     args += ['{}={}'.format(key, repr(kwargs[key])) for key in kwargs]
@@ -932,9 +926,6 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
 
     def visitComplexId(self, ctx):
         return self.visitAtomExpr(ctx)
-
-    def visitIdList(self, ctx):
-        return [self.visit(i) for i in get_list(ctx.idAttr())]
 
     def visitAddRemoveDirectory(self, ctx):
         self.imports.append('import os')
