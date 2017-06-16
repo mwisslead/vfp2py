@@ -136,3 +136,27 @@ __import__(a.strip())._program_main() #NOTE: function call here may not work
         print(''.join(diff))
         raise
 
+
+def Test4():
+    input_str = '''
+LOCAL test
+mkdir test - test
+MD test+test
+rmdir (test+test)
+rd alltrim(test)
+'''.strip()
+    output_str = '''
+test = False #LOCAL Declaration
+os.mkdir((test - test))
+os.mkdir(\'test+test\')
+os.rmdir((test + test))
+os.rmdir(test.strip())
+'''.strip()
+    test_output_str = vfp2py.vfp2py.prg2py(input_str, parser_start='lines', prepend_data='').strip()
+    try:
+        assert test_output_str == output_str
+    except AssertionError:
+        diff = difflib.unified_diff((test_output_str + '\n').splitlines(1), (output_str + '\n').splitlines(1))
+        print(''.join(diff))
+        raise
+

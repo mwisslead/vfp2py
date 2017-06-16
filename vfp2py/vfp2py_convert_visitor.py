@@ -938,11 +938,8 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
 
     def visitAddRemoveDirectory(self, ctx):
         self.imports.append('import os')
-        if ctx.MD() or ctx.MKDIR():
-            funcname = 'mkdir'
-        if ctx.RD() or ctx.RMDIR():
-            funcname = 'rmdir'
-        return make_func_code('os.' + funcname, self.visit(ctx.specialExpr()))
+        funcname = 'os.' + ('mkdir' if ctx.MKDIR() else 'rmdir')
+        return make_func_code(funcname, self.visit(ctx.specialExpr()))
 
     def visitSpecialExpr(self, ctx):
         expr = self.visit(ctx.pathname() or ctx.constant() or ctx.expr())

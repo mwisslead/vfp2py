@@ -100,14 +100,27 @@ __import__((a + b))._program_main() #NOTE: function call here may not work
 __import__(a.strip())._program_main() #NOTE: function call here may not work
 @end=python@
 
+@begin=vfp@&&lines
+LOCAL test
+mkdir test - test
+MD test+test
+rmdir (test+test)
+rd alltrim(test)
+@end=vfp@
+
+@begin=python@
+test = False #LOCAL Declaration
+os.mkdir((test - test))
+os.mkdir('test+test')
+os.rmdir((test + test))
+os.rmdir(test.strip())
+@end=python@
+
 ON ERROR
 ON ERROR DO test
 SET TYPEAHEAD TO 0
 ?LEFT('Hello, World', 5)
 WAIT WINDOW space(3) + 'please wait' + CHR(32) NOWAIT TIMEOUT 1.3
-md test - test
-MD test+test
-md (test+test)
 *com;
 ment
 NOTE note;
@@ -882,9 +895,6 @@ def _program_main():
     vfpfunc.set(u'typeahead', 0, set_value=True)
     print('Hello, World'[:5])
     vfpfunc.wait('\x03please wait ', to=None, window=[-1, -1], nowait=True, noclear=True, timeout=int(u'1.3'))
-    os.mkdir((vfpfunc.variable['test'] - vfpfunc.variable['test']))
-    os.mkdir('test+test')
-    os.mkdir((vfpfunc.variable['test'] + vfpfunc.variable['test']))
     # com
     # ment
     # NOTE note
