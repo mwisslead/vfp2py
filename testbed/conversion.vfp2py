@@ -120,10 +120,18 @@ os.rmdir(test.strip())
 
 @begin=vfp@&&lines
 continue
+LOCAL SEARCH_FOR
+SEARCH_FOR = 'PAUL'
+SEEK ALLTRIM(SEARCH_FOR)
+RELEASE SEARCH_FOR
 @end=vfp@
 
 @begin=python@
 vfpfunc.db.continue_locate()
+search_for = False #LOCAL Declaration
+search_for = 'PAUL'
+vfpfunc.db.seek(None, search_for.strip())
+del search_for
 @end=python@
 
 ON ERROR

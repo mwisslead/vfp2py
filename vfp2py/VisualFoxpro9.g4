@@ -229,7 +229,7 @@ otherCmds
  | SKIPKW expr (IN specialExpr)? #skipRecord
  | PACK (DATABASE | (MEMO | DBF)? (IN workArea=specialExpr | tableName=specialExpr IN workArea=specialExpr | tableName=specialExpr)?) #pack
  | REINDEX COMPACT? #reindex
- | SEEK expr #seekRecord
+ | SEEK seekExpr=expr ((ORDER orderExpr=expr | TAG tagName=specialExpr (OF cdxFileExpr=specialExpr)? | idxFileExpr=specialExpr) (ASCENDING | DESCENDING)?)? (IN tablenameExpr=specialExpr)? #seekRecord
  | (GO | GOTO) (TOP | BOTTOM | RECORD? expr) (IN specialExpr)? #goRecord
  | COPY STRUCTURE? TO specialExpr #copyTo
  | ZAP (IN specialExpr)? #zapTable

@@ -1394,6 +1394,11 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
     def visitReindex(self, ctx):
         return make_func_code('vfpfunc.db.reindex', not not ctx.COMPACT())
 
+    def visitSeekRecord(self, ctx):
+        tablename = self.visit(ctx.tablenameExpr)
+        seek_expr = self.visit(ctx.seekExpr)
+        return make_func_code('vfpfunc.db.seek', tablename, seek_expr)
+
     def visitZapTable(self, ctx):
         return make_func_code('vfpfunc.db.zap', self.visit(ctx.specialExpr()))
 

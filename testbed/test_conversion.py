@@ -166,9 +166,17 @@ os.rmdir(test.strip())
 def Test5():
     input_str = '''
 continue
+LOCAL SEARCH_FOR
+SEARCH_FOR = \'PAUL\'
+SEEK ALLTRIM(SEARCH_FOR)
+RELEASE SEARCH_FOR
 '''.strip()
     output_str = '''
 vfpfunc.db.continue_locate()
+search_for = False #LOCAL Declaration
+search_for = \'PAUL\'
+vfpfunc.db.seek(None, search_for.strip())
+del search_for
 '''.strip()
     test_output_str = vfp2py.vfp2py.prg2py(input_str, parser_start='lines', prepend_data='').strip()
     try:
