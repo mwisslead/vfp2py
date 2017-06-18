@@ -118,6 +118,14 @@ os.rmdir((test + test))
 os.rmdir(test.strip())
 @end=python@
 
+@begin=vfp@&&lines
+continue
+@end=vfp@
+
+@begin=python@
+vfpfunc.db.continue_locate()
+@end=python@
+
 ON ERROR
 ON ERROR DO test
 SET TYPEAHEAD TO 0

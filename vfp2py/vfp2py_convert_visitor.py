@@ -1303,6 +1303,10 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         kwargs['nooptimize'] = ctx.NOOPTIMIZE()
         return make_func_code('vfpfunc.db.locate', **kwargs)
 
+    def visitContinueLocate(self, ctx):
+        self.imports.append('from vfp2py import vfpfunc')
+        return make_func_code('vfpfunc.db.continue_locate')
+
     def visitAppendFrom(self, ctx):
         self.imports.append('from vfp2py import vfpfunc')
         sourcename = self.visit(ctx.specialExpr())

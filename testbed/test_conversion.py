@@ -162,3 +162,19 @@ os.rmdir(test.strip())
         print(''.join(diff))
         raise
 
+
+def Test5():
+    input_str = '''
+continue
+'''.strip()
+    output_str = '''
+vfpfunc.db.continue_locate()
+'''.strip()
+    test_output_str = vfp2py.vfp2py.prg2py(input_str, parser_start='lines', prepend_data='').strip()
+    try:
+        assert test_output_str == output_str
+    except AssertionError:
+        diff = difflib.unified_diff((test_output_str + '\n').splitlines(1), (output_str + '\n').splitlines(1))
+        print(''.join(diff))
+        raise
+
