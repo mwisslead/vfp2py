@@ -20,7 +20,7 @@ setup(
         "Programming Language :: Python",
         "Topic :: Software Development :: Libraries :: Python Modules",
     ],
-    install_requires=[ANTLR4, 'dbf', 'autopep8'],
+    install_requires=[ANTLR4, 'future', 'enum34', 'dbf', 'autopep8'],
     test_suite='nose.collector',
     tests_require=['nose'],
 )
