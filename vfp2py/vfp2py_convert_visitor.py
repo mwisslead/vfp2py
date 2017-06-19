@@ -549,9 +549,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         return self.visitComparison(ctx)
 
     def visitUnaryNegation(self, ctx):
-        if ctx.op.type == ctx.parser.PLUS_SIGN:
-            return CodeStr('{}'.format(repr(self.visit(ctx.expr()))))
-        return CodeStr('-{}'.format(repr(self.visit(ctx.expr()))))
+        return add_args_to_code('{}' if ctx.op.type == ctx.parser.PLUS_SIGN else '-{}', (self.visit(ctx.expr()),))
 
     def visitBooleanNegation(self, ctx):
         return CodeStr('not {}'.format(repr(self.visit(ctx.expr()))))
@@ -977,38 +975,19 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
     def visitMultiplication(self, ctx):
         return self.operationExpr(ctx, ctx.op.type)
 
-    def walkAdditions(self, ctx):
-        retval = []
-        for expr in ctx.expr():
-            if isinstance(expr, ctx.parser.AdditionContext):
-                retval += self.walkAdditions(expr)
-            else:
-                retval.append(self.visit(expr))
-        return retval
-
     def visitAddition(self, ctx):
-        if ctx.op.type == ctx.parser.MINUS_SIGN:
-            return self.operationExpr(ctx, ctx.op.type)
-        exprs = self.walkAdditions(ctx)
-        exprs2 = [exprs[0]]
-        for expr in exprs[1:]:
-            if string_type(expr) and string_type(exprs2[-1]):
-                exprs2[-1] += expr
-            elif expr:
-                exprs2.append(expr)
-        if len(exprs2) == 1:
-            return exprs2[0]
-        exprs2 = [expr for expr in exprs2 if expr != '']
-        if len(exprs2) == 0:
-            return ''
-        return CodeStr('(' + ' + '.join(repr(expr) for expr in exprs2) + ')')
+        return self.operationExpr(ctx, ctx.op.type)
 
     def visitModulo(self, ctx):
         return self.operationExpr(ctx, '%')
 
     def operationExpr(self, ctx, operation):
-        left = self.visit(ctx.expr(0))
-        right = self.visit(ctx.expr(1))
+        def add_parens(parent, child):
+            expr = self.visit(child)
+            if isinstance(child, ctx.parser.SubExprContext):
+                return add_args_to_code('({})', (expr,))
+            return expr
+        left, right = [add_parens(ctx, expr) for expr in ctx.expr()]
         symbols = {
             '**': '**',
             '%': '%',
@@ -1017,10 +996,12 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             ctx.parser.PLUS_SIGN: '+',
             ctx.parser.MINUS_SIGN: '-'
         }
-        return CodeStr('({} {} {})'.format(repr(left), symbols[operation], repr(right)))
+        if string_type(left) and string_type(right) and operation == ctx.parser.PLUS_SIGN:
+            return left + right
+        return add_args_to_code('{} {} {}', (left, CodeStr(symbols[operation]), right))
 
     def visitSubExpr(self, ctx):
-        return add_args_to_code('({})', [self.visit(ctx.expr())])
+        return add_args_to_code('{}', [self.visit(ctx.expr())])
 
     def visitFuncDo(self, ctx):
         self.enable_scope(False)

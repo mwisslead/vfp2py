@@ -159,6 +159,35 @@ class TreeCleanVisitor(VisualFoxpro9Visitor):
             ctx = exprctx
         self.visitChildren(ctx)
 
+    def visitSubExpr(self, ctx):
+        self.visit(ctx.expr())
+        if isinstance(ctx.expr(), ctx.parser.SubExprContext):
+            ctx.removeLastChild()
+            newexpr = ctx.expr().expr()
+            ctx.removeLastChild()
+            ctx.addChild(newexpr)
+
+    def visitPower(self, ctx):
+        self.visitChildren(ctx)
+        left, right = ctx.expr()
+        if isinstance(right, ctx.parser.SubExprContext) and isinstance(right.expr(), ctx.parser.PowerContext):
+            ctx.removeLastChild()
+            right = right.expr()
+            ctx.addChild(right)
+        if isinstance(left, ctx.parser.PowerContext):
+            newleft = ctx.parser.SubExprContext(ctx.parser, ctx.parser.ExprContext(ctx.parser, ctx))
+            newleft.addChild(left)
+            while ctx.children:
+                ctx.removeLastChild()
+            ctx.addChild(newleft)
+            ctx.addChild(right)
+
+    def visitUnaryNegation(self, ctx):
+        self.visit(ctx.expr())
+        if ctx.op.type == ctx.parser.MINUS_SIGN and isinstance(ctx.expr(), ctx.parser.UnaryNegationContext):
+            ctx.expr().op.type = ctx.parser.PLUS_SIGN
+            ctx.op.type = ctx.parser.PLUS_SIGN
+
 def preprocess_code(data):
     input_stream = antlr4.InputStream(data)
     lexer = VisualFoxpro9Lexer(input_stream)
