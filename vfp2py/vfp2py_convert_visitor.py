@@ -139,7 +139,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         if ctx.classDef():
             self.class_list = [self.visit(classDef.classDefStart())[0] for classDef in ctx.classDef()]
         if ctx.funcDef():
-            self.function_list = [self.visit(funcdef.funcDefStart().idAttr2()) for funcdef in ctx.funcDef()]
+            self.function_list = [self.visit(funcdef.funcDefStart())[0] for funcdef in ctx.funcDef()]
 
         self.imports = []
         defs = []
