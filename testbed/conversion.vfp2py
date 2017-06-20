@@ -88,12 +88,15 @@ def _program_main():
 
 @begin=vfp@&&classDef
 DEFINE CLASS TESTCLASS AS COMMANDBUTTON
+   FUNCTION INIT(X)
+   ENDFUNC
 ENDDEFINE
 @end=vfp@
 
 @begin=python@
 class Testclass(vfpfunc.Commandbutton):
-    pass
+    def init(self, x=False):
+        pass
 @end=python@
 
 @begin=vfp@&&lines

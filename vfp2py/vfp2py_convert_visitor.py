@@ -216,7 +216,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             if funcname == 'init' and assign_scope and not self.used_scope:
                 self.used_scope = True
                 funcname, parameters, funcbody = self.visit(funcdef)
-            parameters = [CodeStr('self')] + parameters
+            parameters = [CodeStr('self')] + [add_args_to_code('{}=False', (p,)) for p in parameters]
             if '.' in funcname:
                 newfuncname = funcname.replace('.', '_')
                 assignments.append(CodeStr('def {}({}):'.format(newfuncname, ', '.join(parameters))))
@@ -245,7 +245,8 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
                 parameters, funcbody, line_number = funcs[funcname]
                 while comments and comments[0][1] < line_number:
                     retval.append([comments.pop(0)[0]])
-                retval.append([CodeStr('def {}({}):'.format(funcname, ', '.join([str(repr(p)) + '=False' for p in parameters]))), funcbody])
+                func = make_func_code(funcname, *parameters)
+                retval.append([add_args_to_code('def {}:', (func,)), funcbody])
         else:
             retval.append([CodeStr('pass')])
         while comments:

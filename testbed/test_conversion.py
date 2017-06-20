@@ -110,11 +110,14 @@ def _program_main():
 def Test2():
     input_str = '''
 DEFINE CLASS TESTCLASS AS COMMANDBUTTON
+   FUNCTION INIT(X)
+   ENDFUNC
 ENDDEFINE
 '''.strip()
     output_str = '''
 class Testclass(vfpfunc.Commandbutton):
-    pass
+    def init(self, x=False):
+        pass
 '''.strip()
     test_output_str = vfp2py.vfp2py.prg2py(input_str, parser_start='classDef', prepend_data='').strip()
     try:
