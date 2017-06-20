@@ -129,7 +129,9 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         return retval
 
     def getCtxText(self, ctx):
-        return ''.join(t.text for t in ctx.parser._input.tokens[start:stop+1])
+        start, stop = ctx.getSourceInterval()
+        tokens = ctx.parser._input.tokens[start:stop+1]
+        return ''.join(token.text for token in tokens)
 
     def visitPrg(self, ctx):
         self.scope = None
@@ -164,9 +166,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
     def visitLine(self, ctx):
         retval = self.visitChildren(ctx)
         if retval is None:
-            start, stop = ctx.getSourceInterval()
-            lines = ''.join(t.text for t in ctx.parser._input.tokens[start:stop+1])
-            print(lines, file=sys.stderr)
+            print(self.getCtxText(ctx), file=sys.stderr)
             retval = [CodeStr('#FIX ME: {}'.format(line)) for line in lines.split('\n') if line]
         return retval if isinstance(retval, list) else [retval]
 
@@ -184,7 +184,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         return [CodeStr(self.endfix.sub(repl, comment))]
 
     def visitCmdStmt(self, ctx):
-        return self.visit(ctx.cmd()) if ctx.cmd() else self.visit(ctx.setup())
+        return self.visit(ctx.cmd() or ctx.setup())
 
     def visitLines(self, ctx):
         retval = sum((self.visit(line) for line in ctx.line()), [])
@@ -295,8 +295,8 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         return []
 
     def visitFuncDefStart(self, ctx):
-        params = self.visit_with_disabled_scope(ctx.parameters()) if ctx.parameters() else []
-        params += self.visit_with_disabled_scope(ctx.parameterDef()) if ctx.parameterDef() else []
+        params = self.visit_with_disabled_scope(ctx.parameters()) or []
+        params += self.visit_with_disabled_scope(ctx.parameterDef()) or []
         return self.visit(ctx.idAttr2()), params
 
     def visitParameterDef(self, ctx):
@@ -353,7 +353,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         kwargs = {}
         if len([child for child in ctx.children if child.getText() == '?']) > 1:
             kwargs['end'] = ''
-        return [make_func_code('print', *(self.visit(ctx.args()) if ctx.args() else []), **kwargs)]
+        return [make_func_code('print', *(self.visit(ctx.args()) or []), **kwargs)]
 
     def visitIfStart(self, ctx):
         return self.visit(ctx.expr())
@@ -498,7 +498,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         value = self.visit(ctx.expr())
         args = []
         for var in ctx.idAttr():
-            trailer = self.visit(var.trailer()) if var.trailer() else []
+            trailer = self.visit(var.trailer()) or []
             if len(trailer) > 0 and isinstance(trailer[-1], list):
                 identifier = self.visit(ctx.idAttr()[0].identifier())
                 arg = self.createIdAttr(identifier, trailer[:-1] + [[]])
@@ -835,7 +835,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         identifier = self.visit(ctx.identifier())
         trailer = self.visit(ctx.trailer())
         if ctx.PERIOD() and self.withid:
-            trailer = [identifier] + (trailer if trailer else [])
+            trailer = [identifier] + (trailer or [])
             identifier = self.withid
         return self.createIdAttr(identifier, trailer)
 
@@ -892,9 +892,9 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
 
     def visitAtomExpr(self, ctx):
         atom = self.visit(ctx.atom())
-        trailer = self.visit(ctx.trailer()) if ctx.trailer() else None
+        trailer = self.visit(ctx.trailer())
         if ctx.PERIOD() and self.withid:
-            trailer = [atom] + (trailer if trailer else [])
+            trailer = [atom] + (trailer or [])
             atom = self.withid
 
         if trailer and len(trailer) > 0 and not isinstance(trailer[-1], list) and isinstance(atom, CodeStr) and isinstance(ctx.parentCtx, ctx.parser.CmdContext):
@@ -916,7 +916,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
 
     def visitAddRemoveDirectory(self, ctx):
         self.imports.append('import os')
-        funcname = 'os.' + ('mkdir' if ctx.MKDIR() else 'rmdir')
+        funcname = 'os.mkdir' if ctx.MKDIR() else 'os.rmdir'
         return make_func_code(funcname, self.visit(ctx.specialExpr()))
 
     def visitSpecialExpr(self, ctx):
@@ -1002,7 +1002,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             func = func.lower()
             func = func.replace('.', '_')
             return make_func_code('{}._program_main'.format(func))
-        args = self.visit(ctx.args()) if ctx.args() else []
+        args = self.visit(ctx.args()) or []
         if func.endswith('.mpr'):
             func = func[:-4]
             args = [func] + args
@@ -1062,14 +1062,12 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         return CodeStr('vfpfunc.read_events()')
 
     def on_event(self, ctx, func_prefix):
-        if ctx.cmd():
-            func = self.visit(ctx.cmd())
+        func = self.visit(ctx.cmd())
+        if func:
             if isinstance(func, list) and len(func) == 1:
                 func = func[0]
-            func = CodeStr('lambda: ' + repr(func))
-        else:
-            func = None
-        return [CodeStr(func_prefix + ' = ' + repr(func))]
+            func = add_args_to_code('lambda: {}', (func,))
+        return [add_args_to_code('{} = {}', (CodeStr(func_prefix), func),)]
 
     def visitOnError(self, ctx):
         return self.on_event(ctx, 'vfpfunc.error_func')
@@ -1078,7 +1076,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         return self.on_event(ctx, 'vfpfunc.shutdown_func')
 
     def visitRaiseError(self, ctx):
-        expr = [self.visit(ctx.expr())] if ctx.expr() else []
+        expr = [self.visit(ctx.expr())] or []
         return make_func_code('raise Exception', *expr)
 
     def visitIdentifier(self, ctx):
@@ -1170,21 +1168,13 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         return make_func_code('vfpfunc.db.close_all')
 
     def visitWaitCmd(self, ctx):
-        message = repr(self.visit(ctx.message) if ctx.message else '')
-        to_expr = repr(self.visit(ctx.toExpr) if ctx.TO() else None)
-        if ctx.WINDOW():
-            if ctx.AT():
-                window=[self.visit(ctx.atExpr1), self.visit(ctx.atExpr2)]
-            else:
-                window = [-1, -1]
-        else:
-            window = []
-        window = repr(window)
-        nowait = repr(ctx.NOWAIT() != None)
-        noclear = repr(ctx.NOCLEAR() != None)
-        timeout = repr(self.visit(ctx.timeout)) if ctx.TIMEOUT() else -1
-        code = 'vfpfunc.wait({}, to={}, window={}, nowait={}, noclear={}, timeout={})'
-        return CodeStr(code.format(message, to_expr, window, nowait, noclear, timeout))
+        message = self.visit(ctx.message) or ''
+        to_expr = self.visit(ctx.toExpr) if ctx.TO() else None
+        window = ([self.visit(ctx.atExpr1), self.visit(ctx.atExpr2)] if ctx.AT() else [-1, -1]) if ctx.WINDOW() else []
+        nowait = ctx.NOWAIT() != None
+        noclear = ctx.NOCLEAR() != None
+        timeout = self.visit(ctx.timeout) if ctx.TIMEOUT() else -1
+        return make_func_code('vfpfunc.wait', message, to=to_expr, window=window, nowait=nowait, noclear=noclear, timeout=timeout)
 
     def visitOnKey(self, ctx):
         keys = [repr(str(self.visit(i))) for i in ctx.identifier()]
@@ -1221,10 +1211,10 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             return make_func_code('vfpfunc.db.select', self.visit(ctx.tablename))
         else:
             args = [arg for arg in self.visit(ctx.specialArgs())] if ctx.specialArgs() else ('*',)
-            from_table = self.visit(ctx.fromExpr) if ctx.fromExpr else None
-            into_table = self.visit(ctx.intoExpr) if ctx.intoExpr else None
-            where_expr = self.visit(ctx.whereExpr) if ctx.whereExpr else None
-            order_by = self.visit(ctx.orderbyid) if ctx.orderbyid else None
+            from_table = self.visit(ctx.fromExpr)
+            into_table = self.visit(ctx.intoExpr)
+            where_expr = self.visit(ctx.whereExpr)
+            order_by = self.visit(ctx.orderbyid)
             distinct = 'distinct' if ctx.DISTINCT() else None
             return make_func_code('vfpfunc.db.sqlselect', args, from_table, into_table, where_expr, order_by, distinct)
 
@@ -1240,7 +1230,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
 
     def visitUse(self, ctx):
         shared = ctx.SHARED()
-        exclusive = ctx.EXCL() or ctx.EXCLUSIVE()
+        exclusive = ctx.EXCLUSIVE()
         if shared and exclusive:
             raise Exception('cannot combine shared and exclusive')
         elif shared:
@@ -1456,8 +1446,8 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             args = [self.visit(expr) for expr in ctx.specialExpr()]
         elif setword == 'order':
             order = self.visit(ctx.specialExpr(0))
-            of_expr = self.visit(ctx.ofExpr) if ctx.ofExpr else None
-            in_expr = self.visit(ctx.inExpr) if ctx.inExpr else None
+            of_expr = self.visit(ctx.ofExpr)
+            in_expr = self.visit(ctx.inExpr)
             kwargs.update({'descending': True} if ctx.DESCENDING() else {})
             kwargs.update({'tag': True} if ctx.TAG() else {})
             args = (order, of_expr, in_expr)
@@ -1469,13 +1459,8 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
 
     def visitShellRun(self, ctx):
         if ctx.identifier():
-            pass
-        command = ''
-        for expr in ctx.specialExpr():
-            start, stop = expr.getSourceInterval()
-            tokens = ctx.parser._input.tokens[start:stop+1]
-            command += ''.join(tok.text for tok in tokens) + ' '
-        command = [t for t in command.split() if t]
+            pass #Add /N options
+        command = [self.visit(expr) for expr in ctx.specialExpr()]
         self.imports.append('import subprocess')
         return make_func_code('subprocess.call', command)
 
