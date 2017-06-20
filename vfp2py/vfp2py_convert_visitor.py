@@ -137,7 +137,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         self.scope = None
 
         if ctx.classDef():
-            self.class_list = [self.visit(classDef.classDefStart().identifier()[0]) for classDef in ctx.classDef()]
+            self.class_list = [self.visit(classDef.classDefStart())[0] for classDef in ctx.classDef()]
         if ctx.funcDef():
             self.function_list = [self.visit(funcdef.funcDefStart().idAttr2()) for funcdef in ctx.funcDef()]
 
@@ -283,14 +283,11 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
 
     def visitClassDefAddObject(self, ctx):
         name = self.visit_with_disabled_scope(ctx.identifier())
-        objtype = CodeStr(self.visit_with_disabled_scope(ctx.idAttr()[0]).title())
-        if hasattr(vfpfunc, objtype):
-            self.imports.append('from vfp2py import vfpfunc')
         keywords = [self.visit_with_disabled_scope(idAttr) for idAttr in ctx.idAttr()[1:]]
         kwargs = {key: self.visit(expr) for key, expr in zip(keywords, ctx.expr())}
-        funcname = add_args_to_code('self.{} = {}', (name, objtype))
-        retval = [make_func_code(funcname, **kwargs)]
-        return retval
+        objtype = create_string(self.visit_with_disabled_scope(ctx.idAttr()[0])).title()
+        newobj = self.func_call('createobject', objtype, **kwargs)
+        return [add_args_to_code('self.{} = {}', (name, newobj))]
 
     def visitNodefault(self, ctx):
         return []
@@ -550,7 +547,10 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
     def visitBooleanNegation(self, ctx):
         return CodeStr('not {}'.format(repr(self.visit(ctx.expr()))))
 
-    def func_call(self, funcname, args):
+    def func_call(self, funcname, *args, **kwargs):
+        if not kwargs and len(args) == 1 and isinstance(args[0], (list, tuple)):
+            args = args[0]
+        args = list(args)
         if funcname in self.function_list:
             return make_func_code(funcname, *args)
         if funcname == 'chr' and len(args) == 1:
@@ -710,8 +710,18 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             self.imports.append('import {}'.format(args[0]))
             return make_func_code('{}.{}'.format(args[0], args[1]), *args[2])
         if funcname == 'createobject':
-            if len(args) > 0 and string_type(args[0]) and args[0].lower() in self.class_list:
-                return make_func_code(args[0].lower(), *args[1:])
+            if len(args) > 0 and string_type(args[0]):
+                objtype = args[0].title()
+                args = args[1:]
+                if objtype in self.class_list:
+                    return make_func_code(objtype, *args, **kwargs)
+                elif hasattr(vfpfunc, objtype):
+                    self.imports.append('from vfp2py import vfpfunc')
+                    objtype = 'vfpfunc.{}'.format(objtype)
+                    return make_func_code(objtype, *args, **kwargs)
+                else:
+                    self.imports.append('from vfp2py import vfpfunc')
+                    return make_func_code('vfpfunc.create_object', *([objtype] + args), **kwargs)
             elif len(args) > 0 and string_type(args[0]) and args[0].lower() == 'pythontuple':
                 return tuple(args[1:])
             elif len(args) > 0 and string_type(args[0]) and args[0].lower() == 'pythonlist':
@@ -721,7 +731,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             elif len(args) > 0 and string_type(args[0]) and args[0].lower() == 'pythondictionary':
                 return {}
             else:
-                return make_func_code('vfpfunc.create_object', *args)
+                return make_func_code('vfpfunc.create_object', *args, **kwargs)
         if funcname in ('fcreate', 'fopen'):
             opentypes = ('w', 'r') if funcname == 'fcreate' else ('r', 'w', 'r+')
             if len(args) > 1 and args[1] <= len(opentypes):

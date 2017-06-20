@@ -1,6 +1,6 @@
 Functions.
 @begin=vfp@&&lines
-LOCAL STRING_VAL, FLOAT_VAL, INT_VAL, BOOL_VAL, NULL_VAL, NULLDATE_VAL, DATE_VAL, DATETIME_VAL
+LOCAL STRING_VAL, FLOAT_VAL, INT_VAL, BOOL_VAL, NULL_VAL, NULLDATE_VAL, DATE_VAL, DATETIME_VAL, OBJ_VAL
 STRING_VAL = 'str'
 float_val = 3.0
 int_val = 3
@@ -18,11 +18,13 @@ DATETIME_VAL = {^2017-5-6 5P}
 ?2 ** 3 ** 4
 ?2 ** (3 ** 4)
 ?(((2)))
+OBJ_VAL = CREATEOBJECT('TEST')
+OBJ_VAL = CREATEOBJECT('FORM')
 RELEASE STRING_VAL, INT_VAL, BOOL_VAL, NULL_VAL
 @end=vfp@
 
 @begin=python@
-string_val = float_val = int_val = bool_val = null_val = nulldate_val = date_val = datetime_val = False #LOCAL Declaration
+string_val = float_val = int_val = bool_val = null_val = nulldate_val = date_val = datetime_val = obj_val = False #LOCAL Declaration
 string_val = 'str'
 float_val = 3.0
 int_val = 3
@@ -40,6 +42,8 @@ print('chr(65) = A, just letting you know.\r\n')
 print((2 ** 3) ** 4)
 print(2 ** 3 ** 4)
 print(2)
+obj_val = vfpfunc.create_object('Test')
+obj_val = vfpfunc.Form()
 del string_val, int_val, bool_val, null_val
 @end=python@
 
@@ -86,17 +90,39 @@ def _program_main():
     vfpfunc.variable.popscope()
 @end=python@
 
-@begin=vfp@&&classDef
+@begin=vfp@
+DEFINE CLASS SUBOBJ AS CUSTOM
+   X = 3
+   FUNCTION INIT(X)
+      THIS.X = X
+   ENDFUNC
+ENDDEFINE
+
 DEFINE CLASS TESTCLASS AS COMMANDBUTTON
+   ADD OBJECT TEST1 as custom
+   ADD OBJECT TEST2 as subobj WITH X = 4
+   ADD OBJECT TEST3 as unknownobj WITH X = '4'
    FUNCTION INIT(X)
    ENDFUNC
 ENDDEFINE
 @end=vfp@
 
 @begin=python@
+from __future__ import division, print_function
+
+from vfp2py import vfpfunc
+def _program_main():
+    pass
+class Subobj(vfpfunc.Custom):
+    def init(self, x=False):
+        self.x = x
+        self.x = 3
 class Testclass(vfpfunc.Commandbutton):
     def init(self, x=False):
         pass
+        self.test1 = vfpfunc.Custom()
+        self.test2 = Subobj(x=4)
+        self.test3 = vfpfunc.create_object('Unknownobj', x='4')
 @end=python@
 
 @begin=vfp@&&lines
