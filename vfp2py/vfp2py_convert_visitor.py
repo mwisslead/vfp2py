@@ -106,7 +106,6 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
                 self.scope = self._saved_scope
             else:
                 self.new_scope()
-            self.scope
         else:
             if self.scope:
                 self._saved_scope = self.scope
@@ -122,6 +121,12 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
 
     def has_scope(self):
         return self.scope is not None
+
+    def visit_with_disabled_scope(self, ctx):
+        self.enable_scope(False)
+        retval = self.visit(ctx)
+        self.enable_scope(True)
+        return retval
 
     def getCtxText(self, ctx):
         return ''.join(t.text for t in ctx.parser._input.tokens[start:stop+1])
@@ -262,9 +267,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
 
     def visitClassDefAssign(self, ctx):
         #FIXME - come up with a less hacky way to make this work
-        self.enable_scope(False)
-        args1 = self.visit(ctx.assign())
-        self.enable_scope(True)
+        args1 = self.visit_with_disabled_scope(ctx.assign())
         used_scope = self.used_scope
         args2 = self.visit(ctx.assign())
         args = []
@@ -278,13 +281,11 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         return [CodeStr('self.' + arg) for arg in args]
 
     def visitClassDefAddObject(self, ctx):
-        self.enable_scope(False)
-        name = self.visit(ctx.identifier())
-        objtype = CodeStr(self.visit(ctx.idAttr()[0]).title())
+        name = self.visit_with_disabled_scope(ctx.identifier())
+        objtype = CodeStr(self.visit_with_disabled_scope(ctx.idAttr()[0]).title())
         if hasattr(vfpfunc, objtype):
             self.imports.append('from vfp2py import vfpfunc')
-        keywords = [self.visit(idAttr) for idAttr in ctx.idAttr()[1:]]
-        self.enable_scope(True)
+        keywords = [self.visit_with_disabled_scope(idAttr) for idAttr in ctx.idAttr()[1:]]
         kwargs = {key: self.visit(expr) for key, expr in zip(keywords, ctx.expr())}
         funcname = add_args_to_code('self.{} = {}', (name, objtype))
         retval = [make_func_code(funcname, **kwargs)]
@@ -294,10 +295,8 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         return []
 
     def visitFuncDefStart(self, ctx):
-        self.enable_scope(False)
-        params = self.visit(ctx.parameters()) if ctx.parameters() else []
-        params += self.visit(ctx.parameterDef()) if ctx.parameterDef() else []
-        self.enable_scope(True)
+        params = self.visit_with_disabled_scope(ctx.parameters()) if ctx.parameters() else []
+        params += self.visit_with_disabled_scope(ctx.parameterDef()) if ctx.parameterDef() else []
         return self.visit(ctx.idAttr2()), params
 
     def visitParameterDef(self, ctx):
@@ -400,9 +399,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         return self.visit(ctx.lines())
 
     def visitForStart(self, ctx):
-        self.enable_scope(False)
-        loopvar = self.visit(ctx.idAttr())
-        self.enable_scope(True)
+        loopvar = self.visit_with_disabled_scope(ctx.idAttr())
         self.scope[loopvar] = False
         if ctx.EACH():
             iterator = self.visit(ctx.expr(0))
@@ -488,9 +485,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             self.used_scope = True
             return make_func_code(func, *([str(name)] + value), **kwargs)
         else:
-            self.enable_scope(False)
-            names = self.visit(ctx.parameters())
-            self.enable_scope(True)
+            names = self.visit_with_disabled_scope(ctx.parameters())
             if ctx.LOCAL():
                 for name in names:
                     self.scope[name] = False
@@ -833,9 +828,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
 
     def visitIdentTrailer(self, ctx):
         trailer = self.visit(ctx.trailer()) or []
-        self.enable_scope(False)
-        retval = [self.visit(ctx.identifier())]
-        self.enable_scope(True)
+        retval = [self.visit_with_disabled_scope(ctx.identifier())]
         return retval + trailer
 
     def visitIdAttr(self, ctx):
@@ -1004,9 +997,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         return add_args_to_code('{}', [self.visit(ctx.expr())])
 
     def visitFuncDo(self, ctx):
-        self.enable_scope(False)
-        func = self.visit(ctx.specialExpr()[0])
-        self.enable_scope(True)
+        func = self.visit_with_disabled_scope(ctx.specialExpr()[0])
         if ctx.FORM():
             func = func.lower()
             func = func.replace('.', '_')
@@ -1042,9 +1033,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         return add_args_to_code('{} #{}', [make_func_code(func, *args), CodeStr('NOTE: function call here may not work')])
 
     def visitDoForm(self, ctx):
-        self.enable_scope(False)
-        form = self.visit(ctx.specialExpr())
-        self.enable_scope(True)
+        form = self.visit_with_disabled_scope(ctx.specialExpr())
 
     def visitMethodCall(self, ctx):
         return self.visit(ctx.idAttr()) + '.' + self.visit(ctx.identifier()) + '()'
@@ -1064,11 +1053,9 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             return CodeStr('vfpfunc.clear()')
 
     def visitDllDeclare(self, ctx):
-        self.enable_scope(False)
-        dll_name = self.visit(ctx.specialExpr())
-        funcname = str(self.visit(ctx.identifier()[0]))
-        alias = str(self.visit(ctx.alias)) if ctx.alias else None
-        self.enable_scope(True)
+        dll_name = self.visit_with_disabled_scope(ctx.specialExpr())
+        funcname = str(self.visit_with_disabled_scope(ctx.identifier()[0]))
+        alias = str(self.visit_with_disabled_scope(ctx.alias)) if ctx.alias else None
         return make_func_code('vfpfunc.function.dll_declare', dll_name, funcname, alias)
 
     def visitReadEvent(self, ctx):
@@ -1136,9 +1123,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         if ctx.ALL():
             args = []
         else:
-            self.enable_scope(False)
-            args = self.visit(ctx.args())
-            self.enable_scope(True)
+            args = self.visit_with_disabled_scope(ctx.args())
             final_args = []
             for arg in args:
                 if arg in self.scope:
@@ -1210,9 +1195,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             func = 'vfpfunc.deactivate_menu'
         else:
             func = 'vfpfunc.deactivate_popup'
-        self.enable_scope(False)
-        args = self.visit(ctx.parameters()) if not ctx.ALL() else []
-        self.enable_scope(True)
+        args = self.visit_with_disabled_scope(ctx.parameters()) if not ctx.ALL() else []
         return make_func_code(func, *[str(arg) for arg in args])
 
     def visitCreateTable(self, ctx):
@@ -1321,9 +1304,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
     def visitReplace(self, ctx):
         value = self.visit(ctx.expr(0))
         scope = self.visit(ctx.scopeClause())
-        self.enable_scope(False)
-        field = self.visit(ctx.specialExpr())
-        self.enable_scope(True)
+        field = self.visit_with_disabled_scope(ctx.specialExpr())
         return make_func_code('vfpfunc.db.replace', field, value, scope)
 
     def visitSkipRecord(self, ctx):
@@ -1451,9 +1432,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             elif ctx.DEFAULT():
                 args += ['default']
         elif setword == 'date':
-            self.enable_scope(False)
-            args = (str(self.visit(ctx.identifier())),)
-            self.enable_scope(True)
+            args = (str(self.visit_with_disabled_scope(ctx.identifier())),)
         elif setword == 'refresh':
             args = [self.visit(expr) for expr in ctx.expr()]
             if len(args) < 2:
