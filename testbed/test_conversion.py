@@ -30,7 +30,7 @@ OBJ_VAL = CREATEOBJECT(\'FORM\')
 RELEASE STRING_VAL, INT_VAL, BOOL_VAL, NULL_VAL
 '''.strip()
     output_str = '''
-string_val = float_val = int_val = bool_val = null_val = nulldate_val = date_val = datetime_val = obj_val = False #LOCAL Declaration
+string_val = float_val = int_val = bool_val = null_val = nulldate_val = date_val = datetime_val = obj_val = False  # LOCAL Declaration
 string_val = \'str\'
 float_val = 3.0
 int_val = 3
@@ -88,9 +88,11 @@ WAIT WINDOW space(3) + \'please wait\' + CHR(32) NOWAIT TIMEOUT 1.3
 from __future__ import division, print_function
 
 from vfp2py import vfpfunc
+
+
 def _program_main():
     vfpfunc.variable.pushscope()
-    #comment with spaces
+    # comment with spaces
     ###comment###
     vfpfunc.variable[\'x\'] = \'\\n\'
     vfpfunc.variable[\'x\'] = \'\\n\'
@@ -132,13 +134,21 @@ ENDDEFINE
 from __future__ import division, print_function
 
 from vfp2py import vfpfunc
+
+
 def _program_main():
     pass
+
+
 class Subobj(vfpfunc.Custom):
+
     def init(self, x=False):
         self.x = x
         self.x = 3
+
+
 class Testclass(vfpfunc.Commandbutton):
+
     def init(self, x=False):
         pass
         self.test1 = vfpfunc.Custom()
@@ -163,9 +173,9 @@ DO ALLTRIM(A)
 '''.strip()
     output_str = '''
 a._program_main()
-__import__(\'a+b\')._program_main() #NOTE: function call here may not work
-__import__(a + b)._program_main() #NOTE: function call here may not work
-__import__(a.strip())._program_main() #NOTE: function call here may not work
+__import__(\'a+b\')._program_main()  # NOTE: function call here may not work
+__import__(a + b)._program_main()  # NOTE: function call here may not work
+__import__(a.strip())._program_main()  # NOTE: function call here may not work
 '''.strip()
     test_output_str = vfp2py.vfp2py.prg2py(input_str, parser_start='lines', prepend_data='').strip()
     try:
@@ -185,7 +195,7 @@ rmdir (test+test)
 rd alltrim(test)
 '''.strip()
     output_str = '''
-test = False #LOCAL Declaration
+test = False  # LOCAL Declaration
 os.mkdir(test - test)
 os.mkdir(\'test+test\')
 os.rmdir(test + test)
@@ -210,12 +220,40 @@ RELEASE SEARCH_FOR
 '''.strip()
     output_str = '''
 vfpfunc.db.continue_locate()
-search_for = False #LOCAL Declaration
+search_for = False  # LOCAL Declaration
 search_for = \'PAUL\'
 vfpfunc.db.seek(None, search_for.strip())
 del search_for
 '''.strip()
     test_output_str = vfp2py.vfp2py.prg2py(input_str, parser_start='lines', prepend_data='').strip()
+    try:
+        assert test_output_str == output_str
+    except AssertionError:
+        diff = difflib.unified_diff((test_output_str + '\n').splitlines(1), (output_str + '\n').splitlines(1))
+        print(''.join(diff))
+        raise
+
+
+def Test6():
+    input_str = '''
+MKDIR TEST
+?DATE()
+?PI()
+'''.strip()
+    output_str = '''
+from __future__ import division, print_function
+
+import datetime as dt
+import math
+import os
+
+
+def _program_main():
+    os.mkdir(\'test\')
+    print(dt.datetime.now().date())
+    print(math.pi)
+'''.strip()
+    test_output_str = vfp2py.vfp2py.prg2py(input_str).strip()
     try:
         assert test_output_str == output_str
     except AssertionError:

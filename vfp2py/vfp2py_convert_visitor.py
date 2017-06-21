@@ -14,11 +14,11 @@ from collections import OrderedDict
 import random
 import string
 
+import isort
+
 from VisualFoxpro9Visitor import VisualFoxpro9Visitor
 
 import vfpfunc
-
-STDLIBS = ['import sys', 'import os', 'import math', 'import datetime as dt', 'import subprocess', 'import base64']
 
 class RedirectedBuiltin(object):
     def __init__(self, name):
@@ -42,12 +42,6 @@ def isinstance(obj, istype):
         istype = (istype,)
     istype = tuple(x.func if __builtin__.isinstance(x, RedirectedBuiltin) else x for x in istype)
     return __builtin__.isinstance(obj, istype)
-
-def import_key(module):
-    if module in STDLIBS:
-        return STDLIBS.index(module)
-    else:
-        return len(STDLIBS)
 
 def random_variable(length=10):
     return '_' + ''.join(random.choice(string.ascii_lowercase + string.digits) for _ in range(length))
@@ -141,7 +135,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         if ctx.funcDef():
             self.function_list = [self.visit(funcdef.funcDefStart())[0] for funcdef in ctx.funcDef()]
 
-        self.imports = []
+        self.imports = ['from __future__ import division, print_function']
         defs = []
 
         for child in ctx.children:
@@ -152,15 +146,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             else:
                 defs += self.visit(child)
 
-        self.imports = sorted(set(self.imports), key=import_key)
-        imports = []
-        for n, module in enumerate(self.imports):
-            if n != 0 and module not in STDLIBS:
-                imports.append('')
-            imports.append(module)
-
-        imports.insert(0, '')
-        imports.insert(0, 'from __future__ import division, print_function')
+        imports = isort.SortImports(file_contents='\n'.join(set(self.imports))).output.splitlines()
         return  [CodeStr(imp) for imp in imports] + defs
 
     def visitLine(self, ctx):
