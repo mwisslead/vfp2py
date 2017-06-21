@@ -1,7 +1,9 @@
 all: conversion.vfp2py conversionLexer.py conversion.py conversionVisitor.py test_conversion.py conversionLexer.g4 conversion.g4
 
 test_conversion.py: __main__.py conversion.vfp2py
-	python __main__.py conversion.vfp2py > test_conversion.py
+	python __main__.py conversion.vfp2py > $@
+
+.DELETE_ON_ERROR:
 
 %Lexer.py: %Lexer.g4
 	${Antlr} -Dlanguage=Python${PyVer} $^
