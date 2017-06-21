@@ -152,7 +152,8 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
     def visitLine(self, ctx):
         retval = self.visitChildren(ctx)
         if retval is None:
-            print(self.getCtxText(ctx), file=sys.stderr)
+            lines = self.getCtxText(ctx)
+            print(lines)
             retval = [CodeStr('#FIX ME: {}'.format(line)) for line in lines.split('\n') if line]
         return retval if isinstance(retval, list) else [retval]
 

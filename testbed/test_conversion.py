@@ -261,3 +261,26 @@ def _program_main():
         print(''.join(diff))
         raise
 
+
+def Test7():
+    input_str = '''
+PUSH KEY CLEAR
+PUSH KEY
+POP KEY ALL
+POP KEY
+'''.strip()
+    output_str = '''
+ # FIX ME: PUSH KEY CLEAR
+# FIX ME: PUSH KEY
+# FIX ME: POP KEY ALL
+# FIX ME: POP KEY
+pass
+'''.strip()
+    test_output_str = vfp2py.vfp2py.prg2py(input_str, parser_start='lines', prepend_data='').strip()
+    try:
+        assert test_output_str == output_str
+    except AssertionError:
+        diff = difflib.unified_diff((test_output_str + '\n').splitlines(1), (output_str + '\n').splitlines(1))
+        print(''.join(diff))
+        raise
+

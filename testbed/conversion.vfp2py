@@ -201,6 +201,21 @@ def _program_main():
     print(math.pi)
 @end=python@
 
+@begin=vfp@&&lines
+PUSH KEY CLEAR
+PUSH KEY
+POP KEY ALL
+POP KEY
+@end=vfp@
+
+@begin=python@
+ # FIX ME: PUSH KEY CLEAR
+# FIX ME: PUSH KEY
+# FIX ME: POP KEY ALL
+# FIX ME: POP KEY
+pass
+@end=python@
+
 ON ERROR
 ON ERROR DO test
 SET TYPEAHEAD TO 0
