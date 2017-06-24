@@ -1,6 +1,6 @@
 import dbf
 
-class _Database_Context(object):
+class DatabaseContext(object):
     def __init__(self):
         self.current_table = -1
         self.open_tables = [{'name': None}]*10

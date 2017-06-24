@@ -11,7 +11,7 @@ import traceback
 import inspect
 import re
 
-from vfpdatabase import _Database_Context
+from vfpdatabase import DatabaseContext
 
 SET_PROPS = {
     'bell': ['ON', ''],
@@ -578,7 +578,7 @@ def array(arrayname, dim1, dim2=1, public=False):
     else:
         variable.public_scopes[-1][arrayname] = arr
 
-db = _Database_Context()
+db = DatabaseContext()
 variable = _Variable(db)
 function = _Function()
 error_func = None
