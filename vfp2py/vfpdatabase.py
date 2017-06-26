@@ -13,7 +13,8 @@ class DatabaseWorkspace(object):
             self.name = os.path.basename(os.path.splitext(tablename)[0]).lower()
         self.table = dbf.Table(tablename)
         self.table.open()
-        self.recno = 1 if len(self.table) else 0
+        if len(self.table) > 0:
+            self.table.goto(0)
 
 
 class DatabaseContext(object):
@@ -65,7 +66,7 @@ class DatabaseContext(object):
     def append(self, tablename, editwindow):
         table_info = self._get_table_info(tablename)
         table_info.table.append()
-        table_info.recno = len(table)
+        self.goto(tablename, -1)
 
     def append_from(self, tablename, from_source, from_type='dbf'):
         table = self._get_table_info(tablename).table
@@ -85,10 +86,7 @@ class DatabaseContext(object):
         else:
             field = field[0]
             table = None
-        table_info = self._get_table_info(table)
-        table = table_info.table
-        recno = table_info.recno
-        record = table[recno-1]
+        record = self._get_table_info(table).current_record
         dbf.write(record, **{field: value})
 
     def insert(self, tablename, values):
@@ -106,41 +104,39 @@ class DatabaseContext(object):
                 values = {field: scope[field] for field in table.field_names if field in scope}
                 values.update({field: local[field] for field in table.field_names if field in local})
             table.append(values)
-        table_info.recno = len(table)
+        self.goto(tablename, -1)
 
     def skip(self, tablename, skipnum):
-        table_info = self._get_table_info(tablename)
-        table_info.recno += int(skipnum)
+        try:
+            self._get_table_info(tablename).table.skip(skipnum)
+        except dbf.Eof:
+            pass
 
     def goto(self, tablename, num):
-        table_info = self._get_table_info(tablename)
-        table_info.recno = num + 1 if num != -1 else len(table_info.table) - 1
+        table = self._get_table_info(tablename).table
+        if num == -1:
+            table.bottom()
+        else:
+            num = num - 1
+            table.goto(num)
 
     def delete_record(self, tablename, scope, num, for_cond=None, while_cond=None, recall=False):
         save_current_table = self.current_table
+        self.select(tablename)
         if not for_cond:
             for_cond = lambda: True
         if not while_cond:
             while_cond = lambda: True
-        self.select(tablename)
-        table_info = self._get_table_info()
-        table = table_info.table
-        recno = table_info.recno
-        reccount = len(table)
+        table = self._get_table_info().table
         if scope.lower() == 'rest':
-            records = table[recno-1:reccount]
+            condition = lambda table: not table.eof
         else:
-            records = table[recno-1:recno-1+num]
-        for record in records:
-            if not while_cond():
-                break
+            recno = self.recno()
+            condition = lambda table: not table.eof and dbf.recno(table.current_record) - recno < num
+        while condition(table) and while_cond():
             if for_cond():
-                if recall:
-                    dbf.delete(record)
-                else:
-                    dbf.undelete(record)
-            table_info.recno += 1
-        table_info.recno = recno
+                (dbf.undelete if recall else dbf.delete)(table.current_record)
+            self.skip(None, 1)
         self.current_table = save_current_table
 
     def pack(self, pack, tablename, workarea):
@@ -163,7 +159,7 @@ class DatabaseContext(object):
 
     def recno(self):
         try:
-            return self.open_tables[self.current_table].recno
+            return dbf.recno(self.open_tables[self.current_table].table.current_record)
         except:
             return 0
 
@@ -177,21 +173,18 @@ class DatabaseContext(object):
         return self._get_table_info(workarea).table.record_length
 
     def bof(self, workarea=None):
-        table_info = self._get_table_info(workarea)
-        return table_info.recno == 0
+        return self._get_table_info(workarea).table.bof
 
     def eof(self, workarea=None):
-        table_info = self._get_table_info(workarea)
-        return table_info.recno == len(table_info.table)
+        return self._get_table_info(workarea).table.eof
 
     def deleted(self, workarea=None):
-        table_info = self._get_table_info(workarea)
-        return dbf.is_deleted(table_info.table[table_info.recno])
+        return dbf.is_deleted(self._get_table_info(workarea).table.current_record)
 
     def browse(self):
         table_info = self._get_table_info()
         table = table_info.table
         print('Tablename:', table_info.name)
         print(table.field_names)
-        for i, record in enumerate(table):
-            print('->' if table_info.recno == i+1 else '  ', record[:])
+        for record in table:
+            print('->' if record is table.current_record else '  ', record[:])
