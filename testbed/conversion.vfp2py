@@ -232,6 +232,24 @@ assert not x
 assert x == True, y + ' ASSERT'
 @end=python@
 
+@begin=vfp@&&lines
+SET COMPATIBLE OFF
+SET COMPATIBLE DB4
+SET COMPATIBLE FOXPLUS
+SET COMPATIBLE ON
+SET COMPATIBLE FOXPLUS PROMPT
+SET COMPATIBLE DB4 NOPROMPT
+@end=vfp@
+
+@begin=python@
+vfpfunc.set(u'compatible', 'OFF', set_value=True)
+vfpfunc.set(u'compatible', 'ON', set_value=True)
+vfpfunc.set(u'compatible', 'OFF', set_value=True)
+vfpfunc.set(u'compatible', 'ON', set_value=True)
+vfpfunc.set(u'compatible', 'OFF', 'PROMPT', set_value=True)
+vfpfunc.set(u'compatible', 'ON', 'NOPROMPT', set_value=True)
+@end=python@
+
 ON ERROR
 ON ERROR DO test
 SET TYPEAHEAD TO 0

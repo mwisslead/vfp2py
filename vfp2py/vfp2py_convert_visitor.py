@@ -1413,6 +1413,10 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
                     kwargs.update({'rollover': 67})
             else:
                 args = ('ON' if ctx.ON() else 'OFF',)
+        elif setword == 'compatible':
+            args = ('ON' if ctx.ON() or ctx.DB4() else 'OFF',)
+            if ctx.PROMPT() or ctx.NOPROMPT():
+                args = (args[0], 'PROMPT' if ctx.PROMPT() else 'NOPROMPT')
         elif setword == 'sysmenu':
             args = [x.symbol.text.lower() for x in (ctx.ON(), ctx.OFF(), ctx.TO(), ctx.SAVE(), ctx.NOSAVE()) if x]
             if ctx.expr():

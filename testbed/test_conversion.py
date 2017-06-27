@@ -308,3 +308,29 @@ assert x == True, y + \' ASSERT\'
         print(''.join(diff))
         raise
 
+
+def Test9():
+    input_str = '''
+SET COMPATIBLE OFF
+SET COMPATIBLE DB4
+SET COMPATIBLE FOXPLUS
+SET COMPATIBLE ON
+SET COMPATIBLE FOXPLUS PROMPT
+SET COMPATIBLE DB4 NOPROMPT
+'''.strip()
+    output_str = '''
+vfpfunc.set(u\'compatible\', \'OFF\', set_value=True)
+vfpfunc.set(u\'compatible\', \'ON\', set_value=True)
+vfpfunc.set(u\'compatible\', \'OFF\', set_value=True)
+vfpfunc.set(u\'compatible\', \'ON\', set_value=True)
+vfpfunc.set(u\'compatible\', \'OFF\', \'PROMPT\', set_value=True)
+vfpfunc.set(u\'compatible\', \'ON\', \'NOPROMPT\', set_value=True)
+'''.strip()
+    test_output_str = vfp2py.vfp2py.prg2py(input_str, parser_start='lines', prepend_data='').strip()
+    try:
+        assert test_output_str == output_str
+    except AssertionError:
+        diff = difflib.unified_diff((test_output_str + '\n').splitlines(1), (output_str + '\n').splitlines(1))
+        print(''.join(diff))
+        raise
+
