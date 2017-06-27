@@ -1466,3 +1466,9 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         if not ctx.expr():
             return [CodeStr('return')]
         return [add_args_to_code('return {}', [self.visit(ctx.expr())])]
+
+    def visitAssert(self, ctx):
+        if ctx.expr(1):
+            return add_args_to_code('assert {}, {}', (self.visit(ctx.expr(0)), self.visit(ctx.expr(1))))
+        else:
+            return add_args_to_code('assert {}', (self.visit(ctx.expr(0)),))

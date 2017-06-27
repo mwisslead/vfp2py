@@ -216,6 +216,22 @@ POP KEY
 pass
 @end=python@
 
+@begin=vfp@&&lines
+LOCAL X, Y
+X = .F.
+Y = 'failed'
+ASSERT NOT X
+ASSERT X = .T. MESSAGE Y + ' ASSERT'
+@end=vfp@
+
+@begin=python@
+x = y = False  # LOCAL Declaration
+x = False
+y = 'failed'
+assert not x
+assert x == True, y + ' ASSERT'
+@end=python@
+
 ON ERROR
 ON ERROR DO test
 SET TYPEAHEAD TO 0
