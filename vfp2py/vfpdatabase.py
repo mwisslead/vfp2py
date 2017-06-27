@@ -57,7 +57,7 @@ class DatabaseContext(object):
         if tablename is None:
             if workarea is 0:
                 return
-            self.open_tables[self.get_workarea(workarea)] = None
+            self.open_tables[self.get_workarea(workarea) - 1] = None
             return
         if workarea == 0:
             workarea = self.open_tables.index(None)
