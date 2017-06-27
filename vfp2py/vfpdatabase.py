@@ -7,36 +7,43 @@ import dbf
 
 class DatabaseWorkspace(object):
     def __init__(self, tablename, alias=None):
-        if alias:
-            self.name = alias
-        else:
-            self.name = os.path.basename(os.path.splitext(tablename)[0]).lower()
+        self.name = (alias or '').lower()
         self.table = dbf.Table(tablename)
         self.table.open()
         if len(self.table) > 0:
             self.table.goto(0)
 
+    def _is_alias(self, alias):
+        alias = alias.lower()
+        filename = self.table.filename.lower()
+        possible_aliases = (
+            self.name,
+            filename,
+            os.path.splitext(filename)[0],
+            os.path.basename(filename),
+            os.path.basename(os.path.splitext(filename)[0]),
+        )
+        return alias in possible_aliases
 
 class DatabaseContext(object):
     def __init__(self):
-        self.open_tables = [None]*10
+        self.close_tables(None)
         self.current_table = 0
 
-    def _table_index(self, tablename=None):
+    def get_workarea(self, tablename=None):
         if not tablename:
             ind = self.current_table
         elif isinstance(tablename, (int, float)):
             ind = tablename
         else:
-            tablenames = [t.name if t else None for t in self.open_tables]
-            if tablename in tablenames:
-                ind = tablenames.index(tablename)
-            else:
+            try:
+                ind = next(idx for idx, open_table in enumerate(self.open_tables) if open_table and open_table._is_alias(tablename))
+            except StopIteration:
                 raise Exception('Table is not currently open')
         return ind
 
     def _get_table_info(self, tablename=None):
-        return self.open_tables[self._table_index(tablename)]
+        return self.open_tables[self.get_workarea(tablename)]
 
     def create_table(self, tablename, setup_string, free):
         if free == 'free':
@@ -44,13 +51,13 @@ class DatabaseContext(object):
             self.use(tablename, 0, 'shared')
 
     def select(self, tablename):
-        self.current_table = self._table_index(tablename)
+        self.current_table = self.get_workarea(tablename)
 
     def use(self, tablename, workarea, opentype):
         if tablename is None:
             if workarea is 0:
                 return
-            self.open_tables[self._table_index(workarea)] = None
+            self.open_tables[self.get_workarea(workarea)] = None
             return
         if workarea == 0:
             workarea = self.open_tables.index(None)
@@ -58,7 +65,7 @@ class DatabaseContext(object):
 
     def used(self, tablename):
         try:
-            self._table_index(tablename)
+            self.get_workarea(tablename)
             return True
         except:
             return False
