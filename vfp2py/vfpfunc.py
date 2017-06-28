@@ -16,6 +16,7 @@ from vfpdatabase import DatabaseContext
 SET_PROPS = {
     'bell': ['ON', ''],
     'century': ['OFF', 19, 67, 2029],
+    'compatible': ['OFF', 'PROMPT'],
     'cursor': ['ON'],
     'deleted': ['OFF'],
     'exact': ['OFF'],
@@ -552,6 +553,13 @@ def set(setword, *args, **kwargs):
             settings[1] = kwargs['century']
         if 'rollover' in kwargs:
             settings[2] = kwargs['rollover']
+    elif setword == 'compatible':
+        if args[0].lower() not in ('on', 'off'):
+            raise ValueError('Bad argument: {}'.format(args[0]))
+        settings[0] = args[0].upper()
+        if len(args) > 1:
+            if args[1].lower() not in ('prompt', 'noprompt'):
+                settings[1] = args[1].upper()
     elif setword == 'notify':
         if 'cursor' in kwargs:
             settings[1] = kwargs['cursor']
