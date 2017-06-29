@@ -517,23 +517,6 @@ def version(ver_type=4):
 def wait(msg, to=None, window=[-1, -1], nowait=False, noclear=False, timeout=-1):
     pass
 
-def select(tablename=None):
-    if tablename is None:
-        tablename = int(set('compatible') == 'on')
-    if tablename == 0:
-        return db.current_table + 1
-    elif tablename == 1:
-        try:
-            return next(i+1 for i, table in enumerate(db.open_tables) if table['name'] is None)
-        except:
-            return 0
-    else:
-        try:
-            db.select(tablename)
-        except:
-            pass
-        return db.current_table + 1
-
 def set(setword, *args, **kwargs):
     setword = setword.lower()
     settings = SET_PROPS[setword]

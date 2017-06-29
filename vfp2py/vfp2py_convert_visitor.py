@@ -766,10 +766,13 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             return operation[0](*operation[1])
         if funcname == 'set' and len(args) > 0 and string_type(args[0]):
             args[0] = args[0].lower()
+        if funcname == 'select' and not args:
+            args = (add_args_to_code('{} if {} else {}', (0, CodeStr('vfpfunc.set(\'compatible\') == \'OFF\''), None)),)
         funcname = {
             'sys': 'vfp_sys',
             'stuffc': 'stuff',
             'str': 'num_to_str',
+            'select': 'select_function'
         }.get(funcname, funcname)
         if funcname in dir(vfpfunc):
             self.imports.append('from vfp2py import vfpfunc')
