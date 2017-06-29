@@ -42,6 +42,24 @@ class DatabaseContext(object):
                 raise Exception('Table is not currently open')
         return ind
 
+    def select_function(self, tablename):
+        try:
+            if isinstance(tablename, float):
+                tablename = int(tablename)
+            if isinstance(tablename, int):
+                if tablename == 0:
+                    return self.current_table + 1
+                elif tablename == 1:
+                    return next(len(self.open_tables) - i for i, table in enumerate(reversed(self.open_tables)) if table is None)
+                else:
+                    return tablename if self.open_tables[tablename - 1] else 0
+            if not tablename:
+                return next(i+1 for i, table in enumerate(self.open_tables) if table is None)
+            else:
+                return self.get_workspace(tablename) + 1
+        except:
+            return 0
+
     def _get_table_info(self, tablename=None):
         return self.open_tables[self.get_workarea(tablename)]
 
@@ -162,7 +180,7 @@ class DatabaseContext(object):
         pass
 
     def close_tables(self, all_flag):
-        self.open_tables = [None] * 10
+        self.open_tables = [None] * 32767
 
     def recno(self):
         try:
