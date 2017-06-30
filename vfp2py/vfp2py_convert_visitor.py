@@ -663,13 +663,15 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
                 return add_args_to_code('{}[{}]', args[:2])
             args[2] += args[1]
             return add_args_to_code('{}[{}:{}]', args)
-        if funcname in ('ceiling', 'exp', 'log', 'log10', 'sin', 'cos', 'tan', 'asin', 'acos', 'atan', 'atan2', 'pi', 'sqrt'):
+        if funcname in ('ceiling', 'exp', 'log', 'log10', 'sin', 'cos', 'tan', 'asin', 'acos', 'atan', 'atan2', 'pi', 'sqrt', 'dtor', 'rtod'):
             self.imports.append('import math')
             if funcname == 'pi':
                 return CodeStr('math.pi')
             funcname = {
                 'ceiling': 'ceil',
-                'atn2': 'atan2'
+                'atn2': 'atan2',
+                'rtod': 'degrees',
+                'dtor': 'radians',
             }.get(funcname, funcname)
             funcname = 'math.' + funcname
             return make_func_code(funcname, *args)
