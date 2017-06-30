@@ -583,6 +583,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             elif funcname == 'time':
                 return make_func_code('dt.datetime.now().time().strftime', '%H:%M:%S')
         if funcname in ('year', 'month', 'day', 'hour', 'minute', 'sec', 'dow', 'cdow', 'cmonth'):
+            self.imports.append('import datetime as dt')
             funcname = {
                 'sec': 'second',
                 'dow': 'weekday()',
