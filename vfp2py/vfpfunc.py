@@ -8,7 +8,6 @@ import types
 import ctypes
 import ctypes.util
 import traceback
-import inspect
 import re
 
 from vfpdatabase import DatabaseContext
