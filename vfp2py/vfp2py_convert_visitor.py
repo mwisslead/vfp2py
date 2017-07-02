@@ -1267,10 +1267,12 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
 
     def visitAppendFrom(self, ctx):
         self.imports.append('from vfp2py import vfpfunc')
-        sourcename = self.visit(ctx.specialExpr())
+        sourcename = self.visit(ctx.specialExpr(0))
         kwargs = {}
         if ctx.FOR():
             kwargs['for_cond'] = add_args_to_code('lambda: {}', [self.visit(ctx.expr())])
+        if ctx.typeExpr:
+            kwargs['filetype'] = self.visit(ctx.typeExpr)
         return make_func_code('vfpfunc.db.append_from', None, sourcename, **kwargs)
 
     def visitAppend(self, ctx):

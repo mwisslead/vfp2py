@@ -334,3 +334,23 @@ vfpfunc.set(u\'compatible\', \'ON\', \'NOPROMPT\', set_value=True)
         print(''.join(diff))
         raise
 
+
+def Test10():
+    input_str = '''
+APPEND FROM TABLE_NAME
+APPEND FROM TABLE_NAME TYPE DELIMITED
+APPEND FROM \'table\' + \'_\' + \'name\' TYPE \'Delimited\'
+'''.strip()
+    output_str = '''
+vfpfunc.db.append_from(None, \'table_name\')
+vfpfunc.db.append_from(None, \'table_name\', filetype=\'delimited\')
+vfpfunc.db.append_from(None, \'table_name\', filetype=\'delimited\')
+'''.strip()
+    test_output_str = vfp2py.vfp2py.prg2py(input_str, parser_start='lines', prepend_data='').strip()
+    try:
+        assert test_output_str == output_str
+    except AssertionError:
+        diff = difflib.unified_diff((test_output_str + '\n').splitlines(1), (output_str + '\n').splitlines(1))
+        print(''.join(diff))
+        raise
+

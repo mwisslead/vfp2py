@@ -223,7 +223,7 @@ otherCmds
  | COUNT scopeClause? ((FOR expr) | (WHILE expr) | (TO expr))* NOOPTIMIZE? #count
  | SUM scopeClause? expr (FOR expr | TO idAttr | NOOPTIMIZE)+ #sum
  | (RECALL | DELETE) scopeClause? (FOR forExpr=expr)? (WHILE whileExpr=expr)? (IN inExpr=specialExpr NOOPTIMIZE | IN inExpr=specialExpr)? #deleteRecord
- | APPEND FROM (specialExpr FOR expr | specialExpr) #appendFrom
+ | APPEND FROM (specialExpr FOR expr | specialExpr ) (TYPE typeExpr=specialExpr)? #appendFrom
  | APPEND BLANK? (IN specialExpr NOMENU | IN specialExpr)? #append
  | INSERT INTO specialExpr (FROM (ARRAY expr | MEMVAR | NAME expr) | ('(' specialArgs ')')? VALUES '(' args ')') #insert
  | SKIPKW expr (IN specialExpr)? #skipRecord
@@ -472,6 +472,7 @@ identifier
  | COMPATIBLE
  | DB4
  | FOXPLUS
+ | TYPE
  |ID
  ;
 
@@ -740,6 +741,7 @@ BROWSE: B R O W S E;
 INSERT: I N S E R T;
 VALUES: V A L U E S;
 MEMVAR: M E M V A R;
+TYPE: T Y P E;
 
 ID : [A-Za-z_] [a-zA-Z0-9_]*;
 
