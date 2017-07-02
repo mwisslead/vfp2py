@@ -696,11 +696,19 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             return add_args_to_code('{} == {}', [args[0], None])
         if funcname == 'inlist':
             return add_args_to_code('({} in {})', [args[0], tuple(args[1:])])
-        if funcname == 'pythonfunctioncall' and len(args) == 3:
+        if funcname == 'pythonfunctioncall' and len(args) == 3 and isinstance(args[2], tuple):
             self.imports.append('import {}'.format(args[0]))
             return make_func_code('{}.{}'.format(args[0], args[1]), *args[2])
         if funcname == 'createobject':
-            if len(args) > 0 and string_type(args[0]):
+            if len(args) > 0 and string_type(args[0]) and args[0].lower() == 'pythontuple':
+                return tuple(args[1:])
+            elif len(args) > 0 and string_type(args[0]) and args[0].lower() == 'pythonlist':
+                if len(args) > 1 and isinstance(args[1], list):
+                    return add_args_to_code('{}.data[:]', args[1])
+                return []
+            elif len(args) > 0 and string_type(args[0]) and args[0].lower() == 'pythondictionary':
+                return {}
+            elif len(args) > 0 and string_type(args[0]):
                 objtype = args[0].title()
                 args = args[1:]
                 if objtype in self.class_list:
@@ -712,14 +720,6 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
                 else:
                     self.imports.append('from vfp2py import vfpfunc')
                     return make_func_code('vfpfunc.create_object', *([objtype] + args), **kwargs)
-            elif len(args) > 0 and string_type(args[0]) and args[0].lower() == 'pythontuple':
-                return tuple(args[1:])
-            elif len(args) > 0 and string_type(args[0]) and args[0].lower() == 'pythonlist':
-                if len(args) > 1 and isinstance(args[1], list):
-                    return add_args_to_code('{}.data[:]', args[1])
-                return []
-            elif len(args) > 0 and string_type(args[0]) and args[0].lower() == 'pythondictionary':
-                return {}
             else:
                 return make_func_code('vfpfunc.create_object', *args, **kwargs)
         if funcname in ('fcreate', 'fopen'):
