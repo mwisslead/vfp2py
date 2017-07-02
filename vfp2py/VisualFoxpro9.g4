@@ -215,7 +215,7 @@ otherCmds
 
  | CREATE (TABLE|DBF) specialExpr FREE? '(' identifier identifier arrayIndex (',' identifier identifier arrayIndex)* ')' #createTable
  | SELECT (tablename=specialExpr | (DISTINCT? (specialArgs | '*') (FROM fromExpr=specialExpr)? (WHERE whereExpr=expr)? (INTO TABLE intoExpr=specialExpr)? (ORDER BY orderbyid=identifier)?)) #select
- | USE (SHARED | EXCL | EXCLUSIVE)? (IN workArea=specialExpr | name=specialExpr IN workArea=specialExpr | name=specialExpr)? (SHARED | EXCL | EXCLUSIVE)? (ALIAS identifier)? #use
+ | USE (SHARED | EXCLUSIVE)? (IN workArea=specialExpr | name=specialExpr IN workArea=specialExpr | name=specialExpr)? (SHARED | EXCLUSIVE)? (ALIAS identifier)? #use
  | LOCATE (FOR expr)? (WHILE expr)? NOOPTIMIZE? #locate
  | CONTINUE #continueLocate
  | REPLACE scopeClause? specialExpr WITH expr (FOR expr)? #replace
