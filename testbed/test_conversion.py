@@ -354,3 +354,53 @@ vfpfunc.db.append_from(None, \'table_name\', filetype=\'delimited\')
         print(''.join(diff))
         raise
 
+
+def Test11():
+    input_str = '''
+LOCAL MYFILE, mydir
+MYFILE = \'c:\\test\\test.prg\'
+MYDIR = \'c:\\test\\test\\dir\'
+?file(myfile)
+?justdrive(MYFILE)
+?justpath(MYFILE)
+?justfname(MYFILE)
+?juststem(myfile)
+?JUSTEXT(myfile)
+?FORCEEXT(myfile, \'py\')
+?directory(mydir)
+?justdrive(MYDIR)
+?justpath(MYDIR)
+?justfname(MYDIR)
+?juststem(mydir)
+?JUSTEXT(mydir)
+?FORCEEXT(mydir, \'py\')
+RELEASE MYFILE, MYDIR
+'''.strip()
+    output_str = '''
+myfile = mydir = False  # LOCAL Declaration
+myfile = \'c:\\\\test\\\\test.prg\'
+mydir = \'c:\\\\test\\\\test\\\\dir\'
+print(os.path.isfile(myfile))
+print(os.path.splitdrive(myfile)[0])
+print(os.path.dirname(myfile))
+print(os.path.basename(myfile))
+print(os.path.splitext(os.path.basename(myfile))[0])
+print(os.path.splitext(myfile)[1][1:])
+print(os.path.splitext(myfile)[0] + \'.\' + \'py\')
+print(os.path.isdir(mydir))
+print(os.path.splitdrive(mydir)[0])
+print(os.path.dirname(mydir))
+print(os.path.basename(mydir))
+print(os.path.splitext(os.path.basename(mydir))[0])
+print(os.path.splitext(mydir)[1][1:])
+print(os.path.splitext(mydir)[0] + \'.\' + \'py\')
+del myfile, mydir
+'''.strip()
+    test_output_str = vfp2py.vfp2py.prg2py(input_str, parser_start='lines', prepend_data='').strip()
+    try:
+        assert test_output_str == output_str
+    except AssertionError:
+        diff = difflib.unified_diff((test_output_str + '\n').splitlines(1), (output_str + '\n').splitlines(1))
+        print(''.join(diff))
+        raise
+

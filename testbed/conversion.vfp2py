@@ -262,6 +262,48 @@ vfpfunc.db.append_from(None, 'table_name', filetype='delimited')
 vfpfunc.db.append_from(None, 'table_name', filetype='delimited')
 @end=python@
 
+@begin=vfp@&&lines
+LOCAL MYFILE, mydir
+MYFILE = 'c:\test\test.prg'
+MYDIR = 'c:\test\test\dir'
+?file(myfile)
+?justdrive(MYFILE)
+?justpath(MYFILE)
+?justfname(MYFILE)
+?juststem(myfile)
+?JUSTEXT(myfile)
+?FORCEEXT(myfile, 'py')
+?directory(mydir)
+?justdrive(MYDIR)
+?justpath(MYDIR)
+?justfname(MYDIR)
+?juststem(mydir)
+?JUSTEXT(mydir)
+?FORCEEXT(mydir, 'py')
+RELEASE MYFILE, MYDIR
+@end=vfp@
+
+@begin=python@
+myfile = mydir = False  # LOCAL Declaration
+myfile = 'c:\\test\\test.prg'
+mydir = 'c:\\test\\test\\dir'
+print(os.path.isfile(myfile))
+print(os.path.splitdrive(myfile)[0])
+print(os.path.dirname(myfile))
+print(os.path.basename(myfile))
+print(os.path.splitext(os.path.basename(myfile))[0])
+print(os.path.splitext(myfile)[1][1:])
+print(os.path.splitext(myfile)[0] + '.' + 'py')
+print(os.path.isdir(mydir))
+print(os.path.splitdrive(mydir)[0])
+print(os.path.dirname(mydir))
+print(os.path.basename(mydir))
+print(os.path.splitext(os.path.basename(mydir))[0])
+print(os.path.splitext(mydir)[1][1:])
+print(os.path.splitext(mydir)[0] + '.' + 'py')
+del myfile, mydir
+@end=python@
+
 ON ERROR
 ON ERROR DO test
 SET TYPEAHEAD TO 0
@@ -695,24 +737,6 @@ local myval, lower_val, upper_val
 ?proper('Visual FoxPro')
 ?quarter(date())
 use in select('test')
-
-?justpath('.')
-?justpath('./')
-
-LOCAL MYFILE, mydir
-MYFILE = 'c:\test\test.prg'
-MYDIR = 'c:\test\test.prg\dir'
-
-?justdrive(MYFILE)
-?justpath(MYFILE)
-?justfname(MYFILE)
-?juststem(myfile)
-?JUSTEXT(myfile)
-
-?juststem(mydir)
-?JUSTEXT(mydir)
-
-RELEASE MYFILE, MYDIR
 
 PUBLIC X, Y, Z
 LOCAL W
