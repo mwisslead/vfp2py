@@ -151,6 +151,8 @@ __import__(a.strip())._program_main()  # NOTE: function call here may not work
 
 @begin=vfp@&&lines
 LOCAL test
+copy file (test) to tset
+rename (test) to tset
 mkdir test - test
 MD test+test
 rmdir (test+test)
@@ -159,6 +161,8 @@ rd alltrim(test)
 
 @begin=python@
 test = False  # LOCAL Declaration
+shutil.copyfile(test, 'tset')
+shutil.move(test, 'tset')
 os.mkdir(test - test)
 os.mkdir('test+test')
 os.rmdir(test + test)

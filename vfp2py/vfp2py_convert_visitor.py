@@ -919,6 +919,25 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
     def visitComplexId(self, ctx):
         return self.visitAtomExpr(ctx)
 
+    def visitDeleteFile(self, ctx):
+        if ctx.specialExpr():
+            filename = self.visit(ctx.specialExpr())
+        else:
+            filename = None
+        if ctx.RECYCLE():
+            return make_func_code('vfpfunc.delete_file', filename, True)
+        else:
+            self.imports.append('import os')
+            return make_func_code('os.remove', filename)
+
+    def visitCopyMoveFile(self, ctx):
+        self.imports.append('import shutil')
+        args = [self.visit(arg) for arg in ctx.specialExpr()] #args = [fromFile, toFile]
+        if ctx.RENAME():
+            return make_func_code('shutil.move', *args)
+        else:
+            return make_func_code('shutil.copyfile', *args)
+
     def visitAddRemoveDirectory(self, ctx):
         self.imports.append('import os')
         funcname = 'os.mkdir' if ctx.MKDIR() else 'os.rmdir'
@@ -1106,17 +1125,6 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
 
     def visitQuit(self, ctx):
         return [CodeStr('vfpfunc.quit()')]
-
-    def visitDeleteFile(self, ctx):
-        if ctx.specialExpr():
-            filename = self.visit(ctx.specialExpr())
-        else:
-            filename = None
-        if ctx.RECYCLE():
-            return make_func_code('vfpfunc.delete_file', filename, True)
-        else:
-            self.imports.append('import os')
-            return make_func_code('os.remove', filename)
 
     def visitFile(self, ctx):
         return ctx.getText()

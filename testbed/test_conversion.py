@@ -189,6 +189,8 @@ __import__(a.strip())._program_main()  # NOTE: function call here may not work
 def Test4():
     input_str = '''
 LOCAL test
+copy file (test) to tset
+rename (test) to tset
 mkdir test - test
 MD test+test
 rmdir (test+test)
@@ -196,6 +198,8 @@ rd alltrim(test)
 '''.strip()
     output_str = '''
 test = False  # LOCAL Declaration
+shutil.copyfile(test, \'tset\')
+shutil.move(test, \'tset\')
 os.mkdir(test - test)
 os.mkdir(\'test+test\')
 os.rmdir(test + test)
