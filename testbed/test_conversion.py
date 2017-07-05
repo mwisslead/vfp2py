@@ -378,6 +378,9 @@ MYDIR = \'c:\\test\\test\\dir\'
 ?juststem(mydir)
 ?JUSTEXT(mydir)
 ?FORCEEXT(mydir, \'py\')
+?ADDBS(MYDIR) + \'dir1\'
+?ADDBS(ADDBS(MYDIR) + \'dir1\') + \'dir2\'
+?ADDBS(ADDBS(ADDBS(MYDIR) + \'dir1\') + \'dir2\') + \'dir3\'
 RELEASE MYFILE, MYDIR
 '''.strip()
     output_str = '''
@@ -398,6 +401,9 @@ print(os.path.basename(mydir))
 print(os.path.splitext(os.path.basename(mydir))[0])
 print(os.path.splitext(mydir)[1][1:])
 print(os.path.splitext(mydir)[0] + \'.\' + \'py\')
+print(os.path.join(mydir, \'dir1\'))
+print(os.path.join(mydir, \'dir1\', \'dir2\'))
+print(os.path.join(mydir, \'dir1\', \'dir2\', \'dir3\'))
 del myfile, mydir
 '''.strip()
     test_output_str = vfp2py.vfp2py.prg2py(input_str, parser_start='lines', prepend_data='').strip()

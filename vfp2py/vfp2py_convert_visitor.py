@@ -999,7 +999,22 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
     def visitModulo(self, ctx):
         return self.operationExpr(ctx, '%')
 
+    def extract_args_from_addbs(self, ctx):
+        if not isinstance(ctx, ctx.parser.AdditionContext):
+            return [self.visit(ctx)]
+        leftctx, rightctx = ctx.expr()
+        if isinstance(leftctx, ctx.parser.AtomExprContext) and self.visit(leftctx.atom()) == 'addbs' and isinstance(leftctx.trailer(), ctx.parser.FuncCallTrailerContext):
+            args = self.extract_args_from_addbs(leftctx.trailer().args().expr(0))
+        else:
+            args = [self.visit(leftctx)]
+        args.append(self.visit(rightctx))
+        return args
+
     def operationExpr(self, ctx, operation):
+        if operation == ctx.parser.PLUS_SIGN:
+            args = self.extract_args_from_addbs(ctx)
+            if len(args) > 2 or args[0] != self.visit(ctx.expr(0)):
+                return make_func_code('os.path.join', *args)
         def add_parens(parent, child):
             expr = self.visit(child)
             if isinstance(child, ctx.parser.SubExprContext):
