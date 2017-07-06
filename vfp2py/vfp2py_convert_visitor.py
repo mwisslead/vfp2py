@@ -591,7 +591,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
                 'cmonth': "strftime('%B')",
             }.get(funcname, funcname)
             retval = add_args_to_code('{}.{}', [args[0], CodeStr(funcname)])
-            if funcname in ('weekday()'):
+            if funcname == 'weekday()':
                 self.imports.append('from vfp2py import vfpfunc')
                 return make_func_code('vfpfunc.dow_fix', retval, *args[1:])
             return retval
