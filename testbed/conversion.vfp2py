@@ -144,6 +144,7 @@ DO A
 DO A+B
 DO A + B
 DO ALLTRIM(A)
+CD ..
 @end=vfp@
 
 @begin=python@
@@ -151,6 +152,7 @@ a._program_main()
 __import__('a+b')._program_main()  # NOTE: function call here may not work
 __import__(a + b)._program_main()  # NOTE: function call here may not work
 __import__(a.strip())._program_main()  # NOTE: function call here may not work
+os.chdir('..')
 @end=python@
 
 @begin=vfp@&&lines

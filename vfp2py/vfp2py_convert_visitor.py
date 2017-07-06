@@ -1499,6 +1499,10 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         self.imports.append('import subprocess')
         return make_func_code('subprocess.call', command)
 
+    def visitChdir(self, ctx):
+        self.imports.append('import os')
+        return make_func_code('os.chdir', self.visit(ctx.specialExpr()))
+
     def visitReturnStmt(self, ctx):
         if not ctx.expr():
             return [CodeStr('return')]

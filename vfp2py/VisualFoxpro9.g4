@@ -265,6 +265,7 @@ filesystemCmd
  : (ERASE | DELETE FILE) (specialExpr|'?') RECYCLE? #deleteFile
  | (RENAME | COPY FILE) specialExpr TO specialExpr #copyMoveFile
  | (MKDIR | RMDIR) specialExpr #addRemoveDirectory
+ | CHDIR specialExpr #chdir
  ;
 
 quit
@@ -742,6 +743,7 @@ INSERT: I N S E R T;
 VALUES: V A L U E S;
 MEMVAR: M E M V A R;
 TYPE: T Y P E;
+CHDIR: C D | C H D I R;
 
 ID : [A-Za-z_] [a-zA-Z0-9_]*;
 
