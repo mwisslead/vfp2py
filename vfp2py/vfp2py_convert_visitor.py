@@ -755,7 +755,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         if funcname == 'fseek':
             funcname = '{}.seek'.format(args[0])
             return make_func_code(funcname, *args[1:])
-        if funcname in ('file', 'directory', 'justdrive', 'justpath', 'justfname', 'juststem', 'justext', 'forceext', 'addbs'):
+        if funcname in ('file', 'directory', 'justdrive', 'justpath', 'justfname', 'juststem', 'justext', 'forceext', 'addbs', 'curdir'):
             self.imports.append('import os')
             operation = {
                 'file': [make_func_code, ['os.path.isfile'] + args],
@@ -767,6 +767,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
                 'justext': [add_args_to_code, ('os.path.splitext({})[1][1:]', args)],
                 'forceext': [add_args_to_code, ('os.path.splitext({})[0] + \'.\' + {}', args)],
                 'addbs': [make_func_code, ['os.path.join'] + args + ['']],
+                'curdir': [make_func_code, ['os.getcwd']],
             }[funcname]
             return operation[0](*operation[1])
         if funcname == 'set' and len(args) > 0 and string_type(args[0]):

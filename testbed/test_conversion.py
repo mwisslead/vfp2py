@@ -387,6 +387,7 @@ MYDIR = \'c:\\test\\test\\dir\'
 ?ADDBS(MYDIR) + \'dir1\'
 ?ADDBS(ADDBS(MYDIR) + \'dir1\') + \'dir2\'
 ?ADDBS(ADDBS(ADDBS(MYDIR) + \'dir1\') + \'dir2\') + \'dir3\'
+?CURDIR()
 RELEASE MYFILE, MYDIR
 '''.strip()
     output_str = '''
@@ -410,6 +411,7 @@ print(os.path.splitext(mydir)[0] + \'.\' + \'py\')
 print(os.path.join(mydir, \'dir1\'))
 print(os.path.join(mydir, \'dir1\', \'dir2\'))
 print(os.path.join(mydir, \'dir1\', \'dir2\', \'dir3\'))
+print(os.getcwd())
 del myfile, mydir
 '''.strip()
     test_output_str = vfp2py.vfp2py.prg2py(input_str, parser_start='lines', prepend_data='').strip()
