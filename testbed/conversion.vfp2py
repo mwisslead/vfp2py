@@ -126,14 +126,13 @@ def _program_main():
 class Subobj(vfpfunc.Custom):
 
     def init(self, x=False):
-        self.x = x
         self.x = 3
+        self.x = x
 
 
 class Testclass(vfpfunc.Commandbutton):
 
     def init(self, x=False):
-        pass
         self.test1 = vfpfunc.Custom()
         self.test2 = Subobj(x=4)
         self.test3 = vfpfunc.create_object('Unknownobj', x='4')
