@@ -330,6 +330,8 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
     def visitFuncDef(self, ctx):
         name, parameters = self.visit(ctx.funcDefStart())
         self.new_scope()
+        global FUNCNAME
+        FUNCNAME = name
         self.scope.update({key: False for key in parameters})
         body = self.visit(ctx.lines())
         self.delete_scope()
@@ -540,6 +542,8 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         if not kwargs and len(args) == 1 and isinstance(args[0], (list, tuple)):
             args = args[0]
         args = list(args)
+        if funcname == 'dodefault':
+            return make_func_code('super(type(self), self).{}'.format(FUNCNAME), *args)
         if funcname in self.function_list:
             return make_func_code(funcname, *args)
         if funcname == 'chr' and len(args) == 1:

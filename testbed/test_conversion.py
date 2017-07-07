@@ -122,6 +122,7 @@ def Test2():
 DEFINE CLASS SUBOBJ AS CUSTOM
    X = 3
    FUNCTION INIT(X)
+      DODEFAULT()
       THIS.X = X
    ENDFUNC
 ENDDEFINE
@@ -148,6 +149,7 @@ class Subobj(vfpfunc.Custom):
 
     def init(self, x=False):
         self.x = 3
+        super(type(self), self).init()
         self.x = x
 
 
