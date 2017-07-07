@@ -29,6 +29,11 @@ SET_PROPS = {
     'unique': ['OFF'],
 }
 
+HOME = sys.argv[0]
+if not HOME:
+    HOME = sys.executable
+HOME = os.path.dirname(os.path.abspath(HOME))
+
 class MainWindow(object):
     pass
 
@@ -359,7 +364,9 @@ def getwordnum(string, index, delim=None):
     return ''
 
 def home(location=0):
-    pass
+    if location != 0:
+        raise Exception('not implemented')
+    return HOME
 
 def inkey(seconds=0, hide_cursor=False):
     pass

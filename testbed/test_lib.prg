@@ -33,3 +33,9 @@ procedure math_tests
    assert abs(cos(dtor(90)) - 0) < 0.001
    assert abs(cos(dtor(45)) - sqrt(2)/2) < 0.001
 endproc
+
+procedure path_tests
+   assert HOME() == curdir()
+   CD ..
+   assert HOME() != curdir()
+endproc
