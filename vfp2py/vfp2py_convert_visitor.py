@@ -601,9 +601,11 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
                 self.imports.append('from vfp2py import vfpfunc')
                 return make_func_code('vfpfunc.dow_fix', retval, *args[1:])
             return retval
-        if funcname == 'dtoc':
+        if funcname in ('dtoc', 'dtos'):
             if len(args) == 1 or args[1] == 1:
-                if len(args) > 1 and args[1] == 1:
+                if funcname == 'dtos':
+                    args.append('')
+                if len(args) > 1 and args[1] == 1 or funcname == 'dtos':
                     args[1] = '%Y%m%d'
                 else:
                     args.append('%m/%d/%Y')
