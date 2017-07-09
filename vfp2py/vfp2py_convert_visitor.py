@@ -603,12 +603,12 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             return retval
         if funcname in ('dtoc', 'dtos'):
             if len(args) == 1 or args[1] == 1:
-                if funcname == 'dtos':
+                if len(args) < 2:
                     args.append('')
-                if len(args) > 1 and args[1] == 1 or funcname == 'dtos':
-                    args[1] = '%Y%m%d'
+                if args[1] == 1 or funcname == 'dtos':
+                    args[1] = add_args_to_code('\'%Y%m%d%H%M%S\' if hasattr({}, \'hour\') else \'%Y%m%d\'', [args[0]])
                 else:
-                    args.append('%m/%d/%Y')
+                    args[1] = add_args_to_code('\'%m/%d/%Y %H:%M:%S\' if hassattr({}, \'hour\') else \'%m/%d/%Y\'', [args[0]])
                 return make_func_code('{}.{}'.format(args[0], 'strftime'), args[1])
         if funcname == 'iif' and len(args) == 3:
             return add_args_to_code('({} if {} else {})', [args[i] for i in (1, 0, 2)])
