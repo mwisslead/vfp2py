@@ -34,6 +34,13 @@ procedure math_tests
    assert abs(cos(dtor(45)) - sqrt(2)/2) < 0.001
 endproc
 
+procedure string_tests
+   cString = "AAA aaa, BBB bbb, CCC ccc."
+   assert GetWordCount(cString) == 6
+   assert GetWordCount(cString, ",") = 3
+   ASSERT GetWordCount(cString, ".") == 1
+ENDPROC
+
 procedure path_tests
    assert HOME() == curdir()
    CD ..

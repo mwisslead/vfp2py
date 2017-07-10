@@ -671,6 +671,10 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
                 return add_args_to_code('{}[{}]', args[:2])
             args[2] += args[1]
             return add_args_to_code('{}[{}:{}]', args)
+        if funcname == 'getwordcount':
+            if len(args) < 2:
+                args.append(CodeStr(''))
+            return add_args_to_code('len([w for w in {}.split({}) if w])', args)
         if funcname in ('ceiling', 'exp', 'log', 'log10', 'sin', 'cos', 'tan', 'asin', 'acos', 'atan', 'atan2', 'pi', 'sqrt', 'dtor', 'rtod'):
             self.imports.append('import math')
             if funcname == 'pi':
