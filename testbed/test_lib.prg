@@ -35,10 +35,13 @@ procedure math_tests
 endproc
 
 procedure string_tests
-   cString = "AAA aaa, BBB bbb, CCC ccc."
+   cString = "AAA  aaa, BBB bbb, CCC ccc."
    assert GetWordCount(cString) == 6
    assert GetWordCount(cString, ",") = 3
    ASSERT GetWordCount(cString, ".") == 1
+   assert GetWordNUM(cString, 2) == 'aaa,'
+   assert GetWordNum(cString, 2, ",") = ' BBB bbb'
+   ASSERT GETWORDNUM(cString, 2, ".") == ''
 ENDPROC
 
 procedure path_tests
