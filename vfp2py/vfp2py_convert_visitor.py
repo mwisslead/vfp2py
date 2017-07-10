@@ -214,7 +214,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
 
         if assignments:
             if 'init' not in funcs:
-                funcs['init'] = [[CodeStr('self')], [], float('inf')]
+                funcs['init'] = [[CodeStr('self')], ['pass'], float('inf')]
             funcbody = funcs['init'][1]
             if funcbody[-1] == 'pass':
                 funcbody.pop()

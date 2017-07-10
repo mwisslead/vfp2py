@@ -105,6 +105,10 @@ DEFINE CLASS SUBOBJ AS CUSTOM
    ENDFUNC
 ENDDEFINE
 
+DEFINE CLASS SUBOBJ2 AS SUBOBJ
+   X = 4
+ENDDEFINE
+
 DEFINE CLASS TESTCLASS AS COMMANDBUTTON
    ADD OBJECT TEST1 as custom
    ADD OBJECT TEST2 as subobj WITH X = 4
@@ -130,6 +134,12 @@ class Subobj(vfpfunc.Custom):
         self.x = 3
         super(type(self), self).init()
         self.x = x
+
+
+class Subobj2(Subobj):
+
+    def init(self):
+        self.x = 4
 
 
 class Testclass(vfpfunc.Commandbutton):
