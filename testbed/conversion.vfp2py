@@ -188,18 +188,20 @@ os.rmdir(test.strip())
 
 @begin=vfp@&&lines
 continue
-LOCAL SEARCH_FOR
+LOCAL SEARCH_FOR, COUNTVAL
 SEARCH_FOR = 'PAUL'
 SEEK ALLTRIM(SEARCH_FOR)
-RELEASE SEARCH_FOR
+COUNT FOR TEST = 3 TO COUNTVAL
+RELEASE SEARCH_FOR, COUNTVAL
 @end=vfp@
 
 @begin=python@
 vfpfunc.db.continue_locate()
-search_for = False  # LOCAL Declaration
+search_for = countval = False  # LOCAL Declaration
 search_for = 'PAUL'
 vfpfunc.db.seek(None, search_for.strip())
-del search_for
+countval = vfpfunc.db.count(('all',), for_cond=lambda: vfpfunc.variable['test'] == 3)
+del search_for, countval
 @end=python@
 
 @begin=vfp@

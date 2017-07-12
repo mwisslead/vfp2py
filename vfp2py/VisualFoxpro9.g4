@@ -220,7 +220,7 @@ otherCmds
  | CONTINUE #continueLocate
  | REPLACE scopeClause? specialExpr WITH expr (FOR expr)? #replace
  | INDEX ON specialExpr (TAG | TO) specialExpr COMPACT? (ASCENDING | DESCENDING)? (UNIQUE | CANDIDATE)? ADDITIVE? #indexOn
- | COUNT scopeClause? ((FOR expr) | (WHILE expr) | (TO expr))* NOOPTIMIZE? #count
+ | COUNT scopeClause? ((FOR forExpr=expr) | (WHILE whileExpr=expr) | (TO toExpr=expr))* NOOPTIMIZE? #count
  | SUM scopeClause? expr (FOR expr | TO idAttr | NOOPTIMIZE)+ #sum
  | (RECALL | DELETE) scopeClause? (FOR forExpr=expr)? (WHILE whileExpr=expr)? (IN inExpr=specialExpr NOOPTIMIZE | IN inExpr=specialExpr)? #deleteRecord
  | APPEND FROM (specialExpr FOR expr | specialExpr ) (TYPE typeExpr=specialExpr)? #appendFrom

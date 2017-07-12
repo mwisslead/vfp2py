@@ -1387,6 +1387,16 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         unique_flag = not not ctx.UNIQUE()
         return make_func_code('vfpfunc.db.index_on', field, indexname, order, tag_flag, compact_flag, unique_flag)
 
+    def visitCount(self, ctx):
+        #COUNT scopeClause? ((FOR expr) | (WHILE expr) | (TO expr))* NOOPTIMIZE? #count
+        kwargs = OrderedDict()
+        scope = self.visit(ctx.scopeClause()) or ('all',)
+        if ctx.forExpr:
+            kwargs['for_cond'] = add_args_to_code('lambda: {}', [self.visit(ctx.forExpr)])
+        if ctx.whileExpr:
+            kwargs['while_cond'] = add_args_to_code('lambda: {}', [self.visit(ctx.whileExpr)])
+        return add_args_to_code('{} = {}', (self.visit(ctx.toExpr), make_func_code('vfpfunc.db.count', scope, **kwargs)))
+
     def visitReindex(self, ctx):
         return make_func_code('vfpfunc.db.reindex', not not ctx.COMPACT())
 
