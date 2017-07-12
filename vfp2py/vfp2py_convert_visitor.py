@@ -1388,7 +1388,6 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         return make_func_code('vfpfunc.db.index_on', field, indexname, order, tag_flag, compact_flag, unique_flag)
 
     def visitCount(self, ctx):
-        #COUNT scopeClause? ((FOR expr) | (WHILE expr) | (TO expr))* NOOPTIMIZE? #count
         kwargs = OrderedDict()
         scope = self.visit(ctx.scopeClause()) or ('all',)
         if ctx.forExpr:
@@ -1396,6 +1395,14 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         if ctx.whileExpr:
             kwargs['while_cond'] = add_args_to_code('lambda: {}', [self.visit(ctx.whileExpr)])
         return add_args_to_code('{} = {}', (self.visit(ctx.toExpr), make_func_code('vfpfunc.db.count', scope, **kwargs)))
+
+    def visitSum(self, ctx):
+        kwargs = OrderedDict()
+        scope = self.visit(ctx.scopeClause()) or ('all',)
+        if ctx.forExpr:
+            kwargs['for_cond'] = add_args_to_code('lambda: {}', [self.visit(ctx.forExpr)])
+        sumexpr = add_args_to_code('lambda: {}', [self.visit(ctx.sumExpr)])
+        return add_args_to_code('{} = {}', (self.visit(ctx.toExpr), make_func_code('vfpfunc.db.sum', scope, sumexpr, **kwargs)))
 
     def visitReindex(self, ctx):
         return make_func_code('vfpfunc.db.reindex', not not ctx.COMPACT())

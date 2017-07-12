@@ -234,19 +234,22 @@ os.rmdir(test.strip())
 def Test5():
     input_str = '''
 continue
-LOCAL SEARCH_FOR, COUNTVAL
+LOCAL SEARCH_FOR, COUNTVAL, SUMVAL
 SEARCH_FOR = \'PAUL\'
 SEEK ALLTRIM(SEARCH_FOR)
 COUNT FOR TEST = 3 TO COUNTVAL
-RELEASE SEARCH_FOR, COUNTVAL
+SUM T * T FOR T > 0 TO SUMVAL
+RELEASE SEARCH_FOR, COUNTVAL, SUMVAL
 '''.strip()
     output_str = '''
 vfpfunc.db.continue_locate()
-search_for = countval = False  # LOCAL Declaration
+search_for = countval = sumval = False  # LOCAL Declaration
 search_for = \'PAUL\'
 vfpfunc.db.seek(None, search_for.strip())
 countval = vfpfunc.db.count((\'all\',), for_cond=lambda: vfpfunc.variable[\'test\'] == 3)
-del search_for, countval
+sumval = vfpfunc.db.sum((\'all\',), lambda: vfpfunc.variable[
+                        \'t\'] * vfpfunc.variable[\'t\'], for_cond=lambda: vfpfunc.variable[\'t\'] > 0)
+del search_for, countval, sumval
 '''.strip()
     test_output_str = vfp2py.vfp2py.prg2py(input_str, parser_start='lines', prepend_data='').strip()
     try:
