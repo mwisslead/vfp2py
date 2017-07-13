@@ -175,8 +175,8 @@ class _Variable(object):
         if scope is not None:
             return scope[key]
         table_info = self.db._get_table_info()
-        if table_info['name'] is not None and key in table_info['table'].field_names:
-            return table_info['table'][table_info['recno']-1][key]
+        if table_info is not None and key in table_info.table.field_names:
+            return table_info.table.current_record[key]
         else:
             raise NameError('name {} is not defined'.format(key))
 
