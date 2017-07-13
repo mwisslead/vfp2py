@@ -264,7 +264,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         for arg1, arg2 in zip(args1, args2):
             ident = arg1[:arg1.find(' = ')]
             value = arg2[arg2.find(' = '):]
-            if 'vfpfunc.variable' in value or 'vfpfunc.function' in value:
+            if 'vfpvar' in value or 'vfpfunc.function' in value:
                 used_scope = True
             args.append(ident + value)
         self.used_scope = used_scope
@@ -311,20 +311,20 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
                     newbody.append(fix_returns(line))
                 elif isinstance(line, CodeStr) and line.startswith('return '):
                     return_value = CodeStr(line[7:])
-                    if 'vfpfunc.variable[' in return_value or 'vfpfunc.function[' in return_value:
+                    if 'vfpvar[' in return_value or 'vfpfunc.function[' in return_value:
                         newbody.append(add_args_to_code('function_return_value = {}', [return_value]))
-                        newbody.append(CodeStr('vfpfunc.variable.popscope()'))
+                        newbody.append(CodeStr('vfpvar.popscope()'))
                         newbody.append(CodeStr('return function_return_value'))
                     else:
-                        newbody.append(CodeStr('vfpfunc.variable.popscope()'))
+                        newbody.append(CodeStr('vfpvar.popscope()'))
                         newbody.append(line)
                 else:
                     newbody.append(line)
             return newbody
-        body = [CodeStr('vfpfunc.variable.pushscope()')] + fix_returns(body)
+        body = [CodeStr('vfpvar.pushscope()')] + fix_returns(body)
         if isinstance(body[-1], CodeStr) and body[-1].startswith('return '):
             return body
-        body.append(CodeStr('vfpfunc.variable.popscope()'))
+        body.append(CodeStr('vfpvar.popscope()'))
         return body
 
     def visitFuncDef(self, ctx):
@@ -480,7 +480,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
                     self.scope[name] = False
                 return CodeStr(' = '.join([repr(arg) for arg in (names + [False])]) + ' #LOCAL Declaration')
             self.used_scope = True
-            func = 'vfpfunc.variable.add_public' if ctx.PUBLIC() else 'vfpfunc.variable.add_private'
+            func = 'vfpvar.add_public' if ctx.PUBLIC() else 'vfpvar.add_private'
             return make_func_code(func, *[str(name) for name in names])
 
     def visitAssign(self, ctx):
@@ -812,7 +812,8 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         self.imports.append('from vfp2py import vfpfunc')
         self.used_scope = True
         if vartype == 'val':
-            return add_args_to_code('vfpfunc.variable[{}]', [str(identifier)])
+            self.imports.append('from vfp2py.vfpfunc import variable as vfpvar')
+            return add_args_to_code('vfpvar[{}]', [str(identifier)])
         elif vartype == 'func':
             return add_args_to_code('vfpfunc.function[{}]', [str(identifier)])
 
@@ -1185,7 +1186,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
                     kwargs['extended'] = True
                 retval.append(make_func_code('vfpfunc.function.release_popups', *args, **kwargs))
             elif ctx.ALL():
-                retval.append(make_func_code('vfpfunc.variable.release'))
+                retval.append(make_func_code('vfpvar.release'))
             else:
                 thisargs = [arg for arg in args if arg in ('this', 'thisform')]
                 args = [arg for arg in args if arg not in ('this', 'thisform')]
@@ -1195,7 +1196,8 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
                     if arg == 'thisform':
                         retval.append(make_func_code('self.parentform.release()'))
                 if args:
-                    args = [add_args_to_code('vfpfunc.variable[{}]', [arg]) for arg in args]
+                    self.imports.append('from vfp2py.vfpfunc import variable as vfpvar')
+                    args = [add_args_to_code('vfpvar[{}]', [arg]) for arg in args]
                     retval.append(CodeStr('del {}'.format(', '.join(args))))
         return retval
 

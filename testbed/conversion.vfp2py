@@ -79,21 +79,22 @@ WAIT WINDOW space(3) + 'please wait' + CHR(32) NOWAIT TIMEOUT 1.3
 from __future__ import division, print_function
 
 from vfp2py import vfpfunc
+from vfp2py.vfpfunc import variable as vfpvar
 
 
 def _program_main():
-    vfpfunc.variable.pushscope()
+    vfpvar.pushscope()
     # comment with spaces
     ###comment###
-    vfpfunc.variable['x'] = '\n'
-    vfpfunc.variable['x'] = '\n'
-    vfpfunc.variable['x'] = '\n'
+    vfpvar['x'] = '\n'
+    vfpvar['x'] = '\n'
+    vfpvar['x'] = '\n'
     # set x to 5
-    vfpfunc.variable['x'] = 5
-    vfpfunc.variable['x'] = 'test\r\n'
-    vfpfunc.variable['x'] = '\x05'
-    vfpfunc.variable['x'] = '\r\n'
-    vfpfunc.variable.popscope()
+    vfpvar['x'] = 5
+    vfpvar['x'] = 'test\r\n'
+    vfpvar['x'] = '\x05'
+    vfpvar['x'] = '\r\n'
+    vfpvar.popscope()
 @end=python@
 
 @begin=vfp@
@@ -122,6 +123,7 @@ ENDDEFINE
 from __future__ import division, print_function
 
 from vfp2py import vfpfunc
+from vfp2py.vfpfunc import variable as vfpvar
 
 
 def _program_main():
@@ -201,9 +203,9 @@ vfpfunc.db.continue_locate()
 search_for = countval = sumval = False  # LOCAL Declaration
 search_for = 'PAUL'
 vfpfunc.db.seek(None, search_for.strip())
-countval = vfpfunc.db.count(('all',), for_cond=lambda: vfpfunc.variable['test'] == 3)
-sumval = vfpfunc.db.sum(('all',), lambda: vfpfunc.variable[
-                        't'] * vfpfunc.variable['t'], for_cond=lambda: vfpfunc.variable['t'] > 0)
+countval = vfpfunc.db.count(('all',), for_cond=lambda: vfpvar['test'] == 3)
+sumval = vfpfunc.db.sum(('all',), lambda: vfpvar['t']
+                        * vfpvar['t'], for_cond=lambda: vfpvar['t'] > 0)
 del search_for, countval, sumval
 @end=python@
 
