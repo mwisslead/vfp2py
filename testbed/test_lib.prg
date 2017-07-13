@@ -49,3 +49,9 @@ procedure path_tests
    CD ..
    assert HOME() != curdir()
 endproc
+
+procedure database_tests
+   CREATE TABLE REPORT FREE (NAME C(50), ST C(2), QUANTITY N(5, 0), RECEIVED L(1))
+   ASSERT FILE('report.dbf')
+   DELETE FILE REPORT.DBF
+endproc
