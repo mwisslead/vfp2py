@@ -146,7 +146,7 @@ class DatabaseContext(object):
             num = num - 1
             table.goto(num)
 
-    def delete_record(self, tablename, scope, num, for_cond=None, while_cond=None, recall=False):
+    def _get_records(self, tablename, scope, for_cond, while_cond):
         save_current_table = self.current_table
         self.select(tablename)
         if not for_cond:
@@ -159,11 +159,16 @@ class DatabaseContext(object):
         else:
             recno = self.recno()
             condition = lambda table: not table.eof and dbf.recno(table.current_record) - recno < num
+        records = []
         while condition(table) and while_cond():
             if for_cond():
-                (dbf.undelete if recall else dbf.delete)(table.current_record)
+                records.append(table.current_record)
             self.skip(None, 1)
         self.current_table = save_current_table
+
+    def delete_record(self, tablename, scope, num, for_cond=None, while_cond=None, recall=False):
+        for record in self._get_records(tablename, scope, for_cond, while_cond):
+            (dbf.undelete if recall else dbf.delete)(record)
 
     def pack(self, pack, tablename, workarea):
         if tablename:
