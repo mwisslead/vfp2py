@@ -440,3 +440,33 @@ del myfile, mydir
         print(''.join(diff))
         raise
 
+
+def Test12():
+    input_str = '''
+LOCAL ARRAY somearray[2, 5]
+LOCAL pytuple, pylist, pydict
+pytuple = createobject(\'pythontuple\', \'a\', 3, .T.)
+pylist = createobject(\'pythonlist\', @somearray)
+pylist.callmethod(\'append\', createobject(\'pythontuple\', \'appended value\'))
+pydict = createobject(\'pythondictionary\')
+pydict.setitem(\'one\', 1)
+?pydict.getitem(\'one\')
+'''.strip()
+    output_str = '''
+somearray = vfpfunc.Array(2, 5)
+pytuple = pylist = pydict = False  # LOCAL Declaration
+pytuple = (\'a\', 3, True)
+pylist = somearray.data[:]
+pylist.append(\'appended value\')
+pydict = {}
+pydict[\'one\'] = 1
+print(pydict[\'one\'])
+'''.strip()
+    test_output_str = vfp2py.vfp2py.prg2py(input_str, parser_start='lines', prepend_data='').strip()
+    try:
+        assert test_output_str == output_str
+    except AssertionError:
+        diff = difflib.unified_diff((test_output_str + '\n').splitlines(1), (output_str + '\n').splitlines(1))
+        print(''.join(diff))
+        raise
+

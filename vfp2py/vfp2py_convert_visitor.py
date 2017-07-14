@@ -825,6 +825,10 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             return add_args_to_code('{}[{}] = {}', [self.createIdAttr(identifier, trailer[:-2])] + trailer[-1])
         elif trailer and len(trailer) > 1 and trailer[-2] == 'getitem' and isinstance(trailer[-1], list) and len(trailer[-1]) == 1:
             return add_args_to_code('{}[{}]', [self.createIdAttr(identifier, trailer[:-2])] +  trailer[-1])
+        elif trailer and len(trailer) > 1 and trailer[-2] == 'callmethod' and isinstance(trailer[-1], list) and len(trailer[-1]) == 2:
+            trailer[-1][0] = CodeStr(trailer[-1][0])
+            func = add_args_to_code('{}.{}', [self.createIdAttr(identifier, trailer[:-2])] + trailer[-1][:1])
+            return make_func_code(func, *trailer[-1][1])
         elif trailer:
             trailer = self.convert_trailer_args(trailer)
         else:

@@ -340,6 +340,28 @@ print(os.getcwd())
 del myfile, mydir
 @end=python@
 
+@begin=vfp@&&lines
+LOCAL ARRAY somearray[2, 5]
+LOCAL pytuple, pylist, pydict
+pytuple = createobject('pythontuple', 'a', 3, .T.)
+pylist = createobject('pythonlist', @somearray)
+pylist.callmethod('append', createobject('pythontuple', 'appended value'))
+pydict = createobject('pythondictionary')
+pydict.setitem('one', 1)
+?pydict.getitem('one')
+@end=vfp@
+
+@begin=python@
+somearray = vfpfunc.Array(2, 5)
+pytuple = pylist = pydict = False  # LOCAL Declaration
+pytuple = ('a', 3, True)
+pylist = somearray.data[:]
+pylist.append('appended value')
+pydict = {}
+pydict['one'] = 1
+print(pydict['one'])
+@end=python@
+
 ON ERROR
 ON ERROR DO test
 SET TYPEAHEAD TO 0
