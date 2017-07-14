@@ -118,17 +118,17 @@ class DatabaseContext(object):
     def insert(self, tablename, values):
         table_info = self._get_table_info(tablename)
         table = table_info.table
-        if isinstance(values, Array):
+        if values is None:
+            local = inspect.stack()[1][0].f_locals
+            scope = variable.current_scope()
+            values = {field: scope[field] for field in table.field_names if field in scope}
+            values.update({field: local[field] for field in table.field_names if field in local})
+        try:
             for i in range(1,values.alen(1)+1):
                 table.append(tuple(values[i, j] for j in range(1,values.alen(2)+1)))
-        else:
-            if isinstance(values, Custom):
+        except AttributeError:
+            if not isinstance(values, dict):
                 values = {field: getattr(values, field) for field in table.field_names if hasattr(values, field)}
-            elif values is None:
-                local = inspect.stack()[1][0].f_locals
-                scope = variable.current_scope()
-                values = {field: scope[field] for field in table.field_names if field in scope}
-                values.update({field: local[field] for field in table.field_names if field in local})
             table.append(values)
         self.goto(tablename, -1)
 

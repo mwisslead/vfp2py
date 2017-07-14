@@ -50,8 +50,23 @@ procedure path_tests
    assert HOME() != curdir()
 endproc
 
+procedure _add_db_record()
+   LOCAL fake, fake_name, fake_st, fake_quantity, fake_received
+   fake = pythonfunctioncall('faker', 'Factory.create', createobject('pythontuple'))
+   fake_name = fake.callmethod('name', createobject('pythontuple'))
+   fake_st = fake.callmethod('state_abbr', createobject('pythontuple'))
+   fake_quantity = fake.callmethod('random_number', createobject('pythontuple'))
+   fake_received = fake.callmethod('boolean', createobject('pythontuple'))
+   insert into report values (fake_name, fake_st, fake_quantity, fake_received)
+endproc
+
 procedure database_tests
    CREATE TABLE REPORT FREE (NAME C(50), ST C(2), QUANTITY N(5, 0), RECEIVED L(1))
    ASSERT FILE('report.dbf')
+   ASSERT USED('report')
+   _add_db_record()
+   _add_db_record()
+   _add_db_record()
+   _add_db_record()
    DELETE FILE REPORT.DBF
 endproc

@@ -22,5 +22,5 @@ setup(
     ],
     install_requires=[ANTLR4, 'future', 'enum34', 'dbf', 'autopep8==1.2.4', 'isort'],
     test_suite='nose.collector',
-    tests_require=['nose'],
+    tests_require=['nose', 'Faker'],
 )
