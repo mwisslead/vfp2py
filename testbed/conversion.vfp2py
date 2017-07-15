@@ -362,6 +362,16 @@ pydict['one'] = 1
 print(pydict['one'])
 @end=python@
 
+@begin=vfp@&&lines
+PUBLIC ARRAY somearray[2, 5]
+SOMEARRAY(1, 4) = 3
+@end=vfp@
+
+@begin=python@
+vfpvar.add_public('somearray', somearray_init_val=vfpfunc.Array(2, 5))
+vfpvar['somearray'][1, 4] = 3
+@end=python@
+
 ON ERROR
 ON ERROR DO test
 SET TYPEAHEAD TO 0

@@ -194,9 +194,9 @@ class _Variable(object):
         for key in keys:
             self.public_scopes[-1][key] = False
 
-    def add_public(self, *keys):
+    def add_public(self, *keys, **kwargs):
         for key in keys:
-            self.public_scopes[0][key] = False
+            self.public_scopes[0][key] = kwargs.get('{}_init_val'.format(key), False)
 
     def pushscope(self):
         self.public_scopes.append({})
@@ -570,13 +570,6 @@ def create_object(objtype, *args):
 
 def clearall():
     pass
-
-def array(arrayname, dim1, dim2=1, public=False):
-    arr = Array(dim1, dim2)
-    if public:
-        variable.public_scopes[0][arrayname] = arr
-    else:
-        variable.public_scopes[-1][arrayname] = arr
 
 db = DatabaseContext()
 variable = _Variable(db)

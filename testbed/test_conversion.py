@@ -470,3 +470,21 @@ print(pydict[\'one\'])
         print(''.join(diff))
         raise
 
+
+def Test13():
+    input_str = '''
+PUBLIC ARRAY somearray[2, 5]
+SOMEARRAY(1, 4) = 3
+'''.strip()
+    output_str = '''
+vfpvar.add_public(\'somearray\', somearray_init_val=vfpfunc.Array(2, 5))
+vfpvar[\'somearray\'][1, 4] = 3
+'''.strip()
+    test_output_str = vfp2py.vfp2py.prg2py(input_str, parser_start='lines', prepend_data='').strip()
+    try:
+        assert test_output_str == output_str
+    except AssertionError:
+        diff = difflib.unified_diff((test_output_str + '\n').splitlines(1), (output_str + '\n').splitlines(1))
+        print(''.join(diff))
+        raise
+

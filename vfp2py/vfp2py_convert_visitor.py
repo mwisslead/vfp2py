@@ -461,18 +461,17 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
 
     def visitDeclaration(self, ctx):
         if ctx.ARRAY() or ctx.DIMENSION() or ctx.DEFINE():
-            name = self.visit(ctx.identifier())
-            value = self.visit(ctx.arrayIndex())
+            names = [self.visit(ctx.identifier())]
+            arrays = [make_func_code('vfpfunc.Array', *self.visit(ctx.arrayIndex()))]
             if ctx.LOCAL():
-                self.scope[name] = False
-                array = make_func_code('vfpfunc.Array', *value)
-                return [
-                    add_args_to_code('{} = {}', [name, array])
-                ]
-            func = 'vfpfunc.array'
-            kwargs = {'public': True} if ctx.PUBLIC() else {}
+                for name in names:
+                    self.scope[name] = False
+                return [add_args_to_code('{} = {}', (name, array)) for name, array in zip(names, arrays)]
+            func = 'vfpvar.add_public' if ctx.PUBLIC() else 'vfpvar.add_private'
             self.used_scope = True
-            return make_func_code(func, *([str(name)] + value), **kwargs)
+            args = [str(name) for name in names]
+            kwargs = {'{}_init_val'.format(name): array for name, array in zip(names, arrays)}
+            return make_func_code(func, *args, **kwargs)
         else:
             names = self.visit_with_disabled_scope(ctx.parameters())
             if ctx.LOCAL():
@@ -490,8 +489,8 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             trailer = self.visit(var.trailer()) or []
             if len(trailer) > 0 and isinstance(trailer[-1], list):
                 identifier = self.visit(ctx.idAttr()[0].identifier())
-                arg = self.createIdAttr(identifier, trailer[:-1] + [[]])
-                args.append('{}[{}]'.format(arg[:-2], ','.join(repr(x) for x in trailer[-1])))
+                arg = self.createIdAttr(identifier, trailer[:-1])
+                args.append('{}[{}]'.format(arg, ','.join(repr(x) for x in trailer[-1])))
             else:
                 args.append(self.visit(var))
         if len(args) == 1:
