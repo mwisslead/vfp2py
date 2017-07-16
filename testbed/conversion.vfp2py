@@ -307,7 +307,7 @@ MYDIR = 'c:\test\test\dir'
 ?justfname(MYDIR)
 ?juststem(mydir)
 ?JUSTEXT(mydir)
-?FORCEEXT(mydir, 'py')
+?FORCEEXT(mydir, 'PY')
 ?ADDBS(MYDIR) + 'dir1'
 ?ADDBS(ADDBS(MYDIR) + 'dir1') + 'dir2'
 ?ADDBS(ADDBS(ADDBS(MYDIR) + 'dir1') + 'dir2') + 'dir3'

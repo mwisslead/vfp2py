@@ -80,6 +80,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
     def __init__(self, filename):
         super(PythonConvertVisitor, self).__init__()
         self.filename = filename
+        self.filesystem_caseless = True
         self.imports = []
         self.scope = {}
         self._saved_scope = None
@@ -767,6 +768,8 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             funcname = '{}.seek'.format(args[0])
             return make_func_code(funcname, *args[1:])
         if funcname in ('file', 'directory', 'justdrive', 'justpath', 'justfname', 'juststem', 'justext', 'forceext', 'addbs', 'curdir'):
+            if self.filesystem_caseless:
+                args = [arg.lower() if string_type(arg) else arg for arg in args]
             self.imports.append('import os')
             operation = {
                 'file': [make_func_code, ['os.path.isfile'] + args],
