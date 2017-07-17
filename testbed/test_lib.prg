@@ -50,13 +50,15 @@ procedure path_tests
    assert HOME() != curdir()
 endproc
 
-procedure _add_db_record()
+procedure _add_db_record(seed)
    LOCAL fake, fake_name, fake_st, fake_quantity, fake_received
-   fake = pythonfunctioncall('faker', 'Factory.create', createobject('pythontuple'))
+   fake = pythonfunctioncall('faker', 'Faker', createobject('pythontuple'))
+   fake.callmethod('seed', createobject('pythontuple', seed))
    fake_name = fake.callmethod('name', createobject('pythontuple'))
    fake_st = fake.callmethod('state_abbr', createobject('pythontuple'))
-   fake_quantity = fake.callmethod('random_number', createobject('pythontuple'))
+   fake_quantity = fake.callmethod('random_int', createobject('pythontuple', 0, 100))
    fake_received = fake.callmethod('boolean', createobject('pythontuple'))
+   ?fake_name, fake_st, fake_quantity, fake_received
    insert into report values (fake_name, fake_st, fake_quantity, fake_received)
 endproc
 
@@ -64,9 +66,11 @@ procedure database_tests
    CREATE TABLE REPORT FREE (NAME C(50), ST C(2), QUANTITY N(5, 0), RECEIVED L(1))
    ASSERT FILE('report.dbf')
    ASSERT USED('report')
-   _add_db_record()
-   _add_db_record()
-   _add_db_record()
-   _add_db_record()
+   _add_db_record(0)
+   _add_db_record(1)
+   _add_db_record(2)
+   _add_db_record(3)
+   go top
+   assert not isblank(alltrim(name))
    DELETE FILE REPORT.DBF
 endproc

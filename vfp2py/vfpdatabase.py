@@ -127,7 +127,7 @@ class DatabaseContext(object):
             for i in range(1,values.alen(1)+1):
                 table.append(tuple(values[i, j] for j in range(1,values.alen(2)+1)))
         except AttributeError:
-            if not isinstance(values, dict):
+            if not isinstance(values, (tuple, dict)):
                 values = {field: getattr(values, field) for field in table.field_names if hasattr(values, field)}
             table.append(values)
         self.goto(tablename, -1)
