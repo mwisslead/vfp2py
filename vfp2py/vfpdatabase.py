@@ -140,11 +140,8 @@ class DatabaseContext(object):
 
     def goto(self, tablename, num):
         table = self._get_table_info(tablename).table
-        if num == -1:
-            table.bottom()
-        else:
-            num = num - 1
-            table.goto(num)
+        num = num - 1 if num > 0 else num
+        table.goto(num)
 
     def _get_records(self, tablename, scope, for_cond, while_cond):
         save_current_table = self.current_table

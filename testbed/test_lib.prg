@@ -58,7 +58,6 @@ procedure _add_db_record(seed)
    fake_st = fake.callmethod('state_abbr', createobject('pythontuple'))
    fake_quantity = fake.callmethod('random_int', createobject('pythontuple', 0, 100))
    fake_received = fake.callmethod('boolean', createobject('pythontuple'))
-   ?fake_name, fake_st, fake_quantity, fake_received
    insert into report values (fake_name, fake_st, fake_quantity, fake_received)
 endproc
 
@@ -71,6 +70,8 @@ procedure database_tests
    _add_db_record(2)
    _add_db_record(3)
    go top
-   assert not isblank(alltrim(name))
+   assert alltrim(name) == 'Norma Fisher' MESSAGE alltrim(name) + ' should be Norma Fisher'
+   go bott
+   assert alltrim(name) == 'Joshua Wood' MESSAGE alltrim(name) + ' should be Joshua Wood'
    DELETE FILE REPORT.DBF
 endproc
