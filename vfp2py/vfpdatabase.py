@@ -180,6 +180,20 @@ class DatabaseContext(object):
         for record in self._get_records(tablename, scope, **kwargs):
             (dbf.undelete if recall else dbf.delete)(record)
 
+    def sum(self, tablename, scope, sumexpr, **kwargs):
+        records = self._get_records(tablename, scope, **kwargs)
+        save_current_table = self.current_table
+        self.select(tablename)
+        table = self._get_table_info().table
+        save_current = table.current
+        sumval = 0
+        for record in records:
+            table.goto(dbf.recno(record))
+            sumval += sumexpr()
+        table.goto(save_current)
+        self.current_table = save_current_table
+        return sumval
+
     def pack(self, pack, tablename, workarea):
         if tablename:
             table = dbf.Table(tablename)

@@ -78,6 +78,8 @@ procedure database_tests
       assert alltrim(name) == 'Norma Fisher' MESSAGE alltrim(name) + ' should be Norma Fisher'
       count for quantity > 60 to countval
       assert countval = 2
+      sum sqrt(quantity + 205) for quantity > 50 while quantity != 63 to sumval
+      assert sumval == 17 + 16
       DELETE REST FOR QUANTITY > 60
       PACK
       assert reccount() == 2

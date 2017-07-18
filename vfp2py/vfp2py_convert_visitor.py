@@ -1414,8 +1414,10 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         scope = self.visit(ctx.scopeClause()) or ('all',)
         if ctx.forExpr:
             kwargs['for_cond'] = add_args_to_code('lambda: {}', [self.visit(ctx.forExpr)])
+        if ctx.whileExpr:
+            kwargs['while_cond'] = add_args_to_code('lambda: {}', [self.visit(ctx.whileExpr)])
         sumexpr = add_args_to_code('lambda: {}', [self.visit(ctx.sumExpr)])
-        return add_args_to_code('{} = {}', (self.visit(ctx.toExpr), make_func_code('vfpfunc.db.sum', scope, sumexpr, **kwargs)))
+        return add_args_to_code('{} = {}', (self.visit(ctx.toExpr), make_func_code('vfpfunc.db.sum', None, scope, sumexpr, **kwargs)))
 
     def visitReindex(self, ctx):
         return make_func_code('vfpfunc.db.reindex', not not ctx.COMPACT())
