@@ -1407,7 +1407,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             kwargs['for_cond'] = add_args_to_code('lambda: {}', [self.visit(ctx.forExpr)])
         if ctx.whileExpr:
             kwargs['while_cond'] = add_args_to_code('lambda: {}', [self.visit(ctx.whileExpr)])
-        return add_args_to_code('{} = {}', (self.visit(ctx.toExpr), make_func_code('vfpfunc.db.count', scope, **kwargs)))
+        return add_args_to_code('{} = {}', (self.visit(ctx.toExpr), make_func_code('vfpfunc.db.count', None, scope, **kwargs)))
 
     def visitSum(self, ctx):
         kwargs = OrderedDict()

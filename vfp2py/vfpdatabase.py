@@ -173,6 +173,9 @@ class DatabaseContext(object):
         self.current_table = save_current_table
         return records
 
+    def count(self, tablename, scope, **kwargs):
+        return len(self._get_records(tablename, scope, **kwargs))
+
     def delete_record(self, tablename, scope, recall=False, **kwargs):
         for record in self._get_records(tablename, scope, **kwargs):
             (dbf.undelete if recall else dbf.delete)(record)

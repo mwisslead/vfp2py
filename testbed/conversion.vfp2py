@@ -203,7 +203,7 @@ vfpfunc.db.continue_locate()
 search_for = countval = sumval = False  # LOCAL Declaration
 search_for = 'PAUL'
 vfpfunc.db.seek(None, search_for.strip())
-countval = vfpfunc.db.count(('all',), for_cond=lambda: vfpvar['test'] == 3)
+countval = vfpfunc.db.count(None, ('all',), for_cond=lambda: vfpvar['test'] == 3)
 sumval = vfpfunc.db.sum(('all',), lambda: vfpvar['t']
                         * vfpvar['t'], for_cond=lambda: vfpvar['t'] > 0)
 del search_for, countval, sumval
