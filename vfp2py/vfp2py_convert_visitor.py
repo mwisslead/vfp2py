@@ -1366,7 +1366,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
 
     def visitDeleteRecord(self, ctx):
         kwargs = OrderedDict()
-        scopetype, num = self.visit(ctx.scopeClause()) or ('next', 1)
+        scope = self.visit(ctx.scopeClause()) or ('next', 1)
         name = self.visit(ctx.inExpr)
         if ctx.forExpr:
             kwargs['for_cond'] = add_args_to_code('lambda: {}', [self.visit(ctx.forExpr)])
@@ -1374,7 +1374,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             kwargs['while_cond'] = add_args_to_code('lambda: {}', [self.visit(ctx.whileExpr)])
         if ctx.RECALL():
             kwargs['recall'] = True
-        return make_func_code('vfpfunc.db.delete_record', scopetype, num, **kwargs)
+        return make_func_code('vfpfunc.db.delete_record', name, scope, **kwargs)
 
     def visitPack(self, ctx):
         if ctx.DATABASE():
@@ -1434,13 +1434,13 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
 
     def visitScopeClause(self, ctx):
         if ctx.ALL():
-            return 'all', -1
+            return 'all',
         elif ctx.NEXT():
             return 'next', self.visit(ctx.expr())
         elif ctx.RECORD():
             return 'record', self.visit(ctx.expr())
         elif ctx.REST():
-            return 'rest', -1
+            return 'rest',
 
     def visitReport(self, ctx):
         if ctx.specialExpr():

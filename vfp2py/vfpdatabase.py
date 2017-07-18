@@ -143,28 +143,38 @@ class DatabaseContext(object):
         num = num - 1 if num > 0 else num
         table.goto(num)
 
-    def _get_records(self, tablename, scope, for_cond, while_cond):
+    def _get_records(self, tablename, scope, for_cond=lambda: True, while_cond=lambda: True):
         save_current_table = self.current_table
         self.select(tablename)
-        if not for_cond:
-            for_cond = lambda: True
-        if not while_cond:
-            while_cond = lambda: True
         table = self._get_table_info().table
-        if scope.lower() == 'rest':
-            condition = lambda table: not table.eof
+        save_current = table.current
+        if scope[0].lower() == 'rest':
+            condition = lambda table: bool(table.current_record)
+        elif scope[0].lower() == 'all':
+            table.goto(0)
+            condition = lambda table: bool(table.current_record)
+        elif scope[0].lower() == 'record':
+            table.goto(scope[1])
+            condition = lambda table: table.current == scope[1] - 1
+        elif scope[0].lower() == 'next':
+            final_record = table.current + scope[1]
+            condition = lambda table: table.current < final_record
         else:
-            recno = self.recno()
-            condition = lambda table: not table.eof and dbf.recno(table.current_record) - recno < num
+            raise Exception('not implemented')
         records = []
         while condition(table) and while_cond():
             if for_cond():
                 records.append(table.current_record)
-            self.skip(None, 1)
+            try:
+                table.skip(1)
+            except:
+                break
+        table.goto(save_current)
         self.current_table = save_current_table
+        return records
 
-    def delete_record(self, tablename, scope, num, for_cond=None, while_cond=None, recall=False):
-        for record in self._get_records(tablename, scope, for_cond, while_cond):
+    def delete_record(self, tablename, scope, recall=False, **kwargs):
+        for record in self._get_records(tablename, scope, **kwargs):
             (dbf.undelete if recall else dbf.delete)(record)
 
     def pack(self, pack, tablename, workarea):

@@ -62,16 +62,28 @@ procedure _add_db_record(seed)
 endproc
 
 procedure database_tests
-   CREATE TABLE REPORT FREE (NAME C(50), ST C(2), QUANTITY N(5, 0), RECEIVED L(1))
-   ASSERT FILE('report.dbf')
-   ASSERT USED('report')
-   _add_db_record(0)
-   _add_db_record(1)
-   _add_db_record(2)
-   _add_db_record(3)
-   go top
-   assert alltrim(name) == 'Norma Fisher' MESSAGE alltrim(name) + ' should be Norma Fisher'
-   go bott
-   assert alltrim(name) == 'Joshua Wood' MESSAGE alltrim(name) + ' should be Joshua Wood'
-   DELETE FILE REPORT.DBF
+   try
+      CREATE TABLE REPORT FREE (NAME C(50), ST C(2), QUANTITY N(5, 0), RECEIVED L(1))
+      ASSERT FILE('report.dbf')
+      ASSERT USED('report')
+      _add_db_record(0)
+      _add_db_record(1)
+      _add_db_record(2)
+      _add_db_record(3)
+      go top
+      assert alltrim(name) == 'Norma Fisher' MESSAGE alltrim(name) + ' should be Norma Fisher'
+      go bott
+      assert alltrim(name) == 'Joshua Wood' MESSAGE alltrim(name) + ' should be Joshua Wood'
+      goto 1
+      assert alltrim(name) == 'Norma Fisher' MESSAGE alltrim(name) + ' should be Norma Fisher'
+      DELETE REST FOR QUANTITY > 60
+      PACK
+      assert reccount() == 2
+   catch to err
+      ?err.message
+      browse
+      throw
+   finally
+      DELETE FILE REPORT.DBF
+   endtry
 endproc
