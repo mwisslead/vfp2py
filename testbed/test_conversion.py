@@ -488,3 +488,27 @@ vfpvar[\'somearray\'][1, 4] = 3
         print(''.join(diff))
         raise
 
+
+def Test14():
+    input_str = '''
+Try
+   assert .f.
+catch to oerr
+   throw
+endtry
+'''.strip()
+    output_str = '''
+try:
+    assert False
+except Exception as oerr:
+    # vfpfunc.pyexception_to_foxexception(oerr)
+    raise
+'''.strip()
+    test_output_str = vfp2py.vfp2py.prg2py(input_str, parser_start='lines', prepend_data='').strip()
+    try:
+        assert test_output_str == output_str
+    except AssertionError:
+        diff = difflib.unified_diff((test_output_str + '\n').splitlines(1), (output_str + '\n').splitlines(1))
+        print(''.join(diff))
+        raise
+

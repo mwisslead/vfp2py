@@ -211,7 +211,7 @@ otherCmds
  | DEACTIVATE (MENU|POPUP) (ALL | parameters) #deactivate
 
  | ERROR expr? #raiseError
- | THROW expr #throwError
+ | THROW expr? #throwError
 
  | CREATE (TABLE|DBF) specialExpr FREE? '(' identifier identifier arrayIndex (',' identifier identifier arrayIndex)* ')' #createTable
  | SELECT (tablename=specialExpr | (DISTINCT? (specialArgs | '*') (FROM fromExpr=specialExpr)? (WHERE whereExpr=expr)? (INTO (TABLE | CURSOR) intoExpr=specialExpr)? (ORDER BY orderbyid=identifier)?)) #select

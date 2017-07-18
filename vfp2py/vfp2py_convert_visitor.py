@@ -1238,6 +1238,11 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         args = self.visit_with_disabled_scope(ctx.parameters()) if not ctx.ALL() else []
         return make_func_code(func, *[str(arg) for arg in args])
 
+    def visitThrowError(self, ctx):
+        if ctx.expr():
+            return add_args_to_code('raise {}', [self.visit(ctx.expr())])
+        return CodeStr('raise')
+
     def visitCreateTable(self, ctx):
         if ctx.TABLE():
             func = 'vfpfunc.db.create_table'

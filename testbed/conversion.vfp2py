@@ -372,6 +372,22 @@ vfpvar.add_public('somearray', somearray_init_val=vfpfunc.Array(2, 5))
 vfpvar['somearray'][1, 4] = 3
 @end=python@
 
+@begin=vfp@&&lines
+Try
+   assert .f.
+catch to oerr
+   throw
+endtry
+@end=vfp@
+
+@begin=python@
+try:
+    assert False
+except Exception as oerr:
+    # vfpfunc.pyexception_to_foxexception(oerr)
+    raise
+@end=python@
+
 ON ERROR
 ON ERROR DO test
 SET TYPEAHEAD TO 0
