@@ -82,7 +82,12 @@ procedure database_tests
       assert sumval == 17 + 16
       DELETE REST FOR QUANTITY > 60
       PACK
+      go top
       assert reccount() == 2
+      REPLACE REPORT.NAME WITH 'N/A'
+      assert alltrim(name) == 'N/A'
+      REPLACE ALL NAME WITH 'Not Available'
+      assert alltrim(name) == 'Not Available'
    catch to err
       ?err.message
       browse

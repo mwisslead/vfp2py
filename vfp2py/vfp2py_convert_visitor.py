@@ -1350,9 +1350,15 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
 
     def visitReplace(self, ctx):
         value = self.visit(ctx.expr(0))
-        scope = self.visit(ctx.scopeClause())
+        scope = self.visit(ctx.scopeClause()) or ('next', 1)
         field = self.visit_with_disabled_scope(ctx.specialExpr())
-        return make_func_code('vfpfunc.db.replace', field, value, scope)
+        if string_type(field):
+            field = field.lower().rsplit('.', 1)
+            tablename = field[0] if len(field) == 2 else None
+            field = field[-1]
+        else:
+            tablename = None
+        return make_func_code('vfpfunc.db.replace', tablename, scope, field, value)
 
     def visitSkipRecord(self, ctx):
         table = self.visit(ctx.specialExpr())

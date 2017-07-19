@@ -101,19 +101,13 @@ class DatabaseContext(object):
                 for record in from_table:
                     table.append(record)
 
-    def replace(self, field, value, scope):
-        field = field.lower().split('.')
-        if len(field) > 1:
-            if len(field) == 2:
-                table = str(field[0])
-            else:
-                table = '.'.join(field[:-1])
+    def replace(self, tablename, scope, field, value):
+        if not tablename:
+            field = field.lower().rsplit('.', 1)
+            tablename = field[0] if len(field) == 2 else None
             field = field[-1]
-        else:
-            field = field[0]
-            table = None
-        record = self._get_table_info(table).current_record
-        dbf.write(record, **{field: value})
+        for record in self._get_records(tablename, scope):
+            dbf.write(record, **{field: value})
 
     def insert(self, tablename, values):
         table_info = self._get_table_info(tablename)
@@ -147,6 +141,9 @@ class DatabaseContext(object):
         save_current_table = self.current_table
         self.select(tablename)
         table = self._get_table_info().table
+        if not table:
+            self.current_table = save_current_table
+            return []
         save_current = table.current
         if scope[0].lower() == 'rest':
             condition = lambda table: bool(table.current_record)
@@ -162,6 +159,10 @@ class DatabaseContext(object):
         else:
             raise Exception('not implemented')
         records = []
+        if not table.current_record:
+            table.goto(save_current)
+            self.current_table = save_current_table
+            return []
         while condition(table) and while_cond():
             if for_cond():
                 records.append(table.current_record)
