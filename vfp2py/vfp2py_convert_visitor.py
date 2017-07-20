@@ -1318,6 +1318,8 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
 
     def visitAppendFrom(self, ctx):
         self.imports.append('from vfp2py import vfpfunc')
+        if ctx.ARRAY():
+            return make_func_code('vfpfunc.db.insert', None, self.visit(ctx.expr()))
         sourcename = self.visit(ctx.specialExpr(0))
         kwargs = {}
         if ctx.FOR():

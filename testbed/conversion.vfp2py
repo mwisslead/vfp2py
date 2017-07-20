@@ -282,12 +282,14 @@ vfpfunc.set(u'compatible', 'ON', 'NOPROMPT', set_value=True)
 APPEND FROM TABLE_NAME
 APPEND FROM TABLE_NAME TYPE DELIMITED
 APPEND FROM 'table' + '_' + 'name' TYPE 'Delimited'
+APPEND FROM ARRAY TEST
 @end=vfp@
 
 @begin=python@
 vfpfunc.db.append_from(None, 'table_name')
 vfpfunc.db.append_from(None, 'table_name', filetype='delimited')
 vfpfunc.db.append_from(None, 'table_name', filetype='delimited')
+vfpfunc.db.insert(None, vfpvar['test'])
 @end=python@
 
 @begin=vfp@&&lines

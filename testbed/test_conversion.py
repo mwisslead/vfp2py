@@ -368,11 +368,13 @@ def Test10():
 APPEND FROM TABLE_NAME
 APPEND FROM TABLE_NAME TYPE DELIMITED
 APPEND FROM \'table\' + \'_\' + \'name\' TYPE \'Delimited\'
+APPEND FROM ARRAY TEST
 '''.strip()
     output_str = '''
 vfpfunc.db.append_from(None, \'table_name\')
 vfpfunc.db.append_from(None, \'table_name\', filetype=\'delimited\')
 vfpfunc.db.append_from(None, \'table_name\', filetype=\'delimited\')
+vfpfunc.db.insert(None, vfpvar[\'test\'])
 '''.strip()
     test_output_str = vfp2py.vfp2py.prg2py(input_str, parser_start='lines', prepend_data='').strip()
     try:
