@@ -139,6 +139,9 @@ DEFINE CLASS TESTCLASS AS COMMANDBUTTON
    FUNCTION INIT(X)
    ENDFUNC
 ENDDEFINE
+
+DEFINE CLASS TESTCLASS2 AS UNKNOWNCLASS
+ENDDEFINE
 '''.strip()
     output_str = '''
 from __future__ import division, print_function
@@ -171,6 +174,10 @@ class Testclass(vfpfunc.Commandbutton):
         self.test1 = vfpfunc.Custom()
         self.test2 = Subobj(x=4)
         self.test3 = vfpfunc.create_object(\'Unknownobj\', x=\'4\')
+
+
+class Testclass2(vfpfunc.classes[\'Unknownclass\']):
+    pass
 '''.strip()
     test_output_str = vfp2py.vfp2py.prg2py(input_str).strip()
     try:

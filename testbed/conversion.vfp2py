@@ -117,6 +117,9 @@ DEFINE CLASS TESTCLASS AS COMMANDBUTTON
    FUNCTION INIT(X)
    ENDFUNC
 ENDDEFINE
+
+DEFINE CLASS TESTCLASS2 AS UNKNOWNCLASS
+ENDDEFINE
 @end=vfp@
 
 @begin=python@
@@ -150,6 +153,10 @@ class Testclass(vfpfunc.Commandbutton):
         self.test1 = vfpfunc.Custom()
         self.test2 = Subobj(x=4)
         self.test3 = vfpfunc.create_object('Unknownobj', x='4')
+
+
+class Testclass2(vfpfunc.classes['Unknownclass']):
+    pass
 @end=python@
 
 @begin=vfp@&&lines

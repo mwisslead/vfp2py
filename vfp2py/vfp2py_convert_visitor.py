@@ -254,6 +254,9 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         if hasattr(vfpfunc, supername):
             self.imports.append('from vfp2py import vfpfunc')
             supername = add_args_to_code('{}.{}', (CodeStr('vfpfunc'), supername))
+        elif supername not in self.class_list:
+            supername = add_args_to_code('vfpfunc.classes[{}]', (str(supername),))
+            pass
         return classname, supername
 
     def visitClassDefAssign(self, ctx):
