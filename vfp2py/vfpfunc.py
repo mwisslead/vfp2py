@@ -80,6 +80,27 @@ class Shape(Custom):
 class Commandbutton(Custom):
     pass
 
+class Separator(Custom):
+    pass
+
+class Toolbar(Custom):
+    pass
+
+class Listbox(Custom):
+    pass
+
+class Optiongroup(Custom):
+    pass
+
+class Optionbutton(Custom):
+    pass
+
+class Pageframe(Custom):
+    pass
+
+class Page(Custom):
+    pass
+
 class Array(object):
     def __init__(self, dim1, dim2=0, offset=0):
         self.columns = bool(dim2)
