@@ -240,10 +240,9 @@ class DatabaseContext(object):
     def locate(self, tablename=None, for_cond=None, while_cond=None, nooptimize=None):
         kwargs = locals()
         kwargs = {key: kwargs[key] for key in ('for_cond', 'while_cond') if kwargs[key] is not None}
-        table_info = self._get_table_info(tablename)
         records = self._get_records(tablename, ('rest',), **kwargs)
         if records:
-            table_info.table.goto(dbf.recno(records[0]))
+            dbf.source_table(records[0]).goto(dbf.recno(records[0]))
 
     def browse(self):
         table_info = self._get_table_info()
