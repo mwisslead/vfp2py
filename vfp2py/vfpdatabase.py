@@ -138,12 +138,19 @@ class DatabaseContext(object):
         table.goto(num)
 
     def _get_records(self, tablename, scope, for_cond=lambda: True, while_cond=lambda: True):
+        def reset(used_table, saved_current):
+            if saved_current < 0:
+                used_table.top()
+            elif saved_current == len(used_table):
+                used_table.bottom()
+            else:
+                used_table.goto(saved_current)
         save_current_table = self.current_table
         self.select(tablename)
         table = self._get_table_info().table
         if not table:
             self.current_table = save_current_table
-            return []
+            return
         save_current = table.current
         if scope[0].lower() == 'rest':
             condition = lambda table: bool(table.current_record)
@@ -158,42 +165,29 @@ class DatabaseContext(object):
             condition = lambda table: table.current < final_record
         else:
             raise Exception('not implemented')
-        records = []
         if not table.current_record:
-            table.goto(save_current)
+            reset(table, save_current)
             self.current_table = save_current_table
-            return []
+            return
         while condition(table) and while_cond():
             if for_cond():
-                records.append(table.current_record)
+                yield table.current_record
             try:
                 table.skip(1)
             except:
                 break
-        table.goto(save_current)
+        reset(table, save_current)
         self.current_table = save_current_table
-        return records
 
     def count(self, tablename, scope, **kwargs):
-        return len(self._get_records(tablename, scope, **kwargs))
+        return len(list(self._get_records(tablename, scope, **kwargs)))
 
     def delete_record(self, tablename, scope, recall=False, **kwargs):
         for record in self._get_records(tablename, scope, **kwargs):
             (dbf.undelete if recall else dbf.delete)(record)
 
     def sum(self, tablename, scope, sumexpr, **kwargs):
-        records = self._get_records(tablename, scope, **kwargs)
-        save_current_table = self.current_table
-        self.select(tablename)
-        table = self._get_table_info().table
-        save_current = table.current
-        sumval = 0
-        for record in records:
-            table.goto(dbf.recno(record))
-            sumval += sumexpr()
-        table.goto(save_current)
-        self.current_table = save_current_table
-        return sumval
+        return sum(sumexpr() for record in self._get_records(tablename, scope, **kwargs))
 
     def pack(self, pack, tablename, workarea):
         if tablename:
@@ -240,7 +234,7 @@ class DatabaseContext(object):
     def locate(self, tablename=None, for_cond=None, while_cond=None, nooptimize=None):
         kwargs = locals()
         kwargs = {key: kwargs[key] for key in ('for_cond', 'while_cond') if kwargs[key] is not None}
-        records = self._get_records(tablename, ('rest',), **kwargs)
+        records = list(self._get_records(tablename, ('rest',), **kwargs))
         if records:
             dbf.source_table(records[0]).goto(dbf.recno(records[0]))
 
