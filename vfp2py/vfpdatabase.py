@@ -209,7 +209,7 @@ class DatabaseContext(object):
 
     def recno(self):
         try:
-            return dbf.recno(self.open_tables[self.current_table].table.current_record)
+            return dbf.recno(self.open_tables[self.current_table].table.current_record) + 1
         except:
             return 0
 
