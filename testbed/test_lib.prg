@@ -70,6 +70,7 @@ procedure database_tests
       _add_db_record(1)
       _add_db_record(2)
       _add_db_record(3)
+      assert not found()
       go top
       assert alltrim(name) == 'Norma Fisher' MESSAGE alltrim(name) + ' should be Norma Fisher'
       assert recno() == 1
@@ -79,11 +80,13 @@ procedure database_tests
       goto 1
       locate for st == 'ID'
       assert alltrim(name) == 'Norma Fisher' MESSAGE alltrim(name) + ' should be Norma Fisher'
+      assert found()
       continue
       assert alltrim(name) == 'Ryan Gallagher' MESSAGE alltrim(name) + ' should be Ryan Gallagher'
       continue
       assert EOF()
       assert recno() == reccount() + 1
+      assert not found()
       count for quantity > 60 to countval
       assert countval = 2
       sum sqrt(quantity + 205) for quantity > 50 while quantity != 63 to sumval

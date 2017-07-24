@@ -13,6 +13,7 @@ class DatabaseWorkspace(object):
         self.table.open()
         if len(self.table) > 0:
             self.table.goto(0)
+        self.locate = None
 
     def _is_alias(self, alias):
         alias = alias.lower()
@@ -238,11 +239,19 @@ class DatabaseContext(object):
         self.continue_locate(tablename)
 
     def continue_locate(self, tablename=None):
+        workarea = self._get_table_info(tablename)
+        if not (workarea and workarea.locate):
+            return
         try:
-            record = next(self._get_table_info(tablename).locate)
+            record = next(workarea.locate)
             dbf.source_table(record).goto(dbf.recno(record))
         except StopIteration:
-            self._get_table_info(tablename).table.bottom()
+            workarea.table.bottom()
+            workarea.locate = None
+
+    def found(self, tablename=None):
+        workarea = self._get_table_info(tablename)
+        return workarea.locate is not None if workarea else False
 
     def browse(self):
         table_info = self._get_table_info()
