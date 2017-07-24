@@ -75,12 +75,17 @@ procedure database_tests
       go bott
       assert alltrim(name) == 'Joshua Wood' MESSAGE alltrim(name) + ' should be Joshua Wood'
       goto 1
-      locate for st == 'CA'
-      assert alltrim(name) == 'Theresa Brown' MESSAGE alltrim(name) + ' should be Theresa Brown'
+      locate for st == 'ID'
+      assert alltrim(name) == 'Norma Fisher' MESSAGE alltrim(name) + ' should be Norma Fisher'
+      continue
+      assert alltrim(name) == 'Ryan Gallagher' MESSAGE alltrim(name) + ' should be Ryan Gallagher'
+      continue
+      assert EOF()
       count for quantity > 60 to countval
       assert countval = 2
       sum sqrt(quantity + 205) for quantity > 50 while quantity != 63 to sumval
       assert sumval == 17 + 16
+      go top
       DELETE REST FOR QUANTITY > 60
       PACK
       go top

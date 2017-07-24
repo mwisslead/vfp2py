@@ -234,9 +234,15 @@ class DatabaseContext(object):
     def locate(self, tablename=None, for_cond=None, while_cond=None, nooptimize=None):
         kwargs = locals()
         kwargs = {key: kwargs[key] for key in ('for_cond', 'while_cond') if kwargs[key] is not None}
-        records = list(self._get_records(tablename, ('rest',), **kwargs))
-        if records:
-            dbf.source_table(records[0]).goto(dbf.recno(records[0]))
+        self._get_table_info(tablename).locate = (record for record in list(self._get_records(tablename, ('rest',), **kwargs)))
+        self.continue_locate(tablename)
+
+    def continue_locate(self, tablename=None):
+        try:
+            record = next(self._get_table_info(tablename).locate)
+            dbf.source_table(record).goto(dbf.recno(record))
+        except StopIteration:
+            self._get_table_info(tablename).table.bottom()
 
     def browse(self):
         table_info = self._get_table_info()
