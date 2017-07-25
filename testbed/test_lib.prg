@@ -62,10 +62,19 @@ procedure _add_db_record(seed)
 endproc
 
 procedure database_tests
+   SET SAFETY OFF
+   SET ASSERTS ON
    try
       CREATE TABLE REPORT FREE (NAME C(50), ST C(2), QUANTITY N(5, 0), RECEIVED L(1))
       ASSERT FILE('report.dbf')
       ASSERT USED('report')
+      try
+         USE report in 0 shared
+         assert .f.
+      catch to oerr
+         ?oerr.message
+         assert oerr.message == 'File is in use.'
+      endtry
       _add_db_record(0)
       _add_db_record(1)
       _add_db_record(2)

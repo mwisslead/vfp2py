@@ -79,6 +79,8 @@ class DatabaseContext(object):
                 return
             self.open_tables[self.get_workarea(workarea) - 1] = None
             return
+        if self.used(tablename):
+            raise Exception('File is in use.')
         if workarea == 0:
             workarea = self.open_tables.index(None)
         self.open_tables[workarea] = DatabaseWorkspace(tablename)
