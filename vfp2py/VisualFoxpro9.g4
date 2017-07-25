@@ -317,6 +317,7 @@ setCmd
  | setword=PRINTER (ON PROMPT? | OFF | TO (DEFAULT | NAME specialExpr | specialExpr ADDITIVE?)?)
  | setword=PROCEDURE TO specialExpr (',' specialExpr)* ADDITIVE?
  | setword=REFRESH TO expr (',' expr)?
+ | setword=SAFETY (ON | OFF)
  | setword=STATUS BAR? (ON | OFF)
  | setword=SYSMENU (ON | OFF | TO (DEFAULT | expr)? | SAVE | NOSAVE)
  | setword=TYPEAHEAD TO expr
@@ -577,6 +578,7 @@ FOR : F O R;
 ENDFOR : E N D F O R;
 WHILE : W H I L E;
 NOOPTIMIZE : N O O P T I M I Z E;
+SAFETY: S A F E T Y;
 STATUS : S T A T U S;
 BAR : B A R;
 MEMOWIDTH : M E M O W I D T H;
