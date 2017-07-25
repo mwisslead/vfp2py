@@ -296,6 +296,7 @@ setStmt
 
 setCmd
  : setword=ALTERNATE (ON | OFF | TO specialExpr ADDITIVE?)
+ | setword=ASSERTS (ON | OFF)
  | setword=BELL (ON | OFF | TO specialExpr)
  | setword=CENTURY (ON | OFF | TO (expr (ROLLOVER expr)?)?) 
  | setword=CLASSLIB TO specialExpr ADDITIVE?
@@ -526,6 +527,7 @@ COMMENT: ('&&' (~'\n')* | ';' WS* '&&' (~'\n')* NL) -> channel(1);
 LINECONT : ';' WS* NL -> skip;
 
 ASSERT: A S S E R T;
+ASSERTS: ASSERT S;
 TO : T O;
 DO : D O;
 IN : I N;
