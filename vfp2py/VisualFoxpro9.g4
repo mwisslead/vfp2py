@@ -2,38 +2,23 @@ grammar VisualFoxpro9
  ;
 
 preprocessorCode
- : (preprocessorLine | nonpreprocessorLine)*
+ : preprocessorLines EOF
+ ;
+
+preprocessorLines
+ : preprocessorLine*
  ;
 
 preprocessorLine
  : '#' (IF expr | IFDEF identifier) NL 
-           ifBody=preprocessorCode
+           ifBody=preprocessorLines
   ('#' ELSE NL
-           elseBody=preprocessorCode)?
+           elseBody=preprocessorLines)?
    '#' ENDIF lineEnd #preprocessorIf
  | '#' DEFINE identifier (~NL)* lineEnd #preprocessorDefine
  | '#' UNDEFINE identifier lineEnd #preprocessorUndefine
  | '#' INCLUDE specialExpr lineEnd #preprocessorInclude
- ;
-
-nonpreprocessorLine
- : LINECOMMENT 
- | lineEnd
- | ~'#' (~NL)* lineEnd
- ;
-
-prg
- : (classDef | funcDef | lineComment)*
- ;
-
-lineComment
- : LINECOMMENT
- ;
-
-line
- : controlStmt
- | cmdStmt
- | lineComment
+ | ~'#' (~NL)* lineEnd #nonpreprocessorLine
  ;
 
 lineEnd
@@ -41,8 +26,8 @@ lineEnd
  | EOF
  ;
 
-lines
- : line*?
+prg
+ : (classDef | funcDef)* EOF
  ;
 
 classDefStart
@@ -50,45 +35,51 @@ classDefStart
  ;
 
 classDef
- : classDefStart (classDefProperty | funcDef | lineComment)* ENDDEFINE lineEnd
+ : classDefStart (classDefProperty | funcDef)* ENDDEFINE lineEnd
  ;
 
 classDefProperty
  : ADD OBJECT identifier AS idAttr (WITH idAttr '=' expr (',' idAttr '=' expr)*)? NL #classDefAddObject
  | assign NL #classDefAssign
- | lineComment #classDefLineComment
- ;
-
-funcDefStart
- : PROTECTED? (PROCEDURE | FUNCTION) idAttr2 ('(' parameters? ')')? NL parameterDef?
- ;
-
-funcDefEnd
- : (ENDPROC | ENDFUNC) lineEnd
- ;
-
-parameterDef
- : (LPARAMETER | LPARAMETERS | PARAMETERS) parameters NL
  ;
 
 funcDef
- :  funcDefStart lines funcDefEnd?
+ : PROTECTED? PROCEDURE identifier ('.' identifier)* ('(' parameters? ')')? NL ((LPARAMETER | LPARAMETERS | PARAMETERS) parameters NL)? lines (ENDPROC lineEnd)?
  ;
 
-parameter
- : idAttr (AS idAttr)?
+lines
+ : line*?
  ;
 
-parameters
- : parameter (',' parameter)*
+line
+ : whileStmt
+ | ifStmt
+ | caseStmt
+ | forStmt
+ | withStmt
+ | scanStmt
+ | tryStmt
+ | cmdStmt
  ;
 
-ifStart
- : IF expr THEN? NL
+whileStmt
+ : DO WHILE expr NL lines ENDDO lineEnd
  ;
 
 ifStmt
- : ifStart ifBody=lines (ELSE NL elseBody=lines)? ENDIF lineEnd
+ : IF expr THEN? NL ifBody=lines (ELSE NL elseBody=lines)? ENDIF lineEnd
+ ;
+
+singleCase
+ : CASE expr NL lines
+ ;
+
+otherwise
+ : OTHERWISE NL lines
+ ;
+
+caseStmt
+ : DO CASE NL singleCase* otherwise? ENDCASE lineEnd
  ;
 
 forStart
@@ -97,40 +88,11 @@ forStart
  ;
 
 forEnd
- : (ENDFOR | NEXT idAttr?)
+ : (ENDFOR | NEXT idAttr?) lineEnd
  ;
 
 forStmt
- : forStart lines forEnd lineEnd
- ;
-
-caseExpr
- : CASE expr NL
- ;
-
-singleCase
-  : caseExpr lines
- ;
-
-otherwise
- : OTHERWISE NL lines
- ;
-
-caseElement
- : lineComment
- | singleCase
- ;
-
-caseStmt
- : DO CASE NL caseElement* otherwise? lineComment* ENDCASE lineEnd
- ;
-
-whileStart
- : DO? WHILE expr NL
- ;
-
-whileStmt
- : whileStart lines ENDDO lineEnd
+ : forStart lines forEnd
  ;
 
 withStmt
@@ -145,28 +107,8 @@ tryStmt
  : TRY NL tryLines=lines (CATCH (TO identifier)? NL catchLines=lines)? (FINALLY NL finallyLines=lines)? ENDTRY lineEnd
  ;
 
-breakLoop
- : EXIT NL
- ;
-
-continueLoop
- : LOOP NL
- ;
-
-controlStmt
- : whileStmt
- | ifStmt
- | caseStmt
- | forStmt
- | withStmt
- | scanStmt
- | tryStmt
- | breakLoop
- | continueLoop
- ;
-
 cmdStmt
- : (cmd | setup) lineEnd
+ : cmd lineEnd
  ;
 
 cmd
@@ -177,16 +119,101 @@ cmd
  | waitCmd
  | filesystemCmd
  | returnStmt
- | quit
  | release
- | setup
+ | onEvent
+ | setStmt
+ | quit
+ | breakLoop
+ | continueLoop
  | otherCmds
  | '=' expr
  | complexId
  ;
 
+funcDo
+ : DO FORM? specialExpr (IN specialExpr)? (WITH args)?
+ ;
+
+assign
+ : STORE expr TO idAttr (',' idAttr)*
+ | idAttr '=' expr
+ ;
+
+declaration
+ : (PUBLIC|PRIVATE|LOCAL) (parameters | ARRAY? identifier arrayIndex)
+ | (DIMENSION | DEFINE) identifier arrayIndex
+ ;
+
+printStmt
+ : '?' '?'? args?
+ ;
+
+waitCmd
+ : WAIT (TO toExpr=expr | WINDOW (AT atExpr1=expr ',' atExpr2=expr)? | NOWAIT | CLEAR | NOCLEAR | TIMEOUT timeout=expr | message=expr)*
+ ;
+
+filesystemCmd
+ : (ERASE | DELETE FILE) (specialExpr|'?') RECYCLE? #deleteFile
+ | (RENAME | COPY FILE) specialExpr TO specialExpr #copyMoveFile
+ | (CHDIR | MKDIR | RMDIR) specialExpr #chMkRmDir
+ ;
+
+returnStmt
+ : RETURN expr?
+ ;
+
 release
  : RELEASE (ALL | vartype=(PROCEDURE|CLASSLIB)? args | POPUPS args EXTENDED?)
+ ;
+
+onEvent
+ : ON (ERROR | SHUTDOWN) cmd?
+ ;
+
+setStmt
+ : SET setCmd
+ ;
+
+setCmd
+ : setword=ALTERNATE (ON | OFF | TO specialExpr ADDITIVE?)
+ | setword=ASSERTS (ON | OFF)
+ | setword=BELL (ON | OFF | TO specialExpr)
+ | setword=CENTURY (ON | OFF | TO (expr (ROLLOVER expr)?)?) 
+ | setword=CLASSLIB TO specialExpr ADDITIVE?
+ | setword=CLOCK (ON | OFF | STATUS | TO (expr ',' expr)?)
+ | setword=COMPATIBLE (ON | OFF | DB4 | FOXPLUS) (PROMPT | NOPROMPT)?
+ | setword=CURSOR (ON | OFF)
+ | setword=DATE TO? identifier
+ | setword=DELETED (ON | OFF)
+ | setword=EXACT (ON | OFF)
+ | setword=FILTER TO (specialExpr (IN specialExpr)?)?
+ | setword=INDEX TO specialExpr?
+ | setword=LIBRARY TO (specialExpr ADDITIVE?)
+ | setword=MEMOWIDTH TO expr
+ | setword=MULTILOCKS (ON | OFF)
+ | setword=NEAR (ON | OFF)
+ | setword=NOTIFY CURSOR? (ON | OFF)
+ | setword=ORDER TO (specialExpr | TAG? specialExpr (OF ofExpr=specialExpr)? (IN inExpr=specialExpr)? (ASCENDING | DESCENDING)?)?
+ | setword=PRINTER (ON PROMPT? | OFF | TO (DEFAULT | NAME specialExpr | specialExpr ADDITIVE?)?)
+ | setword=PROCEDURE TO specialExpr (',' specialExpr)* ADDITIVE?
+ | setword=REFRESH TO expr (',' expr)?
+ | setword=SAFETY (ON | OFF)
+ | setword=STATUS BAR? (ON | OFF)
+ | setword=SYSMENU (ON | OFF | TO (DEFAULT | expr)? | SAVE | NOSAVE)
+ | setword=TYPEAHEAD TO expr
+ | setword=UNIQUE (ON | OFF)
+ ;
+
+quit
+ : QUIT
+ ;
+
+breakLoop
+ : EXIT
+ ;
+
+continueLoop
+ : LOOP
  ;
 
 otherCmds
@@ -231,7 +258,7 @@ otherCmds
  | PACK (DATABASE | (MEMO | DBF)? (IN workArea=specialExpr | tableName=specialExpr IN workArea=specialExpr | tableName=specialExpr)?) #pack
  | REINDEX COMPACT? #reindex
  | SEEK seekExpr=expr ((ORDER orderExpr=expr | TAG tagName=specialExpr (OF cdxFileExpr=specialExpr)? | idxFileExpr=specialExpr) (ASCENDING | DESCENDING)?)? (IN tablenameExpr=specialExpr)? #seekRecord
- | (GO | GOTO) (TOP | BOTTOM | RECORD? expr) (IN specialExpr)? #goRecord
+ | GOTO (TOP | BOTTOM | RECORD? expr) (IN specialExpr)? #goRecord
  | COPY STRUCTURE? TO specialExpr #copyTo
  | ZAP (IN specialExpr)? #zapTable
  | BROWSE (~NL)* #browse
@@ -248,87 +275,74 @@ otherCmds
  | ASSERT expr (MESSAGE expr)? #assert
  ;
 
+expr
+ : orTest (AS datatype)?
+ ;
+
+orTest
+ : andTest ('or' andTest)*
+ ;
+
+andTest
+ : notTest ('and' notTest)*
+ ;
+
+notTest
+ : ('!' | 'not') notTest | comparison
+ ;
+
+comparison
+ : addExpr (comp_op addExpr)*
+ ;
+
+comp_op
+ : '==' | NOTEQUALS | '=' | '#' | '>' | '>=' | '<' | '<=' | '$'
+ ;
+
+addExpr
+ : term (('+'|'-') term)*
+ ;
+
+term
+ : factor (('*'|'/'|'%') factor)*
+ ;
+
+factor
+ : ('+'|'-') factor | power
+ ;
+
+power
+ : atomExpr (('*' '*' | '^') factor)?
+ ;
+
+atomExpr
+ : subExpr | idAttr | constant
+ ;
+
+subExpr
+ : '(' expr ')'
+ ;
+
+idAttr
+ : PERIOD? identifier trailer?
+ ;
+
+complexId
+ : PERIOD? identifier trailer
+ | PERIOD identifier trailer?
+ ;
+
+trailer
+ : ('(' args? ')' | '[' args? ']') trailer? #funcCallTrailer
+ | '.' identifier trailer? #identTrailer
+ ;
+
 dllArgs
  : dllArg (',' dllArg)*
  ;
 
 dllArg
  : datatype '@'? identifier?
- ;
-
-printStmt
- : '?' '?'? args?
- ;
-
-waitCmd
- : WAIT (TO toExpr=expr | WINDOW (AT atExpr1=expr ',' atExpr2=expr)? | NOWAIT | CLEAR | NOCLEAR | TIMEOUT timeout=expr | message=expr)*
- ;
-
-filesystemCmd
- : (ERASE | DELETE FILE) (specialExpr|'?') RECYCLE? #deleteFile
- | (RENAME | COPY FILE) specialExpr TO specialExpr #copyMoveFile
- | (CHDIR | MKDIR | RMDIR) specialExpr #chMkRmDir
- ;
-
-quit
- : QUIT
- ;
-
-returnStmt
- : RETURN expr?
- ;
-
-setup
- : onError
- | setStmt
- | onShutdown
- ;
-
-onError
- : ON ERROR cmd?
- ;
-
-onShutdown
- : ON SHUTDOWN cmd?
- ;
-
-setStmt
- : SET setCmd
- ;
-
-setCmd
- : setword=ALTERNATE (ON | OFF | TO specialExpr ADDITIVE?)
- | setword=ASSERTS (ON | OFF)
- | setword=BELL (ON | OFF | TO specialExpr)
- | setword=CENTURY (ON | OFF | TO (expr (ROLLOVER expr)?)?) 
- | setword=CLASSLIB TO specialExpr ADDITIVE?
- | setword=CLOCK (ON | OFF | STATUS | TO (expr ',' expr)?)
- | setword=COMPATIBLE (ON | OFF | DB4 | FOXPLUS) (PROMPT | NOPROMPT)?
- | setword=CURSOR (ON | OFF)
- | setword=DATE TO? identifier
- | setword=DELETED (ON | OFF)
- | setword=EXACT (ON | OFF)
- | setword=FILTER TO (specialExpr (IN specialExpr)?)?
- | setword=INDEX TO specialExpr?
- | setword=LIBRARY TO (specialExpr ADDITIVE?)
- | setword=MEMOWIDTH TO expr
- | setword=MULTILOCKS (ON | OFF)
- | setword=NEAR (ON | OFF)
- | setword=NOTIFY CURSOR? (ON | OFF)
- | setword=ORDER TO (specialExpr | TAG? specialExpr (OF ofExpr=specialExpr)? (IN inExpr=specialExpr)? (ASCENDING | DESCENDING)?)?
- | setword=PRINTER (ON PROMPT? | OFF | TO (DEFAULT | NAME specialExpr | specialExpr ADDITIVE?)?)
- | setword=PROCEDURE TO specialExpr (',' specialExpr)* ADDITIVE?
- | setword=REFRESH TO expr (',' expr)?
- | setword=SAFETY (ON | OFF)
- | setword=STATUS BAR? (ON | OFF)
- | setword=SYSMENU (ON | OFF | TO (DEFAULT | expr)? | SAVE | NOSAVE)
- | setword=TYPEAHEAD TO expr
- | setword=UNIQUE (ON | OFF)
- ;
-
-declaration
- : (PUBLIC|PRIVATE|LOCAL) (parameters | ARRAY? identifier arrayIndex)
- | (DIMENSION | DEFINE) identifier arrayIndex
  ;
 
 args
@@ -339,48 +353,12 @@ specialArgs
  : specialExpr (',' specialExpr)*
  ;
 
-funcDo
- : DO FORM specialExpr
- | DO specialExpr (IN specialExpr)? (WITH args)?
- ;
-
 reference
  : '@' idAttr
  ;
 
 argReplace
  : '&' identifier
- ;
-
-expr
- : '(' expr ')' #subExpr
- | op=('+'|'-') expr #unaryNegation
- | ('!'|NOT) expr #booleanNegation
- | expr ('*' '*'|'^') expr #power
- | expr op=('*'|'/') expr #multiplication
- | expr '%' expr #modulo
- | expr op=('+'|'-') expr #addition
- | expr op=('=='|NOTEQUALS|'='|'#'|'>'|'>='|'<'|'<='|'$') expr #comparison
- | expr op=(OR|AND) expr #booleanOperation
- | constant #constantExpr
- | CAST '(' expr AS datatype ')' #castExpr
- | PERIOD? atom trailer? #atomExpr
- ;
-
-complexId
- : PERIOD? atom trailer
- | PERIOD atom trailer?
- ;
-
-atom
- : identifier
- | reference
- | argReplace
- ;
-
-trailer
- : ('(' args? ')' | '[' args? ']') trailer? #funcCallTrailer
- | '.' identifier trailer? #identTrailer
  ;
 
 pathname
@@ -430,26 +408,17 @@ constant
  | STRING_LITERAL #string
  ;
 
-assign
- : STORE expr TO idAttr (',' idAttr)*
- | idAttr '=' expr
+parameter
+ : idAttr (AS idAttr)?
  ;
 
-idAttr2
- : (startPeriod='.')? identifier ('.' identifier)*
- ;
-
-idAttr
- : PERIOD? identifier trailer?
- ;
-
-twoExpr
- : expr ',' expr
+parameters
+ : parameter (',' parameter)*
  ;
 
 arrayIndex
- : '(' (expr | twoExpr) ')'
- | '[' (expr | twoExpr) ']'
+ : '(' expr (',' expr)? ')'
+ | '[' expr (',' expr)? ']'
  ;
 
 datatype
@@ -461,15 +430,11 @@ scopeClause
  ;
 
 identifier
- : TO|DO|IN|AS|IF|ELIF|ELSE|ENDIF|ON|OFF|ERROR|QUIT|EXIT|WITH|STORE|PUBLIC|PRIVATE|LOCAL|ARRAY|RECALL|DELETE|FILE|SET|RELEASE|RECYCLE|CREATE|TABLE|DATABASE|DBF|NAME|FREE|SELECT|USE|READ|EVENTS|SHUTDOWN|CLEAR|PROCEDURE|FUNCTION|ENDFUNC|DEFINE|CLASS|ENDDEFINE|LOCATE|CONTINUE|FOR|ENDFOR|WHILE|NOOPTIMIZE|STATUS|BAR|MEMOWIDTH|CURSOR|REFRESH|BELL|CENTURY|DATE|ADD|OBJECT|REPLACE|LIBRARY|SHARED|WAIT|WINDOW|NOWAIT|NOCLEAR|NOTIFY|ENDDO|DECLARE|ERASE|SYSMENU|CLOCK|RETURN|LPARAMETERS|LPARAMETER|PARAMETERS|ALTERNATE|EXACT|ALL|COUNT|GOTO|GO|TOP|BOTTOM|RECORD|CLOSE|APPEND|BLANK|NOMENU|CASE|FROM|REPORT|FORM|NOEJECT|PRINTER
+ : TO|DO|IN|AS|ON|OFF|ERROR|QUIT|EXIT|WITH|STORE|PUBLIC|PRIVATE|LOCAL|ARRAY|RECALL|DELETE|FILE|SET|RELEASE|RECYCLE|CREATE|TABLE|DATABASE|DBF|NAME|FREE|SELECT|USE|READ|EVENTS|SHUTDOWN|CLEAR|PROCEDURE|DEFINE|CLASS|LOCATE|CONTINUE|FOR|WHILE|NOOPTIMIZE|STATUS|BAR|MEMOWIDTH|CURSOR|REFRESH|BELL|CENTURY|DATE|ADD|OBJECT|REPLACE|LIBRARY|SHARED|WAIT|WINDOW|NOWAIT|NOCLEAR|NOTIFY|DECLARE|ERASE|SYSMENU|CLOCK|RETURN|LPARAMETERS|LPARAMETER|PARAMETERS|ALTERNATE|EXACT|ALL|COUNT|GOTO|TOP|BOTTOM|RECORD|CLOSE|APPEND|BLANK|NOMENU|CASE|FROM|REPORT|FORM|NOEJECT|PRINTER
  | PROMPT
  | NOPROMPT
- | NOCONSOLE|COPY|STRUCTURE|DELETED|SUM|DISTINCT|INTO|NEXT|REST|SKIPKW|PACK|EXCLUSIVE|NEAR|MKDIR|RMDIR|KEY|KEYBOARD|LABEL|PLAIN|MENU|AT|LINE|SCREEN|NOMARGIN|PAD|OF|COLOR|SCHEME|BEFORE|AFTER|NEGOTIATE|FONT|STYLE|MARK|MESSAGE|ACTIVATE|POPUP|SHADOW|MARGIN|RELATIVE|SELECTION|DEACTIVATE|SAME|NOSHOW|STEP|THEN|UNDEFINE|IFDEF|PUSH|POP|TIMEOUT|ENDWITH|TYPEAHEAD|ALIAS|ORDER|SEEK|WHERE|FILTER|RENAME|INCLUDE|CLASSLIB|BY|UNIQUE|INDEX|TAG|COMPACT|ASCENDING|DESCENDING|CANDIDATE|ADDITIVE|DIMENSION|NOT|AND|OR|SCAN|ENDSCAN|NULL|T|F|Y|N|NODEFAULT|DLLS|MACROS|NUMBER|ZAP|ROLLOVER|DEFAULT|SAVE|NOSAVE|PROGRAM|PROTECTED|THROW|TABLES|EACH|CAST|ENDCASE|ENDPROC|REINDEX|DATABASES|INDEXES|OTHERWISE|RUN|POPUPS|EXTENDED
+ | NOCONSOLE|COPY|STRUCTURE|DELETED|SUM|DISTINCT|INTO|NEXT|REST|SKIPKW|PACK|EXCLUSIVE|NEAR|MKDIR|RMDIR|KEY|KEYBOARD|LABEL|PLAIN|MENU|AT|LINE|SCREEN|NOMARGIN|PAD|OF|COLOR|SCHEME|BEFORE|AFTER|NEGOTIATE|FONT|STYLE|MARK|MESSAGE|ACTIVATE|POPUP|SHADOW|MARGIN|RELATIVE|SELECTION|DEACTIVATE|SAME|NOSHOW|STEP|THEN|UNDEFINE|IFDEF|PUSH|POP|TIMEOUT|TYPEAHEAD|ALIAS|ORDER|SEEK|WHERE|FILTER|RENAME|INCLUDE|CLASSLIB|BY|UNIQUE|INDEX|TAG|COMPACT|ASCENDING|DESCENDING|CANDIDATE|ADDITIVE|DIMENSION|NOT|AND|OR|SCAN|NULL|T|F|Y|N|NODEFAULT|DLLS|MACROS|NUMBER|ZAP|ROLLOVER|DEFAULT|SAVE|NOSAVE|PROGRAM|PROTECTED|THROW|TABLES|EACH|CAST|ENDPROC|REINDEX|DATABASES|INDEXES|RUN|POPUPS|EXTENDED
  | ASSERT
- | TRY
- | CATCH
- | FINALLY
- | ENDTRY
  | BROWSE
  | INSERT
  | VALUES
@@ -531,7 +496,7 @@ STRING_LITERAL: '\'' ~('\'' | '\n' | '\r')* '\''
               | '"' ~('"' | '\n' | '\r')* '"'
               ;
 
-LINECOMMENT: WS* (('*' | N O T E | '&&') (LINECONT | ~'\n')*)? NL {_tokenStartCharPositionInLine == 0}?;
+LINECOMMENT: WS* (('*' | N O T E | '&&') (LINECONT | ~'\n')*)? NL {_tokenStartCharPositionInLine == 0}? -> channel(1);
 
 COMMENT: ('&&' (~'\n')* | ';' WS* '&&' (~'\n')* NL) -> channel(1);
 
@@ -575,10 +540,8 @@ READ : R E A D;
 EVENTS : E V E N T S;
 SHUTDOWN : S H U T D O W N;
 CLEAR : C L E A R;
-PROCEDURE : P R O C E D U R E;
-FUNCTION : F U N C T I O N;
-ENDPROC : E N D P R O C;
-ENDFUNC : E N D F U N C;
+PROCEDURE : (P R O C E D U R E | F U N C T I O N);
+ENDPROC : E N D (P R O C | F U N C);
 DEFINE : D E F I N E;
 CLASS : C L A S S;
 ENDDEFINE : E N D D E F I N E;
@@ -621,10 +584,9 @@ ALTERNATE : A L T E R N A T E;
 EXACT : E X A C T;
 ALL : A L L;
 COUNT : C O U N T;
-GOTO : G O T O;
-GO : G O;
+GOTO : G O (T O)?;
 TOP : T O P;
-BOTTOM : B O T T O M | B O T T;
+BOTTOM : B O T T (O M)?;
 RECORD : R E C O R D;
 CLOSE : C L O S E;
 APPEND : A P P E N D;
@@ -720,10 +682,6 @@ OR : O R;
 SCAN : S C A N;
 ENDSCAN : E N D S C A N;
 NULL : N U L L;
-T : [Tt];
-F : [Ff];
-Y : [Yy];
-N : [Nn];
 NODEFAULT : N O D E F A U L T;
 DLLS : D L L S;
 MACROS : M A C R O S;
@@ -752,7 +710,7 @@ TRY: T R Y;
 CATCH: C A T C H;
 FINALLY: F I N A L L Y;
 ENDTRY: E N D T R Y;
-BROWSE: B R O W S E;
+BROWSE: B R O W (S E)?;
 INSERT: I N S E R T;
 VALUES: V A L U E S;
 MEMVAR: M E M V A R;
@@ -767,19 +725,12 @@ ALTER: A L T E R;
 COLUMN: C O L U M N;
 DROP: D R O P;
 
-ID : [A-Za-z_] [a-zA-Z0-9_]*;
-
-NL : '\n';
-
-WS : [ \t\r] -> channel(1);
-
-UNMATCHED : . ;
-
 fragment A : [Aa];
 fragment B : [Bb];
 fragment C : [Cc];
 fragment D : [Dd];
 fragment E : [Ee];
+F : [Ff];
 fragment G : [Gg];
 fragment H : [Hh];
 fragment I : [Ii];
@@ -787,13 +738,24 @@ fragment J : [Jj];
 fragment K : [Kk];
 fragment L : [Ll];
 fragment M : [Mm];
+N : [Nn];
 fragment O : [Oo];
 fragment P : [Pp];
 fragment Q : [Qq];
 fragment R : [Rr];
 fragment S : [Ss];
+T : [Tt];
 fragment U : [Uu];
 fragment V : [Vv];
 fragment W : [Ww];
 fragment X : [Xx];
+Y : [Yy];
 fragment Z : [Zz];
+
+ID : [A-Za-z_] [a-zA-Z0-9_]*;
+
+NL : '\n';
+
+WS : [ \t\r] -> channel(1);
+
+UNMATCHED : . ;

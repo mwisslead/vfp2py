@@ -18,8 +18,7 @@ from VisualFoxpro9Lexer import VisualFoxpro9Lexer
 from VisualFoxpro9Parser import VisualFoxpro9Parser
 from VisualFoxpro9Visitor import VisualFoxpro9Visitor
 
-import vfpfunc
-from vfp2py_convert_visitor import PythonConvertVisitor
+from vfp2py_convert_visitor import CodeStr, PythonConvertVisitor
 
 SEARCH_PATH = ['.']
 
@@ -41,25 +40,15 @@ class Tic():
     def toc(self):
         return time.time()-self.start
 
-class CodeStr(unicode):
-    def __repr__(self):
-        return unicode(self)
-
-    def __add__(self, val):
-        return CodeStr('{} + {}'.format(self, repr(val)))
-
-    def __sub__(self, val):
-        return CodeStr('{} - {}'.format(self, repr(val)))
-
-    def __mul__(self, val):
-        return CodeStr('{} * {}'.format(self, repr(val)))
-
 class PreprocessVisitor(VisualFoxpro9Visitor):
     def __init__(self):
         self.tokens = None
         self.memory = {}
 
     def visitPreprocessorCode(self, ctx):
+        return self.visit(ctx.preprocessorLines())
+
+    def visitPreprocessorLines(self, ctx):
         retval = []
         for child in ctx.getChildren():
             toks = self.visit(child)
@@ -155,7 +144,7 @@ class TreeCleanVisitor(VisualFoxpro9Visitor):
         parser = VisualFoxpro9Parser(stream)
         exprctx = parser.expr()
         if len(ctx.children) != stop - start + 1 or (isinstance(exprctx, ctx.parser.AtomExprContext) and \
-            isinstance(exprctx.trailer(), ctx.parser.FuncCallTrailerContext)):
+            isinstance(exprctx.idAttr().trailer(), ctx.parser.FuncCallTrailerContext)):
             ctx.parentCtx.removeLastChild()
             ctx.parentCtx.addChild(exprctx)
             ctx = exprctx
@@ -169,7 +158,7 @@ class TreeCleanVisitor(VisualFoxpro9Visitor):
             ctx.removeLastChild()
             ctx.addChild(newexpr)
 
-    def visitPower(self, ctx):
+    def visitPowerOld(self, ctx):
         self.visitChildren(ctx)
         left, right = ctx.expr()
         if isinstance(right, ctx.parser.SubExprContext) and isinstance(right.expr(), ctx.parser.PowerContext):

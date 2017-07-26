@@ -134,7 +134,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         if ctx.classDef():
             self.class_list = [self.visit(classDef.classDefStart())[0] for classDef in ctx.classDef()]
         if ctx.funcDef():
-            self.function_list = [self.visit(funcdef.funcDefStart())[0] for funcdef in ctx.funcDef()]
+            self.function_list = [self.visit(funcdef)[0] for funcdef in ctx.funcDef()]
 
         self.imports = ['from __future__ import division, print_function']
         defs = []
@@ -145,42 +145,17 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
                 funcname, parameters, funcbody = self.visit(child)
                 defs += [CodeStr('def {}({}):'.format(funcname, ', '.join([str(repr(p)) + '=False' for p in parameters]))), funcbody]
             else:
-                defs += self.visit(child)
+                try:
+                    defs += self.visit(child)
+                except:
+                    try:
+                        if child.symbol.type != -1:
+                            raise
+                    except AttributeError:
+                        raise
 
         imports = isort.SortImports(file_contents='\n'.join(set(self.imports))).output.splitlines()
         return  [CodeStr(imp) for imp in imports] + defs
-
-    def visitLine(self, ctx):
-        retval = self.visitChildren(ctx)
-        if retval is None:
-            lines = self.getCtxText(ctx)
-            print(lines)
-            retval = [CodeStr('#FIX ME: {}'.format(line)) for line in lines.split('\n') if line]
-        return retval if isinstance(retval, list) else [retval]
-
-    andfix = re.compile('^&&')
-    frontfix = re.compile('^\**')
-    endfix = re.compile('\**$')
-
-    def visitLineComment(self, ctx):
-        repl = lambda x: '#' * len(x.group())
-        comment = ctx.getText().split('\n')[0].strip()
-        if len(comment) == 0:
-            return ''
-        comment = self.andfix.sub('', comment)
-        comment = self.frontfix.sub(repl, comment)
-        return [CodeStr(self.endfix.sub(repl, comment))]
-
-    def visitCmdStmt(self, ctx):
-        return self.visit(ctx.cmd() or ctx.setup())
-
-    def visitLines(self, ctx):
-        retval = sum((self.visit(line) for line in ctx.line()), [])
-        def badline(line):
-            return line.startswith('#') or not line if hasattr(line, 'startswith') else not line
-        if not retval or all(badline(l) for l in retval):
-            retval.append(CodeStr('pass'))
-        return retval
 
     def visitClassDef(self, ctx):
         assignments = []
@@ -188,7 +163,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         subclasses = {}
         for stmt in ctx.classDefProperty():
             assignment = self.visit(stmt)
-            if isinstance(stmt, ctx.parser.ClassDefLineCommentContext) and assignment:
+            if False:
                 assignments.append(assignment)
             elif isinstance(stmt, ctx.parser.ClassDefAddObjectContext):
                 name, obj = assignment
@@ -224,8 +199,6 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         assign_scope = self.used_scope
 
         comments = []
-        for comment in ctx.lineComment():
-            comments.append(self.visit(comment) + [comment.start.line])
 
         funcs = OrderedDict()
         for funcdef in ctx.funcDef():
@@ -318,11 +291,6 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
     def visitNodefault(self, ctx):
         return []
 
-    def visitFuncDefStart(self, ctx):
-        params = self.visit_with_disabled_scope(ctx.parameters()) or []
-        params += self.visit_with_disabled_scope(ctx.parameterDef()) or []
-        return self.visit(ctx.idAttr2()), params
-
     def visitParameterDef(self, ctx):
         return self.visit(ctx.parameters())
 
@@ -366,7 +334,8 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         return body
 
     def visitFuncDef(self, ctx):
-        name, parameters = self.visit(ctx.funcDefStart())
+        parameters = sum([self.visit_with_disabled_scope(param) for param in ctx.parameters()], [])
+        name = CodeStr('.'.join(self.visit(identifier) for identifier in ctx.identifier()))
         self.new_scope()
         global FUNCNAME
         FUNCNAME = name
@@ -375,6 +344,25 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         self.delete_scope()
         body = self.modify_func_body(body)
         return name, parameters, body
+
+    def visitLines(self, ctx):
+        retval = sum((self.visit(line) for line in ctx.line()), [])
+        def badline(line):
+            return line.startswith('#') or not line if hasattr(line, 'startswith') else not line
+        if not retval or all(badline(l) for l in retval):
+            retval.append(CodeStr('pass'))
+        return retval
+
+    def visitLine(self, ctx):
+        retval = self.visitChildren(ctx)
+        if retval is None:
+            lines = self.getCtxText(ctx)
+            print(lines)
+            retval = [CodeStr('#FIX ME: {}'.format(line)) for line in lines.split('\n') if line]
+        return retval if isinstance(retval, list) else [retval]
+
+    def visitCmdStmt(self, ctx):
+        return self.visit(ctx.cmd())
 
     def visitPrintStmt(self, ctx):
         kwargs = {}
@@ -386,7 +374,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         return self.visit(ctx.expr())
 
     def visitIfStmt(self, ctx):
-        evaluation = self.visit(ctx.ifStart())
+        evaluation = self.visit(ctx.expr())
 
         ifBlock = self.visit(ctx.ifBody)
         retval = [CodeStr('if {}:'.format(evaluation)), ifBlock]
@@ -400,30 +388,18 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
     def visitCaseStmt(self, ctx):
         n = 0
         retval = []
-        for elem in ctx.caseElement():
-            if elem.lineComment():
-                retval += self.visit(elem.lineComment())
+        for elem in ctx.singleCase():
+            expr, lines = self.visit(elem.expr()), self.visit(elem.lines())
+            if n == 0:
+                retval += [CodeStr('if {}:'.format(expr)), lines]
             else:
-                expr, lines = self.visit(elem.singleCase())
-                if n == 0:
-                    retval += [CodeStr('if {}:'.format(expr)), lines]
-                else:
-                    retval += [CodeStr('elif {}:'.format(expr)), lines]
-                n += 1
+                retval += [CodeStr('elif {}:'.format(expr)), lines]
+            n += 1
         if n == 0:
             retval += [CodeStr('if True:'), [CodeStr('pass')]]
         if ctx.otherwise():
-            retval += [CodeStr('else:'), self.visit(ctx.otherwise())]
+            retval += [CodeStr('else:'), self.visit(ctx.otherwise().lines())]
         return retval
-
-    def visitSingleCase(self, ctx):
-        return self.visit(ctx.caseExpr()), self.visit(ctx.lines())
-
-    def visitCaseExpr(self, ctx):
-        return self.visit(ctx.expr())
-
-    def visitOtherwise(self, ctx):
-        return self.visit(ctx.lines())
 
     def visitForStart(self, ctx):
         loopvar = self.visit_with_disabled_scope(ctx.idAttr())
@@ -442,11 +418,8 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
     def visitForStmt(self, ctx):
         return [self.visit(ctx.forStart()), self.visit(ctx.lines())]
 
-    def visitWhileStart(self, ctx):
-        return CodeStr('while {}:'.format(self.visit(ctx.expr())))
-
     def visitWhileStmt(self, ctx):
-        return [self.visit(ctx.whileStart()), self.visit(ctx.lines())]
+        return [add_args_to_code('while {}:', [self.visit(ctx.expr())]), self.visit(ctx.lines())]
 
     def visitWithStmt(self, ctx):
         self.withid = self.visit(ctx.idAttr())
@@ -490,6 +463,30 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             del self.scope[identifier]
 
         return try_lines + catch_lines + finally_lines
+
+    def visitDeleteFile(self, ctx):
+        if ctx.specialExpr():
+            filename = self.visit(ctx.specialExpr())
+        else:
+            filename = None
+        if ctx.RECYCLE():
+            return make_func_code('vfpfunc.delete_file', filename, True)
+        else:
+            self.imports.append('import os')
+            return make_func_code('os.remove', filename)
+
+    def visitCopyMoveFile(self, ctx):
+        self.imports.append('import shutil')
+        args = [self.visit(arg) for arg in ctx.specialExpr()] #args = [fromFile, toFile]
+        if ctx.RENAME():
+            return make_func_code('shutil.move', *args)
+        else:
+            return make_func_code('shutil.copyfile', *args)
+
+    def visitAddRemoveDirectory(self, ctx):
+        self.imports.append('import os')
+        funcname = 'os.mkdir' if ctx.MKDIR() else 'os.rmdir'
+        return make_func_code(funcname, self.visit(ctx.specialExpr()))
 
     def visitBreakLoop(self, ctx):
         return CodeStr('break')
@@ -548,32 +545,85 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
     def visitSpecialArgs(self, ctx):
         return [self.visit(c) for c in ctx.specialExpr()]
 
+    def binary_expr(self, operation, ctx_list):
+        if isinstance(operation, tuple):
+            return CodeStr(''.join(repr(self.visit(ctx)) + ' ' + op + ' ' for ctx, op in zip(ctx_list, operation)) + self.visit(ctx_list[-1]))
+        return CodeStr(operation.join(repr(self.visit(ctx)) for ctx in ctx_list))
+        if operation == ctx.parser.PLUS_SIGN:
+            args = self.extract_args_from_addbs(ctx)
+            if len(args) > 2 or args[0] != self.visit(ctx.expr(0)):
+                return make_func_code('os.path.join', *args)
+        def add_parens(parent, child):
+            expr = self.visit(child)
+            if isinstance(child, ctx.parser.SubExprContext):
+                return add_args_to_code('({})', (expr,))
+            return expr
+        left, right = [add_parens(ctx, expr) for expr in ctx.expr()]
+        symbols = {
+            '**': '**',
+            '%': '%',
+            ctx.parser.ASTERISK: '*',
+            ctx.parser.FORWARDSLASH: '/',
+            ctx.parser.PLUS_SIGN: '+',
+            ctx.parser.MINUS_SIGN: '-'
+        }
+        if string_type(left) and string_type(right) and operation == ctx.parser.PLUS_SIGN:
+            return left + right
+        return add_args_to_code('{} {} {}', (left, CodeStr(symbols[operation]), right))
+
+    def visitExpr(self, ctx):
+        return self.visit(ctx.orTest())
+
+    def visitOrTest(self, ctx):
+        return self.binary_expr('or', ctx.andTest())
+
+    def visitAndTest(self, ctx):
+        return self.binary_expr('and', ctx.notTest())
+
+    def visitNotTest(self, ctx):
+        if ctx.notTest():
+            return add_args_to_code('not {}', (self.visit(ctx.notTest()),))
+        else:
+            return self.visit(ctx.comparison())
+
     def visitComparison(self, ctx):
-        symbol_dict = {ctx.parser.GREATERTHAN: '>',
-                       ctx.parser.GTEQ: '>=',
-                       ctx.parser.LESSTHAN: '<',
-                       ctx.parser.LTEQ: '<=',
-                       ctx.parser.NOTEQUALS: '!=',
-                       ctx.parser.HASH: '!=',
-                       ctx.parser.EQUALS: '==',
-                       ctx.parser.DOUBLEEQUALS: '==',
-                       ctx.parser.DOLLAR: 'in',
-                       ctx.parser.OR: 'or',
-                       ctx.parser.AND: 'and'
-                      }
-        left = self.visit(ctx.expr(0))
-        right = self.visit(ctx.expr(1))
-        symbol = symbol_dict[ctx.op.type]
-        return CodeStr('{} {} {}'.format(repr(left), symbol, repr(right)))
+        symbol_dict = {
+            ctx.parser.GREATERTHAN: '>',
+            ctx.parser.GTEQ: '>=',
+            ctx.parser.LESSTHAN: '<',
+            ctx.parser.LTEQ: '<=',
+            ctx.parser.NOTEQUALS: '!=',
+            ctx.parser.HASH: '!=',
+            ctx.parser.EQUALS: '==',
+            ctx.parser.DOUBLEEQUALS: '==',
+            ctx.parser.DOLLAR: 'in',
+        }
+        op = tuple(symbol_dict[op.symbol.type] for op in ctx.comp_op())
+        return self.binary_expr(op, ctx.addExpr())
 
-    def visitBooleanOperation(self, ctx):
-        return self.visitComparison(ctx)
+    def visitAddExpr(self, ctx):
+        return self.binary_expr('+', ctx.term()) # fix operator
 
-    def visitUnaryNegation(self, ctx):
-        return add_args_to_code('{}' if ctx.op.type == ctx.parser.PLUS_SIGN else '-{}', (self.visit(ctx.expr()),))
+    def visitTerm(self, ctx):
+        return self.binary_expr('*', ctx.factor()) # fix operator
 
-    def visitBooleanNegation(self, ctx):
-        return CodeStr('not {}'.format(repr(self.visit(ctx.expr()))))
+    def visitFactor(self, ctx):
+        if ctx.factor():
+            return add_args_to_code('{}' if ctx.children[0].symbol == ctx.parser.PLUS_SIGN else '-{}', (self.visit(ctx.factor()),))
+        return self.visit(ctx.power())
+
+    def visitPower(self, ctx):
+        exprs = [ctx.atomExpr()] + ([ctx.factor()] if ctx.factor() else [])
+        return self.binary_expr('**', exprs)
+
+    def visitAtomExpr(self, ctx):
+        return self.visit(ctx.subExpr() or ctx.idAttr() or ctx.constant())
+        identifier = self.visit(ctx.identifier())
+        trailer = self.visit(ctx.trailer())
+        if ctx.PERIOD() and self.withid:
+            trailer = [identifier] + (trailer or [])
+            identifier = self.withid
+        return self.createIdAttr(identifier, trailer)
 
     def func_call(self, funcname, *args, **kwargs):
         if not kwargs and len(args) == 1 and isinstance(args[0], (list, tuple)):
@@ -936,17 +986,6 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         retval = [self.visit_with_disabled_scope(ctx.identifier())]
         return retval + trailer
 
-    def visitIdAttr(self, ctx):
-        identifier = self.visit(ctx.identifier())
-        trailer = self.visit(ctx.trailer())
-        if ctx.PERIOD() and self.withid:
-            trailer = [identifier] + (trailer or [])
-            identifier = self.withid
-        return self.createIdAttr(identifier, trailer)
-
-    def visitIdAttr2(self, ctx):
-        return CodeStr('.'.join(([self.withid] if ctx.startPeriod else []) + [self.visit(identifier) for identifier in ctx.identifier()]))
-
     def visitCastExpr(self, ctx):
         func = {
             'integer': 'int',
@@ -995,8 +1034,8 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         except KeyError:
             raise ValueError("invalid datatype '{}'".format(dtype))
 
-    def visitAtomExpr(self, ctx):
-        atom = self.visit(ctx.atom())
+    def visitIdAttr(self, ctx):
+        atom = self.visit(ctx.identifier())
         trailer = self.visit(ctx.trailer())
         if ctx.PERIOD() and self.withid:
             trailer = [atom] + (trailer or [])
@@ -1090,24 +1129,12 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
     def visitString(self, ctx):
         return create_string(ctx.getText()[1:-1])
 
-    def visitPower(self, ctx):
-        return self.operationExpr(ctx, '**')
-
-    def visitMultiplication(self, ctx):
-        return self.operationExpr(ctx, ctx.op.type)
-
-    def visitAddition(self, ctx):
-        return self.operationExpr(ctx, ctx.op.type)
-
-    def visitModulo(self, ctx):
-        return self.operationExpr(ctx, '%')
-
     def extract_args_from_addbs(self, ctx):
         if not isinstance(ctx, ctx.parser.AdditionContext):
             return [self.visit(ctx)]
         leftctx, rightctx = ctx.expr()
-        if isinstance(leftctx, ctx.parser.AtomExprContext) and self.visit(leftctx.atom()) == 'addbs' and isinstance(leftctx.trailer(), ctx.parser.FuncCallTrailerContext):
-            args = self.extract_args_from_addbs(leftctx.trailer().args().expr(0))
+        if isinstance(leftctx, ctx.parser.AtomExprContext) and self.visit(leftctx.idAttr().atom()) == 'addbs' and isinstance(leftctx.idAttr().trailer(), ctx.parser.FuncCallTrailerContext):
+            args = self.extract_args_from_addbs(leftctx.idAttr().trailer().args().expr(0))
         else:
             args = [self.visit(leftctx)]
         args.append(self.visit(rightctx))
@@ -1234,19 +1261,10 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         return [self.visit(ctx.idAttr())]
 
     def visitArrayIndex(self, ctx):
-        if ctx.twoExpr():
-            return self.visit(ctx.twoExpr())
-        else:
-            return [self.visit(ctx.expr())]
-
-    def visitTwoExpr(self, ctx):
         return [self.visit(expr) for expr in ctx.expr()]
 
     def visitQuit(self, ctx):
         return [CodeStr('vfpfunc.quit()')]
-
-    def visitFile(self, ctx):
-        return ctx.getText()
 
     def visitRelease(self, ctx):
         scoped_args = []
