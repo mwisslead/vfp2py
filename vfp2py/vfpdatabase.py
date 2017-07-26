@@ -262,3 +262,6 @@ class DatabaseContext(object):
         print(table.field_names)
         for record in table:
             print('->' if record is table.current_record else '  ', record[:])
+
+    def zap(self, tablename):
+        self._get_table_info().table.zap()

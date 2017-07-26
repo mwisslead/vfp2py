@@ -109,6 +109,8 @@ procedure database_tests
       assert alltrim(name) == 'N/A'
       REPLACE ALL NAME WITH 'Not Available'
       assert alltrim(name) == 'Not Available'
+      ZAP
+      ASSERT RECCOUNT() == 0
    catch to err
       ?err.message
       browse
