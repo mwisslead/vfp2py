@@ -108,6 +108,8 @@ procedure database_tests
       REPLACE REPORT.NAME WITH 'N/A'
       assert alltrim(name) == 'N/A'
       REPLACE ALL NAME WITH 'Not Available'
+      assert recno() == reccount() + 1
+      GO BOTT
       assert alltrim(name) == 'Not Available'
       ZAP
       ASSERT RECCOUNT() == 0

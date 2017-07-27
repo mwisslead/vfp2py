@@ -111,6 +111,8 @@ class DatabaseContext(object):
             field = field[-1]
         for record in self._get_records(tablename, scope):
             dbf.write(record, **{field: value})
+        if scope[0] == 'all':
+            self._get_table_info(tablename).table.bottom()
 
     def insert(self, tablename, values):
         table_info = self._get_table_info(tablename)
