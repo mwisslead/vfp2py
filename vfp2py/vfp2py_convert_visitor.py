@@ -1436,7 +1436,14 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
     def visitSeekRecord(self, ctx):
         tablename = self.visit(ctx.tablenameExpr)
         seek_expr = self.visit(ctx.seekExpr)
-        return make_func_code('vfpfunc.db.seek', tablename, seek_expr)
+        kwargs = OrderedDict()
+        if ctx.orderExpr or ctx.tagName:
+            kwargs['key_index'] = self.visit(ctx.orderExpr or ctx.tagName)
+        if ctx.cdxFileExpr or ctx.idxFileExpr:
+            kwargs['key_index_file'] = self.visit(ctx.cdxFileExpr or ctx.idxFileExpr)
+        if ctx.DESCENDING():
+            kwargs['descending'] = True
+        return make_func_code('vfpfunc.db.seek', tablename, seek_expr, **kwargs)
 
     def visitZapTable(self, ctx):
         return make_func_code('vfpfunc.db.zap', self.visit(ctx.specialExpr()))
