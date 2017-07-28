@@ -111,8 +111,6 @@ class DatabaseContext(object):
             field = field[-1]
         for record in self._get_records(tablename, scope):
             dbf.write(record, **{field: value})
-        if scope[0] == 'all':
-            self._get_table_info(tablename).table.bottom()
 
     def insert(self, tablename, values):
         table_info = self._get_table_info(tablename)
@@ -142,7 +140,7 @@ class DatabaseContext(object):
         num = num - 1 if num > 0 else num
         table.goto(num)
 
-    def _get_records(self, tablename, scope, for_cond=lambda: True, while_cond=lambda: True):
+    def _get_records(self, tablename, scope, for_cond=None, while_cond=None):
         def reset(used_table, saved_current):
             if saved_current < 0:
                 used_table.top()
@@ -157,21 +155,21 @@ class DatabaseContext(object):
             self.current_table = save_current_table
             return
         save_current = table.current
-        if scope[0].lower() == 'rest':
-            condition = lambda table: bool(table.current_record)
-        elif scope[0].lower() == 'all':
+        if scope[0].lower() == 'all':
             table.goto(0)
-            condition = lambda table: bool(table.current_record)
-        elif scope[0].lower() == 'record':
-            table.goto(scope[1])
+        if scope[0].lower() == 'record':
+            table.goto(scope[1] - 1)
             condition = lambda table: table.current == scope[1] - 1
         elif scope[0].lower() == 'next':
             final_record = table.current + scope[1]
             condition = lambda table: table.current < final_record
         else:
-            raise Exception('not implemented')
+            condition = lambda table: bool(table.current_record)
+        if not for_cond:
+            for_cond = lambda: True
+        if not while_cond:
+            while_cond = lambda: True
         if not table.current_record:
-            reset(table, save_current)
             self.current_table = save_current_table
             return
         while condition(table) and while_cond():
@@ -181,7 +179,12 @@ class DatabaseContext(object):
                 table.skip(1)
             except:
                 break
-        reset(table, save_current)
+        if scope[0].lower() in ('all', 'rest'):
+            table.bottom()
+        elif scope[0].lower() == 'next':
+            reset(table, save_current + scope[1] - 1)
+        elif scope[0].lower() == 'record':
+            reset(table, scope[1] - 1)
         self.current_table = save_current_table
 
     def count(self, tablename, scope, **kwargs):

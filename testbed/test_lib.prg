@@ -98,6 +98,10 @@ procedure database_tests
       assert not found()
       count for quantity > 60 to countval
       assert countval = 2
+      assert eof()
+      sum sqrt(quantity + 205) for quantity > 50 while quantity != 63 to sumval
+      assert sumval == 0
+      go top
       sum sqrt(quantity + 205) for quantity > 50 while quantity != 63 to sumval
       assert sumval == 17 + 16
       go top

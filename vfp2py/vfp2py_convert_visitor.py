@@ -1413,7 +1413,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
 
     def visitCount(self, ctx):
         kwargs = OrderedDict()
-        scope = self.visit(ctx.scopeClause()) or ('all',)
+        scope = self.visit(ctx.scopeClause()) or (('rest',) if ctx.whileExpr else ('all',))
         if ctx.forExpr:
             kwargs['for_cond'] = add_args_to_code('lambda: {}', [self.visit(ctx.forExpr)])
         if ctx.whileExpr:
@@ -1422,7 +1422,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
 
     def visitSum(self, ctx):
         kwargs = OrderedDict()
-        scope = self.visit(ctx.scopeClause()) or ('all',)
+        scope = self.visit(ctx.scopeClause()) or (('rest',) if ctx.whileExpr else ('all',))
         if ctx.forExpr:
             kwargs['for_cond'] = add_args_to_code('lambda: {}', [self.visit(ctx.forExpr)])
         if ctx.whileExpr:
