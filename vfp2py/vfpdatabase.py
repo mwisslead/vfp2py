@@ -14,6 +14,7 @@ class DatabaseWorkspace(object):
         if len(self.table) > 0:
             self.table.goto(0)
         self.locate = None
+        self.found = False
 
     def _is_alias(self, alias):
         alias = alias.lower()
@@ -252,13 +253,15 @@ class DatabaseContext(object):
         try:
             record = next(workarea.locate)
             dbf.source_table(record).goto(dbf.recno(record))
+            workarea.found = True
         except StopIteration:
             workarea.table.bottom()
             workarea.locate = None
+            workarea.found = False
 
     def found(self, tablename=None):
         workarea = self._get_table_info(tablename)
-        return workarea.locate is not None if workarea else False
+        return workarea.found if workarea else False
 
     def browse(self):
         table_info = self._get_table_info()
