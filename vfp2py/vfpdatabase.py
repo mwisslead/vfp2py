@@ -15,6 +15,8 @@ class DatabaseWorkspace(object):
             self.table.goto(0)
         self.locate = None
         self.found = False
+        self.index = {}
+        self.current_index = None
 
     def _is_alias(self, alias):
         alias = alias.lower()
@@ -211,7 +213,9 @@ class DatabaseContext(object):
         self._get_table_info().table.reindex()
 
     def index_on(self, field, indexname, order, tag_flag, compact_flag, unique_flag):
-        pass
+        table_info = self._get_table_info()
+        table_info.index[indexname] = table_info.table.create_index(lambda rec, field=field: getattr(rec, field))
+        table_info.current_index = indexname
 
     def close_tables(self, all_flag):
         self.open_tables = [None] * 32767

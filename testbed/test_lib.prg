@@ -104,6 +104,7 @@ procedure database_tests
       go top
       sum sqrt(quantity + 205) for quantity > 50 while quantity != 63 to sumval
       assert sumval == 17 + 16
+      index on st tag st
       go top
       DELETE REST FOR QUANTITY > 60
       PACK
