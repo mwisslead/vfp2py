@@ -105,6 +105,8 @@ procedure database_tests
       sum sqrt(quantity + 205) for quantity > 50 while quantity != 63 to sumval
       assert sumval == 17 + 16
       index on st tag st
+      seek 'CA'
+      assert alltrim(st) == 'CA'
       go top
       DELETE REST FOR QUANTITY > 60
       PACK

@@ -15,6 +15,7 @@ class DatabaseWorkspace(object):
             self.table.goto(0)
         self.locate = None
         self.found = False
+        self.seek = None
         self.index = {}
         self.current_index = None
 
@@ -262,6 +263,19 @@ class DatabaseContext(object):
             workarea.table.bottom()
             workarea.locate = None
             workarea.found = False
+
+    def seek(self, tablename, key_expr, key_index=None, key_index_file=None, descending=False):
+        table_info = self._get_table_info(tablename)
+        if not(table_info.seek and not key_index):
+            table_info.seek = (record for record in table_info.index[table_info.current_index].search((key_expr,)))
+        try:
+            record = next(table_info.seek)
+        except StopIteration:
+            table_info.table.bottom()
+            table_info.found = False
+            return
+        dbf.source_table(record).goto(dbf.recno(record))
+        table_info.found = True
 
     def found(self, tablename=None):
         workarea = self._get_table_info(tablename)
