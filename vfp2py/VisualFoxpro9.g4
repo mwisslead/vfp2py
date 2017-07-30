@@ -280,22 +280,22 @@ expr
  ;
 
 orTest
- : andTest ('or' andTest)*
+ : andTest (OR andTest)*
  ;
 
 andTest
- : notTest ('and' notTest)*
+ : notTest (AND notTest)*
  ;
 
 notTest
- : ('!' | 'not') notTest | comparison
+ : ('!' | NOT) notTest | comparison
  ;
 
 comparison
- : addExpr (comp_op addExpr)*
+ : addExpr (compOp addExpr)*
  ;
 
-comp_op
+compOp
  : '==' | NOTEQUALS | '=' | '#' | '>' | '>=' | '<' | '<=' | '$'
  ;
 
@@ -316,7 +316,7 @@ power
  ;
 
 atomExpr
- : subExpr | idAttr | constant
+ : subExpr | constant | idAttr
  ;
 
 subExpr

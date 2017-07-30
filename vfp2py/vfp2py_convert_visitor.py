@@ -546,8 +546,10 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         return [self.visit(c) for c in ctx.specialExpr()]
 
     def binary_expr(self, operation, ctx_list):
+        if len(ctx_list) == 1:
+            return self.visit(ctx_list[0])
         if isinstance(operation, tuple):
-            return CodeStr(''.join(repr(self.visit(ctx)) + ' ' + op + ' ' for ctx, op in zip(ctx_list, operation)) + self.visit(ctx_list[-1]))
+            return CodeStr(''.join(repr(self.visit(ctx)) + ' ' + op + ' ' for ctx, op in zip(ctx_list, operation)) + repr(self.visit(ctx_list[-1])))
         return CodeStr(operation.join(repr(self.visit(ctx)) for ctx in ctx_list))
         if operation == ctx.parser.PLUS_SIGN:
             args = self.extract_args_from_addbs(ctx)
@@ -598,14 +600,14 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             ctx.parser.DOUBLEEQUALS: '==',
             ctx.parser.DOLLAR: 'in',
         }
-        op = tuple(symbol_dict[op.symbol.type] for op in ctx.comp_op())
+        op = tuple(symbol_dict[op.children[0].symbol.type] for op in ctx.compOp())
         return self.binary_expr(op, ctx.addExpr())
 
     def visitAddExpr(self, ctx):
-        return self.binary_expr('+', ctx.term()) # fix operator
+        return self.binary_expr(tuple([str(ctx.children[2*i + 1].getText()) for i in range(len(ctx.children)//2)]), ctx.term()) # fix operator
 
     def visitTerm(self, ctx):
-        return self.binary_expr('*', ctx.factor()) # fix operator
+        return self.binary_expr(tuple([str(ctx.children[2*i + 1].getText()) for i in range(len(ctx.children)//2)]), ctx.factor()) # fix operator
 
     def visitFactor(self, ctx):
         if ctx.factor():
