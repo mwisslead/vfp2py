@@ -545,16 +545,36 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
     def visitSpecialArgs(self, ctx):
         return [self.visit(c) for c in ctx.specialExpr()]
 
+    def is_addbs(self, ctx):
+        return isinstance(ctx, ctx.parser.IdAttrContext) and self.visit(ctx.atom()) == 'addbs' and isinstance(ctx.trailer(), ctx.parser.FuncCallTrailerContext)
+
     def binary_expr(self, operation, ctx_list):
+        if not isinstance(operation, (tuple, list)):
+            operation = [operation] * (len(ctx_list) - 1)
+        else:
+            operation = list(operation)
+        ctx_list_visited = [self.visit(ctx) for ctx in ctx_list]
+        i = 1
+        while i < len(ctx_list):
+            if string_type(ctx_list_visited[i - 1]) and string_type(ctx_list_visited[i]) and operation[i - 1] == '+':
+                ctx_list_visited[i - 1] += ctx_list_visited.pop(i)
+                ctx_list.pop(i)
+                operation.pop(i - 1)
+            elif self.is_addbs(ctx_list[i - 1]):
+                init = i - 1
+                i += 1
+                while i < len(ctx_list) and self.is_addbs(ctx_list[i]):
+                    i += 1
+                import pdb
+                pdb.set_trace()
+                make_func_code('os.path.join', *args)
+            else:
+                i += 1
         if len(ctx_list) == 1:
             return self.visit(ctx_list[0])
-        if isinstance(operation, tuple):
-            return CodeStr(''.join(repr(self.visit(ctx)) + ' ' + op + ' ' for ctx, op in zip(ctx_list, operation)) + repr(self.visit(ctx_list[-1])))
-        return CodeStr(operation.join(repr(self.visit(ctx)) for ctx in ctx_list))
+        return CodeStr(''.join(repr(ctx) + ' ' + op + ' ' for ctx, op in zip(ctx_list_visited[:-1], operation)) + repr(ctx_list_visited[-1]))
         if operation == ctx.parser.PLUS_SIGN:
             args = self.extract_args_from_addbs(ctx)
-            if len(args) > 2 or args[0] != self.visit(ctx.expr(0)):
-                return make_func_code('os.path.join', *args)
         def add_parens(parent, child):
             expr = self.visit(child)
             if isinstance(child, ctx.parser.SubExprContext):
@@ -574,19 +594,19 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         return add_args_to_code('{} {} {}', (left, CodeStr(symbols[operation]), right))
 
     def visitExpr(self, ctx):
-        return self.visit(ctx.orTest())
+        return self.visit(ctx.children[0])
 
     def visitOrTest(self, ctx):
-        return self.binary_expr('or', ctx.andTest())
+        return self.binary_expr('or', [child for i, child in enumerate(ctx.children) if i % 2])
 
     def visitAndTest(self, ctx):
-        return self.binary_expr('and', ctx.notTest())
+        return self.binary_expr('and', [child for i, child in enumerate(ctx.children) if i % 2])
 
     def visitNotTest(self, ctx):
         if ctx.notTest():
             return add_args_to_code('not {}', (self.visit(ctx.notTest()),))
         else:
-            return self.visit(ctx.comparison())
+            return self.visit(ctx.children[0])
 
     def visitComparison(self, ctx):
         symbol_dict = {
@@ -604,10 +624,10 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         return self.binary_expr(op, ctx.addExpr())
 
     def visitAddExpr(self, ctx):
-        return self.binary_expr(tuple([str(ctx.children[2*i + 1].getText()) for i in range(len(ctx.children)//2)]), ctx.term()) # fix operator
+        return self.binary_expr([str(child) for i, child in enumerate(ctx.children) if i % 2], [child for i, child in enumerate(ctx.children) if not i % 2])
 
     def visitTerm(self, ctx):
-        return self.binary_expr(tuple([str(ctx.children[2*i + 1].getText()) for i in range(len(ctx.children)//2)]), ctx.factor()) # fix operator
+        return self.binary_expr([str(child) for i, child in enumerate(ctx.children) if i % 2], [child for i, child in enumerate(ctx.children) if not i % 2])
 
     def visitFactor(self, ctx):
         if ctx.factor():
@@ -1130,40 +1150,6 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
 
     def visitString(self, ctx):
         return create_string(ctx.getText()[1:-1])
-
-    def extract_args_from_addbs(self, ctx):
-        if not isinstance(ctx, ctx.parser.AdditionContext):
-            return [self.visit(ctx)]
-        leftctx, rightctx = ctx.expr()
-        if isinstance(leftctx, ctx.parser.AtomExprContext) and self.visit(leftctx.idAttr().atom()) == 'addbs' and isinstance(leftctx.idAttr().trailer(), ctx.parser.FuncCallTrailerContext):
-            args = self.extract_args_from_addbs(leftctx.idAttr().trailer().args().expr(0))
-        else:
-            args = [self.visit(leftctx)]
-        args.append(self.visit(rightctx))
-        return args
-
-    def operationExpr(self, ctx, operation):
-        if operation == ctx.parser.PLUS_SIGN:
-            args = self.extract_args_from_addbs(ctx)
-            if len(args) > 2 or args[0] != self.visit(ctx.expr(0)):
-                return make_func_code('os.path.join', *args)
-        def add_parens(parent, child):
-            expr = self.visit(child)
-            if isinstance(child, ctx.parser.SubExprContext):
-                return add_args_to_code('({})', (expr,))
-            return expr
-        left, right = [add_parens(ctx, expr) for expr in ctx.expr()]
-        symbols = {
-            '**': '**',
-            '%': '%',
-            ctx.parser.ASTERISK: '*',
-            ctx.parser.FORWARDSLASH: '/',
-            ctx.parser.PLUS_SIGN: '+',
-            ctx.parser.MINUS_SIGN: '-'
-        }
-        if string_type(left) and string_type(right) and operation == ctx.parser.PLUS_SIGN:
-            return left + right
-        return add_args_to_code('{} {} {}', (left, CodeStr(symbols[operation]), right))
 
     def visitSubExpr(self, ctx):
         return add_args_to_code('{}', [self.visit(ctx.expr())])

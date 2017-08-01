@@ -150,6 +150,71 @@ class TreeCleanVisitor(VisualFoxpro9Visitor):
             ctx = exprctx
         self.visitChildren(ctx)
 
+    def cut_out_simple_expr(self, ctx):
+        if len(ctx.children) == 1:
+            child = ctx.children[0]
+            ctx.removeLastChild()
+            children = []
+            while ctx.parentCtx.children[-1] is not ctx:
+                children.append(ctx.parentCtx.children[-1])
+                ctx.parentCtx.removeLastChild()
+            ctx.parentCtx.removeLastChild()
+            ctx.parentCtx.addChild(child)
+            child.parentCtx = ctx.parentCtx
+            while children:
+                ctx.parentCtx.addChild(children.pop())
+            self.visit(child)
+        else:
+            for child in ctx.children:
+                self.visit(child)
+
+    def visitOrTest(self, ctx):
+        self.cut_out_simple_expr(ctx)
+
+    def visitAndTest(self, ctx):
+        self.cut_out_simple_expr(ctx)
+
+    def visitNotTest(self, ctx):
+        if ctx.notTest():
+            nxt = ctx.notTest()
+            while nxt.notTest():
+                nottest = nxt
+                nxt = nxt.notTest()
+        else:
+            self.cut_out_simple_expr(ctx)
+
+    def visitComparison(self, ctx):
+        self.cut_out_simple_expr(ctx)
+
+    def visitFactor(self, ctx):
+        if ctx.factor():
+            nxt = ctx.factor()
+            i = 0
+            while nxt.factor():
+                if ctx.children[0].symbol.type == ctx.parser.MINUS_SIGN:
+                    i += 1
+                nottest = nxt
+                nxt = nxt.factor()
+            if i % 2 == 1:
+                nxt = nxt.power()
+                children = []
+                while ctx.parentCtx.children[-1] is not ctx:
+                    children.append(ctx.parentCtx.children[-1])
+                    ctx.parentCtx.removeLastChild()
+                ctx.parentCtx.removeLastChild()
+                ctx.parentCtx.addChild(nxt)
+                nxt.parentCtx = ctx.parentCtx
+                while children:
+                    ctx.parentCtx.addChild(children.pop())
+                self.visit(nxt)
+            else:
+                child = ctx.children[-1]
+                ctx.removeLastChild()
+                ctx.addChild(nxt)
+                nxt.parentCtx = child.parentCtx
+        else:
+            self.cut_out_simple_expr(ctx)
+
     def visitSubExpr(self, ctx):
         self.visit(ctx.expr())
         if isinstance(ctx.expr(), ctx.parser.SubExprContext):
