@@ -234,6 +234,8 @@ otherCmds
  | COPY STRUCTURE? TO specialExpr #copyTo
  | ZAP (IN specialExpr)? #zapTable
  | BROWSE (~NL)* #browse
+ | SCATTER (FIELDS (LIKE | EXCEPT)? expr)? MEMO? BLANK? (MEMVAR | NAME expr ADDITIVE? | TO expr) #scatterExpr
+ | GATHER (FIELDS (LIKE | EXCEPT)? expr)? MEMO? FROM (MEMVAR | NAME expr | expr) #gatherExpr
 
  | CLOSE ((DATABASES | INDEXES | TABLES) ALL? | ALL) #closeStmt
  | READ EVENTS #readEvent
@@ -476,7 +478,12 @@ identifier
  | DB4
  | FOXPLUS
  | TYPE
- |ID
+ | SCATTER
+ | GATHER
+ | EXCEPT
+ | LIKE
+ | FIELDS
+ | ID
  ;
 
 NUMBER_LITERAL : ([0-9]* '.')? [0-9]+ ([Ee] [+\-]? [0-9]+)?
@@ -748,6 +755,11 @@ VALUES: V A L U E S;
 MEMVAR: M E M V A R;
 TYPE: T Y P E;
 CHDIR: C D | C H D I R;
+SCATTER: S C A T T E R;
+GATHER: G A T H E R;
+EXCEPT: E X C E P T;
+LIKE: L I K E;
+FIELDS: F I E L D S;
 
 ID : [A-Za-z_] [a-zA-Z0-9_]*;
 

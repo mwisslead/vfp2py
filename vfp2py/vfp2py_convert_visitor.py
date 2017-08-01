@@ -1452,6 +1452,12 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         self.imports.append('from vfp2py import vfpfunc')
         return make_func_code('vfpfunc.db.browse')
 
+    def visitScatterExpr(self, ctx):
+        pass
+
+    def visitGatherExpr(self, ctx):
+        pass
+
     def visitScopeClause(self, ctx):
         if ctx.ALL():
             return 'all',
