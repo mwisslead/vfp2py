@@ -18,6 +18,7 @@ from VisualFoxpro9Lexer import VisualFoxpro9Lexer
 from VisualFoxpro9Parser import VisualFoxpro9Parser
 from VisualFoxpro9Visitor import VisualFoxpro9Visitor
 
+import vfpfunc
 from vfp2py_convert_visitor import PythonConvertVisitor
 
 SEARCH_PATH = ['.']
@@ -351,8 +352,13 @@ def convert_project(infile, directory):
         outfile = directory
         args = [project_files[name], outfile] + search
         try:
-            main(args)
-        except:
+            print('processing {}'.format(name))
+            SEARCH_PATH = search
+            convert_file(project_files[name] or name, outfile)
+        except Exception as err:
+            import logging
+            logging.basicConfig(level=logging.DEBUG)
+            logging.getLogger().exception(err)
             print('failed to convert {}'.format(name))
     if 'config.fpw' in project_files:
         with open(project_files['config.fpw']) as fid:
