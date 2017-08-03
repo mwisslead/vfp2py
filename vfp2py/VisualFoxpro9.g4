@@ -266,8 +266,7 @@ waitCmd
 filesystemCmd
  : (ERASE | DELETE FILE) (specialExpr|'?') RECYCLE? #deleteFile
  | (RENAME | COPY FILE) specialExpr TO specialExpr #copyMoveFile
- | (MKDIR | RMDIR) specialExpr #addRemoveDirectory
- | CHDIR specialExpr #chdir
+ | (CHDIR | MKDIR | RMDIR) specialExpr #chMkRmDir
  ;
 
 quit

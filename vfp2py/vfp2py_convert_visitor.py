@@ -962,9 +962,13 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         else:
             return make_func_code('shutil.copyfile', *args)
 
-    def visitAddRemoveDirectory(self, ctx):
+    def visitChMkRmDir(self, ctx):
         self.imports.append('import os')
-        funcname = 'os.mkdir' if ctx.MKDIR() else 'os.rmdir'
+        funcname = 'os.' + {
+            ctx.parser.CHDIR: 'chdir',
+            ctx.parser.MKDIR: 'mkdir',
+            ctx.parser.RMDIR: 'rmdir',
+        }[ctx.children[0].symbol.type]
         return make_func_code(funcname, self.visit(ctx.specialExpr()))
 
     def visitSpecialExpr(self, ctx):
@@ -1567,10 +1571,6 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         command = [self.visit(expr) for expr in ctx.specialExpr()]
         self.imports.append('import subprocess')
         return make_func_code('subprocess.call', command)
-
-    def visitChdir(self, ctx):
-        self.imports.append('import os')
-        return make_func_code('os.chdir', self.visit(ctx.specialExpr()))
 
     def visitReturnStmt(self, ctx):
         if not ctx.expr():
