@@ -18,7 +18,7 @@ preprocessorLine
  | '#' DEFINE identifier (~NL)* lineEnd #preprocessorDefine
  | '#' UNDEFINE identifier lineEnd #preprocessorUndefine
  | '#' INCLUDE specialExpr lineEnd #preprocessorInclude
- | ~'#' (~NL)* lineEnd #nonpreprocessorLine
+ | (NL | ~('#' | NL | EOF) (~NL)* lineEnd) #nonpreprocessorLine
  ;
 
 lineEnd
@@ -498,7 +498,7 @@ STRING_LITERAL: '\'' ~('\'' | '\n' | '\r')* '\''
 
 LINECOMMENT: WS* (('*' | N O T E | '&&') (LINECONT | ~'\n')*)? NL {_tokenStartCharPositionInLine == 0}? -> channel(1);
 
-COMMENT: ('&&' (~'\n')* | ';' WS* '&&' (~'\n')* NL) -> channel(1);
+COMMENT: (WS* '&&' (~'\n')* | ';' WS* '&&' (~'\n')* NL) -> channel(1);
 
 LINECONT : ';' WS* NL -> skip;
 
