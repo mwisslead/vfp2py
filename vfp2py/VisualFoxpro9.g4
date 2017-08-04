@@ -353,14 +353,6 @@ specialArgs
  : specialExpr (',' specialExpr)*
  ;
 
-reference
- : '@' idAttr
- ;
-
-argReplace
- : '&' identifier
- ;
-
 pathname
  : (identifier ':')? pathElement+?
  ;
@@ -496,9 +488,7 @@ STRING_LITERAL: '\'' ~('\'' | '\n' | '\r')* '\''
               | '"' ~('"' | '\n' | '\r')* '"'
               ;
 
-LINECOMMENT: WS* (('*' | N O T E | '&&') (LINECONT | ~'\n')*)? NL {_tokenStartCharPositionInLine == 0}? -> channel(1);
-
-COMMENT: (WS* '&&' (~'\n')* | ';' WS* '&&' (~'\n')* NL) -> channel(1);
+COMMENT: WS* ('&&' (~'\n')* | ';' WS* '&&' (~'\n')* NL) -> channel(1);
 
 LINECONT : ';' WS* NL -> skip;
 

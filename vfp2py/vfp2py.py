@@ -106,24 +106,16 @@ class PreprocessVisitor(VisualFoxpro9Visitor):
         process_tokens = ctx.parser._input.tokens[start:stop+1]
         for tok in hidden_tokens:
             if tok.type == comment_type:
-                tok.text = tok.text.strip()
-        hidden_middle_tokens = [tok for tok in process_tokens if tok.type == comment_type]
-        for tok in hidden_middle_tokens:
-            tok.text = tok.text.strip() + '\n'
-            if tok.text[0] == ';':
-                tok.text = tok.text[1:]
-        whitespace_token = antlr4.CommonTokenFactory.CommonToken()
-        whitespace_token.type = ctx.parser.WS
-        whitespace_token.text = ' '
-        whitespace_token.channel = 1
-        process_tokens = [tok if tok.type != comment_type else whitespace_token for tok in process_tokens]
-        retval = []
+                tok.text = ';' + tok.text.strip()
         if process_tokens and process_tokens[0].type == ctx.parser.ASTERISK:
             newtok = antlr4.CommonTokenFactory.CommonToken()
             newtok.type = comment_type
-            newtok.text = '&&' + ''.join(tok.text for tok in process_tokens[:-1]).strip()
+            newtok.text = ';&&' + ''.join(tok.text for tok in process_tokens[:-1]).strip()
             process_tokens = [newtok] + process_tokens[-1:]
-        return hidden_tokens + sum((self.memory[tok.text.lower()] if tok.text.lower() in self.memory else [tok] for tok in process_tokens), []) + hidden_middle_tokens
+        process_tokens = sum((self.memory[tok.text.lower()] if tok.text.lower() in self.memory else [tok] for tok in process_tokens), [])
+        if not ''.join(tok.text for tok in (hidden_tokens + process_tokens)).strip():
+            return
+        return hidden_tokens + process_tokens
 
 def add_indents(struct, num_indents):
     retval = []
