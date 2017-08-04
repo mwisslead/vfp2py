@@ -316,7 +316,7 @@ power
  ;
 
 atomExpr
- : subExpr | constant | '@'? idAttr
+ : subExpr | constant | '@'? idAttr | '&' identifier
  ;
 
 subExpr
