@@ -639,7 +639,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         return self.binary_expr('**', exprs)
 
     def visitAtomExpr(self, ctx):
-        return self.visit(ctx.subExpr() or ctx.idAttr() or ctx.constant())
+        return self.visit(ctx.subExpr() or ctx.idAttr() or ctx.constant() or ctx.identifier())
         identifier = self.visit(ctx.identifier())
         trailer = self.visit(ctx.trailer())
         if ctx.PERIOD() and self.withid:
