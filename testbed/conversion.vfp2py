@@ -183,6 +183,7 @@ mkdir test - test
 MD test+test
 rmdir (test+test)
 rd alltrim(test)
+!ls -al &pathname
 @end=vfp@
 
 @begin=python@
@@ -193,6 +194,7 @@ os.mkdir(test - test)
 os.mkdir('test+test')
 os.rmdir(test + test)
 os.rmdir(test.strip())
+subprocess.call(['ls', '-al', pathname])
 @end=python@
 
 @begin=vfp@&&lines

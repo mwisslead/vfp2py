@@ -221,6 +221,7 @@ mkdir test - test
 MD test+test
 rmdir (test+test)
 rd alltrim(test)
+!ls -al &pathname
 '''.strip()
     output_str = '''
 test = False  # LOCAL Declaration
@@ -230,6 +231,7 @@ os.mkdir(test - test)
 os.mkdir(\'test+test\')
 os.rmdir(test + test)
 os.rmdir(test.strip())
+subprocess.call([\'ls\', \'-al\', pathname])
 '''.strip()
     test_output_str = vfp2py.vfp2py.prg2py(input_str, parser_start='lines', prepend_data='').strip()
     try:

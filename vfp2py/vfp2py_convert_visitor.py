@@ -1566,9 +1566,16 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         return make_func_code('vfpfunc.set', setword, *args, **kwargs)
 
     def visitShellRun(self, ctx):
+        start, stop = ctx.getSourceInterval()
         if ctx.identifier():
             pass #Add /N options
-        command = [self.visit(expr) for expr in ctx.specialExpr()]
+            start = ctx.identifier().getSourceInterval()[0]
+        tokens = ctx.parser._input.tokens[start + 1:stop + 1]
+        # FIXME: Need more cleanup on the arguments.
+        command = ''.join(create_string(tok.text if tok.type != ctx.parser.STRING_LITERAL else tok.text[1:-1]) for tok in tokens).strip().split()
+        for i, arg in enumerate(command):
+            if arg.startswith('&'):
+                command[i] = CodeStr(arg[1:])
         self.imports.append('import subprocess')
         return make_func_code('subprocess.call', command)
 
