@@ -22,8 +22,13 @@ endproc
 procedure date_tests
    local somedate
    somedate = {^2017-6-30}
+   assert somedate == Date(2017, 6, 30)
    assert dow(somedate) == 6
    assert cdow(somedate) == 'Friday'
+   assert month(somedate) == 6
+   assert cmonth(somedate) == 'June'
+   assert len(time()) == 8
+   assert len(time(1)) == 11
 endproc
 
 procedure math_tests

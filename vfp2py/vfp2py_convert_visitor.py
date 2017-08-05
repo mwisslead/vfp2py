@@ -583,14 +583,22 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         if funcname in ('repli', 'replicate'):
             args[1:] = [int(arg) for arg in args[1:]]
             return add_args_to_code('({} * {})', args)
-        if funcname in ('date', 'datetime', 'time') and len(args) == 0:
+        if funcname in ('date', 'datetime', 'time'):
             self.imports.append('import datetime as dt')
-            if funcname == 'date':
-                return make_func_code('dt.datetime.now().date')
-            elif funcname == 'datetime':
-                return make_func_code('dt.datetime.now')
-            elif funcname == 'time':
-                return make_func_code('dt.datetime.now().time().strftime', '%H:%M:%S')
+            if len(args) == 0:
+                if funcname == 'date':
+                    return make_func_code('dt.datetime.now().date')
+                elif funcname == 'datetime':
+                    return make_func_code('dt.datetime.now')
+                elif funcname == 'time':
+                    return make_func_code('dt.datetime.now().time().strftime', '%H:%M:%S')
+            else:
+                if funcname == 'date':
+                    return make_func_code('dt.date', *args)
+                elif funcname == 'datetime':
+                    return make_func_code('dt.datetime', *args)
+                elif funcname == 'time':
+                    return add_args_to_code('{}[:11]', [make_func_code('dt.datetime.now().time().strftime', '%H:%M:%S.%f')])
         if funcname in ('year', 'month', 'day', 'hour', 'minute', 'sec', 'dow', 'cdow', 'cmonth'):
             self.imports.append('import datetime as dt')
             funcname = {
