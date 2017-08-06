@@ -401,6 +401,9 @@ def isblank(expr):
     except:
         return expr is None
 
+def like(matchstr, string):
+    return bool(re.match(matchstr.replace('.', r'\.').replace('*', '.*').replace('?', '.'), string))
+
 def lineno(flag=None):
     exc_type, exc_obj, exc_tb = sys.exc_info()
     return exc_tb.tb_lineno
