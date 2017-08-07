@@ -583,7 +583,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         if funcname in ('repli', 'replicate'):
             args[1:] = [int(arg) for arg in args[1:]]
             return add_args_to_code('({} * {})', args)
-        if funcname in ('date', 'datetime', 'time'):
+        if funcname in ('date', 'datetime', 'time', 'dtot'):
             self.imports.append('import datetime as dt')
             if len(args) == 0:
                 if funcname == 'date':
@@ -599,6 +599,8 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
                     return make_func_code('dt.datetime', *args)
                 elif funcname == 'time':
                     return add_args_to_code('{}[:11]', [make_func_code('dt.datetime.now().time().strftime', '%H:%M:%S.%f')])
+            if funcname == 'dtot':
+                return make_func_code('dt.datetime.combine', args[0], make_func_code('dt.datetime.min.time'))
         if funcname in ('year', 'month', 'day', 'hour', 'minute', 'sec', 'dow', 'cdow', 'cmonth'):
             self.imports.append('import datetime as dt')
             funcname = {

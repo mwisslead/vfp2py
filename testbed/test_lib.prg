@@ -29,6 +29,7 @@ procedure date_tests
    assert cmonth(somedate) == 'June'
    assert len(time()) == 8
    assert len(time(1)) == 11
+   assert dtot(somedate) == Datetime(2017, 6, 30, 0)
 endproc
 
 procedure math_tests
