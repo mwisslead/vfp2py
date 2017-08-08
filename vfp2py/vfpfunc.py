@@ -10,6 +10,8 @@ import ctypes.util
 import traceback
 import re
 
+import dateutil.relativedelta
+
 from vfpdatabase import DatabaseContext
 
 SET_PROPS = {
@@ -386,6 +388,9 @@ def getwordnum(string, index, delim=None):
     if 0 <= index <= len(str_list):
         return str_list[index-1]
     return ''
+
+def gomonth(dateval, delta):
+    return dateval + dateutil.relativedelta.relativedelta(months=delta)
 
 def home(location=0):
     if location != 0:

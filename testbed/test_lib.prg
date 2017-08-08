@@ -30,6 +30,7 @@ procedure date_tests
    assert len(time()) == 8
    assert len(time(1)) == 11
    assert dtot(somedate) == Datetime(2017, 6, 30, 0)
+   assert gomonth(somedate, -4) = date(2017, 2, 28)
 endproc
 
 procedure math_tests
