@@ -51,6 +51,9 @@ procedure string_tests
    ASSERT GETWORDNUM(cString, 2, ".") == ''
    assert like('Ab*t.???', 'About.txt')
    assert not like('Ab*t.???', 'about.txt')
+   assert not isalpha('')
+   assert isalpha('a123')
+   assert not isalpha('1abc')
 ENDPROC
 
 procedure path_tests
