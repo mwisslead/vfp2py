@@ -54,6 +54,9 @@ procedure string_tests
    assert not isalpha('')
    assert isalpha('a123')
    assert not isalpha('1abc')
+   assert not islower('')
+   assert islower('test')
+   assert not islower('Test')
 ENDPROC
 
 procedure path_tests

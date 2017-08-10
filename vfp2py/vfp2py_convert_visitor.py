@@ -721,6 +721,8 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             return add_args_to_code('{} == {}', [args[0], None])
         if funcname == 'isalpha':
             return add_args_to_code('{}[:1].isalpha()', args)
+        if funcname == 'islower':
+            return add_args_to_code('{}[:1].islower()', args)
         if funcname == 'inlist':
             return add_args_to_code('({} in {})', [args[0], tuple(args[1:])])
         if funcname == 'pythonfunctioncall' and len(args) == 3 and isinstance(args[2], tuple):
