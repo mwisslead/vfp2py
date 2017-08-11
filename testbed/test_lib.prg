@@ -57,6 +57,9 @@ procedure string_tests
    assert not islower('')
    assert islower('test')
    assert not islower('Test')
+   assert not isdigit('')
+   assert isdigit('1abc')
+   assert not isdigit('a123')
 ENDPROC
 
 procedure path_tests
