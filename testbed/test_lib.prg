@@ -63,6 +63,9 @@ procedure string_tests
    assert not ISUPPER('')
    assert ISUPPER('Test')
    assert not ISUPPER('test')
+   assert isblank('')
+   assert not isblank('test')
+   assert isblank({ / / })
 ENDPROC
 
 procedure path_tests
