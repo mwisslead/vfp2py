@@ -60,6 +60,9 @@ procedure string_tests
    assert not isdigit('')
    assert isdigit('1abc')
    assert not isdigit('a123')
+   assert not ISUPPER('')
+   assert ISUPPER('Test')
+   assert not ISUPPER('test')
 ENDPROC
 
 procedure path_tests
