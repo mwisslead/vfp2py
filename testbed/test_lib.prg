@@ -144,6 +144,8 @@ procedure database_tests
       assert alltrim(name) == 'Not Available'
       ZAP
       ASSERT RECCOUNT() == 0
+      copy structure to report2
+      DELETE FILE REPORT2.DBF
    catch to err
       ?err.message
       browse
