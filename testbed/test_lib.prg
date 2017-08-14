@@ -146,6 +146,9 @@ procedure database_tests
       ZAP
       ASSERT RECCOUNT() == 0
       copy structure to report2
+      USE report2 in 0 shared
+      ASSERT FCOUNT() == 4
+      use
       DELETE FILE REPORT2.DBF
    catch to err
       ?err.message
