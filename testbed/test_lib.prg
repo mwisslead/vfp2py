@@ -103,6 +103,7 @@ procedure database_tests
       _add_db_record(1)
       _add_db_record(2)
       _add_db_record(3)
+      ASSERT FCOUNT() == 4
       assert not found()
       go top
       assert alltrim(name) == 'Norma Fisher' MESSAGE alltrim(name) + ' should be Norma Fisher'

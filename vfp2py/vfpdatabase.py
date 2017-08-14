@@ -295,3 +295,9 @@ class DatabaseContext(object):
 
     def zap(self, tablename):
         self._get_table_info().table.zap()
+
+    def fcount(self, tablename=None):
+        try:
+            return self._get_table_info().table.field_count
+        except:
+            return 0
