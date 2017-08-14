@@ -104,6 +104,8 @@ procedure database_tests
       _add_db_record(2)
       _add_db_record(3)
       ASSERT FCOUNT() == 4
+      ALTER TABLE REPORT ADD COLUMN AGE N(3, 0)
+      ASSERT FCOUNT() == 5
       assert not found()
       go top
       assert alltrim(name) == 'Norma Fisher' MESSAGE alltrim(name) + ' should be Norma Fisher'
@@ -147,7 +149,7 @@ procedure database_tests
       ASSERT RECCOUNT() == 0
       copy structure to report2
       USE report2 in 0 shared
-      ASSERT FCOUNT() == 4
+      ASSERT FCOUNT() == 5
       use
       DELETE FILE REPORT2.DBF
    catch to err

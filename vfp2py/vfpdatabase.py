@@ -74,6 +74,9 @@ class DatabaseContext(object):
             dbf.Table(tablename, setup_string)
             self.use(tablename, 0, 'shared')
 
+    def alter_table(self, tablename, field_specs):
+        self._get_table_info(tablename).table.add_fields(field_specs)
+
     def select(self, tablename):
         self.current_table = self.get_workarea(tablename)
 

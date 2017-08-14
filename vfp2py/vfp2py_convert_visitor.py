@@ -1280,6 +1280,19 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         free = 'free' if ctx.FREE() else ''
         return make_func_code(func, tablename, setupstring, free)
 
+    def visitAlterTable(self, ctx):
+        tablename = self.visit(ctx.specialExpr())
+        tablesetup = zip(ctx.identifier()[::2], ctx.identifier()[1::2], [ctx.arrayIndex()])
+        tablesetup = ((self.visit(id1), self.visit(id2), self.visit(size)) for id1, id2, size in tablesetup)
+        setupstring = []
+        for id1, id2, size in tablesetup:
+            if id2.upper() == 'L' and len(size) == 1 and size[0] == 1:
+                setupstring.append('{} {}'.format(id1, id2))
+            else:
+                setupstring.append('{} {}({})'.format(id1, id2, ', '.join(str(int(i)) for i in size)))
+        setupstring = '; '.join(setupstring)
+        return make_func_code('vfpfunc.db.alter_table', tablename, setupstring)
+
     def visitSelect(self, ctx):
         if ctx.tablename:
             return make_func_code('vfpfunc.db.select', self.visit(ctx.tablename))
