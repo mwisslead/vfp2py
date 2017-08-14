@@ -195,8 +195,7 @@ class DatabaseContext(object):
         return len(list(self._get_records(tablename, scope, **kwargs)))
 
     def copy_structure(self, tablename):
-        structure = self._get_table_info().table.structure()
-        dbf.Table(tablename, '; '.join(structure))
+        dbf.Table(tablename, self._get_table_info().table.structure())
 
     def delete_record(self, tablename, scope, recall=False, **kwargs):
         for record in self._get_records(tablename, scope, **kwargs):
