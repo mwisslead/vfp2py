@@ -149,6 +149,9 @@ procedure database_tests
       ASSERT RECCOUNT() == 0
       copy structure to report2
       USE report2 in 0 shared
+      assert alias() == 'report'
+      SELECT report2
+      assert alias() == 'report2'
       ASSERT FCOUNT() == 5
       use
       DELETE FILE REPORT2.DBF

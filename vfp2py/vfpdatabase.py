@@ -92,6 +92,10 @@ class DatabaseContext(object):
             workarea = self.open_tables.index(None)
         self.open_tables[workarea] = DatabaseWorkspace(tablename)
 
+    def alias(self, tablename=None):
+        table_info = self._get_table_info(tablename)
+        return table_info.name or os.path.splitext(os.path.basename(table_info.table.filename))[0]
+
     def used(self, tablename):
         try:
             self.get_workarea(tablename)

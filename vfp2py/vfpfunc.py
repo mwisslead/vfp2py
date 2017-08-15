@@ -299,9 +299,6 @@ class _Function(object):
         alias = alias or funcname
         self.functions[alias] = {'func': func, 'source': dllname}
 
-def alias(workarea):
-    pass
-
 def alltrim(string):
     return string.strip()
 
