@@ -214,7 +214,7 @@ otherCmds
  | THROW expr? #throwError
 
  | CREATE (TABLE|DBF) specialExpr FREE? '(' identifier identifier arrayIndex (',' identifier identifier arrayIndex)* ')' #createTable
- | ALTER TABLE specialExpr ADD COLUMN identifier identifier arrayIndex #alterTable
+ | ALTER TABLE specialExpr (ADD COLUMN identifier identifier arrayIndex | DROP COLUMN identifier) #alterTable
  | SELECT (tablename=specialExpr | (DISTINCT? (specialArgs | '*') (FROM fromExpr=specialExpr)? (WHERE whereExpr=expr)? (INTO (TABLE | CURSOR) intoExpr=specialExpr)? (ORDER BY orderbyid=identifier)?)) #select
  | USE (SHARED | EXCLUSIVE)? (IN workArea=specialExpr | name=specialExpr IN workArea=specialExpr | name=specialExpr)? (SHARED | EXCLUSIVE)? (ALIAS identifier)? #use
  | LOCATE (FOR expr)? (WHILE expr)? NOOPTIMIZE? #locate
@@ -485,6 +485,7 @@ identifier
  | FIELDS
  | ALTER
  | COLUMN
+ | DROP
  | ID
  ;
 
@@ -764,6 +765,7 @@ LIKE: L I K E;
 FIELDS: F I E L D S;
 ALTER: A L T E R;
 COLUMN: C O L U M N;
+DROP: D R O P;
 
 ID : [A-Za-z_] [a-zA-Z0-9_]*;
 

@@ -153,6 +153,8 @@ procedure database_tests
       SELECT report2
       assert alias() == 'report2'
       ASSERT FCOUNT() == 5
+      ALTER TABLE REPORT2 DROP COLUMN ST
+      ASSERT FCOUNT() == 4
       use
       DELETE FILE REPORT2.DBF
    catch to err
