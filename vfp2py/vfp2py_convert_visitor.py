@@ -570,6 +570,17 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
                 args = [add_args_to_code('{}[{}:({} + {})]', [args[0], args[2], args[2], args[3]]), args[1]]
             if len(args) == 2:
                 return add_args_to_code('{}.index({})', args)
+        if funcname == 'afields':
+            localscode = make_func_code('locals')
+            arrname = args.pop(0)
+            if not args:
+                args.append(None)
+            if arrname.startswith('vfpvar['):
+                arrname = CodeStr(arrname[7:-1]) #FIXME
+            else:
+                arrname = str(arrname)
+            args.append(arrname)
+            args.append((localscode, CodeStr('vfpvar')))
         if funcname == 'empty':
             return add_args_to_code('(not {} if {} is not None else False)', args + args)
         if funcname == 'occurs':

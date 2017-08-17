@@ -523,3 +523,25 @@ except Exception as oerr:
         print(''.join(diff))
         raise
 
+
+def Test15():
+    input_str = '''
+LOCAL CNT_FIELDS
+LOCAL ARRAY MAIN_ARRAY(1)
+CNT_FIELDS = AFIELDS(MAIN_ARRAY) + 32
+CNT_FIELDS = AFIELDS(MAIN_ARRAY2, \'report\') + 47
+'''.strip()
+    output_str = '''
+cnt_fields = False  # LOCAL Declaration
+main_array = vfpfunc.Array(1)
+cnt_fields = vfpfunc.db.afields(None, \'main_array\', (locals(), vfpvar)) + 32
+cnt_fields = vfpfunc.db.afields(\'report\', \'main_array2\', (locals(), vfpvar)) + 47
+'''.strip()
+    test_output_str = vfp2py.vfp2py.prg2py(input_str, parser_start='lines', prepend_data='').strip()
+    try:
+        assert test_output_str == output_str
+    except AssertionError:
+        diff = difflib.unified_diff((test_output_str + '\n').splitlines(1), (output_str + '\n').splitlines(1))
+        print(''.join(diff))
+        raise
+
