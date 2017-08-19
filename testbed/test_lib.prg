@@ -106,6 +106,7 @@ procedure database_tests
       ASSERT FCOUNT() == 4
       ALTER TABLE REPORT ADD COLUMN AGE N(3, 0)
       ASSERT FCOUNT() == 5
+      assert field(2) == 'st'
       assert not found()
       go top
       assert alltrim(name) == 'Norma Fisher' MESSAGE alltrim(name) + ' should be Norma Fisher'
