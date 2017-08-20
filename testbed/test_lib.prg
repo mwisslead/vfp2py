@@ -70,8 +70,13 @@ ENDPROC
 
 procedure path_tests
    assert HOME() == curdir()
+   handle = fcreate('test_lib_file')
+   fclose(handle)
+   assert not isblank(locfile('test_lib_file'))
    CD ..
    assert HOME() != curdir()
+   assert not isblank(locfile('test_lib_file'))
+   delete file ADDBS(HOME()) + 'test_lib_file'
 endproc
 
 procedure _add_db_record(seed)

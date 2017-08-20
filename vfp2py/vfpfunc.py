@@ -36,6 +36,8 @@ if not HOME:
     HOME = sys.executable
 HOME = os.path.dirname(os.path.abspath(HOME))
 
+SEARCH_PATH = [HOME]
+
 class MainWindow(object):
     pass
 
@@ -409,6 +411,19 @@ def like(matchstr, string):
 def lineno(flag=None):
     exc_type, exc_obj, exc_tb = sys.exc_info()
     return exc_tb.tb_lineno
+
+def locfile(filename, ext='', caption=''):
+    '''find file on path'''
+    if os.path.isfile(filename):
+        return os.path.abspath(filename)
+    dirname = os.path.dirname(filename)
+    filename = os.path.basename(filename)
+    for path in SEARCH_PATH:
+        testpath = os.path.join(path, filename)
+        if os.path.isfile(testpath):
+            return os.path.abspath(testpath)
+    #open dialog to find file
+    raise Exception('file not found')
 
 def message(flag=None):
     exc_type, exc_obj, exc_tb = sys.exc_info()
