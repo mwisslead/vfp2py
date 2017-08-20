@@ -404,6 +404,8 @@ LOCAL CNT_FIELDS
 LOCAL ARRAY MAIN_ARRAY(1)
 CNT_FIELDS = AFIELDS(MAIN_ARRAY) + 32
 CNT_FIELDS = AFIELDS(MAIN_ARRAY2, 'report') + 47
+T = aINS(main_array, 3)
+T = aINS(main_array, 3, 2)
 @end=vfp@
 
 @begin=python@
@@ -411,6 +413,8 @@ cnt_fields = False  # LOCAL Declaration
 main_array = vfpfunc.Array(1)
 cnt_fields = vfpfunc.db.afields(None, 'main_array', (locals(), vfpvar)) + 32
 cnt_fields = vfpfunc.db.afields('report', 'main_array2', (locals(), vfpvar)) + 47
+vfpvar['t'] = main_array.insert(None, 3)
+vfpvar['t'] = main_array.insert(None, 3, 2)
 @end=python@
 
 ON ERROR

@@ -530,12 +530,16 @@ LOCAL CNT_FIELDS
 LOCAL ARRAY MAIN_ARRAY(1)
 CNT_FIELDS = AFIELDS(MAIN_ARRAY) + 32
 CNT_FIELDS = AFIELDS(MAIN_ARRAY2, \'report\') + 47
+T = aINS(main_array, 3)
+T = aINS(main_array, 3, 2)
 '''.strip()
     output_str = '''
 cnt_fields = False  # LOCAL Declaration
 main_array = vfpfunc.Array(1)
 cnt_fields = vfpfunc.db.afields(None, \'main_array\', (locals(), vfpvar)) + 32
 cnt_fields = vfpfunc.db.afields(\'report\', \'main_array2\', (locals(), vfpvar)) + 47
+vfpvar[\'t\'] = main_array.insert(None, 3)
+vfpvar[\'t\'] = main_array.insert(None, 3, 2)
 '''.strip()
     test_output_str = vfp2py.vfp2py.prg2py(input_str, parser_start='lines', prepend_data='').strip()
     try:

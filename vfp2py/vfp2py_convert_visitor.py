@@ -570,6 +570,8 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
                 args = [add_args_to_code('{}[{}:({} + {})]', [args[0], args[2], args[2], args[3]]), args[1]]
             if len(args) == 2:
                 return add_args_to_code('{}.index({})', args)
+        if funcname == 'ains':
+            return make_func_code(add_args_to_code('{}.insert', args[:1]), *([None] + args[1:]))
         if funcname == 'afields':
             localscode = make_func_code('locals')
             arrname = args.pop(0)
