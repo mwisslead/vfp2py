@@ -701,6 +701,9 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             if len(args) < 2:
                 args.append(CodeStr(''))
             return add_args_to_code('len([w for w in {}.split({}) if w])', args)
+        if funcname == 'rand':
+            self.imports.append('import random')
+            return make_func_code('random.random')
         if funcname in ('ceiling', 'exp', 'log', 'log10', 'sin', 'cos', 'tan', 'asin', 'acos', 'atan', 'atan2', 'pi', 'sqrt', 'dtor', 'rtod'):
             self.imports.append('import math')
             if funcname == 'pi':
