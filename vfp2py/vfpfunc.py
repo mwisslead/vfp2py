@@ -512,6 +512,28 @@ def seconds():
 def space(num):
     return ' ' * int(num)
 
+def strextract(string, begin, end='', occurance=1, flag=0):
+    begin = re.escape(begin)
+    end = re.escape(end)
+    if end:
+        between = '.*?'
+    else:
+        between = '.*'
+    if flag & 4:
+        regstr = '({}{}{})'.format(begin, between, end)
+    else:
+        regstr = '{}({}){}'.format(begin, between, end)
+    try:
+        if flag & 1:
+            flags = re.IGNORECASE
+        else:
+            flags = 0
+        return re.findall(regstr, string, flags=flags)[occurance - 1]
+    except:
+        if flag & 2 and end:
+            return strextract(string, begin, '', occurance, flag & 5)
+        return ''
+
 def strtofile(string, filename, flag=0):
     flag = int(flag)
     if flag not in (0, 1, 2, 4):

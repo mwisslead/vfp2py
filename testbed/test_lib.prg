@@ -67,6 +67,10 @@ procedure string_tests
    assert isblank('')
    assert not isblank('test')
    assert isblank({ / / })
+   assert strextract('This {{is}} a {{template}}', '{{', '}}') == 'is'
+   assert strextract('This {{is}} a {{template}}', '{{', '}}', 2) == 'template'
+   assert strextract('This {{is}} a {{template}}', '{{is}}') ==  ' a {{template}}'
+   assert strextract('This {{is}} a {{template}}', '{{IS}}', '', 1, 1) ==  ' a {{template}}'
 ENDPROC
 
 procedure path_tests
