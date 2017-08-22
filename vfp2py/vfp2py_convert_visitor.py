@@ -325,6 +325,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
                 else:
                     newbody.append(line)
             return newbody
+        self.imports.append('from vfp2py.vfpfunc import variable as vfpvar')
         body = [CodeStr('vfpvar.pushscope()')] + fix_returns(body)
         if isinstance(body[-1], CodeStr) and body[-1].startswith('return '):
             return body
