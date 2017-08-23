@@ -580,9 +580,6 @@ def vfp_sys(funcnum, *args):
             return os.path.dirname(sys.executable)
         return os.path.dirname(sys.argv[0])
 
-def val(string):
-    return float(string)
-
 def version(ver_type=4):
     if ver_type == 5:
         return 900

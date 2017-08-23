@@ -31,7 +31,7 @@ class RedirectedBuiltin(object):
         except:
             return make_func_code(self.name, *args, **kwargs)
 
-for func in ('chr', 'int', 'str'):
+for func in ('chr', 'int', 'str', 'float'):
     globals()[func] = RedirectedBuiltin(func)
 
 if sys.version_info >= (3,):
@@ -552,6 +552,8 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             return make_func_code(funcname, *args)
         if funcname == 'chr' and len(args) == 1:
             return chr(int(args[0]))
+        if funcname == 'val' and len(args) == 1:
+            return float(args[0])
         if funcname == 'space' and len(args) == 1:
             return int(args[0]) * ' '
         if funcname == 'asc':

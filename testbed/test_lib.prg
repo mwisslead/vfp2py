@@ -40,6 +40,10 @@ procedure math_tests
    assert abs(cos(dtor(90)) - 0) < 0.001
    assert abs(cos(dtor(45)) - sqrt(2)/2) < 0.001
    assert 0 < rand() and rand() < 1
+
+   local stringval
+   stringval = '1e5'
+   assert val(stringval) = 100000
 endproc
 
 procedure string_tests
