@@ -301,12 +301,6 @@ class _Function(object):
         alias = alias or funcname
         self.functions[alias] = {'func': func, 'source': dllname}
 
-def alltrim(string):
-    return string.strip()
-
-def asc(string):
-    return ord(string[0])
-
 def atline(search, string):
     found = string.find(search)
     if found == -1:
@@ -318,9 +312,6 @@ def capslock(on=None):
 
 def cdx(index, workarea):
     pass
-
-def chr(num):
-    return __builtin__.chr(int(num))
 
 def chrtran(expr, fchrs, rchrs):
      return ''.join(rchrs[fchrs.index(c)] if c in fchrs else c for c in expr)
@@ -346,16 +337,8 @@ def ddesettopic(a, b, c):
 def delete_file(string, recycle=False):
     pass
 
-def directory(path, flag):
-    return os.path.isdir(directory)
-
 def dow_fix(weekday, firstday=0):
     return (weekday + 2 - (firstday or 1)) % 7 + 1
-
-def dtoc(dateval, index_format=False):
-    if index_format == 1:
-        return dateval.strftime('%Y%m%d')
-    return dateval.strftime('%m/%d/%Y')
 
 def error(txt):
     raise Exception(txt)
@@ -368,9 +351,6 @@ def fdate(filename, datetype=0):
 
 def ftime(filename):
     return fdate(filename, 1).time()
-
-def file(string):
-     return os.path.isfile(string.lower())
 
 def filetostr(filename):
     with open(filename) as fid:
@@ -510,9 +490,6 @@ def seconds():
     now = dt.datetime.now()
     return (now - dt.datetime.combine(now, dt.time(0, 0))).seconds
 
-def space(num):
-    return ' ' * int(num)
-
 def strextract(string, begin, end='', occurance=1, flag=0):
     begin = re.escape(begin)
     end = re.escape(end)
@@ -569,9 +546,6 @@ def strtran(string, old, new='', start=0, maxreplace=None, flags=0):
 
 def stuff(string, start, num_replaced, repl):
     return string[:start-1] + repl + string[start-1+num_replaced:]
-
-def substr(string, start, chars):
-    return string[start-1:start-1+chars]
 
 def vfp_sys(funcnum, *args):
     if funcnum == 16:
