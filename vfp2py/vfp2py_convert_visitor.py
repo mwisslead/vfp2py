@@ -546,6 +546,22 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         if not kwargs and len(args) == 1 and isinstance(args[0], (list, tuple)):
             args = args[0]
         args = list(args)
+        funcname = {
+            'at_c': 'at',
+            'atcc': 'atc',
+            'atcline': 'atline',
+            'chrtranc': 'chrtran',
+            'leftc': 'left',
+            'lenc': 'len',
+            'likec': 'like',
+            'ratc': 'rat',
+            'rightc': 'right',
+            'select': 'select_function',
+            'str': 'num_to_str',
+            'stuffc': 'stuff',
+            'substrc': 'substr',
+            'sys': 'vfp_sys',
+        }.get(funcname, funcname)
         if funcname == 'dodefault':
             return make_func_code('super(type(self), self).{}'.format(FUNCNAME), *args)
         if funcname in self.function_list:
@@ -820,14 +836,8 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             return operation[0](*operation[1])
         if funcname == 'set' and len(args) > 0 and string_type(args[0]):
             args[0] = args[0].lower()
-        if funcname == 'select' and not args:
+        if funcname == 'select_function' and not args:
             args = (add_args_to_code('{} if {} else {}', (0, CodeStr('vfpfunc.set(\'compatible\') == \'OFF\''), None)),)
-        funcname = {
-            'sys': 'vfp_sys',
-            'stuffc': 'stuff',
-            'str': 'num_to_str',
-            'select': 'select_function'
-        }.get(funcname, funcname)
         if funcname in dir(vfpfunc):
             self.imports.append('from vfp2py import vfpfunc')
             funcname = 'vfpfunc.' + funcname
