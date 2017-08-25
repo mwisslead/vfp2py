@@ -9,6 +9,7 @@ import ctypes
 import ctypes.util
 import traceback
 import re
+import pyodbc
 
 import dateutil.relativedelta
 
@@ -546,6 +547,9 @@ def strtran(string, old, new='', start=0, maxreplace=None, flags=0):
 
 def stuff(string, start, num_replaced, repl):
     return string[:start-1] + repl + string[start-1+num_replaced:]
+
+def sqlconnect(name, userid=None, password=None, shared=False):
+    return pyodbc.connect('dsn=' + name)
 
 def vfp_sys(funcnum, *args):
     if funcnum == 16:
