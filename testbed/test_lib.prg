@@ -179,5 +179,7 @@ procedure database_tests
    finally
       DELETE FILE REPORT.DBF
    endtry
-   assert sqlconnect('testodbc') > 0
+   sqlconn = sqlconnect('testodbc')
+   assert sqlconn > 0
+   sqldisconnect(sqlconn)
 endproc

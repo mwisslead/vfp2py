@@ -551,6 +551,9 @@ def stuff(string, start, num_replaced, repl):
 def sqlconnect(name, userid=None, password=None, shared=False):
     return pyodbc.connect('dsn=' + name)
 
+def sqldisconnect(connection):
+    connection.close()
+
 def vfp_sys(funcnum, *args):
     if funcnum == 16:
         import imp
