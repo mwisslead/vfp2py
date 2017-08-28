@@ -551,6 +551,15 @@ def stuff(string, start, num_replaced, repl):
 def sqlconnect(name, userid=None, password=None, shared=False):
     return pyodbc.connect('dsn=' + name)
 
+def sqlstringconnect(*args):
+    if len(args) == 0 or len(args) == 1 and isinstance(args[0], bool):
+        connect_string = None #should pop up a dialog
+        shared = args[0] if args else False
+    else:
+        connect_string = args[0]
+        shared = args[1] if len(args) > 1 else False
+    return pyodbc.connect(connect_string)
+
 def sqldisconnect(connection):
     connection.close()
 

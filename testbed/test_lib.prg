@@ -182,4 +182,7 @@ procedure database_tests
    sqlconn = sqlconnect('testodbc')
    assert sqlconn > 0
    sqldisconnect(sqlconn)
+   sqlconn = sqlstringconnect('dsn=testodbc')
+   assert sqlconn > 0
+   sqldisconnect(sqlconn)
 endproc
