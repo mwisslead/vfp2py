@@ -560,6 +560,51 @@ def sqlstringconnect(*args):
         shared = args[1] if len(args) > 1 else False
     return pyodbc.connect(connect_string)
 
+def sqlexec(conn, cmd='', cursor_name='', count_info=''):
+    if not cursor_name:
+        cursor_name = 'sqlresult'
+    try:
+        results = conn.execute(cmd)
+        try:
+            values = results.fetchall()
+            columns = [(col[3], col[5]) for col in results.columns().fetchall()]
+            for i, column in enumerate(columns):
+                field_name, field_type = column
+                field_type = list(re.match('([A-Za-z0-9_]*)\s*(\(.*\))?', field_type).groups())
+                if len(field_type) < 2:
+                    field_type.append(None)
+                if not field_type[1]:
+                    field_type[1] = ''
+                field_type, field_len = field_type
+                field_type = {
+                    'char': 'C',
+                    'varchar': 'C',
+                    'bit': 'L',
+                    'int': 'N',
+                }.get(field_type, field_type)
+                field_lens = re.match('\(\s*([0-9]*\s*,\s*)*([0-9]*)\s*\)', field_len)
+                if field_lens:
+                    field_lens = list(field_lens.groups())
+                    if not field_lens[0]:
+                        field_lens[0] = ''
+                    field_lens = [f.strip() for f in field_lens[0].split(',') if f.strip()] + [field_lens[1]]
+                if field_type == 'N':
+                    if len(field_lens) < 2:
+                        field_lens.append('0')
+                    field_len = '({})'.format(', '.join(field_lens))
+                columns[i] = '{} {}{}'.format(field_name, field_type, field_len)
+            if not values:
+                raise Exception('')
+            db.create_table(cursor_name + '.dbf', '; '.join(columns), 'free')
+            for value in values:
+                db.insert(cursor_name, tuple(value))
+            db.goto(cursor_name, 0)
+        except:
+            pass
+        return 1
+    except:
+        return -1
+
 def sqldisconnect(connection):
     connection.close()
 

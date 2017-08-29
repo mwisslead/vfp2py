@@ -99,6 +99,19 @@ procedure _add_db_record(seed)
    insert into report values (fake_name, fake_st, fake_quantity, fake_received)
 endproc
 
+procedure _sqlexec_add_record(sqlconn, seed)
+   LOCAL fake, fake_name, fake_st, fake_quantity, fake_received
+   fake = pythonfunctioncall('faker', 'Faker', createobject('pythontuple'))
+   fake.callmethod('seed', createobject('pythontuple', seed))
+   fake_name = fake.callmethod('name', createobject('pythontuple'))
+   fake_st = fake.callmethod('state_abbr', createobject('pythontuple'))
+   fake_quantity = fake.callmethod('random_int', createobject('pythontuple', 0, 100))
+   fake_received = fake.callmethod('boolean', createobject('pythontuple'))
+   sqlcmd = "insert into REPORT values ('" + fake_name + "','" + fake_st + "'," + alltrim(str(fake_quantity)) + ',' + alltrim(str(cast(fake_received as int))) + ')'
+   ?sqlcmd
+   return sqlexec(sqlconn, sqlcmd)
+endproc
+
 procedure database_tests
    SET SAFETY OFF
    SET ASSERTS ON
@@ -184,5 +197,14 @@ procedure database_tests
    sqldisconnect(sqlconn)
    sqlconn = sqlstringconnect('dsn=testodbc')
    assert sqlconn > 0
+   assert sqlexec(sqlconn, 'CREATE TABLE REPORT (NAME varchar(50), ST char(2), QUANTITY int(5), RECEIVED bit)') > 0
+   assert _sqlexec_add_record(sqlconn, 0) > 0
+   assert _sqlexec_add_record(sqlconn, 1) > 0
+   assert _sqlexec_add_record(sqlconn, 2) > 0
+   assert _sqlexec_add_record(sqlconn, 3) > 0
+   assert sqlexec(sqlconn, 'SELECT * FROM REPORT')
+   select sqlresult
+   assert alltrim(name) == 'Norma Fisher'
+   assert sqlexec(sqlconn, 'DROP TABLE REPORT') > 0
    sqldisconnect(sqlconn)
 endproc
