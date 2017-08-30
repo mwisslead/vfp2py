@@ -62,7 +62,7 @@ class DatabaseContext(object):
             if not tablename:
                 return next(i+1 for i, table in enumerate(self.open_tables) if table is None)
             else:
-                return self.get_workspace(tablename) + 1
+                return self.get_workarea(tablename) + 1
         except:
             return 0
 
