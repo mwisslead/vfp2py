@@ -560,37 +560,49 @@ def sqlstringconnect(*args):
         shared = args[1] if len(args) > 1 else False
     return pyodbc.connect(connect_string)
 
-def sqlexec(conn, cmd='', cursor_name='', count_info=''):
+def _odbc_cursor_to_db(results, cursor_name):
     if not cursor_name:
         cursor_name = 'sqlresult'
     try:
+        values = results.fetchall()
+        if not values:
+            raise Exception('')
+        column_info = values[0].cursor_description
+        columns = []
+        for i, column in enumerate(column_info):
+            field_name = column[0][:10]
+            field_type = {
+                int: 'N',
+                str: 'C',
+                bool: 'L',
+                float: 'N',
+            }[column[1]]
+            if field_type == 'N':
+                field_lens = column[4:6]
+            elif field_type == 'L':
+                field_lens = ''
+            else:
+                field_lens = '({})'.format(column[4])
+            columns.append('{} {}{}'.format(field_name, field_type, field_lens))
+        db.use(None, db.select_function(cursor_name), None)
+        db.create_table(cursor_name + '.dbf', columns, 'free')
+        for value in values:
+            db.insert(cursor_name, tuple(value))
+        db.goto(cursor_name, 0)
+    except:
+        pass
+
+def sqlexec(conn, cmd='', cursor_name='', count_info=''):
+    try:
         results = conn.execute(cmd)
-        try:
-            values = results.fetchall()
-            if not values:
-                raise Exception('')
-            column_info = values[0].cursor_description
-            columns = []
-            for i, column in enumerate(column_info):
-                field_type = {
-                    int: 'N',
-                    str: 'C',
-                    bool: 'L',
-                    float: 'N',
-                }[column[1]]
-                if field_type == 'N':
-                    field_lens = column[4:6]
-                elif field_type == 'L':
-                    field_lens = ''
-                else:
-                    field_lens = '({})'.format(column[4])
-                columns.append('{} {}{}'.format(column[0], field_type, field_lens))
-            db.create_table(cursor_name + '.dbf', columns, 'free')
-            for value in values:
-                db.insert(cursor_name, tuple(value))
-            db.goto(cursor_name, 0)
-        except:
-            pass
+        _odbc_cursor_to_db(results, cursor_name)
+        return 1
+    except:
+        return -1
+
+def sqltables(conn, table_type='', cursor_name=''):
+    try:
+        _odbc_cursor_to_db(conn.cursor().tables(), cursor_name)
         return 1
     except:
         return -1

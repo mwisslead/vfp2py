@@ -205,6 +205,9 @@ procedure database_tests
    assert sqlexec(sqlconn, 'SELECT * FROM REPORT')
    select sqlresult
    assert alltrim(name) == 'Norma Fisher'
+   assert sqltables(sqlconn) > 0
+   select sqlresult
+   assert lower(alltrim(table_name)) == 'report'
    assert sqlexec(sqlconn, 'DROP TABLE REPORT') > 0
    sqldisconnect(sqlconn)
 endproc
