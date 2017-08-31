@@ -194,9 +194,6 @@ procedure database_tests
    endtry
    sqlconn = sqlconnect('testodbc')
    assert sqlconn > 0
-   sqldisconnect(sqlconn)
-   sqlconn = sqlstringconnect('dsn=testodbc')
-   assert sqlconn > 0
    assert sqlexec(sqlconn, 'CREATE TABLE REPORT (NAME varchar(50), ST char(2), QUANTITY int(5), RECEIVED bit)') > 0
    assert _sqlexec_add_record(sqlconn, 0) > 0
    assert _sqlexec_add_record(sqlconn, 1) > 0
@@ -205,6 +202,10 @@ procedure database_tests
    assert sqlexec(sqlconn, 'SELECT * FROM REPORT')
    select sqlresult
    assert alltrim(name) == 'Norma Fisher'
+   sqlcommit(sqlconn)
+   sqldisconnect(sqlconn)
+   sqlconn = sqlstringconnect('dsn=testodbc')
+   assert sqlconn > 0
    assert sqltables(sqlconn) > 0
    select sqlresult
    assert lower(alltrim(table_name)) == 'report'
