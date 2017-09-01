@@ -209,6 +209,12 @@ procedure database_tests
    assert sqltables(sqlconn) > 0
    select sqlresult
    assert lower(alltrim(table_name)) == 'report'
+   assert sqlexec(sqlconn, 'DELETE FROM REPORT;')
+   assert sqlrollback(sqlconn)
+   assert sqlexec(sqlconn, 'SELECT * FROM REPORT')
+   select sqlresult
+   assert alltrim(name) == 'Norma Fisher'
    assert sqlexec(sqlconn, 'DROP TABLE REPORT') > 0
+   sqlcommit(sqlconn)
    sqldisconnect(sqlconn)
 endproc

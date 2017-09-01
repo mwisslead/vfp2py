@@ -607,6 +607,14 @@ def sqlexec(conn, cmd='', cursor_name='', count_info=''):
     except:
         return -1
 
+def sqlrollback(conn):
+    try:
+        conn.rollback()
+        return 1
+    except:
+        return -1
+
+
 def sqltables(conn, table_type='', cursor_name=''):
     try:
         _odbc_cursor_to_db(conn.cursor().tables(), cursor_name)
