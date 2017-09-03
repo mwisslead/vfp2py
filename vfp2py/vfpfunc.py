@@ -13,6 +13,8 @@ import pyodbc
 
 import dateutil.relativedelta
 
+from PySide import QtGui, QtCore
+
 from vfpdatabase import DatabaseContext
 
 SET_PROPS = {
@@ -39,8 +41,13 @@ HOME = os.path.dirname(os.path.abspath(HOME))
 
 SEARCH_PATH = [HOME]
 
-class MainWindow(object):
-    pass
+class MainWindow(QtGui.QMainWindow):
+    def __init__(self):
+        super(type(self), self).__init__()
+        self.centralwidget = QtGui.QWidget(self)
+        self.vbox = QtGui.QVBoxLayout()
+        self.setCentralWidget(self.centralwidget)
+        self.centralwidget.setLayout(self.vbox)
 
 class Custom(object):
     def __init__(self, *args, **kwargs):
@@ -684,10 +691,15 @@ def create_object(objtype, *args):
 def clearall():
     pass
 
+def _exec():
+    qt_app = QtGui.QApplication(())
+    variable.add_public('_vfp')
+    variable['_vfp'] = MainWindow()
+    variable['_vfp'].show()
+    return qt_app.exec_()
+
 db = DatabaseContext()
 variable = _Variable(db)
 function = _Function()
 error_func = None
 variable.pushscope()
-variable.add_public('_vfp')
-variable['_vfp'] = MainWindow()
