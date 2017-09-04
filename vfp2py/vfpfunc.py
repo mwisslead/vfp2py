@@ -65,6 +65,9 @@ class Custom(object):
     def init(self, *args, **kwargs):
         pass
 
+    def add_object(self, obj):
+        pass
+
 class Form(Custom):
     pass
 

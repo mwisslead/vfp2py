@@ -280,7 +280,8 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         kwargs = {key: self.visit(expr) for key, expr in zip(keywords, ctx.expr())}
         objtype = create_string(self.visit_with_disabled_scope(ctx.idAttr()[0])).title()
         newobj = self.func_call('createobject', objtype, **kwargs)
-        return [add_args_to_code('self.{} = {}', (name, newobj))]
+        child = add_args_to_code('self.{}', (name,))
+        return [add_args_to_code('{} = {}', (child, newobj)), make_func_code('self.add_object', child)]
 
     def visitNodefault(self, ctx):
         return []
