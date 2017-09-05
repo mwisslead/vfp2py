@@ -81,7 +81,14 @@ class MainWindow(QtGui.QMainWindow):
 class Form(QtGui.QMdiSubWindow, Custom):
     def __init__(self, *args, **kwargs):
         QtGui.QMdiSubWindow.__init__(self)
+        self._centralwidget = QtGui.QWidget(self)
+        self._vbox = QtGui.QVBoxLayout()
+        self._centralwidget.setLayout(self._vbox)
+        self.setWidget(self._centralwidget)
         Custom.__init__(self, *args, **kwargs)
+
+    def addWidget(self, obj):
+        self._vbox.addWidget(obj)
 
 class CommandButton(QtGui.QPushButton, Custom):
     def __init__(self, *args, **kwargs):
