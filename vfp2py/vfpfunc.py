@@ -9,6 +9,8 @@ import ctypes
 import ctypes.util
 import traceback
 import re
+import inspect
+
 import pyodbc
 
 import dateutil.relativedelta
@@ -41,20 +43,16 @@ HOME = os.path.dirname(os.path.abspath(HOME))
 
 SEARCH_PATH = [HOME]
 
-class MainWindow(QtGui.QMainWindow):
-    def __init__(self):
-        super(type(self), self).__init__()
-        self.centralwidget = QtGui.QWidget(self)
-        self.vbox = QtGui.QVBoxLayout()
-        self.setCentralWidget(self.centralwidget)
-        self.centralwidget.setLayout(self.vbox)
+QTGUICLASSES = [c[1] for c in inspect.getmembers(QtGui, inspect.isclass)]
+
+def _in_qtgui(cls):
+    if cls in QTGUICLASSES:
+        return True
+    return any(_in_qtgui(c) for c in inspect.getmro(cls) if c is not cls)
 
 class Custom(object):
     def __init__(self, *args, **kwargs):
         self.init(*args, **kwargs)
-
-#    def __setattr__(self, name, value):
-#        super(type(self), self).__setattr__(name, value)
 
     def __getitem__(self, name):
         return getattr(self, name)
@@ -65,14 +63,30 @@ class Custom(object):
     def init(self, *args, **kwargs):
         pass
 
+    def add_object(self, name, obj):
+        setattr(self, name, obj)
+        if _in_qtgui(type(obj)):
+            self.addWidget(obj)
+
+class MainWindow(QtGui.QMainWindow):
+    def __init__(self):
+        super(type(self), self).__init__()
+        self.mdiarea = QtGui.QMdiArea()
+        self.mdiarea.setSizePolicy(QtGui.QSizePolicy.Expanding,QtGui.QSizePolicy.Expanding);
+        self.setCentralWidget(self.mdiarea)
+
     def add_object(self, obj):
-        pass
+        self.mdiarea.addSubWindow(obj)
 
-class Form(Custom):
-    pass
+class Form(QtGui.QMdiSubWindow, Custom):
+    def __init__(self, *args, **kwargs):
+        QtGui.QMdiSubWindow.__init__(self)
+        Custom.__init__(self, *args, **kwargs)
 
-class CommandButton(Custom):
-    pass
+class CommandButton(QtGui.QPushButton, Custom):
+    def __init__(self, *args, **kwargs):
+        QtGui.QPushButton.__init__(self)
+        Custom.__init__(self, *args, **kwargs)
 
 class Label(Custom):
     pass
@@ -695,9 +709,6 @@ def clearall():
     pass
 
 def _exec():
-    qt_app = QtGui.QApplication(())
-    variable.add_public('_vfp')
-    variable['_vfp'] = MainWindow()
     variable['_vfp'].show()
     return qt_app.exec_()
 
@@ -706,3 +717,6 @@ variable = _Variable(db)
 function = _Function()
 error_func = None
 variable.pushscope()
+qt_app = QtGui.QApplication(())
+variable.add_public('_vfp')
+variable['_vfp'] = MainWindow()
