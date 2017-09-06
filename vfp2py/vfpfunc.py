@@ -52,6 +52,8 @@ def _in_qtgui(cls):
 
 class Custom(object):
     def __init__(self, *args, **kwargs):
+        for key in kwargs:
+            setattr(self, key, kwargs[key])
         self.init(*args, **kwargs)
 
     def __getitem__(self, name):
@@ -78,6 +80,14 @@ class MainWindow(QtGui.QMainWindow):
     def add_object(self, obj):
         self.mdiarea.addSubWindow(obj)
 
+    @property
+    def caption(self):
+        return self.windowTitle()
+
+    @caption.setter
+    def caption(self, val):
+        self.setWindowTitle(val)
+
 class Form(QtGui.QMdiSubWindow, Custom):
     def __init__(self, *args, **kwargs):
         QtGui.QMdiSubWindow.__init__(self)
@@ -90,10 +100,26 @@ class Form(QtGui.QMdiSubWindow, Custom):
     def addWidget(self, obj):
         self._vbox.addWidget(obj)
 
+    @property
+    def caption(self):
+        return self.windowTitle()
+
+    @caption.setter
+    def caption(self, val):
+        self.setWindowTitle(val)
+
 class Commandbutton(QtGui.QPushButton, Custom):
     def __init__(self, *args, **kwargs):
         QtGui.QPushButton.__init__(self)
         Custom.__init__(self, *args, **kwargs)
+
+    @property
+    def caption(self):
+        return self.text()
+
+    @caption.setter
+    def caption(self, val):
+        self.setText(val)
 
 class Label(Custom):
     pass
@@ -724,3 +750,4 @@ variable.pushscope()
 qt_app = QtGui.QApplication(())
 variable.add_public('_vfp')
 variable['_vfp'] = MainWindow()
+variable['_vfp'].caption = 'VFP To Python'
