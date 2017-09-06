@@ -90,7 +90,7 @@ class Form(QtGui.QMdiSubWindow, Custom):
     def addWidget(self, obj):
         self._vbox.addWidget(obj)
 
-class CommandButton(QtGui.QPushButton, Custom):
+class Commandbutton(QtGui.QPushButton, Custom):
     def __init__(self, *args, **kwargs):
         QtGui.QPushButton.__init__(self)
         Custom.__init__(self, *args, **kwargs)
@@ -111,9 +111,6 @@ class Spinner(Custom):
     pass
 
 class Shape(Custom):
-    pass
-
-class Commandbutton(Custom):
     pass
 
 class Separator(Custom):
