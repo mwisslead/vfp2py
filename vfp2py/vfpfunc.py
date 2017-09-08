@@ -67,6 +67,7 @@ class Custom(object):
 
     def add_object(self, name, obj):
         setattr(self, name, obj)
+        obj.name = name
         if _in_qtgui(type(obj)):
             self.addWidget(obj)
 
