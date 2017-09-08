@@ -169,8 +169,26 @@ class Label(QtGui.QLabel, Custom):
 class Textbox(Custom):
     pass
 
-class Checkbox(Custom):
-    pass
+class Checkbox(QtGui.QCheckBox, Custom):
+    def __init__(self, *args, **kwargs):
+        QtGui.QCheckBox.__init__(self)
+        Custom.__init__(self, *args, **kwargs)
+
+    @property
+    def caption(self):
+        return self.text()
+
+    @caption.setter
+    def caption(self, val):
+        self.setText(val)
+
+    @property
+    def height(self):
+        return QtGui.QLabel.height(self)
+
+    @height.setter
+    def height(self, val):
+        self.setFixedHeight(val)
 
 class Combobox(QtGui.QComboBox, Custom):
     def __init__(self, *args, **kwargs):
