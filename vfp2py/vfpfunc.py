@@ -128,6 +128,10 @@ class Commandbutton(QtGui.QPushButton, Custom):
     def __init__(self, *args, **kwargs):
         QtGui.QPushButton.__init__(self)
         Custom.__init__(self, *args, **kwargs)
+        self.clicked.connect(self.click)
+
+    def click(self):
+        self.click()
 
     @property
     def caption(self):

@@ -206,10 +206,12 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
                 funcname, parameters, funcbody = self.visit(funcdef)
             parameters = [CodeStr('self')] + [add_args_to_code('{}=False', (p,)) for p in parameters]
             if '.' in funcname:
+                self.imports.append('import types')
+                func_parent, _ = funcname.rsplit('.', 1)
                 newfuncname = funcname.replace('.', '_')
                 assignments.append(CodeStr('def {}({}):'.format(newfuncname, ', '.join(parameters))))
                 assignments.append(funcbody)
-                assignments.append(CodeStr('self.{} = {}'.format(funcname, newfuncname)))
+                assignments.append(CodeStr('self.{} = types.MethodType({}, self.{})'.format(funcname, newfuncname, func_parent)))
             else:
                 funcs.update({funcname: [parameters, funcbody, funcdef.start.line]})
 
