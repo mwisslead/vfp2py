@@ -88,6 +88,14 @@ class MainWindow(QtGui.QMainWindow):
     def caption(self, val):
         self.setWindowTitle(val)
 
+    @property
+    def height(self):
+        return QtGui.QMdainWindow.height(self)
+
+    @height.setter
+    def height(self, val):
+        self.setFixedHeight(val)
+
 class Form(QtGui.QMdiSubWindow, Custom):
     def __init__(self, *args, **kwargs):
         QtGui.QMdiSubWindow.__init__(self)
@@ -108,6 +116,14 @@ class Form(QtGui.QMdiSubWindow, Custom):
     def caption(self, val):
         self.setWindowTitle(val)
 
+    @property
+    def height(self):
+        return QtGui.QMdiSubWindow.height(self)
+
+    @height.setter
+    def height(self, val):
+        self.setFixedHeight(val)
+
 class Commandbutton(QtGui.QPushButton, Custom):
     def __init__(self, *args, **kwargs):
         QtGui.QPushButton.__init__(self)
@@ -121,8 +137,34 @@ class Commandbutton(QtGui.QPushButton, Custom):
     def caption(self, val):
         self.setText(val)
 
-class Label(Custom):
-    pass
+    @property
+    def height(self):
+        return QtGui.QPushButton.height(self)
+
+    @height.setter
+    def height(self, val):
+        self.setFixedHeight(val)
+
+class Label(QtGui.QLabel, Custom):
+    def __init__(self, *args, **kwargs):
+        QtGui.QLabel.__init__(self)
+        Custom.__init__(self, *args, **kwargs)
+
+    @property
+    def caption(self):
+        return self.text()
+
+    @caption.setter
+    def caption(self, val):
+        self.setText(val)
+
+    @property
+    def height(self):
+        return QtGui.QLabel.height(self)
+
+    @height.setter
+    def height(self, val):
+        self.setFixedHeight(val)
 
 class Textbox(Custom):
     pass
