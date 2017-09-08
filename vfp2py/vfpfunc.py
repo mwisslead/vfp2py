@@ -171,8 +171,26 @@ class Label(QtGui.QLabel, Custom):
     def height(self, val):
         self.setFixedHeight(val)
 
-class Textbox(Custom):
-    pass
+class Textbox(QtGui.QLineEdit, Custom):
+    def __init__(self, *args, **kwargs):
+        QtGui.QLineEdit.__init__(self)
+        Custom.__init__(self, *args, **kwargs)
+
+    @property
+    def height(self):
+        return QtGui.QLabel.height(self)
+
+    @height.setter
+    def height(self, val):
+        self.setFixedHeight(val)
+
+    @property
+    def value(self):
+        return self.text()
+
+    @value.setter
+    def value(self, val):
+        self.setText(val)
 
 class Checkbox(QtGui.QCheckBox, Custom):
     def __init__(self, *args, **kwargs):
