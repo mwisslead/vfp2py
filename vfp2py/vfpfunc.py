@@ -229,6 +229,9 @@ class Combobox(QtGui.QComboBox, Custom):
         QtGui.QComboBox.__init__(self)
         Custom.__init__(self, *args, **kwargs)
 
+    def additem(self, val):
+        self.addItem(val)
+
     @property
     def caption(self):
         return self.text()
