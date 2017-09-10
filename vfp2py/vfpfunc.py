@@ -68,8 +68,19 @@ class Custom(object):
     def add_object(self, name, obj):
         setattr(self, name, obj)
         obj.name = name
+        obj.parent = self
         if _in_qtgui(type(obj)):
             self.addWidget(obj)
+
+    @property
+    def parentform(self):
+        try:
+            t = self
+            while not isinstance(t, Form):
+                t = t.parent
+            return t
+        except:
+            raise Exception('object is not a member of a form')
 
 class MainWindow(QtGui.QMainWindow):
     def __init__(self):
