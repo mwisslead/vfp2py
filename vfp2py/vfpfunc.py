@@ -45,6 +45,10 @@ SEARCH_PATH = [HOME]
 
 QTGUICLASSES = [c[1] for c in inspect.getmembers(QtGui, inspect.isclass)]
 
+FONTDICT = {
+    'times new roman': 'Times',
+}
+
 def _in_qtgui(cls):
     if cls in QTGUICLASSES:
         return True
@@ -202,6 +206,20 @@ class Textbox(QtGui.QLineEdit, Custom):
     @value.setter
     def value(self, val):
         self.setText(val)
+
+    @property
+    def fontname(self):
+        try:
+            return next(key for key in FONTDICT if self.font().family() == FONTDICT[key])
+        except:
+            return 'Don\'t know'
+
+    @fontname.setter
+    def fontname(self, val):
+        try:
+            self.setFont(QtGui.QFont(FONTDICT[val.lower()]))
+        except:
+            pass
 
 class Checkbox(QtGui.QCheckBox, Custom):
     def __init__(self, *args, **kwargs):
