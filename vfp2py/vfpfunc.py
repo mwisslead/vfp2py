@@ -69,7 +69,7 @@ class Custom(object):
     def __init__(self, *args, **kwargs):
         for key in kwargs:
             setattr(self, key, kwargs[key])
-        self.init(*args, **kwargs)
+        self.init(*args)
 
     def __getitem__(self, name):
         return getattr(self, name)
