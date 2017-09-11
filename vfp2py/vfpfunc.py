@@ -76,9 +76,21 @@ class HasFont(object):
     @fontname.setter
     def fontname(self, val):
         try:
-            self.setFont(QtGui.QFont(FONTDICT[val.lower()]))
+            font = self.font()
+            font.setFamily(FONTDICT[val.lower()])
+            self.setFont(font)
         except:
             pass
+
+    @property
+    def fontbold(self):
+        return self.font().bold()
+
+    @fontbold.setter
+    def fontbold(self, val):
+        font = self.font()
+        font.setBold(val)
+        self.setFont(font)
 
 class Custom(object):
     def __init__(self, *args, **kwargs):
