@@ -65,6 +65,21 @@ class HasColor(object):
         palette.setColor(self.backgroundRole(), color)
         self.setPalette(palette)
 
+class HasFont(object):
+    @property
+    def fontname(self):
+        try:
+            return next(key for key in FONTDICT if self.font().family() == FONTDICT[key])
+        except:
+            return 'Don\'t know'
+
+    @fontname.setter
+    def fontname(self, val):
+        try:
+            self.setFont(QtGui.QFont(FONTDICT[val.lower()]))
+        except:
+            pass
+
 class Custom(object):
     def __init__(self, *args, **kwargs):
         for key in kwargs:
@@ -123,7 +138,7 @@ class MainWindow(QtGui.QMainWindow):
     def height(self, val):
         self.setFixedHeight(val)
 
-class Form(QtGui.QMdiSubWindow, Custom):
+class Form(QtGui.QMdiSubWindow, Custom, HasFont):
     def __init__(self, *args, **kwargs):
         QtGui.QMdiSubWindow.__init__(self)
         self._centralwidget = QtGui.QWidget(self)
@@ -151,7 +166,7 @@ class Form(QtGui.QMdiSubWindow, Custom):
     def height(self, val):
         self.setFixedHeight(val)
 
-class Commandbutton(QtGui.QPushButton, Custom):
+class Commandbutton(QtGui.QPushButton, Custom, HasFont):
     def __init__(self, *args, **kwargs):
         QtGui.QPushButton.__init__(self)
         Custom.__init__(self, *args, **kwargs)
@@ -176,7 +191,7 @@ class Commandbutton(QtGui.QPushButton, Custom):
     def height(self, val):
         self.setFixedHeight(val)
 
-class Label(QtGui.QLabel, Custom):
+class Label(QtGui.QLabel, Custom, HasFont):
     def __init__(self, *args, **kwargs):
         QtGui.QLabel.__init__(self)
         Custom.__init__(self, *args, **kwargs)
@@ -197,7 +212,7 @@ class Label(QtGui.QLabel, Custom):
     def height(self, val):
         self.setFixedHeight(val)
 
-class Textbox(QtGui.QLineEdit, Custom, HasColor):
+class Textbox(QtGui.QLineEdit, Custom, HasColor, HasFont):
     def __init__(self, *args, **kwargs):
         QtGui.QLineEdit.__init__(self)
         Custom.__init__(self, *args, **kwargs)
@@ -218,21 +233,7 @@ class Textbox(QtGui.QLineEdit, Custom, HasColor):
     def value(self, val):
         self.setText(val)
 
-    @property
-    def fontname(self):
-        try:
-            return next(key for key in FONTDICT if self.font().family() == FONTDICT[key])
-        except:
-            return 'Don\'t know'
-
-    @fontname.setter
-    def fontname(self, val):
-        try:
-            self.setFont(QtGui.QFont(FONTDICT[val.lower()]))
-        except:
-            pass
-
-class Checkbox(QtGui.QCheckBox, Custom):
+class Checkbox(QtGui.QCheckBox, Custom, HasFont):
     def __init__(self, *args, **kwargs):
         QtGui.QCheckBox.__init__(self)
         Custom.__init__(self, *args, **kwargs)
@@ -253,7 +254,7 @@ class Checkbox(QtGui.QCheckBox, Custom):
     def height(self, val):
         self.setFixedHeight(val)
 
-class Combobox(QtGui.QComboBox, Custom):
+class Combobox(QtGui.QComboBox, Custom, HasFont):
     def __init__(self, *args, **kwargs):
         QtGui.QComboBox.__init__(self)
         Custom.__init__(self, *args, **kwargs)
