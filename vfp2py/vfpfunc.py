@@ -54,6 +54,17 @@ def _in_qtgui(cls):
         return True
     return any(_in_qtgui(c) for c in inspect.getmro(cls) if c is not cls)
 
+class HasColor(object):
+    @property
+    def backcolor(self):
+        return widget.palette().color(QtGui.QPalette.Background)
+
+    @backcolor.setter
+    def backcolor(self, color):
+        palette = self.palette()
+        palette.setColor(self.backgroundRole(), color)
+        self.setPalette(palette)
+
 class Custom(object):
     def __init__(self, *args, **kwargs):
         for key in kwargs:
@@ -186,7 +197,7 @@ class Label(QtGui.QLabel, Custom):
     def height(self, val):
         self.setFixedHeight(val)
 
-class Textbox(QtGui.QLineEdit, Custom):
+class Textbox(QtGui.QLineEdit, Custom, HasColor):
     def __init__(self, *args, **kwargs):
         QtGui.QLineEdit.__init__(self)
         Custom.__init__(self, *args, **kwargs)
@@ -672,7 +683,7 @@ def ratline(search, string):
     return string[:found].count('\r') + 1
 
 def rgb(red, green, blue):
-    return (red, green, blue)
+    return QtGui.QColor(red, green, blue)
 
 def seconds():
     now = dt.datetime.now()
