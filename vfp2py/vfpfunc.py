@@ -624,10 +624,108 @@ def message(flag=None):
         return exc_obj.message
     return traceback.extract_tb(exc_tb)[0][3]
 
-def messagebox(message, flags, title):
-    print(message)
-    print(flags)
-    print(title)
+def messagebox(msg, arg1=None, arg2=None, timeout=None, details=''):
+    OK_ONLY = 0
+    OK_CANCEL = 1
+    ABORT_RETRY_IGNORE = 2
+    YES_NO_CANCEL = 3
+    YES_NO = 4
+    RETRY_CANCEL = 5
+
+    NOICON = 0
+    STOPSIGN = 16
+    QUESTION = 32
+    EXCLAMATION = 48
+    INFORMATION = 64
+
+    FIRSTBUTTON = 0
+    SECONDBUTTON = 256
+    THIRDBUTTON = 512
+
+    OK = QtGui.QMessageBox.Ok
+    CANCEL = QtGui.QMessageBox.Cancel
+    ABORT = QtGui.QMessageBox.Abort
+    RETRY = QtGui.QMessageBox.Retry
+    IGNORE = QtGui.QMessageBox.Ignore
+    YES = QtGui.QMessageBox.Yes
+    NO = QtGui.QMessageBox.No
+
+    RETURN_OK = 1
+    RETURN_CANCEL = 2
+    RETURN_ABORT = 3
+    RETURN_RETRY = 4
+    RETURN_IGNORE = 5
+    RETURN_YES = 6
+    RETURN_NO = 7
+
+    def center_widget(widget):
+        '''center the widget on the screen'''
+        widget_pos = widget.frameGeometry()
+        screen_center = QtGui.QDesktopWidget().screenGeometry().center()
+        widget_pos.moveCenter(screen_center)
+        widget.move(widget_pos.topLeft())
+
+    '''mimics MESSAGEBOX function from visual foxpro'''
+    flags=0
+    title='pyvfp'
+    if arg1 is not None:
+        if isinstance(arg1, str):
+            title = arg1
+            if arg2 is not None:
+                flags = arg2
+        else:
+            flags = arg1
+            if arg2 is not None:
+                title = arg2
+    flags = int(flags) & 1023
+
+    buttons = {OK_ONLY: ((OK,), OK),
+               OK_CANCEL: ((OK, CANCEL), CANCEL),
+               ABORT_RETRY_IGNORE: ((ABORT, RETRY, IGNORE), IGNORE),
+               YES_NO_CANCEL: ((YES, NO, CANCEL), CANCEL),
+               YES_NO: ((YES, NO), NO),
+               RETRY_CANCEL: ((RETRY, CANCEL), CANCEL)
+              }[flags & 15]
+    buttonobj = buttons[0][0]
+    for button in buttons[0][1:]:
+        buttonobj |= button
+
+    icon = {NOICON: QtGui.QMessageBox.NoIcon,
+            STOPSIGN: QtGui.QMessageBox.Critical,
+            QUESTION: QtGui.QMessageBox.Question,
+            EXCLAMATION: QtGui.QMessageBox.Warning,
+            INFORMATION: QtGui.QMessageBox.Information
+           }[flags & (15 << 4)]
+
+    default_button = min(len(buttons[0])-1, (flags >> 8))
+
+    msg_box = QtGui.QMessageBox(icon, title, msg, buttons=buttonobj)
+    msg_box.setDefaultButton(buttons[0][default_button])
+    msg_box.setEscapeButton(buttons[1])
+    if details:
+        msg_box.setDetailedText(details)
+
+    msg_box.show()
+
+    retval = [0]
+    def closebox():
+        t = retval
+        t[0] = -1
+        msg_box.close()
+
+    if timeout:
+        QtCore.QTimer().singleShot(float(timeout)*1000, closebox)
+    button = msg_box.exec_()
+    retval = retval[0]
+    center_widget(msg_box)
+    return {OK: RETURN_OK,
+            CANCEL: RETURN_CANCEL,
+            ABORT: RETURN_ABORT,
+            RETRY: RETURN_RETRY,
+            IGNORE: RETURN_IGNORE,
+            YES: RETURN_YES,
+            NO: RETURN_NO
+           }[button] if retval != -1 else -1
 
 def num_to_str(num, length=10, decimals=0):
     length = int(length)
