@@ -160,6 +160,14 @@ class MainWindow(QtGui.QMainWindow):
     def height(self, val):
         self.setFixedHeight(val)
 
+    @property
+    def icon(self):
+        return self.windowIcon()
+
+    @icon.setter
+    def icon(self, iconfile):
+        self.setWindowIcon(QtGui.QIcon(iconfile))
+
 class Form(QtGui.QMdiSubWindow, Custom, HasFont):
     def __init__(self, *args, **kwargs):
         QtGui.QMdiSubWindow.__init__(self)
@@ -187,6 +195,14 @@ class Form(QtGui.QMdiSubWindow, Custom, HasFont):
     @height.setter
     def height(self, val):
         self.setFixedHeight(val)
+
+    @property
+    def icon(self):
+        return self.windowIcon()
+
+    @icon.setter
+    def icon(self, iconfile):
+        self.setWindowIcon(QtGui.QIcon(iconfile))
 
 class Commandbutton(QtGui.QPushButton, Custom, HasFont):
     def __init__(self, *args, **kwargs):
