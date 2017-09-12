@@ -92,6 +92,16 @@ class HasFont(object):
         font.setBold(val)
         self.setFont(font)
 
+    @property
+    def fontsize(self):
+        return self.font().pointSize()
+
+    @fontsize.setter
+    def fontsize(self, val):
+        font = self.font()
+        font.setPointSize(val)
+        self.setFont(font)
+
 class Custom(object):
     def __init__(self, *args, **kwargs):
         for key in kwargs:
