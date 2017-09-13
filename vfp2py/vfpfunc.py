@@ -106,6 +106,8 @@ class Custom(object):
     def __init__(self, *args, **kwargs):
         for key in kwargs:
             setattr(self, key, kwargs[key])
+        if _in_qtgui(type(self)) and 'parent' in kwargs:
+            self.parent.add_object(self)
         self.init(*args)
 
     def __getitem__(self, name):
@@ -117,12 +119,8 @@ class Custom(object):
     def init(self, *args, **kwargs):
         pass
 
-    def add_object(self, name, obj):
-        setattr(self, name, obj)
-        obj.name = name
-        obj.parent = self
-        if _in_qtgui(type(obj)):
-            self.addWidget(obj)
+    def add_object(self, obj):
+        self.addWidget(obj)
 
     @property
     def parentform(self):
@@ -1013,7 +1011,7 @@ def set(setword, *args, **kwargs):
         settings = args
     SET_PROPS[setword] = settings
 
-def create_object(objtype, *args):
+def create_object(objtype, *args, **kwargs):
     pass
 
 def clearall():

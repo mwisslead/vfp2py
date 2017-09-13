@@ -185,12 +185,42 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
     def visitClassDef(self, ctx):
         assignments = []
         self.used_scope = False
+        subclasses = {}
         for stmt in ctx.classDefProperty():
             assignment = self.visit(stmt)
             if isinstance(stmt, ctx.parser.ClassDefLineCommentContext) and assignment:
                 assignments.append(assignment)
+            elif isinstance(stmt, ctx.parser.ClassDefAddObjectContext):
+                name, obj = assignment
+                for stmt in ctx.classDefProperty():
+                    if isinstance(stmt, ctx.parser.ClassDefAssignContext):
+                        assignment = self.visit(stmt)
+                        for (ident, value) in assignment:
+                            if '.' in ident:
+                                parent, ident = ident.split('.', 1)
+                                if parent == name:
+                                    obj['args'][ident] = CodeStr(value.replace(' = ', '', 1))
+                obj['functions'] = {}
+                for funcdef in ctx.funcDef():
+                    self.used_scope = False
+                    funcname, parameters, funcbody = self.visit(funcdef)
+                    if '.' in funcname:
+                        func_parent, funcname = funcname.rsplit('.', 1)
+                        if func_parent == name:
+                            parameters = [add_args_to_code('{}=False', (p,)) for p in parameters]
+                            obj['functions'][funcname] = [parameters, funcbody]
+                obj['args']['parent'] = CodeStr('self')
+                obj['args']['name'] = name
+                if obj['functions']:
+                    subclass = 'SubClass' + name.title()
+                    subclasses[subclass] = {key: obj[key] for key in ('parent_type', 'functions')}
+                    obj['parent_type'] = 'self.' + subclass
+                    self.class_list.append(obj['parent_type'])
+                assignments.append(add_args_to_code('self.{} = {}', [CodeStr(name), self.func_call('createobject', obj['parent_type'], **obj['args'])]))
             else:
-                assignments += assignment
+                for (ident, value) in assignment:
+                    if '.' not in ident:
+                        assignments.append(CodeStr('self.' + ident + value))
         assign_scope = self.used_scope
 
         comments = []
@@ -204,16 +234,9 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             if funcname == 'init' and assign_scope and not self.used_scope:
                 self.used_scope = True
                 funcname, parameters, funcbody = self.visit(funcdef)
-            parameters = [CodeStr('self')] + [add_args_to_code('{}=False', (p,)) for p in parameters]
-            if '.' in funcname:
-                self.imports.append('import types')
-                func_parent, _ = funcname.rsplit('.', 1)
-                newfuncname = funcname.replace('.', '_')
-                assignments.append(CodeStr('def {}({}):'.format(newfuncname, ', '.join(parameters))))
-                assignments.append(funcbody)
-                assignments.append(CodeStr('self.{} = types.MethodType({}, self.{})'.format(funcname, newfuncname, func_parent)))
-            else:
-                funcs.update({funcname: [parameters, funcbody, funcdef.start.line]})
+            parameters = [add_args_to_code('{}=False', (p,)) for p in parameters]
+            if '.' not in funcname:
+                funcs.update({funcname: [[CodeStr('self')] + parameters, funcbody, funcdef.start.line]})
 
         if assignments:
             if 'init' not in funcs:
@@ -233,6 +256,15 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         classname, supername = self.visit(ctx.classDefStart())
         retval = [CodeStr('class {}({}):'.format(classname, supername))]
         if funcs:
+            for name in subclasses:
+                subclass = subclasses[name]
+                subclass_code = [CodeStr('class {}({}):'.format(name, subclass['parent_type']))]
+                for funcname in subclass['functions']:
+                    parameters, funcbody = subclass['functions'][funcname]
+                    parameters = [CodeStr('self')] + parameters
+                    func = make_func_code(funcname, *parameters)
+                    subclass_code.append([add_args_to_code('def {}:', (func,)), funcbody])
+                retval.append(subclass_code)
             for funcname in funcs:
                 parameters, funcbody, line_number = funcs[funcname]
                 while comments and comments[0][1] < line_number:
@@ -272,17 +304,16 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             value = arg2[arg2.find(' = '):]
             if 'vfpvar' in value or 'vfpfunc.function' in value:
                 used_scope = True
-            args.append(ident + value)
+            args.append((ident, value))
         self.used_scope = used_scope
-        return [CodeStr('self.' + arg) for arg in args]
+        return args
 
     def visitClassDefAddObject(self, ctx):
         name = str(self.visit_with_disabled_scope(ctx.identifier()))
         keywords = [self.visit_with_disabled_scope(idAttr) for idAttr in ctx.idAttr()[1:]]
         kwargs = {key: self.visit(expr) for key, expr in zip(keywords, ctx.expr())}
         objtype = create_string(self.visit_with_disabled_scope(ctx.idAttr()[0])).title()
-        newobj = self.func_call('createobject', objtype, **kwargs)
-        return [make_func_code('self.add_object', name, newobj)]
+        return name, {'parent_type': objtype, 'args': kwargs}
 
     def visitNodefault(self, ctx):
         return []
@@ -773,7 +804,9 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             elif len(args) > 0 and string_type(args[0]) and args[0].lower() == 'pythondictionary':
                 return {}
             elif len(args) > 0 and string_type(args[0]):
-                objtype = args[0].title()
+                objtype = args[0]
+                if not objtype.startswith('self.'):
+                    objtype = objtype.title()
                 args = args[1:]
                 if objtype in self.class_list:
                     return make_func_code(objtype, *args, **kwargs)

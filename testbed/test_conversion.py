@@ -171,9 +171,9 @@ class Subobj2(Subobj):
 class Testclass(vfpfunc.Commandbutton):
 
     def init(self, x=False):
-        self.test1 = vfpfunc.Custom()
-        self.test2 = Subobj(x=4)
-        self.test3 = vfpfunc.create_object(\'Unknownobj\', x=\'4\')
+        self.test1 = vfpfunc.Custom(name=\'test1\', parent=self)
+        self.test2 = Subobj(x=4, name=\'test2\', parent=self)
+        self.test3 = vfpfunc.create_object(\'Unknownobj\', x=\'4\', name=\'test3\', parent=self)
 
 
 class Testclass2(vfpfunc.classes[\'Unknownclass\']):
