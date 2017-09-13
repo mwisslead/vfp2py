@@ -738,8 +738,15 @@ def messagebox(msg, arg1=None, arg2=None, timeout=None, details=''):
         msg_box.close()
 
     if timeout:
-        QtCore.QTimer().singleShot(float(timeout)*1000, closebox)
+        timer = QtCore.QTimer()
+        timer.setSingleShot(True)
+        timer.timeout.connect(closebox)
+        timer.start(float(timeout)*1000)
+        timeout = timer
     button = msg_box.exec_()
+    if timeout and timeout.isActive():
+        timeout.stop()
+        print('stop timer')
     retval = retval[0]
     center_widget(msg_box)
     return {OK: RETURN_OK,
