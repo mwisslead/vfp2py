@@ -269,6 +269,15 @@ class Textbox(QtGui.QLineEdit, Custom, HasColor, HasFont):
     def value(self, val):
         self.setText(val)
 
+    def focusInEvent(self, event):
+        self.gotfocus()
+
+    def focusOutEvent(self, event):
+        self.lostfocus()
+
+    def setfocus(self):
+        self.setFocus()
+
 class Checkbox(QtGui.QCheckBox, Custom, HasFont):
     def __init__(self, *args, **kwargs):
         QtGui.QCheckBox.__init__(self)
