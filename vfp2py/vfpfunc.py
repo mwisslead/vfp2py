@@ -698,9 +698,8 @@ def messagebox(msg, arg1=None, arg2=None, timeout=None, details=''):
         widget_pos.moveCenter(screen_center)
         widget.move(widget_pos.topLeft())
 
-    '''mimics MESSAGEBOX function from visual foxpro'''
     flags=0
-    title='pyvfp'
+    title='vfp2py'
     if arg1 is not None:
         if isinstance(arg1, str):
             title = arg1
@@ -712,23 +711,26 @@ def messagebox(msg, arg1=None, arg2=None, timeout=None, details=''):
                 title = arg2
     flags = int(flags) & 1023
 
-    buttons = {OK_ONLY: ((OK,), OK),
-               OK_CANCEL: ((OK, CANCEL), CANCEL),
-               ABORT_RETRY_IGNORE: ((ABORT, RETRY, IGNORE), IGNORE),
-               YES_NO_CANCEL: ((YES, NO, CANCEL), CANCEL),
-               YES_NO: ((YES, NO), NO),
-               RETRY_CANCEL: ((RETRY, CANCEL), CANCEL)
-              }[flags & 15]
+    buttons = {
+        OK_ONLY: ((OK,), OK),
+        OK_CANCEL: ((OK, CANCEL), CANCEL),
+        ABORT_RETRY_IGNORE: ((ABORT, RETRY, IGNORE), IGNORE),
+        YES_NO_CANCEL: ((YES, NO, CANCEL), CANCEL),
+        YES_NO: ((YES, NO), NO),
+        RETRY_CANCEL: ((RETRY, CANCEL), CANCEL)
+    }[flags & 15]
+
     buttonobj = buttons[0][0]
     for button in buttons[0][1:]:
         buttonobj |= button
 
-    icon = {NOICON: QtGui.QMessageBox.NoIcon,
-            STOPSIGN: QtGui.QMessageBox.Critical,
-            QUESTION: QtGui.QMessageBox.Question,
-            EXCLAMATION: QtGui.QMessageBox.Warning,
-            INFORMATION: QtGui.QMessageBox.Information
-           }[flags & (15 << 4)]
+    icon = {
+        NOICON: QtGui.QMessageBox.NoIcon,
+        STOPSIGN: QtGui.QMessageBox.Critical,
+        QUESTION: QtGui.QMessageBox.Question,
+        EXCLAMATION: QtGui.QMessageBox.Warning,
+        INFORMATION: QtGui.QMessageBox.Information
+    }[flags & (15 << 4)]
 
     default_button = min(len(buttons[0])-1, (flags >> 8))
 
@@ -755,17 +757,17 @@ def messagebox(msg, arg1=None, arg2=None, timeout=None, details=''):
     button = msg_box.exec_()
     if timeout and timeout.isActive():
         timeout.stop()
-        print('stop timer')
     retval = retval[0]
     center_widget(msg_box)
-    return {OK: RETURN_OK,
-            CANCEL: RETURN_CANCEL,
-            ABORT: RETURN_ABORT,
-            RETRY: RETURN_RETRY,
-            IGNORE: RETURN_IGNORE,
-            YES: RETURN_YES,
-            NO: RETURN_NO
-           }[button] if retval != -1 else -1
+    return {
+        OK: RETURN_OK,
+        CANCEL: RETURN_CANCEL,
+        ABORT: RETURN_ABORT,
+        RETRY: RETURN_RETRY,
+        IGNORE: RETURN_IGNORE,
+        YES: RETURN_YES,
+        NO: RETURN_NO
+    }[button] if retval != -1 else -1
 
 def num_to_str(num, length=10, decimals=0):
     length = int(length)
