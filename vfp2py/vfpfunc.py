@@ -188,11 +188,19 @@ class Form(QtGui.QMdiSubWindow, Custom, HasFont):
 
     @property
     def height(self):
-        return QtGui.QMdiSubWindow.height(self)
+        return self._centralwidget.height()
 
     @height.setter
     def height(self, val):
-        self.setFixedHeight(val)
+        self._centralwidget.setFixedHeight(val)
+
+    @property
+    def width(self):
+        return self._centralwidget.width()
+
+    @height.setter
+    def width(self, val):
+        self._centralwidget.setFixedWidth(val)
 
     @property
     def icon(self):
@@ -227,6 +235,14 @@ class Commandbutton(QtGui.QPushButton, Custom, HasFont):
     def height(self, val):
         self.setFixedHeight(val)
 
+    @property
+    def width(self):
+        return QtGui.QPushButton.width(self)
+
+    @height.setter
+    def width(self, val):
+        self.setFixedWidth(val)
+
 class Label(QtGui.QLabel, Custom, HasFont):
     def __init__(self, *args, **kwargs):
         QtGui.QLabel.__init__(self)
@@ -247,6 +263,14 @@ class Label(QtGui.QLabel, Custom, HasFont):
     @height.setter
     def height(self, val):
         self.setFixedHeight(val)
+
+    @property
+    def width(self):
+        return QtGui.QLabel.width(self)
+
+    @height.setter
+    def width(self, val):
+        self.setFixedWidth(val)
 
 class Textbox(QtGui.QLineEdit, Custom, HasColor, HasFont):
     def __init__(self, *args, **kwargs):
@@ -317,11 +341,19 @@ class Combobox(QtGui.QComboBox, Custom, HasFont):
 
     @property
     def height(self):
-        return QtGui.QLabel.height(self)
+        return QtGui.QComboBox.height(self)
 
     @height.setter
     def height(self, val):
         self.setFixedHeight(val)
+
+    @property
+    def width(self):
+        return QtGui.QComboBox.width(self)
+
+    @height.setter
+    def width(self, val):
+        self.setFixedWidth(val)
 
 class Spinner(Custom):
     pass
