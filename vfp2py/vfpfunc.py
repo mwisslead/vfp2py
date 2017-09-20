@@ -57,12 +57,22 @@ def _in_qtgui(cls):
 class HasColor(object):
     @property
     def backcolor(self):
-        return widget.palette().color(QtGui.QPalette.Background)
+        return self.palette().color(QtGui.QPalette.Background)
 
     @backcolor.setter
     def backcolor(self, color):
         palette = self.palette()
         palette.setColor(self.backgroundRole(), color)
+        self.setPalette(palette)
+
+    @property
+    def forecolor(self):
+        return self.palette().color(QtGui.QPalette.Foreground)
+
+    @forecolor.setter
+    def forecolor(self, color):
+        palette = self.palette()
+        palette.setColor(self.foregroundRole(), color)
         self.setPalette(palette)
 
 class HasFont(object):
