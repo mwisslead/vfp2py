@@ -316,6 +316,14 @@ class Checkbox(QtGui.QCheckBox, Custom, HasFont):
     def __init__(self, *args, **kwargs):
         QtGui.QCheckBox.__init__(self)
         Custom.__init__(self, *args, **kwargs)
+        self.clicked.connect(self.click)
+        self.clicked.connect(self.interactivechange)
+
+    def click(self):
+        pass
+
+    def interactivechange(self):
+        pass
 
     @property
     def caption(self):
