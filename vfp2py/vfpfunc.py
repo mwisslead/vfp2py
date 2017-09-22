@@ -227,7 +227,7 @@ class Commandbutton(QtGui.QPushButton, Custom, HasFont):
         self.clicked.connect(self.click)
 
     def click(self):
-        self.click()
+        pass
 
     @property
     def caption(self):
