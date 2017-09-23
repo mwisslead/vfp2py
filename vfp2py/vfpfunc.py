@@ -350,6 +350,16 @@ class Combobox(QtGui.QComboBox, Custom, HasFont):
         self.addItem(val)
 
     @property
+    def value(self):
+        return self.currentText()
+
+    @value.setter
+    def value(self, val):
+        index = self.findText(val, QtCore.Qt.MatchFixedString)
+        if index >= 0:
+            self.setCurrentIndex(index)
+
+    @property
     def caption(self):
         return self.text()
 
