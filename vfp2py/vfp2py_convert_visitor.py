@@ -546,9 +546,13 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         return [self.visit(c) for c in ctx.specialExpr()]
 
     def is_addbs(self, ctx):
+        if hasattr(ctx, 'symbol'):
+            return False
         return isinstance(ctx, ctx.parser.IdAttrContext) and self.visit(ctx.atom()) == 'addbs' and isinstance(ctx.trailer(), ctx.parser.FuncCallTrailerContext)
 
     def binary_expr(self, operation, ctx_list):
+        if len(ctx_list) == 1:
+            return self.visit(ctx_list[0])
         if not isinstance(operation, (tuple, list)):
             operation = [operation] * (len(ctx_list) - 1)
         else:
@@ -565,13 +569,9 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
                 i += 1
                 while i < len(ctx_list) and self.is_addbs(ctx_list[i]):
                     i += 1
-                import pdb
-                pdb.set_trace()
                 make_func_code('os.path.join', *args)
             else:
                 i += 1
-        if len(ctx_list) == 1:
-            return self.visit(ctx_list[0])
         return CodeStr(''.join(repr(ctx) + ' ' + op + ' ' for ctx, op in zip(ctx_list_visited[:-1], operation)) + repr(ctx_list_visited[-1]))
         if operation == ctx.parser.PLUS_SIGN:
             args = self.extract_args_from_addbs(ctx)
@@ -597,10 +597,10 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         return self.visit(ctx.children[0])
 
     def visitOrTest(self, ctx):
-        return self.binary_expr('or', [child for i, child in enumerate(ctx.children) if i % 2])
+        return self.binary_expr('or', [child for i, child in enumerate(ctx.children) if not i % 2])
 
     def visitAndTest(self, ctx):
-        return self.binary_expr('and', [child for i, child in enumerate(ctx.children) if i % 2])
+        return self.binary_expr('and', [child for i, child in enumerate(ctx.children) if not i % 2])
 
     def visitNotTest(self, ctx):
         if ctx.notTest():
@@ -1078,7 +1078,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             return self.visit(ctx.atom())
 
     def visitComplexId(self, ctx):
-        return self.visitAtomExpr(ctx)
+        return self.visitIdAttr(ctx)
 
     def visitDeleteFile(self, ctx):
         if ctx.specialExpr():
