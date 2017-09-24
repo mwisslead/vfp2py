@@ -146,7 +146,7 @@ def read_raw(fid, length):
     return ' '.join('{:02x}'.format(d) for d in fid.read(length))
 
 def read_next_code(fid, names, expr=None):
-    if expr == None:
+    if expr is None:
         expr = []
     codeval = fid.read(1)[0]
     if codeval == END_EXPR:
@@ -181,8 +181,7 @@ def read_next_code(fid, names, expr=None):
     elif codeval in OPERATORS:
         code = OPERATORS[codeval]
         if code[1] == 0:
-            codeval = fid.read(1)[0]
-            return
+            return read_next_code(fid, names, expr)
         elif code[1] > 0:
             parameters = [p for p in reversed([expr.pop() for i in range(code[1])])]
             if len(parameters) == 1:
@@ -196,8 +195,7 @@ def read_next_code(fid, names, expr=None):
         if callable(code):
             code = code(fid, names)
         if codeval in (0xF0, 0xF1):
-            codeval = fid.read(1)[0]
-            return
+            return read_next_code(fid, names, expr)
         if type(code) is FXPName:
             while expr and type(expr[-1]) is FXPAlias:
                 code = FXPName(repr(expr.pop()) + repr(code))
