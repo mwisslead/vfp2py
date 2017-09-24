@@ -345,11 +345,14 @@ class Combobox(QtGui.QComboBox, Custom, HasFont):
     def __init__(self, *args, **kwargs):
         QtGui.QComboBox.__init__(self)
         Custom.__init__(self, *args, **kwargs)
+        self.currentIndexChanged.connect(self.interactivechange)
 
     def additem(self, val):
         index = self.currentIndex()
+        self.blockSignals(True)
         self.addItem(val)
         self.setCurrentIndex(index)
+        self.blockSignals(False)
 
     @property
     def value(self):
@@ -358,7 +361,16 @@ class Combobox(QtGui.QComboBox, Custom, HasFont):
     @value.setter
     def value(self, val):
         index = self.findText(val, QtCore.Qt.MatchFixedString)
+        self.blockSignals(True)
         self.setCurrentIndex(index)
+        self.blockSignals(False)
+        self.programmaticchange()
+
+    def programmaticchange(self):
+        pass
+
+    def interactivechange(self):
+        pass
 
     @property
     def caption(self):
