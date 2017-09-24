@@ -145,70 +145,80 @@ def read_name(fid, names):
 def read_raw(fid, length):
     return ' '.join('{:02x}'.format(d) for d in fid.read(length))
 
-def read_expr(fid, names, *args):
+def read_next_code(fid, names, expr=None):
+    if expr == None:
+        expr = []
     codeval = fid.read(1)[0]
-    expr = []
-    while codeval != END_EXPR:
-        if codeval == PARAMETER_MARK:
-            code = codeval
-        elif codeval == SQL_SUBQUERY:
-            length = read_ushort(fid)
-            final = fid.tell() + length
-            fid.read(1)
-            code = FXPName('(SELECT {})'.format(parse_subline(fid, length, final, names, [])))
-        elif codeval in FUNCTIONS:
-            code = FUNCTIONS[codeval]
-            if codeval in (0xE5, 0xF6):
-                code = code(fid, names)
-                while expr and type(expr[-1]) is FXPAlias:
-                    code = FXPName(repr(expr.pop()) + repr(code))
-                code = repr(code)
-            elif callable(code):
-                code = code(fid)
-            parameters = []
-            while expr:
-                parameter = expr.pop()
-                if parameter == PARAMETER_MARK:
-                    break
-                parameters.insert(0, parameter)
-            code += '({})'.format(', '.join(repr(p) for p in parameters))
-            if codeval == 0xE5:
-                code = FXPAlias(code)
-            else:
-                code = FXPName(code)
-        elif codeval in OPERATORS:
-            code = OPERATORS[codeval]
-            if code[1] == 0:
-                codeval = fid.read(1)[0]
-                continue
-            elif code[1] > 0:
-                parameters = [p for p in reversed([expr.pop() for i in range(code[1])])]
-                if len(parameters) == 1:
-                    code = FXPName('({} {})'.format(code[0], repr(parameters[0])))
-                else:
-                    code = FXPName('({})'.format((' ' + code[0] + ' ').join(repr(p) for p in parameters)))
-            else:
-                code = code[0]
-        elif codeval in VALUES:
-            code = VALUES[codeval]
-            if callable(code):
-                code = code(fid, names)
-            if codeval in (0xF0, 0xF1):
-                codeval = fid.read(1)[0]
-                continue
-            if type(code) is FXPName:
-                while expr and type(expr[-1]) is FXPAlias:
-                    code = FXPName(repr(expr.pop()) + repr(code))
-            elif type(code) is FXPAlias:
-                pass
-            elif type(code) in (float, int):
-                code = FXPName(repr(code))
-            else:
-                code = FXPName(code)
+    if codeval == END_EXPR:
+        return codeval
+    if codeval == PARAMETER_MARK:
+        code = codeval
+    elif codeval == SQL_SUBQUERY:
+        length = read_ushort(fid)
+        final = fid.tell() + length
+        fid.read(1)
+        code = FXPName('(SELECT {})'.format(parse_subline(fid, length, final, names, [])))
+    elif codeval in FUNCTIONS:
+        code = FUNCTIONS[codeval]
+        if codeval in (0xE5, 0xF6):
+            code = code(fid, names)
+            while expr and type(expr[-1]) is FXPAlias:
+                code = FXPName(repr(expr.pop()) + repr(code))
+            code = repr(code)
+        elif callable(code):
+            code = code(fid)
+        parameters = []
+        while expr:
+            parameter = expr.pop()
+            if parameter == PARAMETER_MARK:
+                break
+            parameters.insert(0, parameter)
+        code += '({})'.format(', '.join(repr(p) for p in parameters))
+        if codeval == 0xE5:
+            code = FXPAlias(code)
         else:
-            raise KeyError(hex(codeval))
-        expr.append(code)
-        codeval = fid.read(1)[0]
+            code = FXPName(code)
+    elif codeval in OPERATORS:
+        code = OPERATORS[codeval]
+        if code[1] == 0:
+            codeval = fid.read(1)[0]
+            return
+        elif code[1] > 0:
+            parameters = [p for p in reversed([expr.pop() for i in range(code[1])])]
+            if len(parameters) == 1:
+                code = FXPName('({} {})'.format(code[0], repr(parameters[0])))
+            else:
+                code = FXPName('({})'.format((' ' + code[0] + ' ').join(repr(p) for p in parameters)))
+        else:
+            code = code[0]
+    elif codeval in VALUES:
+        code = VALUES[codeval]
+        if callable(code):
+            code = code(fid, names)
+        if codeval in (0xF0, 0xF1):
+            codeval = fid.read(1)[0]
+            return
+        if type(code) is FXPName:
+            while expr and type(expr[-1]) is FXPAlias:
+                code = FXPName(repr(expr.pop()) + repr(code))
+        elif type(code) is FXPAlias:
+            pass
+        elif type(code) in (float, int):
+            code = FXPName(repr(code))
+        else:
+            code = FXPName(code)
+    else:
+        raise KeyError(hex(codeval))
+    return code
+
+def read_expr(fid, names, *args):
+    expr = []
+    while True:
+        code = read_next_code(fid, names, expr)
+        if code == END_EXPR:
+            break
+        if code:
+            expr.append(code)
     if len(expr) == 1:
         return expr[0]
     return expr
@@ -807,6 +817,7 @@ VALUES = {
     0xE6: read_datetime,
     SQL_SUBQUERY: 'SQL SUBQUERY', #0xE8
     0xE9: read_int32,
+    0xEB: read_next_code,
     0xEC: read_menu_system_name,
     0xED: read_system_name,
     0xEE: read_date,
@@ -847,7 +858,6 @@ OPERATORS = {
     0x14: ('==', 2),
     0x18: ('@', -1),
     0xCC: ('', 1),
-    0xEB: ('ARRAY_SCOPE', -1),
 }
 
 FUNCTIONS = {
