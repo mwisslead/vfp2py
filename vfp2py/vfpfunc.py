@@ -45,10 +45,6 @@ SEARCH_PATH = [HOME]
 
 QTGUICLASSES = [c[1] for c in inspect.getmembers(QtGui, inspect.isclass)]
 
-FONTDICT = {
-    'times new roman': 'Times',
-}
-
 def _in_qtgui(cls):
     if cls in QTGUICLASSES:
         return True
@@ -78,19 +74,13 @@ class HasColor(object):
 class HasFont(object):
     @property
     def fontname(self):
-        try:
-            return next(key for key in FONTDICT if self.font().family() == FONTDICT[key])
-        except:
-            return 'Don\'t know'
+        return self.font().family()
 
     @fontname.setter
     def fontname(self, val):
-        try:
-            font = self.font()
-            font.setFamily(FONTDICT[val.lower()])
-            self.setFont(font)
-        except:
-            pass
+        font = self.font()
+        font.setFamily(val)
+        self.setFont(font)
 
     @property
     def fontbold(self):
