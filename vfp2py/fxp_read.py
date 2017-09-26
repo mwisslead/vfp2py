@@ -7,6 +7,7 @@ import struct
 from math import floor, log10
 from datetime import datetime, timedelta
 from collections import OrderedDict
+import re
 
 HEADER_SIZE = 0x29
 
@@ -548,7 +549,7 @@ COMMANDS = {
     0x9B: 'BEGIN',
     0x9C: 'ROLLBACK',
     0x9D: 'END',
-    0x9E: 'HIDDEN PROCEDURE',
+    0x9E: 'add hidden method',
     0x9F: 'HIDDEN',
     0xA0: 'VALIDATE',
     0xA1: 'PROTECTED',
@@ -1488,14 +1489,27 @@ def read_fxp_file_block(fid):
                 print(item[1])
                 print(fid.read(item[3] - item[2]).decode('ISO-8859-1'))
 
+    removed_procedures = []
     for i, cls in enumerate(classes):
-        for proc in procedures:
-            if proc['class'] == i:
-                proc.pop('class')
-                cls['procedures'].append(proc)
-        for proc in cls['procedures']:
-            procedures.pop(procedures.index(proc))
+        code_lines = [line.strip() for line in cls['code'].split('\n') if line.strip()]
+        good_code_lines = []
+        for code_ind, line in enumerate(code_lines):
+            match = re.match(r'add (hidden |protected |)?method ([0-9]*)', line)
+            if match:
+                match = match.groups()
+                qualifier = match[0].upper()
+                proc = procedures[int(match[1])]
+                assert proc['class'] == i
+                cls['procedures'].append((qualifier, proc))
+                removed_procedures.append(proc)
+            else:
+                good_code_lines.append(line)
+        code_lines = good_code_lines
+        if 'ENDPROC' in code_lines:
+            code_lines.pop(code_lines.index('ENDPROC'))
+        cls['code'] = ''.join((line + '\n' for line in code_lines))
 
+    procedures = [proc for proc in procedures if proc not in removed_procedures]
     for proc in procedures:
         proc.pop('class')
 
@@ -1562,10 +1576,10 @@ def fxp_read():
                             outfid.write('PROCEDURE {}\n'.format(proc['name']).encode('ISO-8859-1'))
                         outfid.write(proc['code'].encode('ISO-8859-1'))
                     for cls in classes:
-                        outfid.write('DEFINE CLASS {} AS {}'.format(cls['name'], cls['parent']).encode('ISO-8859-1'))
+                        outfid.write('DEFINE CLASS {} AS {}\n'.format(cls['name'], cls['parent']).encode('ISO-8859-1'))
                         outfid.write(cls['code'].encode('ISO-8859-1'))
-                        for proc in cls['procedures']:
-                            outfid.write('PROCEDURE {}\n'.format(proc['name']).encode('ISO-8859-1'))
+                        for qualifier, proc in cls['procedures']:
+                            outfid.write('{}PROCEDURE {}\n'.format(qualifier, proc['name']).encode('ISO-8859-1'))
                             outfid.write(proc['code'].encode('ISO-8859-1'))
 
         for filename in output:
