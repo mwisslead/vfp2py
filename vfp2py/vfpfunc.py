@@ -93,6 +93,16 @@ class HasFont(object):
         self.setFont(font)
 
     @property
+    def fontitalic(self):
+        return self.font().italic()
+
+    @fontitalic.setter
+    def fontitalic(self, val):
+        font = self.font()
+        font.setItalic(val)
+        self.setFont(font)
+
+    @property
     def fontsize(self):
         return self.font().pointSize()
 
