@@ -792,7 +792,7 @@ CLAUSES = {
     0xD2: 'NOMARGIN',
     0xD3: 'UNIQUE',
     0xD4: '(TYPE or LONG)',
-    0xD5: '(EVENTS or CSV)',
+    0xD5: '(EVENTS or CSV or COLUMN)',
     0xD6: '(STRING or SHEET or NORM)',
     0xD7: 'READWRITE',
     0xE5: read_name, #user defined function alias
