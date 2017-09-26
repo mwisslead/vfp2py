@@ -103,6 +103,26 @@ class HasFont(object):
         self.setFont(font)
 
     @property
+    def fontstrikethru(self):
+        return self.font().strikeOut()
+
+    @fontstrikethru.setter
+    def fontstrikethru(self, val):
+        font = self.font()
+        font.setStrikeOut(val)
+        self.setFont(font)
+
+    @property
+    def fontunderline(self):
+        return self.font().fontunderline()
+
+    @fontunderline.setter
+    def fontunderline(self, val):
+        font = self.font()
+        font.setUnderline(val)
+        self.setFont(font)
+
+    @property
     def fontsize(self):
         return self.font().pointSize()
 
