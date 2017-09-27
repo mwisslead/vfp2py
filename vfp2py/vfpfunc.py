@@ -432,10 +432,27 @@ class Listbox(Custom):
     pass
 
 class Optiongroup(Custom):
-    pass
+    def __init__(self, *args, **kwargs):
+        self._group = QtGui.QButtonGroup()
+        Custom.__init__(self, *args, **kwargs)
+        for button in self._group.buttons():
+            self.parent.addWidget(button)
 
-class Optionbutton(Custom):
-    pass
+    def add_object(self, obj):
+        self._group.addButton(obj)
+
+class Optionbutton(QtGui.QRadioButton, Custom, HasFont):
+    def __init__(self, *args, **kwargs):
+        QtGui.QRadioButton.__init__(self)
+        Custom.__init__(self, *args, **kwargs)
+
+    @property
+    def caption(self):
+        return self.text()
+
+    @caption.setter
+    def caption(self, val):
+        self.setText(val)
 
 class Pageframe(Custom):
     pass
