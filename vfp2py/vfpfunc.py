@@ -449,6 +449,15 @@ class Optiongroup(Custom):
     def add_object(self, obj):
         self._group.addButton(obj)
 
+    @property
+    def enabled(self):
+        return any(button.enabled for button in self._group.buttons())
+
+    @enabled.setter
+    def enabled(self, val):
+        for button in self._group.buttons():
+            button.enabled = val
+
 class Optionbutton(QtGui.QRadioButton, Custom, HasFont):
     def __init__(self, *args, **kwargs):
         QtGui.QRadioButton.__init__(self)
@@ -461,6 +470,14 @@ class Optionbutton(QtGui.QRadioButton, Custom, HasFont):
     @caption.setter
     def caption(self, val):
         self.setText(val)
+
+    @property
+    def enabled(self):
+        return self.isEnabled()
+
+    @enabled.setter
+    def enabled(self, val):
+        self.setEnabled(val)
 
 class Pageframe(Custom):
     pass
