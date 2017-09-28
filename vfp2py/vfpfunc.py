@@ -323,6 +323,14 @@ class Textbox(QtGui.QLineEdit, Custom, HasColor, HasFont):
     def value(self, val):
         self.setText(val)
 
+    @property
+    def visible(self):
+        return self.isVisible()
+
+    @visible.setter
+    def visible(self, val):
+        self.setVisible(val)
+
     def focusInEvent(self, event):
         self.gotfocus()
 
