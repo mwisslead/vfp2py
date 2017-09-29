@@ -479,11 +479,19 @@ class Optionbutton(QtGui.QRadioButton, Custom, HasFont):
     def enabled(self, val):
         self.setEnabled(val)
 
-class Pageframe(Custom):
-    pass
+class Pageframe(QtGui.QTabWidget, Custom):
+    def __init__(self, *args, **kwargs):
+        QtGui.QTabWidget.__init__(self)
+        Custom.__init__(self, *args, **kwargs)
 
-class Page(Custom):
-    pass
+    def addWidget(self, widget):
+        self.addTab(widget, widget.caption)
+
+class Page(QtGui.QWidget, Custom):
+    def __init__(self, *args, **kwargs):
+        QtGui.QWidget.__init__(self)
+        self.caption = kwargs['name']
+        Custom.__init__(self, *args, **kwargs)
 
 class Array(object):
     def __init__(self, dim1, dim2=0, offset=0):
