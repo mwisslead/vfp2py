@@ -490,8 +490,13 @@ class Pageframe(QtGui.QTabWidget, Custom):
 class Page(QtGui.QWidget, Custom):
     def __init__(self, *args, **kwargs):
         QtGui.QWidget.__init__(self)
+        self._vbox = QtGui.QVBoxLayout()
+        self.setLayout(self._vbox)
         self.caption = kwargs['name']
         Custom.__init__(self, *args, **kwargs)
+
+    def addWidget(self, widget):
+        self._vbox.addWidget(widget)
 
 class Array(object):
     def __init__(self, dim1, dim2=0, offset=0):
