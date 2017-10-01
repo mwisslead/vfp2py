@@ -284,7 +284,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             names.append('Custom')
         classname, supername = names
         if hasattr(vfpfunc, classname):
-            raise Exception(classname + ' is a reserved classname')
+            raise Exception(str(classname) + ' is a reserved classname')
         if hasattr(vfpfunc, supername):
             self.imports.append('from vfp2py import vfpfunc')
             supername = add_args_to_code('{}.{}', (CodeStr('vfpfunc'), supername))
