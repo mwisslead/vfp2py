@@ -424,8 +424,36 @@ class Combobox(QtGui.QComboBox, Custom, HasFont):
     def width(self, val):
         self.setFixedWidth(val)
 
-class Spinner(Custom):
-    pass
+class Spinner(QtGui.QSpinBox, Custom):
+    def __init__(self, *args, **kwargs):
+        QtGui.QSpinBox.__init__(self)
+        Custom.__init__(self, *args, **kwargs)
+        self.pressed = False
+        self.installEventFilter(self)
+
+    def eventFilter(self, widget, event):
+        if event.type() == QtCore.QEvent.Type.MouseButtonPress:
+            self.pressed = True
+        if event.type() == QtCore.QEvent.Type.MouseButtonRelease:
+            if self.pressed:
+                self.click()
+                self.interactivechange()
+            self.pressed = False
+        return QtGui.QWidget.eventFilter(self, widget, event)
+
+    def click(self):
+        pass
+
+    def interactivechange(self):
+        pass
+
+    @property
+    def value(self):
+        return QtGui.QSpinBox.value(self)
+
+    @value.setter
+    def value(self, val):
+        self.setValue(val)
 
 class Shape(Custom):
     pass
