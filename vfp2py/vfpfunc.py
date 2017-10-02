@@ -424,7 +424,7 @@ class Combobox(QtGui.QComboBox, Custom, HasFont):
     def width(self, val):
         self.setFixedWidth(val)
 
-class Spinner(QtGui.QSpinBox, Custom):
+class Spinner(QtGui.QSpinBox, Custom, HasFont, HasColor):
     def __init__(self, *args, **kwargs):
         QtGui.QSpinBox.__init__(self)
         Custom.__init__(self, *args, **kwargs)
@@ -507,7 +507,7 @@ class Optionbutton(QtGui.QRadioButton, Custom, HasFont):
     def enabled(self, val):
         self.setEnabled(val)
 
-class Pageframe(QtGui.QTabWidget, Custom):
+class Pageframe(QtGui.QTabWidget, Custom, HasFont):
     def __init__(self, *args, **kwargs):
         QtGui.QTabWidget.__init__(self)
         Custom.__init__(self, *args, **kwargs)
@@ -515,7 +515,7 @@ class Pageframe(QtGui.QTabWidget, Custom):
     def addWidget(self, widget):
         self.addTab(widget, widget.caption)
 
-class Page(QtGui.QWidget, Custom):
+class Page(QtGui.QWidget, Custom, HasFont):
     def __init__(self, *args, **kwargs):
         QtGui.QWidget.__init__(self)
         self._vbox = QtGui.QVBoxLayout()
