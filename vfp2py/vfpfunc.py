@@ -472,6 +472,9 @@ class Toolbar(QtGui.QToolBar, Custom):
 class Listbox(Custom):
     pass
 
+class Grid(Custom):
+    pass
+
 class Optiongroup(Custom):
     def __init__(self, *args, **kwargs):
         self._group = QtGui.QButtonGroup()
