@@ -150,7 +150,14 @@ class Custom(object):
         pass
 
     def add_object(self, obj):
-        self.addWidget(obj)
+        try:
+            self.addWidget(obj)
+        except:
+            pass
+
+    def addobject(self, name, *args):
+        name = name.lower()
+        setattr(self, name, create_object(*args, name=name, parent=self))
 
     @property
     def parentform(self):
@@ -1214,7 +1221,11 @@ def set(setword, *args, **kwargs):
     SET_PROPS[setword] = settings
 
 def create_object(objtype, *args, **kwargs):
-    pass
+    objtype = objtype.title()
+    frame = inspect.getouterframes(inspect.currentframe())[2][0]
+    if objtype in frame.f_globals:
+        return frame.f_globals[objtype](*args, **kwargs)
+    raise Exception('create_object not fully implemented')
 
 def clearall():
     pass
