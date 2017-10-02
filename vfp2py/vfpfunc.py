@@ -156,7 +156,7 @@ class Custom(object):
     def parentform(self):
         try:
             t = self
-            while not isinstance(t, Form):
+            while not isinstance(t, (Form, Toolbar)):
                 t = t.parent
             return t
         except:
@@ -170,7 +170,10 @@ class MainWindow(QtGui.QMainWindow):
         self.setCentralWidget(self.mdiarea)
 
     def add_object(self, obj):
-        self.mdiarea.addSubWindow(obj)
+        if isinstance(obj, Toolbar):
+            self.addToolBar(obj)
+        else:
+            self.mdiarea.addSubWindow(obj)
 
     @property
     def caption(self):
@@ -461,8 +464,10 @@ class Shape(Custom):
 class Separator(Custom):
     pass
 
-class Toolbar(Custom):
-    pass
+class Toolbar(QtGui.QToolBar, Custom):
+    def __init__(self, *args, **kwargs):
+        QtGui.QToolBar.__init__(self)
+        Custom.__init__(self, *args, **kwargs)
 
 class Listbox(Custom):
     pass
