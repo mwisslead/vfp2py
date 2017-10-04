@@ -283,6 +283,14 @@ class Commandbutton(QtGui.QPushButton, Custom, HasFont):
     def width(self, val):
         self.setFixedWidth(val)
 
+    @property
+    def visible(self):
+        return self.isVisible()
+
+    @visible.setter
+    def visible(self, val):
+        self.setVisible(val)
+
 class Label(QtGui.QLabel, Custom, HasFont):
     def __init__(self, *args, **kwargs):
         QtGui.QLabel.__init__(self)
