@@ -284,6 +284,14 @@ class Commandbutton(QtGui.QPushButton, Custom, HasFont):
         self.setFixedWidth(val)
 
     @property
+    def enabled(self):
+        return self.isEnabled()
+
+    @enabled.setter
+    def enabled(self, val):
+        self.setEnabled(val)
+
+    @property
     def visible(self):
         return self.isVisible()
 
