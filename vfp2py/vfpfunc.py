@@ -299,6 +299,14 @@ class Commandbutton(QtGui.QPushButton, Custom, HasFont):
     def visible(self, val):
         self.setVisible(val)
 
+    @property
+    def picture(self):
+        return QtGui.QPushButton.icon(self)
+
+    @picture.setter
+    def picture(self, iconfile):
+        self.setIcon(QtGui.QIcon(iconfile))
+
 class Label(QtGui.QLabel, Custom, HasFont):
     def __init__(self, *args, **kwargs):
         QtGui.QLabel.__init__(self)
