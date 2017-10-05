@@ -198,6 +198,7 @@ subprocess.call(['ls', '-al', pathname])
 @end=python@
 
 @begin=vfp@&&lines
+CREATE CURSOR TEST_CURSOR (SOMEFIELD N(3))
 continue
 LOCAL SEARCH_FOR, COUNTVAL, SUMVAL
 SEARCH_FOR = 'PAUL'
@@ -208,6 +209,7 @@ RELEASE SEARCH_FOR, COUNTVAL, SUMVAL
 @end=vfp@
 
 @begin=python@
+vfpfunc.db.create_cursor('test_cursor', 'somefield n(3)', '')
 vfpfunc.db.continue_locate()
 search_for = countval = sumval = False  # LOCAL Declaration
 search_for = 'PAUL'

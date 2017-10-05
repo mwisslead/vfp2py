@@ -1331,6 +1331,8 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             func = 'vfpfunc.db.create_table'
         elif ctx.DBF():
             func = 'vfpfunc.db.create_dbf'
+        elif ctx.CURSOR():
+            func = 'vfpfunc.db.create_cursor'
         tablename = self.visit(ctx.specialExpr())
         tablesetup = zip(ctx.identifier()[::2], ctx.identifier()[1::2], ctx.arrayIndex())
         tablesetup = ((self.visit(id1), self.visit(id2), self.visit(size)) for id1, id2, size in tablesetup)

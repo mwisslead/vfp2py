@@ -244,6 +244,7 @@ subprocess.call([\'ls\', \'-al\', pathname])
 
 def Test5():
     input_str = '''
+CREATE CURSOR TEST_CURSOR (SOMEFIELD N(3))
 continue
 LOCAL SEARCH_FOR, COUNTVAL, SUMVAL
 SEARCH_FOR = \'PAUL\'
@@ -253,6 +254,7 @@ SUM T * T FOR T > 0 TO SUMVAL
 RELEASE SEARCH_FOR, COUNTVAL, SUMVAL
 '''.strip()
     output_str = '''
+vfpfunc.db.create_cursor(\'test_cursor\', \'somefield n(3)\', \'\')
 vfpfunc.db.continue_locate()
 search_for = countval = sumval = False  # LOCAL Declaration
 search_for = \'PAUL\'

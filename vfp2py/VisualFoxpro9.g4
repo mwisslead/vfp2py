@@ -213,7 +213,7 @@ otherCmds
  | ERROR expr? #raiseError
  | THROW expr? #throwError
 
- | CREATE (TABLE|DBF) specialExpr FREE? '(' identifier identifier arrayIndex (',' identifier identifier arrayIndex)* ')' #createTable
+ | CREATE (TABLE|DBF|CURSOR) specialExpr FREE? '(' identifier identifier arrayIndex (',' identifier identifier arrayIndex)* ')' #createTable
  | ALTER TABLE specialExpr (ADD COLUMN identifier identifier arrayIndex | DROP COLUMN identifier) #alterTable
  | SELECT (tablename=specialExpr | (DISTINCT? (specialArgs | '*') (FROM fromExpr=specialExpr)? (WHERE whereExpr=expr)? (INTO (TABLE | CURSOR) intoExpr=specialExpr)? (ORDER BY orderbyid=identifier)?)) #select
  | USE (SHARED | EXCLUSIVE)? (IN workArea=specialExpr | name=specialExpr IN workArea=specialExpr | name=specialExpr)? (SHARED | EXCLUSIVE)? (ALIAS identifier)? #use
