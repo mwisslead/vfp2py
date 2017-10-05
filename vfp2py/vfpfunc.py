@@ -492,8 +492,27 @@ class Spinner(QtGui.QSpinBox, Custom, HasFont, HasColor):
     def value(self, val):
         self.setValue(val)
 
-class Shape(Custom):
-    pass
+class Shape(QtGui.QFrame, Custom):
+    def __init__(self, *args, **kwargs):
+        QtGui.QFrame.__init__(self)
+        Custom.__init__(self, *args, **kwargs)
+        self.setFrameStyle(QtGui.QFrame.Box | QtGui.QFrame.Plain)
+
+    @property
+    def height(self):
+        return QtGui.QComboBox.height(self)
+
+    @height.setter
+    def height(self, val):
+        self.setFixedHeight(val)
+
+    @property
+    def width(self):
+        return QtGui.QComboBox.width(self)
+
+    @height.setter
+    def width(self, val):
+        self.setFixedWidth(val)
 
 class Separator(Custom):
     pass
