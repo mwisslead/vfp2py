@@ -218,6 +218,9 @@ class Form(QtGui.QMdiSubWindow, Custom, HasFont):
     def addWidget(self, obj):
         self._vbox.addWidget(obj)
 
+    def release(self):
+        self.close()
+
     @property
     def caption(self):
         return self.windowTitle()
