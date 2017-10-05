@@ -192,7 +192,7 @@ class MainWindow(QtGui.QMainWindow):
 
     @property
     def height(self):
-        return QtGui.QMdainWindow.height(self)
+        return QtGui.QMainWindow.height(self)
 
     @height.setter
     def height(self, val):
