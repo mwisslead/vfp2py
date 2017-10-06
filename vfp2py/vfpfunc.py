@@ -315,6 +315,14 @@ class Commandbutton(QtGui.QPushButton, Custom, HasFont):
         self.setIcon(QtGui.QIcon(iconfile))
 
     @property
+    def tooltiptext(self):
+        return self.toolTip()
+
+    @tooltiptext.setter
+    def tooltiptext(self, val):
+        self.setToolTip(val)
+
+    @property
     def specialeffect(self):
         if self.isFlat():
             return 2
