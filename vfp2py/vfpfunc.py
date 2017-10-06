@@ -518,8 +518,16 @@ class Shape(QtGui.QFrame, Custom):
     def width(self, val):
         self.setFixedWidth(val)
 
-class Separator(Custom):
-    pass
+class Separator(QtGui.QFrame, Custom):
+    def __init__(self, *args, **kwargs):
+        QtGui.QFrame.__init__(self)
+        Custom.__init__(self, *args, **kwargs)
+        self.setFrameStyle(QtGui.QFrame.VLine | QtGui.QFrame.Plain)
+        palette = self.palette()
+        palette.setColor(self.foregroundRole(), QtGui.QColor(0, 0, 0, 0))
+        self.setPalette(palette)
+        margin = 4
+        self.setContentsMargins(margin, 0, margin, 0)
 
 class Toolbar(QtGui.QToolBar, Custom):
     def __init__(self, *args, **kwargs):
