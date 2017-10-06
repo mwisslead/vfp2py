@@ -314,6 +314,17 @@ class Commandbutton(QtGui.QPushButton, Custom, HasFont):
     def picture(self, iconfile):
         self.setIcon(QtGui.QIcon(iconfile))
 
+    @property
+    def specialeffect(self):
+        if self.isFlat():
+            return 2
+        else:
+            return 0
+
+    @specialeffect.setter
+    def specialeffect(self, val):
+        self.setFlat(val == 2)
+
 class Label(QtGui.QLabel, Custom, HasFont):
     def __init__(self, *args, **kwargs):
         QtGui.QLabel.__init__(self)
