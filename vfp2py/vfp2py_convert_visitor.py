@@ -238,22 +238,12 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             if '.' not in funcname:
                 funcs.update({funcname: [[CodeStr('self')] + parameters, funcbody, funcdef.start.line]})
 
-        if assignments:
-            if 'init' not in funcs:
-                funcs['init'] = [[CodeStr('self')], ['pass'], float('inf')]
-            funcbody = funcs['init'][1]
-            if funcbody[-1] == 'pass':
-                funcbody.pop()
-            if funcbody:
-                if funcbody[0] == 'vfpfunc.pushscope()':
-                    funcs['init'][1] = funcbody[:1] + assignments + funcbody[1:]
-                else:
-                    funcs['init'][1] = assignments + funcbody
-            else:
-                self.used_scope = assign_scope
-                funcs['init'][1] = self.modify_func_body(assignments)
-
         classname, supername = self.visit(ctx.classDefStart())
+
+        self.used_scope = assign_scope
+        funcbody = self.modify_func_body([CodeStr('{}._assign(self)'.format(supername))] + assignments)
+        funcs['_assign'] = [[CodeStr('self'), CodeStr('*args'), CodeStr('**kwargs')], funcbody, float('inf')]
+
         retval = [CodeStr('class {}({}):'.format(classname, supername))]
         if funcs:
             for name in subclasses:

@@ -134,6 +134,7 @@ class HasFont(object):
 
 class Custom(object):
     def __init__(self, *args, **kwargs):
+        self._assign()
         for key in kwargs:
             setattr(self, key, kwargs[key])
         if _in_qtgui(type(self)) and 'parent' in kwargs:
@@ -168,6 +169,9 @@ class Custom(object):
             return t
         except:
             raise Exception('object is not a member of a form')
+
+    def _assign(self):
+        pass
 
 class MainWindow(QtGui.QMainWindow):
     def __init__(self):
