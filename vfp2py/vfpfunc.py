@@ -557,6 +557,18 @@ class Listbox(QtGui.QListWidget, Custom):
     def __init__(self, *args, **kwargs):
         QtGui.QListWidget.__init__(self)
         Custom.__init__(self, *args, **kwargs)
+        self._source = ''
+
+    @property
+    def rowsource(self):
+        return self._source
+
+    @rowsource.setter
+    def rowsource(self, source):
+        self._source = source
+        table = db._get_table_info(source).table
+        for record in table:
+            self.addItem(QtGui.QListWidgetItem(str(record[0])))
 
 class Grid(QtGui.QTableWidget, Custom, HasFont):
     def __init__(self, *args, **kwargs):
