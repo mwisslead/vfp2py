@@ -574,6 +574,25 @@ class Grid(QtGui.QTableWidget, Custom, HasFont):
     def __init__(self, *args, **kwargs):
         QtGui.QTableWidget.__init__(self)
         Custom.__init__(self, *args, **kwargs)
+        self._source = ''
+
+    @property
+    def recordsource(self):
+        return self._source
+
+    @recordsource.setter
+    def recordsource(self, source):
+        self._source = source
+        table = db._get_table_info(self._source).table
+        labels = table.field_names
+        self.setColumnCount(len(labels))
+        self.setRowCount(len(table))
+        self.setVerticalHeaderLabels(['>' if record is table.current_record else '  ' for record in table])
+        self.setHorizontalHeaderLabels(labels)
+
+        for i, record in enumerate(table):
+            for j, val in enumerate(record):
+                self.setItem(i, j, QtGui.QTableWidgetItem(str(val)))
 
 class Optiongroup(Custom):
     def __init__(self, *args, **kwargs):
