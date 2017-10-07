@@ -577,6 +577,14 @@ class Grid(QtGui.QTableWidget, Custom, HasFont):
         self._source = ''
 
     @property
+    def allowrowsizing(self):
+        return self.verticalHeader().resizeMode(0) == QtGui.QHeaderView.Interactive
+
+    @allowrowsizing.setter
+    def allowrowsizing(self, val):
+        self.verticalHeader().setResizeMode(QtGui.QHeaderView.Interactive if val else QtGui.QHeaderView.Fixed)
+
+    @property
     def recordsource(self):
         return self._source
 
