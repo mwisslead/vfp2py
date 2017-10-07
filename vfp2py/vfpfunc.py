@@ -553,8 +553,10 @@ class Toolbar(QtGui.QToolBar, Custom):
         QtGui.QToolBar.__init__(self)
         Custom.__init__(self, *args, **kwargs)
 
-class Listbox(Custom):
-    pass
+class Listbox(QtGui.QListWidget, Custom):
+    def __init__(self, *args, **kwargs):
+        QtGui.QListWidget.__init__(self)
+        Custom.__init__(self, *args, **kwargs)
 
 class Grid(Custom):
     pass
