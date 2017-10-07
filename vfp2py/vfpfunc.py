@@ -558,8 +558,10 @@ class Listbox(QtGui.QListWidget, Custom):
         QtGui.QListWidget.__init__(self)
         Custom.__init__(self, *args, **kwargs)
 
-class Grid(Custom):
-    pass
+class Grid(QtGui.QTableWidget, Custom, HasFont):
+    def __init__(self, *args, **kwargs):
+        QtGui.QTableWidget.__init__(self)
+        Custom.__init__(self, *args, **kwargs)
 
 class Optiongroup(Custom):
     def __init__(self, *args, **kwargs):
