@@ -556,6 +556,7 @@ class Toolbar(QtGui.QToolBar, Custom):
 class Listbox(QtGui.QListWidget, Custom):
     def __init__(self, *args, **kwargs):
         QtGui.QListWidget.__init__(self)
+        self.multiselect = 0
         Custom.__init__(self, *args, **kwargs)
         self._source = ''
 
@@ -569,6 +570,14 @@ class Listbox(QtGui.QListWidget, Custom):
         table = db._get_table_info(source).table
         for record in table:
             self.addItem(QtGui.QListWidgetItem(str(record[0])))
+
+    @property
+    def multiselect(self):
+        return int(self.selectionMode() == QtGui.QAbstractItemView.MultiSelection)
+
+    @multiselect.setter
+    def multiselect(self, mode):
+        self.setSelectionMode(QtGui.QAbstractItemView.MultiSelection if mode else QtGui.QAbstractItemView.SingleSelection)
 
 class Grid(QtGui.QTableWidget, Custom, HasFont):
     def __init__(self, *args, **kwargs):
