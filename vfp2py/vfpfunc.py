@@ -617,6 +617,15 @@ class Grid(QtGui.QTableWidget, Custom, HasFont):
             for j, val in enumerate(record):
                 self.setItem(i, j, QtGui.QTableWidgetItem(str(val)))
 
+    @property
+    def allowcellselection(self):
+        return self.selectionBehavior() != QtGui.QAbstractItemView.SelectItems
+
+    @allowcellselection.setter
+    def allowcellselection(self, mode):
+        self.setSelectionBehavior(QtGui.QAbstractItemView.SelectItems if mode else QtGui.QAbstractItemView.SelectRows)
+        self.setEditTriggers(QtGui.QAbstractItemView.AllEditTriggers if mode else QtGui.QAbstractItemView.NoEditTriggers)
+
 class Optiongroup(Custom):
     def __init__(self, *args, **kwargs):
         self._group = QtGui.QButtonGroup()
