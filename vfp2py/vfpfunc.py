@@ -490,6 +490,7 @@ class Spinner(QtGui.QSpinBox, Custom, HasFont, HasColor):
         Custom.__init__(self, *args, **kwargs)
         self.pressed = False
         self.installEventFilter(self)
+        self.valueChanged.connect(self.interactivechange)
 
     def eventFilter(self, widget, event):
         if event.type() == QtCore.QEvent.Type.MouseButtonPress:
@@ -497,7 +498,6 @@ class Spinner(QtGui.QSpinBox, Custom, HasFont, HasColor):
         if event.type() == QtCore.QEvent.Type.MouseButtonRelease:
             if self.pressed:
                 self.click()
-                self.interactivechange()
             self.pressed = False
         return QtGui.QWidget.eventFilter(self, widget, event)
 
@@ -507,13 +507,19 @@ class Spinner(QtGui.QSpinBox, Custom, HasFont, HasColor):
     def interactivechange(self):
         pass
 
+    def programmaticchange(self):
+        pass
+
     @property
     def value(self):
         return QtGui.QSpinBox.value(self)
 
     @value.setter
     def value(self, val):
+        self.blockSignals(True)
         self.setValue(val)
+        self.blockSignals(False)
+        self.programmaticchange()
 
 class Shape(QtGui.QFrame, Custom):
     def __init__(self, *args, **kwargs):
