@@ -141,12 +141,6 @@ class Custom(object):
             self.parent.add_object(self)
         self.init(*args)
 
-    def __getitem__(self, name):
-        return getattr(self, name)
-
-    def __setitem__(self, name, value):
-        setattr(self, name, value)
-
     def init(self, *args, **kwargs):
         pass
 
@@ -666,6 +660,19 @@ class Optiongroup(QtGui.QWidget, Custom):
     def enabled(self, val):
         for button in self._group.buttons():
             button.enabled = val
+
+    @property
+    def buttoncount(self):
+        return len(self._group.buttons())
+
+    @buttoncount.setter
+    def buttoncount(self, val):
+        for i in range(val, self.buttoncount):
+            self._group.buttons()[-1].deleteLater()
+        for i in range(self.buttoncount, val):
+            caption = 'option {}'.format(i + 1)
+            name = caption.replace(' ', '')
+            setattr(self, name, Optionbutton(caption=caption, name=name, parent=self))
 
 class Optionbutton(QtGui.QRadioButton, Custom, HasFont):
     def __init__(self, *args, **kwargs):
