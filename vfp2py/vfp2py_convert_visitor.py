@@ -248,7 +248,13 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         if funcs:
             for name in subclasses:
                 subclass = subclasses[name]
-                subclass_code = [CodeStr('class {}({}):'.format(name, subclass['parent_type']))]
+                supername = CodeStr(subclass['parent_type'])
+                if hasattr(vfpfunc, supername):
+                    self.imports.append('from vfp2py import vfpfunc')
+                    supername = add_args_to_code('{}.{}', (CodeStr('vfpfunc'), supername))
+                elif supername not in self.class_list:
+                    supername = add_args_to_code('vfpfunc.classes[{}]', (str(supername),))
+                subclass_code = [CodeStr('class {}({}):'.format(name, supername))]
                 for funcname in subclass['functions']:
                     parameters, funcbody = subclass['functions'][funcname]
                     parameters = [CodeStr('self')] + parameters
