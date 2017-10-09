@@ -646,14 +646,16 @@ class Grid(QtGui.QTableWidget, Custom, HasFont):
         self.setSelectionBehavior(QtGui.QAbstractItemView.SelectItems if mode else QtGui.QAbstractItemView.SelectRows)
         self.setEditTriggers(QtGui.QAbstractItemView.AllEditTriggers if mode else QtGui.QAbstractItemView.NoEditTriggers)
 
-class Optiongroup(Custom):
+class Optiongroup(QtGui.QWidget, Custom):
     def __init__(self, *args, **kwargs):
+        QtGui.QWidget.__init__(self)
         self._group = QtGui.QButtonGroup()
+        self._vbox = QtGui.QVBoxLayout()
+        self.setLayout(self._vbox)
         Custom.__init__(self, *args, **kwargs)
-        for button in self._group.buttons():
-            self.parent.addWidget(button)
 
     def add_object(self, obj):
+        self._vbox.addWidget(obj)
         self._group.addButton(obj)
 
     @property
