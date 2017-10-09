@@ -484,6 +484,17 @@ class Combobox(QtGui.QComboBox, Custom, HasFont):
     def width(self, val):
         self.setFixedWidth(val)
 
+    @property
+    def style(self):
+        if self.isEditable():
+            return 0
+        else:
+            return 2
+
+    @style.setter
+    def style(self, val):
+        self.setEditable(val == 0)
+
 class Spinner(QtGui.QSpinBox, Custom, HasFont, HasColor):
     def __init__(self, *args, **kwargs):
         QtGui.QSpinBox.__init__(self)
