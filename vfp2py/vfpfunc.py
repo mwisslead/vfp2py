@@ -597,10 +597,14 @@ class Grid(QtGui.QTableWidget, Custom, HasFont):
         self.setSelectionMode(QtGui.QAbstractItemView.SingleSelection)
         self._source = ''
         self.cellClicked.connect(self._update_recno)
+        self.cellClicked.connect(self.click)
 
     def _update_recno(self):
         table = db._get_table_info(self._source).table.goto(self.currentRow())
         self.refresh()
+
+    def click(self):
+        pass
 
     def refresh(self):
         table = db._get_table_info(self._source).table
