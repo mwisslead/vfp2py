@@ -745,6 +745,10 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
                 return add_args_to_code('{}[{}]', args[:2])
             args[2] += args[1]
             return add_args_to_code('{}[{}:{}]', args)
+        if funcname == 'getenv':
+            args.append('')
+            args[0] = args[0].upper() if string_type(args[0]) else add_args_to_code('{}.upper()', args[0])
+            return make_func_code('os.environ.get', *args)
         if funcname == 'getwordcount':
             if len(args) < 2:
                 args.append(CodeStr(''))
