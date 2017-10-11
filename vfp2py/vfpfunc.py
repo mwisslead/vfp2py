@@ -598,12 +598,16 @@ class Grid(QtGui.QTableWidget, Custom, HasFont):
         self._source = ''
         self.cellClicked.connect(self._update_recno)
         self.cellClicked.connect(self.click)
+        self.cellDoubleClicked.connect(self.dblclick)
 
     def _update_recno(self):
         table = db._get_table_info(self._source).table.goto(self.currentRow())
         self.refresh()
 
     def click(self):
+        pass
+
+    def dblclick(self):
         pass
 
     def refresh(self):
