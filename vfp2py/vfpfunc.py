@@ -219,6 +219,12 @@ class Form(QtGui.QMdiSubWindow, Custom, HasFont):
     def release(self):
         self.close()
 
+    def destroy(self):
+        pass
+
+    def closeEvent(self, event):
+        self.destroy()
+
     @property
     def caption(self):
         return self.windowTitle()
