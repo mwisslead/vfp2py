@@ -2,14 +2,18 @@ grammar VisualFoxpro9
  ;
 
 preprocessorCode
+ : preprocessorLines EOF
+ ;
+
+preprocessorLines
  : (preprocessorLine | nonpreprocessorLine)*
  ;
 
 preprocessorLine
  : '#' (IF expr | IFDEF identifier) NL 
-           ifBody=preprocessorCode
+           ifBody=preprocessorLines
   ('#' ELSE NL
-           elseBody=preprocessorCode)?
+           elseBody=preprocessorLines)?
    '#' ENDIF lineEnd #preprocessorIf
  | '#' DEFINE identifier (~NL)* lineEnd #preprocessorDefine
  | '#' UNDEFINE identifier lineEnd #preprocessorUndefine
@@ -18,8 +22,8 @@ preprocessorLine
 
 nonpreprocessorLine
  : LINECOMMENT 
- | lineEnd
- | ~'#' (~NL)* lineEnd
+ | NL
+ | ~('#' | NL | EOF) (~NL)* lineEnd
  ;
 
 prg

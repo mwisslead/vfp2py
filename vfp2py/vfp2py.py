@@ -60,6 +60,9 @@ class PreprocessVisitor(VisualFoxpro9Visitor):
         self.memory = {}
 
     def visitPreprocessorCode(self, ctx):
+        return self.visit(ctx.preprocessorLines())
+
+    def visitPreprocessorLines(self, ctx):
         retval = []
         for child in ctx.getChildren():
             toks = self.visit(child)
