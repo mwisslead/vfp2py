@@ -728,6 +728,9 @@ class Page(QtGui.QWidget, Custom, HasFont):
     def addWidget(self, widget):
         self._vbox.addWidget(widget)
 
+class Image(Custom):
+    pass
+
 class Array(object):
     def __init__(self, dim1, dim2=0, offset=0):
         self.columns = bool(dim2)
