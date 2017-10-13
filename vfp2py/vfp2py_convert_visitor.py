@@ -344,13 +344,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
                     newbody.append(fix_returns(line))
                 elif isinstance(line, CodeStr) and line.startswith('return '):
                     return_value = CodeStr(line[7:])
-                    if 'vfpvar[' in return_value or 'vfpfunc.function[' in return_value:
-                        newbody.append(add_args_to_code('function_return_value = {}', [return_value]))
-                        newbody.append(CodeStr('vfpvar.popscope()'))
-                        newbody.append(CodeStr('return function_return_value'))
-                    else:
-                        newbody.append(CodeStr('vfpvar.popscope()'))
-                        newbody.append(line)
+                    newbody.append(CodeStr('return vfpvar.popscope({})'.format(return_value)))
                 else:
                     newbody.append(line)
             return newbody
@@ -662,13 +656,14 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
                     return add_args_to_code('{}[:11]', [make_func_code('dt.datetime.now().time().strftime', '%H:%M:%S.%f')])
             if funcname == 'dtot':
                 return make_func_code('dt.datetime.combine', args[0], make_func_code('dt.datetime.min.time'))
-        if funcname in ('year', 'month', 'day', 'hour', 'minute', 'sec', 'dow', 'cdow', 'cmonth'):
+        if funcname in ('year', 'month', 'day', 'hour', 'minute', 'sec', 'dow', 'cdow', 'cmonth', 'dmy'):
             self.imports.append('import datetime as dt')
             funcname = {
                 'sec': 'second',
                 'dow': 'weekday()',
                 'cdow': "strftime('%A')",
                 'cmonth': "strftime('%B')",
+                'dmy': "strftime('%d %B %Y')",
             }.get(funcname, funcname)
             retval = add_args_to_code('{}.{}', [args[0], CodeStr(funcname)])
             if funcname == 'weekday()':

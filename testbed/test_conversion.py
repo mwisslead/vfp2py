@@ -87,6 +87,7 @@ _SCREEN.LOGO.TOP = (_SCREEN.HEIGHT-_SCREEN.LOGO.HEIGHT)/2-3
 
 WAIT WINDOW space(3) + \'please wait\' + CHR(32) NOWAIT TIMEOUT 1.3
 #ENDIF
+RETURN X
 '''.strip()
     output_str = '''
 from __future__ import division, print_function
@@ -107,7 +108,7 @@ def _program_main():
     vfpvar[\'x\'] = \'test\\r\\n\'
     vfpvar[\'x\'] = \'\\x05\'
     vfpvar[\'x\'] = \'\\r\\n\'
-    vfpvar.popscope()
+    return vfpvar.popscope(vfpvar[\'x\'])
 '''.strip()
     test_output_str = vfp2py.vfp2py.prg2py(input_str).strip()
     try:

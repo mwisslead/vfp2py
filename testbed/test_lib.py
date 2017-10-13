@@ -44,6 +44,7 @@ def date_tests():
     assert somedate.strftime('%A') == 'Friday'
     assert somedate.month == 6
     assert somedate.strftime('%B') == 'June'
+    assert somedate.strftime('%d %B %Y') == '30 June 2017'
     assert len(dt.datetime.now().time().strftime('%H:%M:%S')) == 8
     assert len(dt.datetime.now().time().strftime('%H:%M:%S.%f')[:11]) == 11
     assert dt.datetime.combine(somedate, dt.datetime.min.time()) == dt.datetime(2017, 6, 30, 0)
@@ -132,9 +133,7 @@ def _sqlexec_add_record(sqlconn=False, seed=False):
     vfpvar['sqlcmd'] = "insert into REPORT values ('" + fake_name + "','" + fake_st + "'," + vfpfunc.num_to_str(
         fake_quantity).strip() + ',' + vfpfunc.num_to_str(int(fake_received)).strip() + ')'
     print(vfpvar['sqlcmd'])
-    function_return_value = vfpfunc.sqlexec(sqlconn, vfpvar['sqlcmd'])
-    vfpvar.popscope()
-    return function_return_value
+    return vfpvar.popscope(vfpfunc.sqlexec(sqlconn, vfpvar['sqlcmd']))
 
 
 def database_tests():

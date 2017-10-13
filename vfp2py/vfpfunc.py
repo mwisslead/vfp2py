@@ -853,9 +853,11 @@ class _Variable(object):
         self.public_scopes.append({})
         self.local_scopes.append({})
 
-    def popscope(self):
+    def popscope(self, *args):
         self.public_scopes.pop()
         self.local_scopes.pop()
+        if args:
+            return args[0] if len(args) == 1 else args
 
     def release(self, mode='Normal', skeleton=None):
         if mode == 'Extended':
