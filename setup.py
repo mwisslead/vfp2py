@@ -23,4 +23,7 @@ setup(
     install_requires=[ANTLR4, 'future', 'enum34', 'dbf', 'autopep8==1.2.4', 'isort', 'python-dateutil', 'pyodbc', 'pyside'],
     test_suite='nose.collector',
     tests_require=['nose', 'Faker'],
+    entry_points = {
+        'console_scripts': ['vfp2py=vfp2py.__main__:main'],
+    }
 )
