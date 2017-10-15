@@ -428,6 +428,7 @@ specialExpr
 
 constant
  : NUMBER_LITERAL #number
+ | '$' NUMBER_LITERAL #currency
  | '.' (T | F | Y | N) '.' #boolean
  | ('.' NULL '.' | NULL) #null
  | '{' ( '/' '/'  | '^' NUMBER_LITERAL '-' NUMBER_LITERAL '-' NUMBER_LITERAL (','? NUMBER_LITERAL (':' NUMBER_LITERAL (':' NUMBER_LITERAL)?)? identifier)? ) '}' #date

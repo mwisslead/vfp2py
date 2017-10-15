@@ -7,9 +7,10 @@ import vfp2py
 
 def Test0():
     input_str = '''
-LOCAL STRING_VAL, FLOAT_VAL, INT_VAL, BOOL_VAL, NULL_VAL, NULLDATE_VAL, DATE_VAL, DATETIME_VAL, OBJ_VAL
+LOCAL STRING_VAL, FLOAT_VAL, MONEY_VAL, INT_VAL, BOOL_VAL, NULL_VAL, NULLDATE_VAL, DATE_VAL, DATETIME_VAL, OBJ_VAL
 STRING_VAL = \'str\'
 float_val = 3.0
+money_val = $3.512345
 int_val = 3
 BOOL_VAL = .F.
 NULL_VAL = NULL
@@ -32,9 +33,10 @@ OBJ_VAL = CREATEOBJECT(\'FORM\')
 RELEASE STRING_VAL, INT_VAL, BOOL_VAL, NULL_VAL
 '''.strip()
     output_str = '''
-string_val = float_val = int_val = bool_val = null_val = nulldate_val = date_val = datetime_val = obj_val = False  # LOCAL Declaration
+string_val = float_val = money_val = int_val = bool_val = null_val = nulldate_val = date_val = datetime_val = obj_val = False  # LOCAL Declaration
 string_val = \'str\'
 float_val = 3.0
+money_val = 3.5123
 int_val = 3
 bool_val = False
 null_val = None

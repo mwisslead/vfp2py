@@ -1061,6 +1061,9 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
     def visitNumber(self, ctx):
         return self.convert_number(ctx.NUMBER_LITERAL())
 
+    def visitCurrency(self, ctx):
+        return round(float(ctx.NUMBER_LITERAL().getText()), 4)
+
     def visitBoolean(self, ctx):
         if ctx.T() or ctx.Y() or ctx.F() or ctx.N():
             return not (ctx.F() or ctx.N())
