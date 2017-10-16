@@ -1180,18 +1180,20 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         return self.visit(ctx.idAttr()) + '.' + self.visit(ctx.identifier()) + '()'
 
     def visitClearStmt(self, ctx):
-        if ctx.ALL():
-            return CodeStr('vfpfunc.clearall()')
-        elif ctx.DLLS():
-            return make_func_code('vfpfunc.cleardlls', *self.visit(ctx.args()))
-        elif ctx.MACROS():
-            return CodeStr('vfpfunc.clearmacros()')
-        elif ctx.EVENTS():
-            return CodeStr('vfpfunc.clearevents()')
-        elif ctx.PROGRAM():
-            return CodeStr('vfpfunc.clearprogram()')
-        else:
-            return CodeStr('vfpfunc.clear()')
+        command = None
+        args = []
+        if len(ctx.children) > 1:
+            if ctx.expr():
+                args.append(self.visit(ctx.expr()))
+            elif ctx.specialExpr():
+                args.append(self.visit(ctx.specialExpr()))
+            elif ctx.specialArgs():
+                args += self.visit(ctx.specialArgs())
+            elif ctx.ALL():
+                args.append('all')
+            if not ctx.ALL() or ctx.READ():
+                command = create_string(ctx.children[1].getText().lower())
+        return make_func_code('vfpfunc.clear', command, *args)
 
     def visitDllDeclare(self, ctx):
         dll_name = self.visit_with_disabled_scope(ctx.specialExpr())

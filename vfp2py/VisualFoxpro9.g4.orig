@@ -244,7 +244,7 @@ otherCmds
 
  | CLOSE ((DATABASES | INDEXES | TABLES) ALL? | ALL) #closeStmt
  | READ EVENTS #readEvent
- | CLEAR (ALL | CLASS expr | CLASSLIB specialExpr | DEBUG | DLLS specialArgs | EVENTS | ERROR | FIELDS | GETS | MACROS | MEMORY | MENUS | POPUPS | PROGRAM | PROMPT | READ ALL? | RESOURCES expr | TYPEAHEAD | WINDOWS)? #clearStmt
+ | CLEAR (ALL | CLASS expr | CLASSLIB specialExpr | DEBUG | DLLS args | EVENTS | ERROR | FIELDS | GETS | MACROS | MEMORY | MENUS | POPUPS | PROGRAM | PROMPT | READ ALL? | RESOURCES expr | TYPEAHEAD | WINDOWS)? #clearStmt
  | REPORT FORM ('?' | specialExpr) (NOEJECT | TO PRINTER PROMPT? | NOCONSOLE)* #report
  | DECLARE returnType=datatype? identifier IN specialExpr (AS alias=identifier)? dllArgs? #dllDeclare
  | NODEFAULT #nodefault
@@ -305,7 +305,7 @@ setCmd
  | setword=ASSERTS (ON | OFF)
  | setword=BELL (ON | OFF | TO specialExpr)
  | setword=CENTURY (ON | OFF | TO (expr (ROLLOVER expr)?)?) 
- | setword=CLASSLIB TO specialExpr ADDITIVE?
+ | setword=CLASSLIB TO specialExpr (IN specialExpr)? (ALIAS expr)? ADDITIVE?
  | setword=CLOCK (ON | OFF | STATUS | TO (expr ',' expr)?)
  | setword=COMPATIBLE (ON | OFF | DB4 | FOXPLUS) (PROMPT | NOPROMPT)?
  | setword=CURSOR (ON | OFF)
@@ -326,6 +326,7 @@ setCmd
  | setword=SAFETY (ON | OFF)
  | setword=STATUS BAR? (ON | OFF)
  | setword=SYSMENU (ON | OFF | TO (DEFAULT | expr)? | SAVE | NOSAVE)
+ | setword=TABLEPROMPT (ON | OFF)
  | setword=TYPEAHEAD TO expr
  | setword=UNIQUE (ON | OFF)
  ;
@@ -571,6 +572,7 @@ RELEASE : R E L E A S E;
 RECYCLE : R E C Y C L E;
 CREATE : C R E A T E;
 TABLE : T A B L E;
+TABLEPROMPT: T A B L E P R O M P T;
 DBF : D B F;
 NAME : N A M E;
 FREE : F R E E;
@@ -771,12 +773,6 @@ FIELDS: F I E L D S;
 ALTER: A L T E R;
 COLUMN: C O L U M N;
 DROP: D R O P;
-DEBUG: D E B U G;
-GETS: G E T S;
-MEMORY: M E M O R Y;
-MENUS: M E N U S;
-RESOURCES: R E S O U R C E S;
-WINDOWS: W I N D O W S;
 
 ID : [A-Za-z_] [a-zA-Z0-9_]*;
 

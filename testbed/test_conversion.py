@@ -320,13 +320,26 @@ PUSH KEY CLEAR
 PUSH KEY
 POP KEY ALL
 POP KEY
+CLEAR DLLS "TEST1", "TEST2"
+CLEAR MACROS
+CLEAR EVENTS
+CLEAR ALL
+CLEAR READ
+CLEAR READ ALL
+CLEAR
 '''.strip()
     output_str = '''
  # FIX ME: PUSH KEY CLEAR
 # FIX ME: PUSH KEY
 # FIX ME: POP KEY ALL
 # FIX ME: POP KEY
-pass
+vfpfunc.clear(\'dlls\', \'test1\', \'test2\')
+vfpfunc.clear(\'macros\')
+vfpfunc.clear(\'events\')
+vfpfunc.clear(None, \'all\')
+vfpfunc.clear(\'read\')
+vfpfunc.clear(\'read\', \'all\')
+vfpfunc.clear(None)
 '''.strip()
     test_output_str = vfp2py.vfp2py.prg2py(input_str, parser_start='lines', prepend_data='').strip()
     try:

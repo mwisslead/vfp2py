@@ -258,6 +258,13 @@ PUSH KEY CLEAR
 PUSH KEY
 POP KEY ALL
 POP KEY
+CLEAR DLLS "TEST1", "TEST2"
+CLEAR MACROS
+CLEAR EVENTS
+CLEAR ALL
+CLEAR READ
+CLEAR READ ALL
+CLEAR
 @end=vfp@
 
 @begin=python@
@@ -265,7 +272,13 @@ POP KEY
 # FIX ME: PUSH KEY
 # FIX ME: POP KEY ALL
 # FIX ME: POP KEY
-pass
+vfpfunc.clear('dlls', 'test1', 'test2')
+vfpfunc.clear('macros')
+vfpfunc.clear('events')
+vfpfunc.clear(None, 'all')
+vfpfunc.clear('read')
+vfpfunc.clear('read', 'all')
+vfpfunc.clear(None)
 @end=python@
 
 @begin=vfp@&&lines
