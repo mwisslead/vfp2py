@@ -446,14 +446,13 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
 
     def visitScanStmt(self, ctx):
         lines = self.visit(ctx.lines())
-        lines.append(make_func_code('vfpfunc.db.skip', None, 1))
         if ctx.FOR():
             condition = self.visit(ctx.expr())
-            lines = [add_args_to_code('if not {}:', [condition]), [CodeStr('continue')]] + lines
-        save_variable_name = CodeStr(random_variable(length=10) + '_current_record')
-        save_recno = CodeStr('{} = {}'.format(save_variable_name, 'vfpfunc.db.recno()'))
-        return_recno = make_func_code('vfpfunc.db.goto', None, CodeStr(save_variable_name))
-        return [save_recno, CodeStr('while not vfpfunc.db.eof():'), lines, return_recno]
+            condition = add_args_to_code('lambda: {}', [condition])
+            func = make_func_code('vfpfunc.db.scanner', condition)
+        else:
+            func = make_func_code('vfpfunc.db.scanner')
+        return [add_args_to_code('for _ in {}:', [func]), lines]
 
     def visitTryStmt(self, ctx):
         try_lines = self.visit(ctx.tryLines)

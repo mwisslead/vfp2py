@@ -201,6 +201,21 @@ class DatabaseContext(object):
             reset(table, scope[1] - 1)
         self.current_table = save_current_table
 
+    def scanner(self, condition=None):
+        if not condition:
+            condition = lambda: True
+        workspace = self.current_table
+        record = self.recno()
+        t = self._get_table_info(workspace).table
+        if len(t) > 0 and condition():
+            yield
+        while not self.eof(workspace):
+            self.skip(workspace, 1)
+            if not condition():
+                continue
+            yield
+        self.goto(workspace, record)
+
     def count(self, tablename, scope, **kwargs):
         return len(list(self._get_records(tablename, scope, **kwargs)))
 

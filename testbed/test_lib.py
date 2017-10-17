@@ -162,6 +162,18 @@ def database_tests():
         assert vfpfunc.db.field(2) == 'st'
         assert not vfpfunc.db.found()
         vfpfunc.db.goto(None, 0)
+        loopcount = False  # LOCAL Declaration
+        loopcount = 0
+        for _ in vfpfunc.db.scanner():
+            assert len(vfpvar['name'].strip()) > 0
+            loopcount += 1
+        assert loopcount == 4
+        loopcount = 0
+        for _ in vfpfunc.db.scanner(lambda: vfpvar['st'].strip() == 'ID'):
+            assert len(vfpvar['name'].strip()) > 0
+            loopcount += 1
+        assert loopcount == 2
+        del loopcount
         assert vfpvar['name'].strip() == 'Norma Fisher', vfpvar[
             'name'].strip() + ' should be Norma Fisher'
         assert vfpfunc.db.recno() == 1

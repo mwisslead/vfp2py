@@ -137,6 +137,20 @@ procedure database_tests
       assert field(2) == 'st'
       assert not found()
       go top
+      local loopcount
+      loopcount = 0
+      scan
+         assert len(alltrim(name)) > 0
+         loopcount = loopcount + 1
+      endscan
+      assert loopcount == 4
+      loopcount = 0
+      scan for alltrim(st) = 'ID'
+         assert len(alltrim(name)) > 0
+         loopcount = loopcount + 1
+      endscan
+      assert loopcount == 2
+      release loopcount
       assert alltrim(name) == 'Norma Fisher' MESSAGE alltrim(name) + ' should be Norma Fisher'
       assert recno() == 1
       go bott
