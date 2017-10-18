@@ -91,3 +91,6 @@ ENV/
 VisualFoxpro9*.tokens
 test.py
 *.dbf
+*.diff
+*.rej
+*.orig
