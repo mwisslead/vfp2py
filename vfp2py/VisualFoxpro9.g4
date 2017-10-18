@@ -326,6 +326,7 @@ setCmd
  | setword=SAFETY (ON | OFF)
  | setword=STATUS BAR? (ON | OFF)
  | setword=SYSMENU (ON | OFF | TO (DEFAULT | expr)? | SAVE | NOSAVE)
+ | setword=TABLEPROMPT (ON | OFF)
  | setword=TYPEAHEAD TO expr
  | setword=UNIQUE (ON | OFF)
  ;
@@ -571,6 +572,7 @@ RELEASE : R E L E A S E;
 RECYCLE : R E C Y C L E;
 CREATE : C R E A T E;
 TABLE : T A B L E;
+TABLEPROMPT: T A B L E P R O M P T;
 DBF : D B F;
 NAME : N A M E;
 FREE : F R E E;
