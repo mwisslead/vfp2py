@@ -388,6 +388,10 @@ SET COMPATIBLE FOXPLUS
 SET COMPATIBLE ON
 SET COMPATIBLE FOXPLUS PROMPT
 SET COMPATIBLE DB4 NOPROMPT
+SET CLASSLIB TO TEST
+SET CLASSLIB TO TEST IN TEST
+SET CLASSLIB TO TEST ALIAS NOTTEST
+SET CLASSLIB TO TEST IN TEST ALIAS NOTTEST ADDITIVE
 '''.strip()
     output_str = '''
 vfpfunc.set(u\'compatible\', \'OFF\', set_value=True)
@@ -396,6 +400,10 @@ vfpfunc.set(u\'compatible\', \'OFF\', set_value=True)
 vfpfunc.set(u\'compatible\', \'ON\', set_value=True)
 vfpfunc.set(u\'compatible\', \'OFF\', \'PROMPT\', set_value=True)
 vfpfunc.set(u\'compatible\', \'ON\', \'NOPROMPT\', set_value=True)
+vfpfunc.set(u\'classlib\', \'test\', set_value=True)
+vfpfunc.set(u\'classlib\', \'test\', set_value=True, in=\'test\')
+vfpfunc.set(u\'classlib\', \'test\', alias=\'nottest\', set_value=True)
+vfpfunc.set(u\'classlib\', \'test\', alias=\'nottest\', set_value=True, additive=True, in=\'test\')
 '''.strip()
     test_output_str = vfp2py.vfp2py.prg2py(input_str, parser_start='lines', prepend_data='').strip()
     try:

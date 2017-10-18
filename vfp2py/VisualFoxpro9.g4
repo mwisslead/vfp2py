@@ -305,7 +305,7 @@ setCmd
  | setword=ASSERTS (ON | OFF)
  | setword=BELL (ON | OFF | TO specialExpr)
  | setword=CENTURY (ON | OFF | TO (expr (ROLLOVER expr)?)?) 
- | setword=CLASSLIB TO specialExpr ADDITIVE?
+ | setword=CLASSLIB TO specialExpr (IN specialExpr)? (ALIAS specialExpr)? ADDITIVE?
  | setword=CLOCK (ON | OFF | STATUS | TO (expr ',' expr)?)
  | setword=COMPATIBLE (ON | OFF | DB4 | FOXPLUS) (PROMPT | NOPROMPT)?
  | setword=CURSOR (ON | OFF)

@@ -1612,6 +1612,14 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
                     kwargs.update({'rollover': 67})
             else:
                 args = ('ON' if ctx.ON() else 'OFF',)
+        elif setword == 'classlib':
+            args = (self.visit(ctx.specialExpr(0)),)
+            if ctx.IN():
+                kwargs['in'] = self.visit(ctx.specialExpr(1))
+            if ctx.ALIAS():
+                kwargs['alias'] = self.visit(ctx.specialExpr(2 if ctx.IN() else 1))
+            if ctx.ADDITIVE():
+                kwargs['additive'] = True
         elif setword == 'compatible':
             args = ('ON' if ctx.ON() or ctx.DB4() else 'OFF',)
             if ctx.PROMPT() or ctx.NOPROMPT():
