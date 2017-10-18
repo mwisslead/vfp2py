@@ -173,18 +173,24 @@ class Testclass2(vfpfunc.classes['Unknownclass']):
 @end=python@
 
 @begin=vfp@&&lines
+LOCAL A
 DO A
 DO A+B
 DO A + B
 DO ALLTRIM(A)
+DO TEST in A
+DO TEST in (A)
 CD ..
 @end=vfp@
 
 @begin=python@
-a._program_main()
-__import__('a+b')._program_main()  # NOTE: function call here may not work
-__import__(a + b)._program_main()  # NOTE: function call here may not work
-__import__(a.strip())._program_main()  # NOTE: function call here may not work
+a = False  # LOCAL Declaration
+vfpfunc.function['a']()
+vfpfunc.function['a+b']()
+vfpfunc.function[a + b]()
+vfpfunc.function[a.strip()]()
+a.test()
+vfpfunc.module(a).test()
 os.chdir('..')
 @end=python@
 

@@ -1429,6 +1429,10 @@ def _exec():
 db = DatabaseContext()
 variable = _Variable(db)
 function = _Function()
+
+def module(module_name):
+    return __import__(module_name.lower())
+
 error_func = None
 variable.pushscope()
 qt_app = QtGui.QApplication(())

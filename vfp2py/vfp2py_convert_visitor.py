@@ -1152,8 +1152,8 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         if (not namespace or os.path.splitext(namespace)[0] == self.filename) and func in self.function_list:
             return make_func_code(func, *args)
         if not namespace:
-            namespace = func
-            func = '_program_main'
+            namespace = 'vfpfunc'
+            func = create_string(add_args_to_code('function[{}]', [func]))
         if string_type(namespace) and re.match(tokenize.Name + '$', namespace) and not keyword.iskeyword(namespace):
             namespace = ntpath.normpath(ntpath.splitext(namespace)[0]).replace(ntpath.sep, '.')
             self.imports.append('import ' + namespace)
@@ -1161,7 +1161,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         else:
             if string_type(namespace):
                 namespace = CodeStr(repr(namespace))
-            mod = make_func_code('__import__', namespace)
+            mod = make_func_code('vfpfunc.module', namespace)
         if string_type(func):
             func = CodeStr(func)
             func = add_args_to_code('{}.{}', (mod, func))
@@ -1170,7 +1170,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         else:
             func = make_func_code('getattr', mod, func)
 
-        return add_args_to_code('{} #{}', [make_func_code(func, *args), CodeStr('NOTE: function call here may not work')])
+        return make_func_code(func, *args)
 
     def visitDoForm(self, ctx):
         form = self.visit_with_disabled_scope(ctx.specialExpr())

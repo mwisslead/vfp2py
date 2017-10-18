@@ -203,17 +203,23 @@ class Testclass2(vfpfunc.classes[\'Unknownclass\']):
 
 def Test3():
     input_str = '''
+LOCAL A
 DO A
 DO A+B
 DO A + B
 DO ALLTRIM(A)
+DO TEST in A
+DO TEST in (A)
 CD ..
 '''.strip()
     output_str = '''
-a._program_main()
-__import__(\'a+b\')._program_main()  # NOTE: function call here may not work
-__import__(a + b)._program_main()  # NOTE: function call here may not work
-__import__(a.strip())._program_main()  # NOTE: function call here may not work
+a = False  # LOCAL Declaration
+vfpfunc.function[\'a\']()
+vfpfunc.function[\'a+b\']()
+vfpfunc.function[a + b]()
+vfpfunc.function[a.strip()]()
+a.test()
+vfpfunc.module(a).test()
 os.chdir(\'..\')
 '''.strip()
     test_output_str = vfp2py.vfp2py.prg2py(input_str, parser_start='lines', prepend_data='').strip()
