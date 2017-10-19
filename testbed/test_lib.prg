@@ -32,9 +32,13 @@ procedure date_tests
    assert len(time(1)) == 11
    assert dtot(somedate) == Datetime(2017, 6, 30, 0)
    assert gomonth(somedate, -4) = date(2017, 2, 28)
+   assert vartype(somedate) == 'D'
+   assert vartype(dtot(somedate)) == 'T'
 endproc
 
 procedure math_tests
+   local num_value
+   num_value = pi()
    assert round(pi(), 2) == 3.14
    assert abs(tan(dtor(45)) - 1) < 0.001
    assert abs(sin(dtor(90)) - 1) < 0.001
@@ -45,10 +49,12 @@ procedure math_tests
    local stringval
    stringval = '1e5'
    assert val(stringval) = 100000
+   assert vartype(num_value) == 'N'
 endproc
 
 procedure string_tests
    cString = "AAA  aaa, BBB bbb, CCC ccc."
+   assert vartype(cString) == 'C'
    assert GetWordCount(cString) == 6
    assert GetWordCount(cString, ",") = 3
    ASSERT GetWordCount(cString, ".") == 1

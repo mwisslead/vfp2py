@@ -49,9 +49,13 @@ def date_tests():
     assert len(dt.datetime.now().time().strftime('%H:%M:%S.%f')[:11]) == 11
     assert dt.datetime.combine(somedate, dt.datetime.min.time()) == dt.datetime(2017, 6, 30, 0)
     assert vfpfunc.gomonth(somedate, -4) == dt.date(2017, 2, 28)
+    assert vfpfunc.vartype(somedate) == 'D'
+    assert vfpfunc.vartype(dt.datetime.combine(somedate, dt.datetime.min.time())) == 'T'
 
 
 def math_tests():
+    num_value = False  # LOCAL Declaration
+    num_value = math.pi
     assert round(math.pi, 2) == 3.14
     assert abs(math.tan(math.radians(45)) - 1) < 0.001
     assert abs(math.sin(math.radians(90)) - 1) < 0.001
@@ -62,11 +66,13 @@ def math_tests():
     stringval = False  # LOCAL Declaration
     stringval = '1e5'
     assert float(stringval) == 100000
+    assert vfpfunc.vartype(num_value) == 'N'
 
 
 def string_tests():
     vfpvar.pushscope()
     vfpvar['cstring'] = 'AAA  aaa, BBB bbb, CCC ccc.'
+    assert vfpfunc.vartype(vfpvar['cstring']) == 'C'
     assert len([w for w in vfpvar['cstring'].split() if w]) == 6
     assert len([w for w in vfpvar['cstring'].split(',') if w]) == 3
     assert len([w for w in vfpvar['cstring'].split('.') if w]) == 1

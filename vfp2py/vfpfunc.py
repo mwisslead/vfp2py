@@ -1366,6 +1366,18 @@ def vfp_sys(funcnum, *args):
             return os.path.dirname(sys.executable)
         return os.path.dirname(sys.argv[0])
 
+def vartype(var):
+    t = type(var)
+    return {
+        str: 'C',
+        dt.date: 'D',
+        bool: 'L',
+        int: 'N',
+        float: 'N',
+        dt.datetime: 'T',
+        type(None): 'X',
+    }.get(t, 'O')
+
 def version(ver_type=4):
     if ver_type == 5:
         return 900
