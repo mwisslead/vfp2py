@@ -628,6 +628,9 @@ class Grid(QtGui.QTableWidget, Custom, HasFont):
             for j, val in enumerate(record):
                 self.setItem(i, j, QtGui.QTableWidgetItem(str(val)))
 
+    def focusInEvent(self, event):
+        self.refresh()
+
     @property
     def allowrowsizing(self):
         return self.verticalHeader().resizeMode(0) == QtGui.QHeaderView.Interactive
