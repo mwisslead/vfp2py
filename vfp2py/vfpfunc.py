@@ -987,6 +987,9 @@ def filetostr(filename):
     with open(filename) as fid:
         return fid.read().decode('ISO-8859-1')
 
+def getfile(file_ext='', text='', button_caption='', button_type=0, title=''):
+    return QtGui.QFileDialog.getOpenFileName(parent=variable['_vfp'], caption='Open', dir='.')[0]
+
 def _getwords(string, delim=None):
     return [w for w in string.split(delim) if w]
 
