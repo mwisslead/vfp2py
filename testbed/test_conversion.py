@@ -89,10 +89,13 @@ _SCREEN.LOGO.TOP = (_SCREEN.HEIGHT-_SCREEN.LOGO.HEIGHT)/2-3
 
 WAIT WINDOW space(3) + \'please wait\' + CHR(32) NOWAIT TIMEOUT 1.3
 #ENDIF
+DO TEST.PRG
 RETURN X
 '''.strip()
     output_str = '''
 from __future__ import division, print_function
+
+import test
 
 from vfp2py import vfpfunc
 from vfp2py.vfpfunc import variable as vfpvar
@@ -110,6 +113,7 @@ def _program_main():
     vfpvar[\'x\'] = \'test\\r\\n\'
     vfpvar[\'x\'] = \'\\x05\'
     vfpvar[\'x\'] = \'\\r\\n\'
+    test._program_main()
     return vfpvar.popscope(vfpvar[\'x\'])
 '''.strip()
     test_output_str = vfp2py.vfp2py.prg2py(input_str).strip()
@@ -210,16 +214,20 @@ DO A + B
 DO ALLTRIM(A)
 DO TEST in A
 DO TEST in (A)
+DO TEST.PRG
+DO TEST IN TEST.PRG
 CD ..
 '''.strip()
     output_str = '''
 a = False  # LOCAL Declaration
 vfpfunc.function[\'a\']()
 vfpfunc.function[\'a+b\']()
-vfpfunc.function[a + b]()
+vfpfunc.function[a + vfpvar[\'b\']]()
 vfpfunc.function[a.strip()]()
 a.test()
 vfpfunc.module(a).test()
+test._program_main()
+test.test()
 os.chdir(\'..\')
 '''.strip()
     test_output_str = vfp2py.vfp2py.prg2py(input_str, parser_start='lines', prepend_data='').strip()

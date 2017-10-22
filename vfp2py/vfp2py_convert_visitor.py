@@ -1137,26 +1137,38 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         return add_args_to_code('{}', [self.visit(ctx.expr())])
 
     def visitFuncDo(self, ctx):
-        func = self.visit_with_disabled_scope(ctx.specialExpr()[0])
+        func = self.visit(ctx.specialExpr(0))
+        namespace = self.visit(ctx.specialExpr(1)) if ctx.IN() else ''
+        args = self.visit(ctx.args()) if ctx.WITH() else []
+
         if ctx.FORM():
-            func = func.lower()
             func = func.replace('.', '_')
             return make_func_code('{}._program_main'.format(func))
-        args = self.visit(ctx.args()) or []
-        if func.endswith('.mpr'):
-            func = func[:-4]
-            args = [func] + args
-            self.imports.append('from vfp2py import vfpfunc')
-            return make_func_code('vfpfunc.mprfile', *args)
-        namespace = self.visit(ctx.specialExpr()[1]) if ctx.IN() else None
-        if (not namespace or os.path.splitext(namespace)[0] == self.filename) and func in self.function_list:
-            return make_func_code(func, *args)
+
+        if os.path.splitext(namespace)[0] == self.filename:
+            namespace = ''
+
         if not namespace:
-            namespace = 'vfpfunc'
-            func = create_string(add_args_to_code('function[{}]', [func]))
+            if func in self.function_list:
+                return make_func_code(func, *args)
+
+            if os.path.splitext(func)[1] in ('.prg', '.mpr', '.spr'):
+                namespace = os.path.splitext(func)[0]
+                if os.path.splitext(func)[1] in ('.mpr', '.spr'):
+                    namespace += os.path.splitext(func)[1].replace('.', '_')
+                func = '_program_main'
+            else:
+                self.imports.append('from vfp2py import vfpfunc')
+                namespace = 'vfpfunc'
+                func = create_string(add_args_to_code('function[{}]', [func]))
+
+        if namespace.endswith('.prg'):
+            namespace = namespace[:-4]
+
         if string_type(namespace) and re.match(tokenize.Name + '$', namespace) and not keyword.iskeyword(namespace):
             namespace = ntpath.normpath(ntpath.splitext(namespace)[0]).replace(ntpath.sep, '.')
-            self.imports.append('import ' + namespace)
+            if namespace != 'vfpfunc':
+                self.imports.append('import ' + namespace)
             mod = CodeStr(namespace)
         else:
             if string_type(namespace):
