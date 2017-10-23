@@ -16,6 +16,8 @@ import string
 
 import isort
 
+import antlr4
+
 from VisualFoxpro9Visitor import VisualFoxpro9Visitor
 
 import vfpfunc
@@ -144,7 +146,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
                 self.used_scope = False
                 funcname, parameters, funcbody = self.visit(child)
                 defs += [CodeStr('def {}({}):'.format(funcname, ', '.join([str(repr(p)) + '=False' for p in parameters]))), funcbody]
-            else:
+            elif not isinstance(child, antlr4.tree.Tree.TerminalNodeImpl):
                 defs += self.visit(child)
 
         imports = isort.SortImports(file_contents='\n'.join(set(self.imports))).output.splitlines()

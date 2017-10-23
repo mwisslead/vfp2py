@@ -27,7 +27,7 @@ nonpreprocessorLine
  ;
 
 prg
- : (classDef | funcDef | lineComment)*
+ : (classDef | funcDef | lineComment)* EOF
  ;
 
 lineComment
