@@ -35,6 +35,11 @@ class VisualFoxpro9Visitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by VisualFoxpro9Parser#preprocessorJunk.
+    def visitPreprocessorJunk(self, ctx):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by VisualFoxpro9Parser#nonpreprocessorLine.
     def visitNonpreprocessorLine(self, ctx):
         return self.visitChildren(ctx)
