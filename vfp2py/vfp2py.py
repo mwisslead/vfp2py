@@ -79,6 +79,8 @@ class PreprocessVisitor(VisualFoxpro9Visitor):
         tokens = ctx.parser._input.tokens[namestart+1:stop]
         while len(tokens) > 0 and tokens[0].type == ctx.parser.WS:
             tokens.pop(0)
+        while len(tokens) > 0 and tokens[-1].type in (ctx.parser.WS, ctx.parser.COMMENT):
+            tokens.pop()
         self.memory[name] = tokens
         return []
 

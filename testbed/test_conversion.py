@@ -72,6 +72,7 @@ def Test1():
    *comment with spaces
 #DEFINE cantbewrong
 #DEFINE SPACE CHR
+#DEFINE THREE 3 &&the number 3
 #IFDEF cantbewrong
 #IF FILE ( \'test.h\' )
    ***comment***
@@ -90,6 +91,7 @@ _SCREEN.LOGO.TOP = (_SCREEN.HEIGHT-_SCREEN.LOGO.HEIGHT)/2-3
 WAIT WINDOW space(3) + \'please wait\' + CHR(32) NOWAIT TIMEOUT 1.3
 #ENDIF
 DO TEST.PRG
+?STR(THREE)
 RETURN X
 '''.strip()
     output_str = '''
@@ -114,6 +116,7 @@ def _program_main():
     vfpvar[\'x\'] = \'\\x05\'
     vfpvar[\'x\'] = \'\\r\\n\'
     test._program_main()
+    print(vfpfunc.num_to_str(3))
     return vfpvar.popscope(vfpvar[\'x\'])
 '''.strip()
     test_output_str = vfp2py.vfp2py.prg2py(input_str).strip()
