@@ -200,7 +200,7 @@ def preprocess_code(data):
     lexer = VisualFoxpro9Lexer(input_stream)
     stream = antlr4.CommonTokenStream(lexer)
     parser = VisualFoxpro9Parser(stream)
-    tree = parser.preprocessorCode()
+    tree = run_parser(stream, parser, 'preprocessorCode')
     visitor = PreprocessVisitor()
     visitor.tokens = visitor.visit(tree)
     return visitor
@@ -390,12 +390,26 @@ def convert_project(infile, directory):
     with open(os.path.join(directory, 'setup.py'), 'wb') as fid:
         pass
 
+def run_parser(stream, parser, parser_start):
+    parser._interp.PredictionMode = antlr4.PredictionMode.SLL
+    parser.removeErrorListeners()
+    parser._errHandler = antlr4.error.ErrorStrategy.BailErrorStrategy()
+    try:
+        return getattr(parser, parser_start)()
+    except antlr4.error.Errors.ParseCancellationException as err:
+        stream.reset();
+        parser.reset();
+        parser.addErrorListener(antlr4.error.ErrorListener.ConsoleErrorListener.INSTANCE)
+        parser._errHandler = antlr4.error.ErrorStrategy.DefaultErrorStrategy()
+        parser._interp.PredictionMode = antlr4.PredictionMode.LL
+        return getattr(parser, parser_start)()
+
 def prg2py_after_preproc(data, parser_start, input_filename):
     input_stream = antlr4.InputStream(data)
     lexer = VisualFoxpro9Lexer(input_stream)
     stream = antlr4.CommonTokenStream(lexer)
     parser = VisualFoxpro9Parser(stream)
-    tree = getattr(parser, parser_start)()
+    tree = run_parser(stream, parser, parser_start)
     TreeCleanVisitor().visit(tree)
     output_tree = PythonConvertVisitor(input_filename).visit(tree)
     output = add_indents(output_tree, 0)
