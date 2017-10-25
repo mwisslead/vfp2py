@@ -690,11 +690,12 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             return add_args_to_code('({} or {})', args)
         if funcname == 'sign':
             return add_args_to_code('1 if {} > 0 else (-1 if {} < 0 else 0)', [args[0], args[0]])
-        if funcname in ('alltrim', 'ltrim', 'rtrim', 'lower', 'upper', 'padr', 'padl', 'padc', 'proper'):
+        if funcname in ('alltrim', 'ltrim', 'rtrim', 'trim', 'lower', 'upper', 'padr', 'padl', 'padc', 'proper'):
             funcname = {
                 'alltrim': 'strip',
-                'ltrim': 'lstrip',
-                'rtrim': 'rstrip',
+                'ltrim': 'rstrip',
+                'rtrim': 'lstrip',
+                'trim': 'lstrip',
                 'padr': 'ljust',
                 'padl': 'rjust',
                 'padc': 'center',

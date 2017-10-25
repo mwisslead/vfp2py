@@ -96,6 +96,11 @@ def string_tests():
     assert vfpfunc.isblank('')
     assert not vfpfunc.isblank('test')
     assert vfpfunc.isblank(None)
+    vfpvar['cstring'] = ' AAA   '
+    assert vfpvar['cstring'].strip() == 'AAA'
+    assert vfpvar['cstring'].rstrip() == ' AAA'
+    assert vfpvar['cstring'].lstrip() == 'AAA   '
+    assert vfpvar['cstring'].lstrip() == vfpvar['cstring'].lstrip()
     assert vfpfunc.strextract('This {{is}} a {{template}}', '{{', '}}') == 'is'
     assert vfpfunc.strextract('This {{is}} a {{template}}', '{{', '}}', 2) == 'template'
     assert vfpfunc.strextract('This {{is}} a {{template}}', '{{is}}') == ' a {{template}}'

@@ -78,6 +78,11 @@ procedure string_tests
    assert isblank('')
    assert not isblank('test')
    assert isblank({ / / })
+   cString = ' AAA   '
+   assert alltrim(cString) = 'AAA'
+   assert ltrim(cString) = ' AAA'
+   assert rtrim(cString) = 'AAA   '
+   assert trim(cString) = rtrim(cString)
    assert strextract('This {{is}} a {{template}}', '{{', '}}') == 'is'
    assert strextract('This {{is}} a {{template}}', '{{', '}}', 2) == 'template'
    assert strextract('This {{is}} a {{template}}', '{{is}}') ==  ' a {{template}}'
