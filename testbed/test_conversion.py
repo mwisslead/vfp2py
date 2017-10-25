@@ -91,7 +91,9 @@ _SCREEN.LOGO.TOP = (_SCREEN.HEIGHT-_SCREEN.LOGO.HEIGHT)/2-3
 WAIT WINDOW space(3) + \'please wait\' + CHR(32) NOWAIT TIMEOUT 1.3
 #ENDIF
 DO TEST.PRG
-?STR(THREE)
+#IF THREE > 1
+   ?STR(THREE)
+#ENDIF
 RETURN X
 '''.strip()
     output_str = '''

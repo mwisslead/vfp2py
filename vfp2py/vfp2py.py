@@ -102,9 +102,8 @@ class PreprocessVisitor(VisualFoxpro9Visitor):
 
     def visitPreprocessorIf(self, ctx):
         if ctx.IF():
-            visitor = PythonConvertVisitor('')
-            visitor.scope = {}
-            ifexpr = eval(repr(visitor.visit(ctx.expr())))
+            ifexpr = ''.join(x.text for x in self.replace_define_tokens(ctx.expr()))
+            ifexpr = prg2py_after_preproc(ifexpr, 'expr', '')
         else:
             name = ctx.identifier().getText().lower()
             ifexpr = name in self.memory
@@ -115,7 +114,7 @@ class PreprocessVisitor(VisualFoxpro9Visitor):
         else:
             return []
 
-    def visitNonpreprocessorLine(self, ctx):
+    def replace_define_tokens(self, ctx):
         start, stop = ctx.getSourceInterval()
         hidden_tokens = ctx.parser._input.getHiddenTokensToLeft(start)
         retval = []
@@ -137,6 +136,9 @@ class PreprocessVisitor(VisualFoxpro9Visitor):
                         tok.text = ''.join(lines)
                 retval.append(tok)
         return hidden_tokens + retval
+
+    def visitNonpreprocessorLine(self, ctx):
+        return self.replace_define_tokens(ctx)
 
 def add_indents(struct, num_indents):
     retval = []
@@ -412,6 +414,8 @@ def prg2py_after_preproc(data, parser_start, input_filename):
     tree = run_parser(stream, parser, parser_start)
     TreeCleanVisitor().visit(tree)
     output_tree = PythonConvertVisitor(input_filename).visit(tree)
+    if not isinstance(output_tree, list):
+        return output_tree
     output = add_indents(output_tree, 0)
     options = autopep8.parse_args(['--max-line-length', '100', '-'])
     return autopep8.fix_code(output, options)
