@@ -100,6 +100,12 @@ procedure path_tests
    delete file ADDBS(HOME()) + 'test_lib_file'
 endproc
 
+procedure misc_tests
+   assert version() == 'Not FoxPro 9'
+   assert version(4) == version()
+   assert version(5) == 900
+endproc
+
 procedure _add_db_record(seed)
    LOCAL fake, fake_name, fake_st, fake_quantity, fake_received
    fake = pythonfunctioncall('faker', 'Faker', createobject('pythontuple'))

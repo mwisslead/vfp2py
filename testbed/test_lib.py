@@ -121,6 +121,12 @@ def path_tests():
     vfpvar.popscope()
 
 
+def misc_tests():
+    assert vfpfunc.version() == 'Not FoxPro 9'
+    assert vfpfunc.version(4) == vfpfunc.version()
+    assert vfpfunc.version(5) == 900
+
+
 def _add_db_record(seed=False):
     fake = fake_name = fake_st = fake_quantity = fake_received = False  # LOCAL Declaration
     fake = faker.Faker()

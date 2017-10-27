@@ -1388,6 +1388,8 @@ def vartype(var):
     }.get(t, 'O')
 
 def version(ver_type=4):
+    if ver_type == 4:
+        return 'Not FoxPro 9'
     if ver_type == 5:
         return 900
 
