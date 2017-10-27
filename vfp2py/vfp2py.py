@@ -427,39 +427,28 @@ def prg2py(data, parser_start='prg', prepend_data='procedure _program_main\n', i
 
 def convert_file(infile, outfile):
     tic = Tic()
-    if infile.lower().endswith('.pjx'):
+    file_ext = os.path.splitext(infile.lower())[1]
+    if file_ext == '.pjx':
         convert_project(infile, outfile)
         return
-    elif infile.lower().endswith('.fpw'):
-        return
-    elif infile.lower().endswith('.h'):
-        return
-    elif infile.lower().endswith('.scx'):
+    elif file_ext in ('.prg', '.mpr', '.spr', '.scx'):
         if os.path.isdir(outfile):
-            name = (os.path.splitext(os.path.basename(infile).lower())[0] + '.py').lower()
+            basename = os.path.splitext(os.path.basename(infile).lower())[0]
+            suffix = '' if file_ext == '.prg' else file_ext.replace('.', '_')
+            name = basename + suffix + '.py'
             outfile = os.path.join(outfile, name)
-        data = convert_scx_to_vfp_code(infile)
-        tokens = preprocess_code(data).tokens
-    elif infile.lower().endswith('.vcx'):
-        print('.vcx files not currently supported')
+            if os.path.isfile(outfile):
+                return
+        if file_ext == '.scx':
+            data = convert_scx_to_vfp_code(infile)
+            tokens = preprocess_code(data).tokens
+        else:
+            tokens = preprocess_file(infile).tokens
+    elif file_ext in ('.vcx', '.frx', '.mnx', '.fll', '.app'):
+        print('{} files not currently supported'.format(file_ext))
         return
-    elif infile.lower().endswith('.frx'):
-        print('.frx files not currently supported')
+    elif file_ext in ('.fpw', '.h'):
         return
-    elif infile.lower().endswith('.mnx'):
-        print('.mnx files not currently supported')
-        return
-    elif infile.lower().endswith('.fll'):
-        print('.fll files not currently supported')
-        return
-    elif infile.lower().endswith('.app'):
-        print('.app can\'t be converted')
-        return
-    elif infile.lower().endswith('.prg'):
-        if os.path.isdir(outfile):
-            name = (os.path.splitext(os.path.basename(infile).lower())[0] + '.py').lower()
-            outfile = os.path.join(outfile, name)
-        tokens = preprocess_file(infile).tokens
     else:
         if os.path.isdir(outfile):
             name = os.path.basename(infile).lower()
