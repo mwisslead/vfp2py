@@ -11,8 +11,7 @@ def parse_args(argv=None):
 
 def main(argv=None):
     args = parse_args(argv)
-    global SEARCH_PATH
-    SEARCH_PATH = args.search
+    vfp2py.SEARCH_PATH += args.search
     vfp2py.convert_file(args.infile, args.outfile)
 
 if __name__ == '__main__':
