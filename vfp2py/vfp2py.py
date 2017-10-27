@@ -103,7 +103,7 @@ class PreprocessVisitor(VisualFoxpro9Visitor):
     def visitPreprocessorIf(self, ctx):
         if ctx.IF():
             ifexpr = ''.join(x.text for x in self.replace_define_tokens(ctx.expr()))
-            ifexpr = prg2py_after_preproc(ifexpr, 'expr', '')
+            ifexpr = eval(repr(prg2py_after_preproc(ifexpr, 'expr', '')))
         else:
             name = ctx.identifier().getText().lower()
             ifexpr = name in self.memory
