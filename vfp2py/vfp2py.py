@@ -343,6 +343,10 @@ def read_vfp_project(pjxfile):
         if record.mainprog:
             main_file = os.path.basename(name).lower()
 
+    table.close()
+    os.remove(table.filename)
+    os.remove(table.memoname)
+
     return files, main_file
 
 def convert_project(infile, directory):
