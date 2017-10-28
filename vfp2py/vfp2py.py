@@ -301,6 +301,10 @@ def convert_scx_to_vfp_code(scxfile):
                 retval += '   '*level + line + '\n'
         return retval
 
+    table.close()
+    os.remove(table.filename)
+    os.remove(table.memoname)
+
     code = add_indent(code, 0)
 
     code = re.sub(r'(\n\s*)+\n+', '\n\n', code)
