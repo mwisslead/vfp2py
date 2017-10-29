@@ -181,12 +181,24 @@ def database_tests():
         vfpfunc.db.goto(None, 0)
         loopcount = False  # LOCAL Declaration
         loopcount = 0
-        for _ in vfpfunc.db.scanner():
+        for _ in vfpfunc.db.scanner(scope=('rest',)):
             assert len(vfpvar['name'].strip()) > 0
             loopcount += 1
         assert loopcount == 4
+        vfpfunc.db.goto(None, 3)
         loopcount = 0
-        for _ in vfpfunc.db.scanner(lambda: vfpvar['st'].strip() == 'ID'):
+        for _ in vfpfunc.db.scanner(scope=('all',), condition=lambda: vfpvar['st'].strip() == 'ID'):
+            assert len(vfpvar['name'].strip()) > 0
+            loopcount += 1
+        assert loopcount == 2
+        loopcount = 0
+        for _ in vfpfunc.db.scanner(scope=('rest',), condition=lambda: vfpvar['st'].strip() == 'ID'):
+            assert len(vfpvar['name'].strip()) > 0
+            loopcount += 1
+        assert loopcount == 0
+        vfpfunc.db.goto(None, 0)
+        loopcount = 0
+        for _ in vfpfunc.db.scanner(scope=('rest',), condition=lambda: vfpvar['st'].strip() == 'ID'):
             assert len(vfpvar['name'].strip()) > 0
             loopcount += 1
         assert loopcount == 2

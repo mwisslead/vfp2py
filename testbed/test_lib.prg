@@ -161,6 +161,20 @@ procedure database_tests
          loopcount = loopcount + 1
       endscan
       assert loopcount == 4
+      go 3
+      loopcount = 0
+      scan all for alltrim(st) = 'ID'
+         assert len(alltrim(name)) > 0
+         loopcount = loopcount + 1
+      endscan
+      assert loopcount == 2
+      loopcount = 0
+      scan rest for alltrim(st) = 'ID'
+         assert len(alltrim(name)) > 0
+         loopcount = loopcount + 1
+      endscan
+      assert loopcount == 0
+      go top
       loopcount = 0
       scan for alltrim(st) = 'ID'
          assert len(alltrim(name)) > 0

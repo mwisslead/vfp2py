@@ -448,12 +448,11 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
 
     def visitScanStmt(self, ctx):
         lines = self.visit(ctx.lines())
+        kwargs = OrderedDict()
         if ctx.FOR():
-            condition = self.visit(ctx.expr())
-            condition = add_args_to_code('lambda: {}', [condition])
-            func = make_func_code('vfpfunc.db.scanner', condition)
-        else:
-            func = make_func_code('vfpfunc.db.scanner')
+            kwargs['condition'] = add_args_to_code('lambda: {}', [self.visit(ctx.expr())])
+        kwargs['scope'] = self.visit(ctx.scopeClause()) or ('rest',)
+        func = make_func_code('vfpfunc.db.scanner', **kwargs)
         return [add_args_to_code('for _ in {}:', [func]), lines]
 
     def visitTryStmt(self, ctx):

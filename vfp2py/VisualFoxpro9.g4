@@ -142,7 +142,7 @@ withStmt
  ;
 
 scanStmt
- : SCAN (FOR expr)? NL lines ENDSCAN lineEnd
+ : SCAN scopeClause? (FOR expr)? NL lines ENDSCAN lineEnd
  ;
 
 tryStmt
