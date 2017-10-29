@@ -338,7 +338,10 @@ def read_vfp_project(pjxfile):
 
     files = {}
     main_file = ''
-    for record in table[1:]:
+
+    for record in table:
+        if record.exclude is None or record.exclude:
+            continue
         name, failed = find_full_path(record.name.rstrip('\x00'), directory)
         if failed:
             files[name] = None
