@@ -235,6 +235,74 @@ def copy_obscured_dbf(filename, memo_ext, dbf_basename):
         shutil.copy(memofile, dbf_basename + '.fpt')
     return dbffile
 
+def convert_vcx_to_vfp_code(mnxfile):
+    with tempfile.NamedTemporaryFile() as tmpfile:
+        pass
+    tmpfile = tmpfile.name
+    dbffile = copy_obscured_dbf(mnxfile, 'vct', tmpfile)
+
+    code = ''
+    with dbf.Table(dbffile) as table:
+        includes = list(set(sum(([x for x in record.reserved8.splitlines()] for record in table), [])))
+        if len(includes) > 1:
+            raise Exception('temporarily badly implemented to just place single include at top or fail')
+        code += '\n'.join('#include "{}"'.format(x) for x in table[1].reserved8.splitlines()) + '\n'
+
+        for record in table:
+            if not (record.objname and record['class']):
+                continue
+            code += 'DEFINE CLASS {} AS {}\n'.format(record.objname, record['class'])
+            props = []
+            for line in record.properties.splitlines():
+                if not line:
+                    props.append('')
+                    continue
+                prop, value = line.split(' = ', 1)
+                if not value:
+                    value = '""'
+                elif re.match(r'^[0-9]*,[0-9]*,[0-9]*$', value):
+                    value = 'RGB({})'.format(value)
+                elif re.match(r'^\(.*\)$', value):
+                    pass
+                else:
+                    if value.startswith('-'):
+                        input_stream = antlr4.InputStream(value[1:])
+                    else:
+                        input_stream = antlr4.InputStream(value)
+                    lexer = VisualFoxpro9Lexer(input_stream)
+                    stream = antlr4.CommonTokenStream(lexer)
+                    parser = VisualFoxpro9Parser(stream)
+                    parser._interp.PredictionMode = antlr4.PredictionMode.SLL
+                    parser.removeErrorListeners()
+                    parser._errHandler = antlr4.error.ErrorStrategy.BailErrorStrategy()
+                    try:
+                        tree = parser.constant()
+                        TreeCleanVisitor().visit(tree)
+                        output_tree = PythonConvertVisitor('').visit(tree)
+                    except:
+                        if '"' not in value:
+                            format_string = '"{}"'
+                        else:
+                            if "'" not in value:
+                                format_string = "'{}'"
+                            else:
+                                if '[' not in value and ']' not in value:
+                                    format_string = '[{}]'
+                                else:
+                                    format_string = '{}'
+                        value = format_string.format(value)
+
+                props.append('{} = {}'.format(prop.strip(), value))
+
+            code += '\n'.join(props) + '\n\n'
+            code += '\n'.join(record.methods.splitlines()) + '\n'
+            code += 'ENDDEFINE\n\n'
+
+    os.remove(table.filename)
+    os.remove(table.memoname)
+
+    return code
+
 def convert_scx_to_vfp_code(scxfile):
     with tempfile.NamedTemporaryFile() as tmpfile:
         pass
@@ -442,7 +510,7 @@ def convert_file(infile, outfile):
     if file_ext == '.pjx':
         convert_project(infile, outfile)
         return
-    elif file_ext in ('.prg', '.mpr', '.spr', '.scx'):
+    elif file_ext in ('.prg', '.mpr', '.spr', '.scx', '.vcx'):
         if os.path.isdir(outfile):
             basename = os.path.splitext(os.path.basename(infile).lower())[0]
             suffix = '' if file_ext == '.prg' else file_ext.replace('.', '_')
@@ -453,9 +521,12 @@ def convert_file(infile, outfile):
         if file_ext == '.scx':
             data = convert_scx_to_vfp_code(infile)
             tokens = preprocess_code(data).tokens
+        elif file_ext == '.vcx':
+            data = convert_vcx_to_vfp_code(infile)
+            tokens = preprocess_code(data).tokens
         else:
             tokens = preprocess_file(infile).tokens
-    elif file_ext in ('.vcx', '.frx', '.mnx', '.fll', '.app'):
+    elif file_ext in ('.frx', '.mnx', '.fll', '.app'):
         print('{} files not currently supported'.format(file_ext))
         return
     elif file_ext in ('.fpw', '.h'):
