@@ -170,7 +170,7 @@ controlStmt
  ;
 
 cmdStmt
- : (cmd | setup) lineEnd
+ : cmd lineEnd
  ;
 
 cmd
