@@ -153,8 +153,11 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         return  [CodeStr(imp) for imp in imports] + defs
 
     def visitLine(self, ctx):
-        retval = self.visitChildren(ctx)
-        if retval is None:
+        try:
+            retval = self.visitChildren(ctx)
+            if retval is None:
+                raise Exception('just to jump to except block')
+        except:
             lines = self.getCtxText(ctx)
             print(lines)
             retval = [CodeStr('#FIX ME: {}'.format(line)) for line in lines.split('\n') if line]
