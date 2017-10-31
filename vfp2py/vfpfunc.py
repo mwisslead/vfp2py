@@ -734,6 +734,15 @@ class Page(QtGui.QWidget, Custom, HasFont):
 class Image(Custom):
     pass
 
+class Timer(Custom):
+    pass
+
+class Container(Custom):
+    pass
+
+class Editbox(Custom):
+    pass
+
 class Array(object):
     def __init__(self, dim1, dim2=0, offset=0):
         self.columns = bool(dim2)
