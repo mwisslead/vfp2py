@@ -6,7 +6,7 @@ preprocessorCode
  ;
 
 preprocessorLines
- : (preprocessorLine | nonpreprocessorLine)*?
+ : preprocessorLine*
  ;
 
 preprocessorLine
@@ -18,12 +18,8 @@ preprocessorLine
  | '#' DEFINE identifier (~NL)* lineEnd #preprocessorDefine
  | '#' UNDEFINE identifier lineEnd #preprocessorUndefine
  | '#' INCLUDE specialExpr lineEnd #preprocessorInclude
- | '#' (~(IF | ELSE | ENDIF | DEFINE | INCLUDE | NL) (~NL)*)? lineEnd #preprocessorJunk
- ;
-
-nonpreprocessorLine
- : LINECOMMENT 
- | ~('#' | NL | EOF) (~NL)* lineEnd
+ | '#' (~(IF | ELSE | ENDIF | DEFINE | INCLUDE | NL) (~NL)*) lineEnd #preprocessorJunk
+ | (LINECOMMENT | ~('#' | NL | EOF) (~NL)* lineEnd) #nonpreprocessorLine
  ;
 
 prg
