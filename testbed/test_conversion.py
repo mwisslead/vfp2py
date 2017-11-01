@@ -96,12 +96,15 @@ WAIT WINDOW space(3) + \'please wait\' + CHR(32) NOWAIT TIMEOUT 1.3
 DO TEST.PRG
 #IF THREE > 1
    ?STR(THREE)
+   ??STR(THREE)
+   DEBUGOUT STR(THREE)
 #ENDIF
 RETURN X
 '''.strip()
     output_str = '''
 from __future__ import division, print_function
 
+import sys
 import test
 
 from vfp2py import vfpfunc
@@ -122,6 +125,8 @@ def _program_main():
     vfpvar[\'x\'] = \'\\r\\n\'
     test._program_main()
     print(vfpfunc.num_to_str(3))
+    print(vfpfunc.num_to_str(3), end=\'\')
+    print(vfpfunc.num_to_str(3), file=sys.stderr)
     return vfpvar.popscope(vfpvar[\'x\'])
 '''.strip()
     test_output_str = vfp2py.vfp2py.prg2py(input_str).strip()

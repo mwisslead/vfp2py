@@ -375,6 +375,9 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         kwargs = {}
         if len([child for child in ctx.children if child.getText() == '?']) > 1:
             kwargs['end'] = ''
+        if ctx.DEBUGOUT():
+            self.imports.append('import sys')
+            kwargs['file'] = CodeStr('sys.stderr')
         return [make_func_code('print', *(self.visit(ctx.args()) or []), **kwargs)]
 
     def visitIfStart(self, ctx):

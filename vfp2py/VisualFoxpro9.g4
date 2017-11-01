@@ -257,7 +257,7 @@ dllArg
  ;
 
 printStmt
- : '?' '?'? args?
+ : ('?' '?'? | DEBUGOUT) args?
  ;
 
 waitCmd
@@ -771,6 +771,7 @@ COLUMN: C O L U M N;
 DROP: D R O P;
 DEBUG: D E B U G;
 GETS: G E T S;
+DEBUGOUT: DEBUG O U T;
 MEMORY: M E M O R Y;
 MENUS: M E N U S;
 RESOURCES: R E S O U R C E S;
