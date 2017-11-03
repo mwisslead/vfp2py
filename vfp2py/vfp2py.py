@@ -25,7 +25,7 @@ SEARCH_PATH = ['.']
 
 def which(filename):
     '''find file on path'''
-    for path in SEARCH_PATH:
+    for path in filter(None, SEARCH_PATH):
         testpath = os.path.join(path, filename)
         if os.path.isfile(testpath):
             return testpath
