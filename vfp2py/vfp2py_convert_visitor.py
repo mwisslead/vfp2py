@@ -600,7 +600,10 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         if funcname == 'val' and len(args) == 1:
             return float(args[0])
         if funcname == 'space' and len(args) == 1:
-            return int(args[0]) * ' '
+            args[0] = int(args[0])
+            if isinstance(args[0], int) and args[0] > 8:
+                args[0] = CodeStr(args[0])
+            return args[0] * ' '
         if funcname == 'asc':
             return make_func_code('ord', CodeStr(str(repr(args[0])) + '[0]'))
         if funcname == 'len':
