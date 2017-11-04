@@ -116,6 +116,7 @@ DO TEST.PRG
    ?STR(THREE)
    ??STR(THREE)
    DEBUGOUT STR(THREE)
+   @ 10, 10 SAY THREE
 #ENDIF
 RETURN X
 '''.strip()
@@ -145,6 +146,7 @@ def _program_main():
     print(vfpfunc.num_to_str(3))
     print(vfpfunc.num_to_str(3), end=\'\')
     print(vfpfunc.num_to_str(3), file=sys.stderr)
+    print(3)
     return vfpvar.popscope(vfpvar[\'x\'])
 '''.strip()
     test_output_str = vfp2py.vfp2py.prg2py(input_str).strip()

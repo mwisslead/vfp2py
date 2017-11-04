@@ -102,6 +102,7 @@ DO TEST.PRG
    ?STR(THREE)
    ??STR(THREE)
    DEBUGOUT STR(THREE)
+   @ 10, 10 SAY THREE
 #ENDIF
 RETURN X
 @end=vfp@
@@ -132,6 +133,7 @@ def _program_main():
     print(vfpfunc.num_to_str(3))
     print(vfpfunc.num_to_str(3), end='')
     print(vfpfunc.num_to_str(3), file=sys.stderr)
+    print(3)
     return vfpvar.popscope(vfpvar['x'])
 @end=python@
 

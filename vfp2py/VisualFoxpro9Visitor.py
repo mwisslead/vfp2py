@@ -235,6 +235,11 @@ class VisualFoxpro9Visitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by VisualFoxpro9Parser#atSay.
+    def visitAtSay(self, ctx):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by VisualFoxpro9Parser#pushKey.
     def visitPushKey(self, ctx):
         return self.visitChildren(ctx)

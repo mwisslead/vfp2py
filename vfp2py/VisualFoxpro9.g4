@@ -183,6 +183,7 @@ otherCmds
  : ON KEY (LABEL identifier ('+' identifier)?)? cmd #onKey
  | EXIT #breakLoop
  | LOOP #continueLoop
+ | '@' args (SAY sayExpr=expr | STYLE styleExpr=expr)* #atSay
  | PUSH KEY CLEAR? #pushKey
  | POP KEY ALL? #popKey
  | KEYBOARD expr PLAIN? CLEAR? #keyboard
@@ -481,6 +482,7 @@ identifier
  | COLUMN
  | DROP
  | ID
+ | SAY
  ;
 
 NUMBER_LITERAL : ([0-9]* '.')? [0-9]+ ([Ee] [+\-]? [0-9]+)?
@@ -768,6 +770,7 @@ MEMORY: M E M O R Y;
 MENUS: M E N U S;
 RESOURCES: R E S O U R C E S;
 WINDOWS: W I N D O W S;
+SAY: S A Y;
 
 ID : [A-Za-z_] [a-zA-Z0-9_]*;
 

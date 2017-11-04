@@ -380,6 +380,12 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             kwargs['file'] = CodeStr('sys.stderr')
         return [make_func_code('print', *(self.visit(ctx.args()) or []), **kwargs)]
 
+    def visitAtSay(self, ctx):
+        if ctx.SAY() and len(ctx.SAY()) > 1:
+            raise Exception('Invalid command')
+        if ctx.SAY():
+            return make_func_code('print', self.visit(ctx.sayExpr))
+
     def visitIfStart(self, ctx):
         return self.visit(ctx.expr())
 
