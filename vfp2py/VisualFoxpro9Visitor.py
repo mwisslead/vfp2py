@@ -200,16 +200,6 @@ class VisualFoxpro9Visitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by VisualFoxpro9Parser#breakLoop.
-    def visitBreakLoop(self, ctx):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by VisualFoxpro9Parser#continueLoop.
-    def visitContinueLoop(self, ctx):
-        return self.visitChildren(ctx)
-
-
     # Visit a parse tree produced by VisualFoxpro9Parser#controlStmt.
     def visitControlStmt(self, ctx):
         return self.visitChildren(ctx)
@@ -232,6 +222,16 @@ class VisualFoxpro9Visitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by VisualFoxpro9Parser#onKey.
     def visitOnKey(self, ctx):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by VisualFoxpro9Parser#breakLoop.
+    def visitBreakLoop(self, ctx):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by VisualFoxpro9Parser#continueLoop.
+    def visitContinueLoop(self, ctx):
         return self.visitChildren(ctx)
 
 

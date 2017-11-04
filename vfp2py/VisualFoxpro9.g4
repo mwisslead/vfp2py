@@ -145,14 +145,6 @@ tryStmt
  : TRY NL tryLines=lines (CATCH (TO identifier)? NL catchLines=lines)? (FINALLY NL finallyLines=lines)? ENDTRY lineEnd
  ;
 
-breakLoop
- : EXIT NL
- ;
-
-continueLoop
- : LOOP NL
- ;
-
 controlStmt
  : whileStmt
  | ifStmt
@@ -161,8 +153,6 @@ controlStmt
  | withStmt
  | scanStmt
  | tryStmt
- | breakLoop
- | continueLoop
  ;
 
 cmdStmt
@@ -191,6 +181,8 @@ release
 
 otherCmds
  : ON KEY (LABEL identifier ('+' identifier)?)? cmd #onKey
+ | EXIT #breakLoop
+ | LOOP #continueLoop
  | PUSH KEY CLEAR? #pushKey
  | POP KEY ALL? #popKey
  | KEYBOARD expr PLAIN? CLEAR? #keyboard

@@ -32,6 +32,15 @@ DATETIME_VAL = {^2017-5-6 5P}
 OBJ_VAL = CREATEOBJECT(\'TEST\')
 OBJ_VAL = CREATEOBJECT(\'FORM\')
 RELEASE STRING_VAL, INT_VAL, BOOL_VAL, NULL_VAL
+LOCAL ARRAY ITEMS[3, 5]
+LOCAL ITEM
+FOR EACH ITEM IN ITEMS
+    IF NOT ITEM
+       LOOP
+    ENDIF
+    EXIT
+ENDFOR
+RELEASE ITEMS, item
 '''.strip()
     output_str = '''
 string_val = float_val = money_val = int_val = bool_val = null_val = nulldate_val = date_val = datetime_val = obj_val = False  # LOCAL Declaration
@@ -59,6 +68,13 @@ print(2)
 obj_val = vfpfunc.create_object(\'Test\')
 obj_val = vfpfunc.Form()
 del string_val, int_val, bool_val, null_val
+items = vfpfunc.Array(3, 5)
+item = False  # LOCAL Declaration
+for item in items:
+    if not item:
+        continue
+    break
+del items, item
 '''.strip()
     test_output_str = vfp2py.vfp2py.prg2py(input_str, parser_start='lines', prepend_data='').strip()
     try:
