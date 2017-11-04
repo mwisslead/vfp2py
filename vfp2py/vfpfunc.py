@@ -837,6 +837,11 @@ class _Variable(object):
         scope = self._get_scope(key)
         if scope is not None:
             return scope[key]
+        try:
+            table_info = self.db._get_table_info(key)
+            return table_info.table.current_record
+        except:
+            pass
         table_info = self.db._get_table_info()
         if table_info is not None and key in table_info.table.field_names:
             return table_info.table.current_record[key]

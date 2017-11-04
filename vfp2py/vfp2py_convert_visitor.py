@@ -1413,6 +1413,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         return make_func_code('vfpfunc.db.goto', name, record)
 
     def visitUse(self, ctx):
+        kwargs = OrderedDict()
         shared = ctx.SHARED()
         exclusive = ctx.EXCLUSIVE()
         if shared and exclusive:
@@ -1423,11 +1424,13 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             opentype = 'exclusive'
         else:
             opentype = None
+        if ctx.aliasExpr:
+            kwargs['alias'] = self.visit(ctx.aliasExpr)
         name = self.visit(ctx.name)
         workarea = self.visit(ctx.workArea)
         if isinstance(workarea, float):
             workarea = int(workarea)
-        return make_func_code('vfpfunc.db.use', name, workarea, opentype)
+        return make_func_code('vfpfunc.db.use', name, workarea, opentype, **kwargs)
 
     def visitLocate(self, ctx):
         self.imports.append('from vfp2py import vfpfunc')

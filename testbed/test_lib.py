@@ -250,10 +250,10 @@ def database_tests():
         vfpfunc.db.zap(None)
         assert vfpfunc.db.reccount() == 0
         vfpfunc.db.copy_structure('report2')
-        vfpfunc.db.use('report2', 0, 'shared')
+        vfpfunc.db.use('report2', 0, 'shared', alias='somethingelse')
         assert vfpfunc.db.alias() == 'report'
         vfpfunc.db.select('report2')
-        assert vfpfunc.db.alias() == 'report2'
+        assert vfpfunc.db.alias() == 'somethingelse'
         assert vfpfunc.db.fcount() == 5
         vfpfunc.db.alter_table('report2', 'drop', 'st')
         assert vfpfunc.db.fcount() == 4

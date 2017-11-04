@@ -222,10 +222,10 @@ procedure database_tests
       ZAP
       ASSERT RECCOUNT() == 0
       copy structure to report2
-      USE report2 in 0 shared
+      USE report2 in 0 shared alias somethingelse
       assert alias() == 'report'
       SELECT report2
-      assert alias() == 'report2'
+      assert alias() == 'somethingelse'
       ASSERT FCOUNT() == 5
       ALTER TABLE REPORT2 DROP COLUMN ST
       ASSERT FCOUNT() == 4

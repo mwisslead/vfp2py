@@ -83,7 +83,7 @@ class DatabaseContext(object):
     def select(self, tablename):
         self.current_table = self.get_workarea(tablename)
 
-    def use(self, tablename, workarea, opentype):
+    def use(self, tablename, workarea, opentype, alias=None):
         if tablename is None:
             if workarea is 0:
                 return
@@ -93,7 +93,7 @@ class DatabaseContext(object):
             raise Exception('File is in use.')
         if workarea == 0:
             workarea = self.open_tables.index(None)
-        self.open_tables[workarea] = DatabaseWorkspace(tablename)
+        self.open_tables[workarea] = DatabaseWorkspace(tablename, alias)
 
     def alias(self, tablename=None):
         table_info = self._get_table_info(tablename)
