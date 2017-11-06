@@ -34,6 +34,15 @@ FOR EACH ITEM IN ITEMS
     EXIT
 ENDFOR
 RELEASE ITEMS, item
+DO CASE
+   *line comment1
+   * line comment2
+   CASE X == 1
+   CASE X == 2
+   CASE X == 2
+   OTHERWISE
+      ?Test
+ENDCASE
 @end=vfp@
 
 @begin=python@
@@ -69,6 +78,16 @@ for item in items:
         continue
     break
 del items, item
+# line comment1
+# line comment2
+if vfpvar['x'] == 1:
+    pass
+elif vfpvar['x'] == 2:
+    pass
+elif vfpvar['x'] == 2:
+    pass
+else:
+    print(vfpvar['test'])
 @end=python@
 
 Preprocessor Directives

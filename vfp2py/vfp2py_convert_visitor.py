@@ -402,29 +402,24 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         return retval
 
     def visitCaseStmt(self, ctx):
-        n = 0
-        retval = []
-        for elem in ctx.caseElement():
-            if elem.lineComment():
-                retval += self.visit(elem.lineComment())
-            else:
-                expr, lines = self.visit(elem.singleCase())
-                if n == 0:
-                    retval += [CodeStr('if {}:'.format(expr)), lines]
-                else:
-                    retval += [CodeStr('elif {}:'.format(expr)), lines]
-                n += 1
-        if n == 0:
+        retval = [self.visit(comment) for comment in ctx.lineComment()]
+
+        items = [self.visit(elem) for elem in ctx.singleCase()]
+
+        if not items:
             retval += [CodeStr('if True:'), [CodeStr('pass')]]
+        else:
+            expr, lines = items[0]
+            retval += [CodeStr('if {}:'.format(expr)), lines]
+            for expr, lines in items[1:]:
+                retval += [CodeStr('elif {}:'.format(expr)), lines]
+
         if ctx.otherwise():
             retval += [CodeStr('else:'), self.visit(ctx.otherwise())]
         return retval
 
     def visitSingleCase(self, ctx):
-        return self.visit(ctx.caseExpr()), self.visit(ctx.lines())
-
-    def visitCaseExpr(self, ctx):
-        return self.visit(ctx.expr())
+        return self.visit(ctx.expr()), self.visit(ctx.lines())
 
     def visitOtherwise(self, ctx):
         return self.visit(ctx.lines())

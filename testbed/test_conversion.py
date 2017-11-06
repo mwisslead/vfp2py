@@ -41,6 +41,15 @@ FOR EACH ITEM IN ITEMS
     EXIT
 ENDFOR
 RELEASE ITEMS, item
+DO CASE
+   *line comment1
+   * line comment2
+   CASE X == 1
+   CASE X == 2
+   CASE X == 2
+   OTHERWISE
+      ?Test
+ENDCASE
 '''.strip()
     output_str = '''
 string_val = float_val = money_val = int_val = bool_val = null_val = nulldate_val = date_val = datetime_val = obj_val = False  # LOCAL Declaration
@@ -75,6 +84,16 @@ for item in items:
         continue
     break
 del items, item
+# line comment1
+# line comment2
+if vfpvar[\'x\'] == 1:
+    pass
+elif vfpvar[\'x\'] == 2:
+    pass
+elif vfpvar[\'x\'] == 2:
+    pass
+else:
+    print(vfpvar[\'test\'])
 '''.strip()
     test_output_str = vfp2py.vfp2py.prg2py(input_str, parser_start='lines', prepend_data='').strip()
     try:

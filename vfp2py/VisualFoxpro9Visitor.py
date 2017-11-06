@@ -150,11 +150,6 @@ class VisualFoxpro9Visitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by VisualFoxpro9Parser#caseExpr.
-    def visitCaseExpr(self, ctx):
-        return self.visitChildren(ctx)
-
-
     # Visit a parse tree produced by VisualFoxpro9Parser#singleCase.
     def visitSingleCase(self, ctx):
         return self.visitChildren(ctx)
@@ -162,11 +157,6 @@ class VisualFoxpro9Visitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by VisualFoxpro9Parser#otherwise.
     def visitOtherwise(self, ctx):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by VisualFoxpro9Parser#caseElement.
-    def visitCaseElement(self, ctx):
         return self.visitChildren(ctx)
 
 

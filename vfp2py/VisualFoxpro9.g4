@@ -104,25 +104,16 @@ forStmt
  : forStart lines forEnd lineEnd
  ;
 
-caseExpr
- : CASE expr NL
- ;
-
 singleCase
-  : caseExpr lines
+ : CASE expr NL lines
  ;
 
 otherwise
  : OTHERWISE NL lines
  ;
 
-caseElement
- : lineComment
- | singleCase
- ;
-
 caseStmt
- : DO CASE NL caseElement* otherwise? lineComment* ENDCASE lineEnd
+ : DO CASE NL lineComment* singleCase* otherwise? ENDCASE lineEnd
  ;
 
 whileStart
