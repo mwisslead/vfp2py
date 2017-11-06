@@ -220,7 +220,7 @@ otherCmds
  | APPEND FROM (ARRAY expr | specialExpr FOR expr | specialExpr ) (TYPE typeExpr=specialExpr)? #appendFrom
  | APPEND BLANK? (IN specialExpr NOMENU | IN specialExpr)? #append
  | INSERT INTO specialExpr (FROM (ARRAY expr | MEMVAR | NAME expr) | ('(' specialArgs ')')? VALUES '(' args ')') #insert
- | SKIPKW expr (IN specialExpr)? #skipRecord
+ | SKIPKW expr? (IN specialExpr)? #skipRecord
  | PACK (DATABASE | (MEMO | DBF)? (IN workArea=specialExpr | tableName=specialExpr IN workArea=specialExpr | tableName=specialExpr)?) #pack
  | REINDEX COMPACT? #reindex
  | SEEK seekExpr=expr ((ORDER orderExpr=expr | TAG tagName=specialExpr (OF cdxFileExpr=specialExpr)? | idxFileExpr=specialExpr) (ASCENDING | DESCENDING)?)? (IN tablenameExpr=specialExpr)? #seekRecord

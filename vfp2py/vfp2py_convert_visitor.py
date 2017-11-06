@@ -1496,7 +1496,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
 
     def visitSkipRecord(self, ctx):
         table = self.visit(ctx.specialExpr())
-        skipnum = self.visit(ctx.expr())
+        skipnum = self.visit(ctx.expr()) or 1
         return make_func_code('vfpfunc.db.skip', table, skipnum)
 
     def visitCopyTo(self, ctx):

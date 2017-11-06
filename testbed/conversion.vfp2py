@@ -502,6 +502,20 @@ vfpvar['t'] = main_array.insert(None, 3)
 vfpvar['t'] = main_array.insert(None, 3, 2)
 @end=python@
 
+@begin=vfp@&&lines
+SKIP
+SKIP 10
+SKIP IN TEST
+SKIP someval IN TEST
+@end=vfp@
+
+@begin=python@
+vfpfunc.db.skip(None, 1)
+vfpfunc.db.skip(None, 10)
+vfpfunc.db.skip('test', 1)
+vfpfunc.db.skip('test', vfpvar['someval'])
+@end=python@
+
 ON ERROR
 ON ERROR DO test
 SET TYPEAHEAD TO 0

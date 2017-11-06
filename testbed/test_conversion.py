@@ -634,3 +634,25 @@ vfpvar[\'t\'] = main_array.insert(None, 3, 2)
         print(''.join(diff))
         raise
 
+
+def Test16():
+    input_str = '''
+SKIP
+SKIP 10
+SKIP IN TEST
+SKIP someval IN TEST
+'''.strip()
+    output_str = '''
+vfpfunc.db.skip(None, 1)
+vfpfunc.db.skip(None, 10)
+vfpfunc.db.skip(\'test\', 1)
+vfpfunc.db.skip(\'test\', vfpvar[\'someval\'])
+'''.strip()
+    test_output_str = vfp2py.vfp2py.prg2py(input_str, parser_start='lines', prepend_data='').strip()
+    try:
+        assert test_output_str == output_str
+    except AssertionError:
+        diff = difflib.unified_diff((test_output_str + '\n').splitlines(1), (output_str + '\n').splitlines(1))
+        print(''.join(diff))
+        raise
+
