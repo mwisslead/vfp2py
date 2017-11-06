@@ -204,6 +204,9 @@ class MainWindow(QtGui.QMainWindow):
     def icon(self, iconfile):
         self.setWindowIcon(QtGui.QIcon(iconfile))
 
+class Formset(Custom):
+    pass
+
 class Form(QtGui.QMdiSubWindow, Custom, HasFont):
     def __init__(self, *args, **kwargs):
         QtGui.QMdiSubWindow.__init__(self)
@@ -741,6 +744,9 @@ class Container(Custom):
     pass
 
 class Editbox(Custom):
+    pass
+
+class Dataenvironment(Custom):
     pass
 
 class Array(object):
