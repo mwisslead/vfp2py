@@ -92,6 +92,7 @@ class PreprocessVisitor(VisualFoxpro9Visitor):
     def visitPreprocessorInclude(self, ctx):
         visitor = PythonConvertVisitor('')
         visitor.scope = {}
+        TreeCleanVisitor().visit(ctx.specialExpr())
         filename = visitor.visit(ctx.specialExpr())
         if isinstance(filename, CodeStr):
             filename = eval(filename)
@@ -152,20 +153,29 @@ def add_indents(struct, num_indents):
     return '\n'.join(retval)
 
 class TreeCleanVisitor(VisualFoxpro9Visitor):
-    def visitPathname(self, ctx):
+    def visitSpecialExpr(self, ctx):
+        if ctx.pathname():
+            return
+
+        expr = ctx.expr()
         start, stop = ctx.getSourceInterval()
-        tokens = ctx.parser._input.tokens[start:stop+1]
-        data = ''.join(t.text for t in tokens)
-        input_stream = antlr4.InputStream(data)
-        lexer = VisualFoxpro9Lexer(input_stream)
-        stream = antlr4.CommonTokenStream(lexer)
-        parser = VisualFoxpro9Parser(stream)
-        exprctx = parser.expr()
-        if len(ctx.children) != stop - start + 1 or (isinstance(exprctx, ctx.parser.AtomExprContext) and \
-            isinstance(exprctx.trailer(), ctx.parser.FuncCallTrailerContext)):
-            ctx.parentCtx.removeLastChild()
-            ctx.parentCtx.addChild(exprctx)
-            ctx = exprctx
+        stream = ctx.parser._input
+        tokens = stream.tokens[start:stop+1]
+
+        if not (
+            any(tok.type == ctx.parser.WS for tok in tokens) or \
+            (isinstance(expr, ctx.parser.AtomExprContext) and expr.trailer() and isinstance(expr.trailer(), ctx.parser.FuncCallTrailerContext)) or \
+            isinstance(expr, ctx.parser.ConstantExprContext) or \
+            isinstance(expr, ctx.parser.SubExprContext)
+        ):
+            stream.seek(start)
+            ctx.removeLastChild()
+            pathname = VisualFoxpro9Parser(stream).pathname()
+            ctx.addChild(pathname)
+            pathname.stop = stream.tokens[stop]
+            while pathname.children and pathname.children[-1].getSourceInterval()[0] > stop:
+                pathname.removeLastChild()
+
         self.visitChildren(ctx)
 
     def visitSubExpr(self, ctx):

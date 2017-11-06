@@ -1054,7 +1054,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         return make_func_code(funcname, self.visit(ctx.specialExpr()))
 
     def visitSpecialExpr(self, ctx):
-        expr = self.visit(ctx.pathname() or ctx.constant() or ctx.expr())
+        expr = self.visit(ctx.pathname() or ctx.expr())
         return expr.lower() if string_type(expr) else expr
 
     def visitPathname(self, ctx):
