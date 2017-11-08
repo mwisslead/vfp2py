@@ -690,6 +690,11 @@ class VisualFoxpro9Visitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by VisualFoxpro9Parser#blob.
+    def visitBlob(self, ctx):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by VisualFoxpro9Parser#assign.
     def visitAssign(self, ctx):
         return self.visitChildren(ctx)

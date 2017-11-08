@@ -412,6 +412,7 @@ constant
  | ('.' NULL '.' | NULL) #null
  | '{' ( '/' '/'  | '^' NUMBER_LITERAL '-' NUMBER_LITERAL '-' NUMBER_LITERAL (','? NUMBER_LITERAL (':' NUMBER_LITERAL (':' NUMBER_LITERAL)?)? identifier)? ) '}' #date
  | STRING_LITERAL #string
+ | BLOB_LITERAL #blob
  ;
 
 assign
@@ -478,6 +479,8 @@ NUMBER_LITERAL : ([0-9]* '.')? [0-9]+ ([Ee] [+\-]? [0-9]+)?
                | [0-9]+ '.'
                | '0' [Xx] [0-9A-Fa-f]*
                ;
+
+BLOB_LITERAL : '0' H [0-9A-Fa-f]* ;
 
 SEMICOLON: ';';
 AMPERSAND: '&';

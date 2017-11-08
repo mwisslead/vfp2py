@@ -1075,6 +1075,13 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
     def visitCurrency(self, ctx):
         return round(float(ctx.NUMBER_LITERAL().getText()), 4)
 
+    def visitBlob(self, ctx):
+        blob = ctx.BLOB_LITERAL().getText()[2:]
+        if len(blob) % 2:
+            blob = '0' + blob
+        blob_iter = iter(blob)
+        return bytearray([int(x + y, 16) for x, y in zip(blob_iter, blob_iter)])
+
     def visitBoolean(self, ctx):
         if ctx.T() or ctx.Y() or ctx.F() or ctx.N():
             return not (ctx.F() or ctx.N())
