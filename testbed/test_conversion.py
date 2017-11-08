@@ -266,6 +266,8 @@ DO A + B
 DO ALLTRIM(A)
 DO TEST in A
 DO TEST in (A)
+DO TEST IN A+\'.PRG\'
+DO TEST IN A+(B)
 DO TEST.PRG
 DO TEST IN TEST.PRG
 CD ..
@@ -278,6 +280,8 @@ vfpfunc.function[a + vfpvar[\'b\']]()
 vfpfunc.function[a.strip()]()
 a.test()
 vfpfunc.module(a).test()
+vfpfunc.module(a + \'.PRG\').test()
+vfpfunc.module(a + (vfpvar[\'b\'])).test()
 test._program_main()
 test.test()
 os.chdir(\'..\')

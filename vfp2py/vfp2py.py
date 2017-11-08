@@ -152,22 +152,22 @@ def add_indents(struct, num_indents):
             retval.append('')
     return '\n'.join(retval)
 
+def contains_exceptions(ctx):
+    return (isinstance(ctx, ctx.parser.AtomExprContext) and ctx.trailer() and isinstance(ctx.trailer(), ctx.parser.FuncCallTrailerContext)) or \
+           isinstance(ctx, ctx.parser.ConstantExprContext) or \
+           isinstance(ctx, ctx.parser.SubExprContext) or \
+           any(contains_exceptions(c) for c in ctx.children if isinstance(c, ctx.parser.ExprContext))
+
 class TreeCleanVisitor(VisualFoxpro9Visitor):
     def visitSpecialExpr(self, ctx):
         if ctx.pathname():
             return
 
-        expr = ctx.expr()
         start, stop = ctx.getSourceInterval()
         stream = ctx.parser._input
         tokens = stream.tokens[start:stop+1]
 
-        if not (
-            any(tok.type == ctx.parser.WS for tok in tokens) or \
-            (isinstance(expr, ctx.parser.AtomExprContext) and expr.trailer() and isinstance(expr.trailer(), ctx.parser.FuncCallTrailerContext)) or \
-            isinstance(expr, ctx.parser.ConstantExprContext) or \
-            isinstance(expr, ctx.parser.SubExprContext)
-        ):
+        if not (any(tok.type == ctx.parser.WS for tok in tokens) or contains_exceptions(ctx)):
             stream.seek(start)
             ctx.removeLastChild()
             pathname = VisualFoxpro9Parser(stream).pathname()
