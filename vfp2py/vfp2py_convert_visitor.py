@@ -1061,7 +1061,10 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         return create_string(ctx.getText())
 
     def convert_number(self, num_literal):
-        num = num_literal.getText()
+        num = num_literal.getText().lower()
+        if 'x' in num:
+            return CodeStr(num)
+
         if num[-1:].lower() == 'e':
             num += '0'
         try:

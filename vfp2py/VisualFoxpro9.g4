@@ -477,7 +477,7 @@ identifier
 
 NUMBER_LITERAL : ([0-9]* '.')? [0-9]+ ([Ee] [+\-]? [0-9]+)?
                | [0-9]+ '.'
-               | '0' [Xx] [0-9A-Fa-f]*
+               | '0' X [0-9A-Fa-f]*
                ;
 
 BLOB_LITERAL : '0' H [0-9A-Fa-f]* ;
