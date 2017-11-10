@@ -1065,8 +1065,7 @@ def locfile(filename, ext='', caption=''):
         testpath = os.path.join(path, filename)
         if os.path.isfile(testpath):
             return os.path.abspath(testpath)
-    #open dialog to find file
-    raise Exception('file not found')
+    return getfile(file_ext=ext, title=caption)
 
 def message(flag=None):
     exc_type, exc_obj, exc_tb = sys.exc_info()
