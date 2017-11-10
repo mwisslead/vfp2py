@@ -1062,11 +1062,11 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
 
     def convert_number(self, num_literal):
         num = num_literal.getText().lower()
-        if 'x' in num:
+        if 'x' in num or 'e' in num:
+            if ('x' not in num and num[-1] == 'e') or ('x' in num and len(num) == 2):
+                num += '0'
             return CodeStr(num)
 
-        if num[-1:].lower() == 'e':
-            num += '0'
         try:
             return int(num).real
         except:

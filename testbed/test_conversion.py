@@ -10,12 +10,18 @@ def Test0():
 LOCAL STRING_VAL, FLOAT_VAL, MONEY_VAL, INT_VAL, BLOB_VAL, BOOL_VAL, NULL_VAL, NULLDATE_VAL, DATE_VAL, DATETIME_VAL, OBJ_VAL
 STRING_VAL = \'str\'
 float_val = 3.0
+float_val = .5e-5
+float_val = 8e+18
+float_val = 1.3e12
+float_val = .1e
 money_val = $3.512345
 int_val = 3
 int_val = 0x3
 int_val = 0X3F
+int_val = 0x
 blob_val = 0h123456789abcde
 blob_val = 0h0123456789abcde
+blob_val = 0h
 BOOL_VAL = .F.
 NULL_VAL = NULL
 NULLDATE_VAL = { / / }
@@ -59,12 +65,18 @@ ENDCASE
 string_val = float_val = money_val = int_val = blob_val = bool_val = null_val = nulldate_val = date_val = datetime_val = obj_val = False  # LOCAL Declaration
 string_val = \'str\'
 float_val = 3.0
+float_val = .5e-5
+float_val = 8e+18
+float_val = 1.3e12
+float_val = .1e0
 money_val = 3.5123
 int_val = 3
 int_val = 0x3
 int_val = 0x3f
+int_val = 0x0
 blob_val = bytearray(b\'\\x124Vx\\x9a\\xbc\\xde\')
 blob_val = bytearray(b\'\\x00\\x124Vx\\x9a\\xbc\\xde\')
+blob_val = bytearray(b\'\')
 bool_val = False
 null_val = None
 nulldate_val = None

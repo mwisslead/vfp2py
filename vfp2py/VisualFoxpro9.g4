@@ -475,12 +475,12 @@ identifier
  | SAY
  ;
 
-NUMBER_LITERAL : ([0-9]* '.')? [0-9]+ ([Ee] [+\-]? [0-9]+)?
-               | [0-9]+ '.'
-               | '0' X [0-9A-Fa-f]*
+NUMBER_LITERAL : (DIGIT* '.')? DIGIT+ (E [+-]? DIGIT*)?
+               | DIGIT+ '.'
+               | '0' X HEXDIGIT*
                ;
 
-BLOB_LITERAL : '0' H [0-9A-Fa-f]* ;
+BLOB_LITERAL : '0' H HEXDIGIT* ;
 
 SEMICOLON: ';';
 AMPERSAND: '&';
@@ -794,3 +794,5 @@ fragment V : [Vv];
 fragment W : [Ww];
 fragment X : [Xx];
 fragment Z : [Zz];
+fragment DIGIT : [0-9];
+fragment HEXDIGIT : [0-9A-Fa-f];

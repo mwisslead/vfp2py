@@ -1011,7 +1011,12 @@ def getdir(dir='.', text='', caption='Select Text', flags=0, root_only=False):
     return QtGui.QFileDialog.getExistingDirectory(parent=variable['_vfp'], caption=caption, dir=dir)
 
 def getfile(file_ext='', text='', button_caption='', button_type=0, title=''):
-    return QtGui.QFileDialog.getOpenFileName(parent=variable['_vfp'], caption='Open', dir='.')[0]
+    filter = {
+        '': '',
+        'txt': 'File (*.txt)',
+        'dbf': 'Table/DBF (*.dbf)',
+    }.get(file_ext, '*.' + file_ext)
+    return QtGui.QFileDialog.getOpenFileName(parent=variable['_vfp'], caption='Open', dir='.', filter='All Files (*.*);;' + filter, selectedFilter=filter)[0]
 
 def _getwords(string, delim=None):
     return [w for w in string.split(delim) if w]
