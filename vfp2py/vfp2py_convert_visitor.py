@@ -1072,11 +1072,10 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         except:
             return float(num)
 
-    def visitNumber(self, ctx):
+    def visitNumberOrCurrency(self, ctx):
+        if ctx.children[0].symbol.type == ctx.parser.DOLLAR:
+            return round(float(ctx.NUMBER_LITERAL().getText()), 4)
         return self.convert_number(ctx.NUMBER_LITERAL())
-
-    def visitCurrency(self, ctx):
-        return round(float(ctx.NUMBER_LITERAL().getText()), 4)
 
     def visitBlob(self, ctx):
         blob = ctx.BLOB_LITERAL().getText()[2:]

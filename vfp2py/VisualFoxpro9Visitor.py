@@ -660,13 +660,8 @@ class VisualFoxpro9Visitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by VisualFoxpro9Parser#number.
-    def visitNumber(self, ctx):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by VisualFoxpro9Parser#currency.
-    def visitCurrency(self, ctx):
+    # Visit a parse tree produced by VisualFoxpro9Parser#numberOrCurrency.
+    def visitNumberOrCurrency(self, ctx):
         return self.visitChildren(ctx)
 
 
