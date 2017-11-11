@@ -1084,13 +1084,13 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         blob_iter = iter(blob)
         return bytearray([int(x + y, 16) for x, y in zip(blob_iter, blob_iter)])
 
-    def visitBoolean(self, ctx):
-        if ctx.T() or ctx.Y() or ctx.F() or ctx.N():
-            return not (ctx.F() or ctx.N())
+    def visitBoolOrNull(self, ctx):
+        if ctx.NULL():
+            return None
+        txt = ctx.BOOLEANCHAR().getText().lower()
+        if len(txt) == 1 and txt in 'fnty':
+            return txt in 'ty'
         raise Exception('Can\'t convert boolean:' + ctx.getText())
-
-    def visitNull(self, ctx):
-        return None
 
     def visitDate(self, ctx):
         if not ctx.NUMBER_LITERAL():

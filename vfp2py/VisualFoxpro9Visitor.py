@@ -665,13 +665,8 @@ class VisualFoxpro9Visitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by VisualFoxpro9Parser#boolean.
-    def visitBoolean(self, ctx):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by VisualFoxpro9Parser#null.
-    def visitNull(self, ctx):
+    # Visit a parse tree produced by VisualFoxpro9Parser#boolOrNull.
+    def visitBoolOrNull(self, ctx):
         return self.visitChildren(ctx)
 
 
