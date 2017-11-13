@@ -170,8 +170,6 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
     def visitLineComment(self, ctx):
         repl = lambda x: '#' * len(x.group())
         comment = ctx.getText().split('\n')[0].strip()
-        if len(comment) == 0:
-            return ''
         comment = self.andfix.sub('', comment)
         comment = self.frontfix.sub(repl, comment)
         return [CodeStr(self.endfix.sub(repl, comment))]

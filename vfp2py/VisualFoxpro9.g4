@@ -23,7 +23,7 @@ preprocessorLine
  ;
 
 prg
- : (classDef | funcDef | lineComment)* EOF
+ : (classDef | funcDef)* EOF
  ;
 
 lineComment
@@ -50,7 +50,7 @@ classDefStart
  ;
 
 classDef
- : classDefStart (classDefProperty | funcDef | lineComment)* ENDDEFINE lineEnd
+ : classDefStart (classDefProperty | funcDef)* ENDDEFINE lineEnd lineComment*
  ;
 
 classDefProperty
@@ -64,7 +64,7 @@ funcDefStart
  ;
 
 funcDefEnd
- : (ENDPROC | ENDFUNC) lineEnd
+ : (ENDPROC | ENDFUNC) lineEnd lineComment*
  ;
 
 parameterDef
