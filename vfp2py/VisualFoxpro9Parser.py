@@ -8,7 +8,7 @@ import sys
 def serializedATN():
     with StringIO() as buf:
         buf.write(u"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3")
-        buf.write(u"\u0118\u06f2\4\2\t\2\4\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6")
+        buf.write(u"\u0118\u06fa\4\2\t\2\4\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6")
         buf.write(u"\4\7\t\7\4\b\t\b\4\t\t\t\4\n\t\n\4\13\t\13\4\f\t\f\4")
         buf.write(u"\r\t\r\4\16\t\16\4\17\t\17\4\20\t\20\4\21\t\21\4\22\t")
         buf.write(u"\22\4\23\t\23\4\24\t\24\4\25\t\25\4\26\t\26\4\27\t\27")
@@ -159,122 +159,123 @@ def serializedATN():
         buf.write(u";\u0664\3<\3<\3<\3<\3<\3<\3<\3<\3<\3<\3<\3<\3<\3<\3<")
         buf.write(u"\3<\3<\3<\3<\3<\3<\3<\3<\3<\3<\5<\u0680\n<\3=\3=\5=\u0684")
         buf.write(u"\n=\3>\5>\u0687\n>\3>\3>\3>\3>\3>\5>\u068e\n>\3>\3>\3")
-        buf.write(u">\3>\3>\3>\3>\3>\3>\3>\5>\u069a\n>\3>\3>\3>\3>\3>\5>")
-        buf.write(u"\u06a1\n>\5>\u06a3\n>\3>\5>\u06a6\n>\5>\u06a8\n>\3>\3")
-        buf.write(u">\3>\5>\u06ad\n>\3?\3?\3?\3?\3?\3?\7?\u06b5\n?\f?\16")
-        buf.write(u"?\u06b8\13?\3?\3?\3?\3?\5?\u06be\n?\3@\5@\u06c1\n@\3")
-        buf.write(u"@\3@\3@\7@\u06c6\n@\f@\16@\u06c9\13@\3A\5A\u06cc\nA\3")
-        buf.write(u"A\3A\5A\u06d0\nA\3B\3B\3B\3B\3C\3C\3C\5C\u06d9\nC\3C")
-        buf.write(u"\3C\3C\3C\3C\5C\u06e0\nC\3C\3C\5C\u06e4\nC\3D\3D\3E\3")
-        buf.write(u"E\3E\3E\3E\3E\5E\u06ee\nE\3F\3F\3F\4\u00e9\u0664\3lG")
-        buf.write(u"\2\4\6\b\n\f\16\20\22\24\26\30\32\34\36 \"$&(*,.\60\62")
-        buf.write(u"\64\668:<>@BDFHJLNPRTVXZ\\^`bdfhjlnprtvxz|~\u0080\u0082")
-        buf.write(u"\u0084\u0086\u0088\u008a\2%\3\2\u0116\u0116\7\2\60\60")
-        buf.write(u"\62\63UU\u00d0\u00d0\u0116\u0116\4\3\30\30\u0116\u0116")
-        buf.write(u"\3\3\u0116\u0116\3\2QR\3\2ST\3\2xz\4\2QQ\u00d1\u00d1")
-        buf.write(u"\4\2\u00a6\u00a6\u00b7\u00b7\4\2\u0081\u0082\u00bf\u00bf")
-        buf.write(u"\5\2FFHHbb\4\2FFbb\4\2ll\u009e\u009e\4\2,,\u00d5\u00d5")
-        buf.write(u"\3\2\u00d7\u00d8\4\2\u00d3\u00d3\u00d9\u00d9\3\2?@\4")
-        buf.write(u"\2HH\u00f3\u00f3\3\2\177\u0080\3\2\u0107\u0108\3\2\u00ed")
-        buf.write(u"\u00ef\4\2\27\27\u00f9\u00f9\4\2\u00a0\u00a1\u0104\u0104")
-        buf.write(u"\3\2\64\65\4\2\64\65\u0092\u0093\3\2\u0090\u0091\3\2")
-        buf.write(u";=\4\2UU\u00db\u00db\3\2\n\13\4\2\27\27\u00dc\u00dc\4")
-        buf.write(u"\2\t\t\f\f\6\2\25\26\30\34\36\36!!\3\2\u00dd\u00de\3")
-        buf.write(u"\2\u00e1\u00e2\13\2**,FH]_\u00ef\u00f1\u00f2\u00f4\u00f9")
-        buf.write(u"\u00fb\u0103\u0105\u010c\u0114\u0115\2\u087f\2\u008c")
-        buf.write(u"\3\2\2\2\4\u0092\3\2\2\2\6\u00d1\3\2\2\2\b\u00d8\3\2")
-        buf.write(u"\2\2\n\u00dd\3\2\2\2\f\u00e2\3\2\2\2\16\u00e4\3\2\2\2")
-        buf.write(u"\20\u00e9\3\2\2\2\22\u00ec\3\2\2\2\24\u00f5\3\2\2\2\26")
-        buf.write(u"\u011c\3\2\2\2\30\u011f\3\2\2\2\32\u012e\3\2\2\2\34\u0131")
-        buf.write(u"\3\2\2\2\36\u0135\3\2\2\2 \u013a\3\2\2\2\"\u013f\3\2")
-        buf.write(u"\2\2$\u0147\3\2\2\2&\u014e\3\2\2\2(\u016b\3\2\2\2*\u0172")
-        buf.write(u"\3\2\2\2,\u0174\3\2\2\2.\u0179\3\2\2\2\60\u017e\3\2\2")
-        buf.write(u"\2\62\u0182\3\2\2\2\64\u0198\3\2\2\2\66\u019e\3\2\2\2")
-        buf.write(u"8\u01a3\3\2\2\2:\u01aa\3\2\2\2<\u01b7\3\2\2\2>\u01d2")
-        buf.write(u"\3\2\2\2@\u01d4\3\2\2\2B\u01e5\3\2\2\2D\u01e7\3\2\2\2")
-        buf.write(u"F\u04a4\3\2\2\2H\u04a6\3\2\2\2J\u04ae\3\2\2\2L\u04ba")
-        buf.write(u"\3\2\2\2N\u04bf\3\2\2\2P\u04ec\3\2\2\2R\u04ee\3\2\2\2")
-        buf.write(u"T\u04f0\3\2\2\2V\u04f7\3\2\2\2X\u04f9\3\2\2\2Z\u04fe")
-        buf.write(u"\3\2\2\2\\\u0503\3\2\2\2^\u05c5\3\2\2\2`\u05d5\3\2\2")
-        buf.write(u"\2b\u05d7\3\2\2\2d\u05e2\3\2\2\2f\u05f7\3\2\2\2h\u05f9")
-        buf.write(u"\3\2\2\2j\u05fc\3\2\2\2l\u0617\3\2\2\2n\u063f\3\2\2\2")
-        buf.write(u"p\u0644\3\2\2\2r\u065a\3\2\2\2t\u065f\3\2\2\2v\u067f")
-        buf.write(u"\3\2\2\2x\u0683\3\2\2\2z\u06ac\3\2\2\2|\u06bd\3\2\2\2")
-        buf.write(u"~\u06c0\3\2\2\2\u0080\u06cb\3\2\2\2\u0082\u06d1\3\2\2")
-        buf.write(u"\2\u0084\u06e3\3\2\2\2\u0086\u06e5\3\2\2\2\u0088\u06ed")
-        buf.write(u"\3\2\2\2\u008a\u06ef\3\2\2\2\u008c\u008d\5\4\3\2\u008d")
-        buf.write(u"\u008e\7\2\2\3\u008e\3\3\2\2\2\u008f\u0091\5\6\4\2\u0090")
-        buf.write(u"\u008f\3\2\2\2\u0091\u0094\3\2\2\2\u0092\u0090\3\2\2")
-        buf.write(u"\2\u0092\u0093\3\2\2\2\u0093\5\3\2\2\2\u0094\u0092\3")
-        buf.write(u"\2\2\2\u0095\u009a\7\30\2\2\u0096\u0097\7\60\2\2\u0097")
-        buf.write(u"\u009b\5l\67\2\u0098\u0099\7\u00c4\2\2\u0099\u009b\5")
-        buf.write(u"\u008aF\2\u009a\u0096\3\2\2\2\u009a\u0098\3\2\2\2\u009b")
-        buf.write(u"\u009c\3\2\2\2\u009c\u009d\7\u0116\2\2\u009d\u00a2\5")
-        buf.write(u"\4\3\2\u009e\u009f\7\30\2\2\u009f\u00a0\7\62\2\2\u00a0")
-        buf.write(u"\u00a1\7\u0116\2\2\u00a1\u00a3\5\4\3\2\u00a2\u009e\3")
-        buf.write(u"\2\2\2\u00a2\u00a3\3\2\2\2\u00a3\u00a4\3\2\2\2\u00a4")
-        buf.write(u"\u00a5\7\30\2\2\u00a5\u00a6\7\63\2\2\u00a6\u00a7\5\16")
-        buf.write(u"\b\2\u00a7\u00d2\3\2\2\2\u00a8\u00a9\7\30\2\2\u00a9\u00aa")
-        buf.write(u"\7U\2\2\u00aa\u00ae\5\u008aF\2\u00ab\u00ad\n\2\2\2\u00ac")
-        buf.write(u"\u00ab\3\2\2\2\u00ad\u00b0\3\2\2\2\u00ae\u00ac\3\2\2")
-        buf.write(u"\2\u00ae\u00af\3\2\2\2\u00af\u00b1\3\2\2\2\u00b0\u00ae")
-        buf.write(u"\3\2\2\2\u00b1\u00b2\5\16\b\2\u00b2\u00d2\3\2\2\2\u00b3")
-        buf.write(u"\u00b4\7\30\2\2\u00b4\u00b5\7\u00c3\2\2\u00b5\u00b6\5")
-        buf.write(u"\u008aF\2\u00b6\u00b7\5\16\b\2\u00b7\u00d2\3\2\2\2\u00b8")
-        buf.write(u"\u00b9\7\30\2\2\u00b9\u00ba\7\u00d0\2\2\u00ba\u00bb\5")
-        buf.write(u"x=\2\u00bb\u00bc\5\16\b\2\u00bc\u00d2\3\2\2\2\u00bd\u00be")
-        buf.write(u"\7\30\2\2\u00be\u00c2\n\3\2\2\u00bf\u00c1\n\2\2\2\u00c0")
-        buf.write(u"\u00bf\3\2\2\2\u00c1\u00c4\3\2\2\2\u00c2\u00c0\3\2\2")
-        buf.write(u"\2\u00c2\u00c3\3\2\2\2\u00c3\u00c5\3\2\2\2\u00c4\u00c2")
-        buf.write(u"\3\2\2\2\u00c5\u00d2\5\16\b\2\u00c6\u00d0\7\'\2\2\u00c7")
-        buf.write(u"\u00cb\n\4\2\2\u00c8\u00ca\n\2\2\2\u00c9\u00c8\3\2\2")
-        buf.write(u"\2\u00ca\u00cd\3\2\2\2\u00cb\u00c9\3\2\2\2\u00cb\u00cc")
-        buf.write(u"\3\2\2\2\u00cc\u00ce\3\2\2\2\u00cd\u00cb\3\2\2\2\u00ce")
-        buf.write(u"\u00d0\5\16\b\2\u00cf\u00c6\3\2\2\2\u00cf\u00c7\3\2\2")
-        buf.write(u"\2\u00d0\u00d2\3\2\2\2\u00d1\u0095\3\2\2\2\u00d1\u00a8")
-        buf.write(u"\3\2\2\2\u00d1\u00b3\3\2\2\2\u00d1\u00b8\3\2\2\2\u00d1")
-        buf.write(u"\u00bd\3\2\2\2\u00d1\u00cf\3\2\2\2\u00d2\7\3\2\2\2\u00d3")
-        buf.write(u"\u00d7\5\24\13\2\u00d4\u00d7\5\36\20\2\u00d5\u00d7\5")
-        buf.write(u"\n\6\2\u00d6\u00d3\3\2\2\2\u00d6\u00d4\3\2\2\2\u00d6")
-        buf.write(u"\u00d5\3\2\2\2\u00d7\u00da\3\2\2\2\u00d8\u00d6\3\2\2")
-        buf.write(u"\2\u00d8\u00d9\3\2\2\2\u00d9\u00db\3\2\2\2\u00da\u00d8")
-        buf.write(u"\3\2\2\2\u00db\u00dc\7\2\2\3\u00dc\t\3\2\2\2\u00dd\u00de")
-        buf.write(u"\7\'\2\2\u00de\13\3\2\2\2\u00df\u00e3\5> \2\u00e0\u00e3")
-        buf.write(u"\5@!\2\u00e1\u00e3\5\n\6\2\u00e2\u00df\3\2\2\2\u00e2")
-        buf.write(u"\u00e0\3\2\2\2\u00e2\u00e1\3\2\2\2\u00e3\r\3\2\2\2\u00e4")
-        buf.write(u"\u00e5\t\5\2\2\u00e5\17\3\2\2\2\u00e6\u00e8\5\f\7\2\u00e7")
-        buf.write(u"\u00e6\3\2\2\2\u00e8\u00eb\3\2\2\2\u00e9\u00ea\3\2\2")
-        buf.write(u"\2\u00e9\u00e7\3\2\2\2\u00ea\21\3\2\2\2\u00eb\u00e9\3")
-        buf.write(u"\2\2\2\u00ec\u00ed\7U\2\2\u00ed\u00ee\7V\2\2\u00ee\u00f1")
-        buf.write(u"\5\u008aF\2\u00ef\u00f0\7/\2\2\u00f0\u00f2\5\u008aF\2")
-        buf.write(u"\u00f1\u00ef\3\2\2\2\u00f1\u00f2\3\2\2\2\u00f2\u00f3")
-        buf.write(u"\3\2\2\2\u00f3\u00f4\7\u0116\2\2\u00f4\23\3\2\2\2\u00f5")
-        buf.write(u"\u00fb\5\22\n\2\u00f6\u00fa\5\26\f\2\u00f7\u00fa\5\36")
-        buf.write(u"\20\2\u00f8\u00fa\5\n\6\2\u00f9\u00f6\3\2\2\2\u00f9\u00f7")
-        buf.write(u"\3\2\2\2\u00f9\u00f8\3\2\2\2\u00fa\u00fd\3\2\2\2\u00fb")
-        buf.write(u"\u00f9\3\2\2\2\u00fb\u00fc\3\2\2\2\u00fc\u00fe\3\2\2")
-        buf.write(u"\2\u00fd\u00fb\3\2\2\2\u00fe\u00ff\7W\2\2\u00ff\u0100")
-        buf.write(u"\5\16\b\2\u0100\25\3\2\2\2\u0101\u0102\7h\2\2\u0102\u0103")
-        buf.write(u"\7i\2\2\u0103\u0104\5\u008aF\2\u0104\u0105\7/\2\2\u0105")
-        buf.write(u"\u0114\5\u0080A\2\u0106\u0107\79\2\2\u0107\u0108\5\u0080")
-        buf.write(u"A\2\u0108\u0109\7\36\2\2\u0109\u0111\5l\67\2\u010a\u010b")
-        buf.write(u"\7 \2\2\u010b\u010c\5\u0080A\2\u010c\u010d\7\36\2\2\u010d")
-        buf.write(u"\u010e\5l\67\2\u010e\u0110\3\2\2\2\u010f\u010a\3\2\2")
-        buf.write(u"\2\u0110\u0113\3\2\2\2\u0111\u010f\3\2\2\2\u0111\u0112")
-        buf.write(u"\3\2\2\2\u0112\u0115\3\2\2\2\u0113\u0111\3\2\2\2\u0114")
-        buf.write(u"\u0106\3\2\2\2\u0114\u0115\3\2\2\2\u0115\u0116\3\2\2")
-        buf.write(u"\2\u0116\u0117\7\u0116\2\2\u0117\u011d\3\2\2\2\u0118")
-        buf.write(u"\u0119\5|?\2\u0119\u011a\7\u0116\2\2\u011a\u011d\3\2")
-        buf.write(u"\2\2\u011b\u011d\5\n\6\2\u011c\u0101\3\2\2\2\u011c\u0118")
-        buf.write(u"\3\2\2\2\u011c\u011b\3\2\2\2\u011d\27\3\2\2\2\u011e\u0120")
-        buf.write(u"\7\u00f5\2\2\u011f\u011e\3\2\2\2\u011f\u0120\3\2\2\2")
-        buf.write(u"\u0120\u0121\3\2\2\2\u0121\u0122\t\6\2\2\u0122\u0128")
-        buf.write(u"\5~@\2\u0123\u0125\7\22\2\2\u0124\u0126\5\"\22\2\u0125")
-        buf.write(u"\u0124\3\2\2\2\u0125\u0126\3\2\2\2\u0126\u0127\3\2\2")
-        buf.write(u"\2\u0127\u0129\7\23\2\2\u0128\u0123\3\2\2\2\u0128\u0129")
-        buf.write(u"\3\2\2\2\u0129\u012a\3\2\2\2\u012a\u012c\7\u0116\2\2")
-        buf.write(u"\u012b\u012d\5\34\17\2\u012c\u012b\3\2\2\2\u012c\u012d")
-        buf.write(u"\3\2\2\2\u012d\31\3\2\2\2\u012e\u012f\t\7\2\2\u012f\u0130")
+        buf.write(u">\3>\3>\3>\3>\3>\3>\3>\3>\3>\3>\3>\3>\5>\u069f\n>\3>")
+        buf.write(u"\5>\u06a2\n>\3>\3>\3>\3>\3>\5>\u06a9\n>\5>\u06ab\n>\3")
+        buf.write(u">\5>\u06ae\n>\5>\u06b0\n>\3>\3>\3>\5>\u06b5\n>\3?\3?")
+        buf.write(u"\3?\3?\3?\3?\7?\u06bd\n?\f?\16?\u06c0\13?\3?\3?\3?\3")
+        buf.write(u"?\5?\u06c6\n?\3@\5@\u06c9\n@\3@\3@\3@\7@\u06ce\n@\f@")
+        buf.write(u"\16@\u06d1\13@\3A\5A\u06d4\nA\3A\3A\5A\u06d8\nA\3B\3")
+        buf.write(u"B\3B\3B\3C\3C\3C\5C\u06e1\nC\3C\3C\3C\3C\3C\5C\u06e8")
+        buf.write(u"\nC\3C\3C\5C\u06ec\nC\3D\3D\3E\3E\3E\3E\3E\3E\5E\u06f6")
+        buf.write(u"\nE\3F\3F\3F\4\u00e9\u0664\3lG\2\4\6\b\n\f\16\20\22\24")
+        buf.write(u"\26\30\32\34\36 \"$&(*,.\60\62\64\668:<>@BDFHJLNPRTV")
+        buf.write(u"XZ\\^`bdfhjlnprtvxz|~\u0080\u0082\u0084\u0086\u0088\u008a")
+        buf.write(u"\2%\3\2\u0116\u0116\7\2\60\60\62\63UU\u00d0\u00d0\u0116")
+        buf.write(u"\u0116\4\3\30\30\u0116\u0116\3\3\u0116\u0116\3\2QR\3")
+        buf.write(u"\2ST\3\2xz\4\2QQ\u00d1\u00d1\4\2\u00a6\u00a6\u00b7\u00b7")
+        buf.write(u"\4\2\u0081\u0082\u00bf\u00bf\5\2FFHHbb\4\2FFbb\4\2ll")
+        buf.write(u"\u009e\u009e\4\2,,\u00d5\u00d5\3\2\u00d7\u00d8\4\2\u00d3")
+        buf.write(u"\u00d3\u00d9\u00d9\3\2?@\4\2HH\u00f3\u00f3\3\2\177\u0080")
+        buf.write(u"\3\2\u0107\u0108\3\2\u00ed\u00ef\4\2\27\27\u00f9\u00f9")
+        buf.write(u"\4\2\u00a0\u00a1\u0104\u0104\3\2\64\65\4\2\64\65\u0092")
+        buf.write(u"\u0093\3\2\u0090\u0091\3\2;=\4\2UU\u00db\u00db\3\2\n")
+        buf.write(u"\13\4\2\27\27\u00dc\u00dc\4\2\t\t\f\f\6\2\25\26\30\34")
+        buf.write(u"\36\36!!\3\2\u00dd\u00de\3\2\u00e1\u00e2\13\2**,FH]_")
+        buf.write(u"\u00ef\u00f1\u00f2\u00f4\u00f9\u00fb\u0103\u0105\u010c")
+        buf.write(u"\u0114\u0115\2\u088a\2\u008c\3\2\2\2\4\u0092\3\2\2\2")
+        buf.write(u"\6\u00d1\3\2\2\2\b\u00d8\3\2\2\2\n\u00dd\3\2\2\2\f\u00e2")
+        buf.write(u"\3\2\2\2\16\u00e4\3\2\2\2\20\u00e9\3\2\2\2\22\u00ec\3")
+        buf.write(u"\2\2\2\24\u00f5\3\2\2\2\26\u011c\3\2\2\2\30\u011f\3\2")
+        buf.write(u"\2\2\32\u012e\3\2\2\2\34\u0131\3\2\2\2\36\u0135\3\2\2")
+        buf.write(u"\2 \u013a\3\2\2\2\"\u013f\3\2\2\2$\u0147\3\2\2\2&\u014e")
+        buf.write(u"\3\2\2\2(\u016b\3\2\2\2*\u0172\3\2\2\2,\u0174\3\2\2\2")
+        buf.write(u".\u0179\3\2\2\2\60\u017e\3\2\2\2\62\u0182\3\2\2\2\64")
+        buf.write(u"\u0198\3\2\2\2\66\u019e\3\2\2\28\u01a3\3\2\2\2:\u01aa")
+        buf.write(u"\3\2\2\2<\u01b7\3\2\2\2>\u01d2\3\2\2\2@\u01d4\3\2\2\2")
+        buf.write(u"B\u01e5\3\2\2\2D\u01e7\3\2\2\2F\u04a4\3\2\2\2H\u04a6")
+        buf.write(u"\3\2\2\2J\u04ae\3\2\2\2L\u04ba\3\2\2\2N\u04bf\3\2\2\2")
+        buf.write(u"P\u04ec\3\2\2\2R\u04ee\3\2\2\2T\u04f0\3\2\2\2V\u04f7")
+        buf.write(u"\3\2\2\2X\u04f9\3\2\2\2Z\u04fe\3\2\2\2\\\u0503\3\2\2")
+        buf.write(u"\2^\u05c5\3\2\2\2`\u05d5\3\2\2\2b\u05d7\3\2\2\2d\u05e2")
+        buf.write(u"\3\2\2\2f\u05f7\3\2\2\2h\u05f9\3\2\2\2j\u05fc\3\2\2\2")
+        buf.write(u"l\u0617\3\2\2\2n\u063f\3\2\2\2p\u0644\3\2\2\2r\u065a")
+        buf.write(u"\3\2\2\2t\u065f\3\2\2\2v\u067f\3\2\2\2x\u0683\3\2\2\2")
+        buf.write(u"z\u06b4\3\2\2\2|\u06c5\3\2\2\2~\u06c8\3\2\2\2\u0080\u06d3")
+        buf.write(u"\3\2\2\2\u0082\u06d9\3\2\2\2\u0084\u06eb\3\2\2\2\u0086")
+        buf.write(u"\u06ed\3\2\2\2\u0088\u06f5\3\2\2\2\u008a\u06f7\3\2\2")
+        buf.write(u"\2\u008c\u008d\5\4\3\2\u008d\u008e\7\2\2\3\u008e\3\3")
+        buf.write(u"\2\2\2\u008f\u0091\5\6\4\2\u0090\u008f\3\2\2\2\u0091")
+        buf.write(u"\u0094\3\2\2\2\u0092\u0090\3\2\2\2\u0092\u0093\3\2\2")
+        buf.write(u"\2\u0093\5\3\2\2\2\u0094\u0092\3\2\2\2\u0095\u009a\7")
+        buf.write(u"\30\2\2\u0096\u0097\7\60\2\2\u0097\u009b\5l\67\2\u0098")
+        buf.write(u"\u0099\7\u00c4\2\2\u0099\u009b\5\u008aF\2\u009a\u0096")
+        buf.write(u"\3\2\2\2\u009a\u0098\3\2\2\2\u009b\u009c\3\2\2\2\u009c")
+        buf.write(u"\u009d\7\u0116\2\2\u009d\u00a2\5\4\3\2\u009e\u009f\7")
+        buf.write(u"\30\2\2\u009f\u00a0\7\62\2\2\u00a0\u00a1\7\u0116\2\2")
+        buf.write(u"\u00a1\u00a3\5\4\3\2\u00a2\u009e\3\2\2\2\u00a2\u00a3")
+        buf.write(u"\3\2\2\2\u00a3\u00a4\3\2\2\2\u00a4\u00a5\7\30\2\2\u00a5")
+        buf.write(u"\u00a6\7\63\2\2\u00a6\u00a7\5\16\b\2\u00a7\u00d2\3\2")
+        buf.write(u"\2\2\u00a8\u00a9\7\30\2\2\u00a9\u00aa\7U\2\2\u00aa\u00ae")
+        buf.write(u"\5\u008aF\2\u00ab\u00ad\n\2\2\2\u00ac\u00ab\3\2\2\2\u00ad")
+        buf.write(u"\u00b0\3\2\2\2\u00ae\u00ac\3\2\2\2\u00ae\u00af\3\2\2")
+        buf.write(u"\2\u00af\u00b1\3\2\2\2\u00b0\u00ae\3\2\2\2\u00b1\u00b2")
+        buf.write(u"\5\16\b\2\u00b2\u00d2\3\2\2\2\u00b3\u00b4\7\30\2\2\u00b4")
+        buf.write(u"\u00b5\7\u00c3\2\2\u00b5\u00b6\5\u008aF\2\u00b6\u00b7")
+        buf.write(u"\5\16\b\2\u00b7\u00d2\3\2\2\2\u00b8\u00b9\7\30\2\2\u00b9")
+        buf.write(u"\u00ba\7\u00d0\2\2\u00ba\u00bb\5x=\2\u00bb\u00bc\5\16")
+        buf.write(u"\b\2\u00bc\u00d2\3\2\2\2\u00bd\u00be\7\30\2\2\u00be\u00c2")
+        buf.write(u"\n\3\2\2\u00bf\u00c1\n\2\2\2\u00c0\u00bf\3\2\2\2\u00c1")
+        buf.write(u"\u00c4\3\2\2\2\u00c2\u00c0\3\2\2\2\u00c2\u00c3\3\2\2")
+        buf.write(u"\2\u00c3\u00c5\3\2\2\2\u00c4\u00c2\3\2\2\2\u00c5\u00d2")
+        buf.write(u"\5\16\b\2\u00c6\u00d0\7\'\2\2\u00c7\u00cb\n\4\2\2\u00c8")
+        buf.write(u"\u00ca\n\2\2\2\u00c9\u00c8\3\2\2\2\u00ca\u00cd\3\2\2")
+        buf.write(u"\2\u00cb\u00c9\3\2\2\2\u00cb\u00cc\3\2\2\2\u00cc\u00ce")
+        buf.write(u"\3\2\2\2\u00cd\u00cb\3\2\2\2\u00ce\u00d0\5\16\b\2\u00cf")
+        buf.write(u"\u00c6\3\2\2\2\u00cf\u00c7\3\2\2\2\u00d0\u00d2\3\2\2")
+        buf.write(u"\2\u00d1\u0095\3\2\2\2\u00d1\u00a8\3\2\2\2\u00d1\u00b3")
+        buf.write(u"\3\2\2\2\u00d1\u00b8\3\2\2\2\u00d1\u00bd\3\2\2\2\u00d1")
+        buf.write(u"\u00cf\3\2\2\2\u00d2\7\3\2\2\2\u00d3\u00d7\5\24\13\2")
+        buf.write(u"\u00d4\u00d7\5\36\20\2\u00d5\u00d7\5\n\6\2\u00d6\u00d3")
+        buf.write(u"\3\2\2\2\u00d6\u00d4\3\2\2\2\u00d6\u00d5\3\2\2\2\u00d7")
+        buf.write(u"\u00da\3\2\2\2\u00d8\u00d6\3\2\2\2\u00d8\u00d9\3\2\2")
+        buf.write(u"\2\u00d9\u00db\3\2\2\2\u00da\u00d8\3\2\2\2\u00db\u00dc")
+        buf.write(u"\7\2\2\3\u00dc\t\3\2\2\2\u00dd\u00de\7\'\2\2\u00de\13")
+        buf.write(u"\3\2\2\2\u00df\u00e3\5> \2\u00e0\u00e3\5@!\2\u00e1\u00e3")
+        buf.write(u"\5\n\6\2\u00e2\u00df\3\2\2\2\u00e2\u00e0\3\2\2\2\u00e2")
+        buf.write(u"\u00e1\3\2\2\2\u00e3\r\3\2\2\2\u00e4\u00e5\t\5\2\2\u00e5")
+        buf.write(u"\17\3\2\2\2\u00e6\u00e8\5\f\7\2\u00e7\u00e6\3\2\2\2\u00e8")
+        buf.write(u"\u00eb\3\2\2\2\u00e9\u00ea\3\2\2\2\u00e9\u00e7\3\2\2")
+        buf.write(u"\2\u00ea\21\3\2\2\2\u00eb\u00e9\3\2\2\2\u00ec\u00ed\7")
+        buf.write(u"U\2\2\u00ed\u00ee\7V\2\2\u00ee\u00f1\5\u008aF\2\u00ef")
+        buf.write(u"\u00f0\7/\2\2\u00f0\u00f2\5\u008aF\2\u00f1\u00ef\3\2")
+        buf.write(u"\2\2\u00f1\u00f2\3\2\2\2\u00f2\u00f3\3\2\2\2\u00f3\u00f4")
+        buf.write(u"\7\u0116\2\2\u00f4\23\3\2\2\2\u00f5\u00fb\5\22\n\2\u00f6")
+        buf.write(u"\u00fa\5\26\f\2\u00f7\u00fa\5\36\20\2\u00f8\u00fa\5\n")
+        buf.write(u"\6\2\u00f9\u00f6\3\2\2\2\u00f9\u00f7\3\2\2\2\u00f9\u00f8")
+        buf.write(u"\3\2\2\2\u00fa\u00fd\3\2\2\2\u00fb\u00f9\3\2\2\2\u00fb")
+        buf.write(u"\u00fc\3\2\2\2\u00fc\u00fe\3\2\2\2\u00fd\u00fb\3\2\2")
+        buf.write(u"\2\u00fe\u00ff\7W\2\2\u00ff\u0100\5\16\b\2\u0100\25\3")
+        buf.write(u"\2\2\2\u0101\u0102\7h\2\2\u0102\u0103\7i\2\2\u0103\u0104")
+        buf.write(u"\5\u008aF\2\u0104\u0105\7/\2\2\u0105\u0114\5\u0080A\2")
+        buf.write(u"\u0106\u0107\79\2\2\u0107\u0108\5\u0080A\2\u0108\u0109")
+        buf.write(u"\7\36\2\2\u0109\u0111\5l\67\2\u010a\u010b\7 \2\2\u010b")
+        buf.write(u"\u010c\5\u0080A\2\u010c\u010d\7\36\2\2\u010d\u010e\5")
+        buf.write(u"l\67\2\u010e\u0110\3\2\2\2\u010f\u010a\3\2\2\2\u0110")
+        buf.write(u"\u0113\3\2\2\2\u0111\u010f\3\2\2\2\u0111\u0112\3\2\2")
+        buf.write(u"\2\u0112\u0115\3\2\2\2\u0113\u0111\3\2\2\2\u0114\u0106")
+        buf.write(u"\3\2\2\2\u0114\u0115\3\2\2\2\u0115\u0116\3\2\2\2\u0116")
+        buf.write(u"\u0117\7\u0116\2\2\u0117\u011d\3\2\2\2\u0118\u0119\5")
+        buf.write(u"|?\2\u0119\u011a\7\u0116\2\2\u011a\u011d\3\2\2\2\u011b")
+        buf.write(u"\u011d\5\n\6\2\u011c\u0101\3\2\2\2\u011c\u0118\3\2\2")
+        buf.write(u"\2\u011c\u011b\3\2\2\2\u011d\27\3\2\2\2\u011e\u0120\7")
+        buf.write(u"\u00f5\2\2\u011f\u011e\3\2\2\2\u011f\u0120\3\2\2\2\u0120")
+        buf.write(u"\u0121\3\2\2\2\u0121\u0122\t\6\2\2\u0122\u0128\5~@\2")
+        buf.write(u"\u0123\u0125\7\22\2\2\u0124\u0126\5\"\22\2\u0125\u0124")
+        buf.write(u"\3\2\2\2\u0125\u0126\3\2\2\2\u0126\u0127\3\2\2\2\u0127")
+        buf.write(u"\u0129\7\23\2\2\u0128\u0123\3\2\2\2\u0128\u0129\3\2\2")
+        buf.write(u"\2\u0129\u012a\3\2\2\2\u012a\u012c\7\u0116\2\2\u012b")
+        buf.write(u"\u012d\5\34\17\2\u012c\u012b\3\2\2\2\u012c\u012d\3\2")
+        buf.write(u"\2\2\u012d\31\3\2\2\2\u012e\u012f\t\7\2\2\u012f\u0130")
         buf.write(u"\5\16\b\2\u0130\33\3\2\2\2\u0131\u0132\t\b\2\2\u0132")
         buf.write(u"\u0133\5\"\22\2\u0133\u0134\7\u0116\2\2\u0134\35\3\2")
         buf.write(u"\2\2\u0135\u0136\5\30\r\2\u0136\u0138\5\20\t\2\u0137")
@@ -951,54 +952,58 @@ def serializedATN():
         buf.write(u"\67\2\u0682\u0684\5t;\2\u0683\u0681\3\2\2\2\u0683\u0682")
         buf.write(u"\3\2\2\2\u0684y\3\2\2\2\u0685\u0687\7!\2\2\u0686\u0685")
         buf.write(u"\3\2\2\2\u0686\u0687\3\2\2\2\u0687\u0688\3\2\2\2\u0688")
-        buf.write(u"\u06ad\7\4\2\2\u0689\u068a\7\r\2\2\u068a\u068b\t#\2\2")
+        buf.write(u"\u06b5\7\4\2\2\u0689\u068a\7\r\2\2\u068a\u068b\t#\2\2")
         buf.write(u"\u068b\u068e\7\r\2\2\u068c\u068e\7\u00e1\2\2\u068d\u0689")
-        buf.write(u"\3\2\2\2\u068d\u068c\3\2\2\2\u068e\u06ad\3\2\2\2\u068f")
-        buf.write(u"\u06a7\7\20\2\2\u0690\u0691\7\f\2\2\u0691\u06a8\7\f\2")
-        buf.write(u"\2\u0692\u0693\7\37\2\2\u0693\u0694\7\4\2\2\u0694\u0695")
-        buf.write(u"\7\13\2\2\u0695\u0696\7\4\2\2\u0696\u0697\7\13\2\2\u0697")
-        buf.write(u"\u06a5\7\4\2\2\u0698\u069a\7 \2\2\u0699\u0698\3\2\2\2")
-        buf.write(u"\u0699\u069a\3\2\2\2\u069a\u069b\3\2\2\2\u069b\u06a2")
-        buf.write(u"\7\4\2\2\u069c\u069d\7\"\2\2\u069d\u06a0\7\4\2\2\u069e")
-        buf.write(u"\u069f\7\"\2\2\u069f\u06a1\7\4\2\2\u06a0\u069e\3\2\2")
-        buf.write(u"\2\u06a0\u06a1\3\2\2\2\u06a1\u06a3\3\2\2\2\u06a2\u069c")
-        buf.write(u"\3\2\2\2\u06a2\u06a3\3\2\2\2\u06a3\u06a4\3\2\2\2\u06a4")
-        buf.write(u"\u06a6\5\u008aF\2\u06a5\u0699\3\2\2\2\u06a5\u06a6\3\2")
-        buf.write(u"\2\2\u06a6\u06a8\3\2\2\2\u06a7\u0690\3\2\2\2\u06a7\u0692")
-        buf.write(u"\3\2\2\2\u06a8\u06a9\3\2\2\2\u06a9\u06ad\7\21\2\2\u06aa")
-        buf.write(u"\u06ad\7&\2\2\u06ab\u06ad\7\5\2\2\u06ac\u0686\3\2\2\2")
-        buf.write(u"\u06ac\u068d\3\2\2\2\u06ac\u068f\3\2\2\2\u06ac\u06aa")
-        buf.write(u"\3\2\2\2\u06ac\u06ab\3\2\2\2\u06ad{\3\2\2\2\u06ae\u06af")
-        buf.write(u"\7:\2\2\u06af\u06b0\5l\67\2\u06b0\u06b1\7,\2\2\u06b1")
-        buf.write(u"\u06b6\5\u0080A\2\u06b2\u06b3\7 \2\2\u06b3\u06b5\5\u0080")
-        buf.write(u"A\2\u06b4\u06b2\3\2\2\2\u06b5\u06b8\3\2\2\2\u06b6\u06b4")
-        buf.write(u"\3\2\2\2\u06b6\u06b7\3\2\2\2\u06b7\u06be\3\2\2\2\u06b8")
-        buf.write(u"\u06b6\3\2\2\2\u06b9\u06ba\5\u0080A\2\u06ba\u06bb\7\36")
-        buf.write(u"\2\2\u06bb\u06bc\5l\67\2\u06bc\u06be\3\2\2\2\u06bd\u06ae")
-        buf.write(u"\3\2\2\2\u06bd\u06b9\3\2\2\2\u06be}\3\2\2\2\u06bf\u06c1")
-        buf.write(u"\7\r\2\2\u06c0\u06bf\3\2\2\2\u06c0\u06c1\3\2\2\2\u06c1")
-        buf.write(u"\u06c2\3\2\2\2\u06c2\u06c7\5\u008aF\2\u06c3\u06c4\7\r")
-        buf.write(u"\2\2\u06c4\u06c6\5\u008aF\2\u06c5\u06c3\3\2\2\2\u06c6")
-        buf.write(u"\u06c9\3\2\2\2\u06c7\u06c5\3\2\2\2\u06c7\u06c8\3\2\2")
-        buf.write(u"\2\u06c8\177\3\2\2\2\u06c9\u06c7\3\2\2\2\u06ca\u06cc")
-        buf.write(u"\7\r\2\2\u06cb\u06ca\3\2\2\2\u06cb\u06cc\3\2\2\2\u06cc")
-        buf.write(u"\u06cd\3\2\2\2\u06cd\u06cf\5\u008aF\2\u06ce\u06d0\5r")
-        buf.write(u":\2\u06cf\u06ce\3\2\2\2\u06cf\u06d0\3\2\2\2\u06d0\u0081")
-        buf.write(u"\3\2\2\2\u06d1\u06d2\5l\67\2\u06d2\u06d3\7 \2\2\u06d3")
-        buf.write(u"\u06d4\5l\67\2\u06d4\u0083\3\2\2\2\u06d5\u06d8\7\22\2")
-        buf.write(u"\2\u06d6\u06d9\5l\67\2\u06d7\u06d9\5\u0082B\2\u06d8\u06d6")
-        buf.write(u"\3\2\2\2\u06d8\u06d7\3\2\2\2\u06d9\u06da\3\2\2\2\u06da")
-        buf.write(u"\u06db\7\23\2\2\u06db\u06e4\3\2\2\2\u06dc\u06df\7\16")
-        buf.write(u"\2\2\u06dd\u06e0\5l\67\2\u06de\u06e0\5\u0082B\2\u06df")
-        buf.write(u"\u06dd\3\2\2\2\u06df\u06de\3\2\2\2\u06e0\u06e1\3\2\2")
-        buf.write(u"\2\u06e1\u06e2\7\17\2\2\u06e2\u06e4\3\2\2\2\u06e3\u06d5")
-        buf.write(u"\3\2\2\2\u06e3\u06dc\3\2\2\2\u06e4\u0085\3\2\2\2\u06e5")
-        buf.write(u"\u06e6\5\u008aF\2\u06e6\u0087\3\2\2\2\u06e7\u06ee\7}")
-        buf.write(u"\2\2\u06e8\u06e9\7\u009b\2\2\u06e9\u06ee\5l\67\2\u06ea")
-        buf.write(u"\u06eb\7\u0083\2\2\u06eb\u06ee\5l\67\2\u06ec\u06ee\7")
-        buf.write(u"\u009c\2\2\u06ed\u06e7\3\2\2\2\u06ed\u06e8\3\2\2\2\u06ed")
-        buf.write(u"\u06ea\3\2\2\2\u06ed\u06ec\3\2\2\2\u06ee\u0089\3\2\2")
-        buf.write(u"\2\u06ef\u06f0\t$\2\2\u06f0\u008b\3\2\2\2\u0115\u0092")
+        buf.write(u"\3\2\2\2\u068d\u068c\3\2\2\2\u068e\u06b5\3\2\2\2\u068f")
+        buf.write(u"\u06af\7\20\2\2\u0690\u0691\7\f\2\2\u0691\u06b0\7\f\2")
+        buf.write(u"\2\u0692\u06b0\7\"\2\2\u0693\u069e\7\37\2\2\u0694\u0695")
+        buf.write(u"\7\4\2\2\u0695\u0696\7\13\2\2\u0696\u0697\7\4\2\2\u0697")
+        buf.write(u"\u0698\7\13\2\2\u0698\u069f\7\4\2\2\u0699\u069a\7\4\2")
+        buf.write(u"\2\u069a\u069b\7\f\2\2\u069b\u069c\7\4\2\2\u069c\u069d")
+        buf.write(u"\7\f\2\2\u069d\u069f\7\4\2\2\u069e\u0694\3\2\2\2\u069e")
+        buf.write(u"\u0699\3\2\2\2\u069f\u06ad\3\2\2\2\u06a0\u06a2\7 \2\2")
+        buf.write(u"\u06a1\u06a0\3\2\2\2\u06a1\u06a2\3\2\2\2\u06a2\u06a3")
+        buf.write(u"\3\2\2\2\u06a3\u06aa\7\4\2\2\u06a4\u06a5\7\"\2\2\u06a5")
+        buf.write(u"\u06a8\7\4\2\2\u06a6\u06a7\7\"\2\2\u06a7\u06a9\7\4\2")
+        buf.write(u"\2\u06a8\u06a6\3\2\2\2\u06a8\u06a9\3\2\2\2\u06a9\u06ab")
+        buf.write(u"\3\2\2\2\u06aa\u06a4\3\2\2\2\u06aa\u06ab\3\2\2\2\u06ab")
+        buf.write(u"\u06ac\3\2\2\2\u06ac\u06ae\5\u008aF\2\u06ad\u06a1\3\2")
+        buf.write(u"\2\2\u06ad\u06ae\3\2\2\2\u06ae\u06b0\3\2\2\2\u06af\u0690")
+        buf.write(u"\3\2\2\2\u06af\u0692\3\2\2\2\u06af\u0693\3\2\2\2\u06af")
+        buf.write(u"\u06b0\3\2\2\2\u06b0\u06b1\3\2\2\2\u06b1\u06b5\7\21\2")
+        buf.write(u"\2\u06b2\u06b5\7&\2\2\u06b3\u06b5\7\5\2\2\u06b4\u0686")
+        buf.write(u"\3\2\2\2\u06b4\u068d\3\2\2\2\u06b4\u068f\3\2\2\2\u06b4")
+        buf.write(u"\u06b2\3\2\2\2\u06b4\u06b3\3\2\2\2\u06b5{\3\2\2\2\u06b6")
+        buf.write(u"\u06b7\7:\2\2\u06b7\u06b8\5l\67\2\u06b8\u06b9\7,\2\2")
+        buf.write(u"\u06b9\u06be\5\u0080A\2\u06ba\u06bb\7 \2\2\u06bb\u06bd")
+        buf.write(u"\5\u0080A\2\u06bc\u06ba\3\2\2\2\u06bd\u06c0\3\2\2\2\u06be")
+        buf.write(u"\u06bc\3\2\2\2\u06be\u06bf\3\2\2\2\u06bf\u06c6\3\2\2")
+        buf.write(u"\2\u06c0\u06be\3\2\2\2\u06c1\u06c2\5\u0080A\2\u06c2\u06c3")
+        buf.write(u"\7\36\2\2\u06c3\u06c4\5l\67\2\u06c4\u06c6\3\2\2\2\u06c5")
+        buf.write(u"\u06b6\3\2\2\2\u06c5\u06c1\3\2\2\2\u06c6}\3\2\2\2\u06c7")
+        buf.write(u"\u06c9\7\r\2\2\u06c8\u06c7\3\2\2\2\u06c8\u06c9\3\2\2")
+        buf.write(u"\2\u06c9\u06ca\3\2\2\2\u06ca\u06cf\5\u008aF\2\u06cb\u06cc")
+        buf.write(u"\7\r\2\2\u06cc\u06ce\5\u008aF\2\u06cd\u06cb\3\2\2\2\u06ce")
+        buf.write(u"\u06d1\3\2\2\2\u06cf\u06cd\3\2\2\2\u06cf\u06d0\3\2\2")
+        buf.write(u"\2\u06d0\177\3\2\2\2\u06d1\u06cf\3\2\2\2\u06d2\u06d4")
+        buf.write(u"\7\r\2\2\u06d3\u06d2\3\2\2\2\u06d3\u06d4\3\2\2\2\u06d4")
+        buf.write(u"\u06d5\3\2\2\2\u06d5\u06d7\5\u008aF\2\u06d6\u06d8\5r")
+        buf.write(u":\2\u06d7\u06d6\3\2\2\2\u06d7\u06d8\3\2\2\2\u06d8\u0081")
+        buf.write(u"\3\2\2\2\u06d9\u06da\5l\67\2\u06da\u06db\7 \2\2\u06db")
+        buf.write(u"\u06dc\5l\67\2\u06dc\u0083\3\2\2\2\u06dd\u06e0\7\22\2")
+        buf.write(u"\2\u06de\u06e1\5l\67\2\u06df\u06e1\5\u0082B\2\u06e0\u06de")
+        buf.write(u"\3\2\2\2\u06e0\u06df\3\2\2\2\u06e1\u06e2\3\2\2\2\u06e2")
+        buf.write(u"\u06e3\7\23\2\2\u06e3\u06ec\3\2\2\2\u06e4\u06e7\7\16")
+        buf.write(u"\2\2\u06e5\u06e8\5l\67\2\u06e6\u06e8\5\u0082B\2\u06e7")
+        buf.write(u"\u06e5\3\2\2\2\u06e7\u06e6\3\2\2\2\u06e8\u06e9\3\2\2")
+        buf.write(u"\2\u06e9\u06ea\7\17\2\2\u06ea\u06ec\3\2\2\2\u06eb\u06dd")
+        buf.write(u"\3\2\2\2\u06eb\u06e4\3\2\2\2\u06ec\u0085\3\2\2\2\u06ed")
+        buf.write(u"\u06ee\5\u008aF\2\u06ee\u0087\3\2\2\2\u06ef\u06f6\7}")
+        buf.write(u"\2\2\u06f0\u06f1\7\u009b\2\2\u06f1\u06f6\5l\67\2\u06f2")
+        buf.write(u"\u06f3\7\u0083\2\2\u06f3\u06f6\5l\67\2\u06f4\u06f6\7")
+        buf.write(u"\u009c\2\2\u06f5\u06ef\3\2\2\2\u06f5\u06f0\3\2\2\2\u06f5")
+        buf.write(u"\u06f2\3\2\2\2\u06f5\u06f4\3\2\2\2\u06f6\u0089\3\2\2")
+        buf.write(u"\2\u06f7\u06f8\t$\2\2\u06f8\u008b\3\2\2\2\u0116\u0092")
         buf.write(u"\u009a\u00a2\u00ae\u00c2\u00cb\u00cf\u00d1\u00d6\u00d8")
         buf.write(u"\u00e2\u00e9\u00f1\u00f9\u00fb\u0111\u0114\u011c\u011f")
         buf.write(u"\u0125\u0128\u012c\u0138\u013d\u0144\u014a\u0153\u0160")
@@ -1027,9 +1032,9 @@ def serializedATN():
         buf.write(u"\u05bc\u05c5\u05ca\u05cf\u05d5\u05dc\u05e0\u05e7\u05f1")
         buf.write(u"\u05f5\u05f7\u0611\u0615\u0617\u061d\u062f\u0631\u0635")
         buf.write(u"\u063d\u063f\u0644\u0648\u064d\u0650\u0653\u0658\u065a")
-        buf.write(u"\u065f\u0664\u067f\u0683\u0686\u068d\u0699\u06a0\u06a2")
-        buf.write(u"\u06a5\u06a7\u06ac\u06b6\u06bd\u06c0\u06c7\u06cb\u06cf")
-        buf.write(u"\u06d8\u06df\u06e3\u06ed")
+        buf.write(u"\u065f\u0664\u067f\u0683\u0686\u068d\u069e\u06a1\u06a8")
+        buf.write(u"\u06aa\u06ad\u06af\u06b4\u06be\u06c5\u06c8\u06cf\u06d3")
+        buf.write(u"\u06d7\u06e0\u06e7\u06eb\u06f5")
         return buf.getvalue()
 
 
@@ -11499,7 +11504,7 @@ class VisualFoxpro9Parser ( Parser ):
         self.enterRule(localctx, 120, self.RULE_constant)
         self._la = 0 # Token type
         try:
-            self.state = 1706
+            self.state = 1714
             self._errHandler.sync(self)
             token = self._input.LA(1)
             if token in [VisualFoxpro9Parser.NUMBER_LITERAL, VisualFoxpro9Parser.DOLLAR]:
@@ -11548,7 +11553,7 @@ class VisualFoxpro9Parser ( Parser ):
                 self.enterOuterAlt(localctx, 3)
                 self.state = 1677
                 self.match(VisualFoxpro9Parser.LEFTBRACE)
-                self.state = 1701
+                self.state = 1709
                 self._errHandler.sync(self)
                 token = self._input.LA(1)
                 if token in [VisualFoxpro9Parser.FORWARDSLASH]:
@@ -11557,74 +11562,99 @@ class VisualFoxpro9Parser ( Parser ):
                     self.state = 1679
                     self.match(VisualFoxpro9Parser.FORWARDSLASH)
                     pass
-                elif token in [VisualFoxpro9Parser.CARAT]:
+                elif token in [VisualFoxpro9Parser.COLON]:
                     self.state = 1680
-                    self.match(VisualFoxpro9Parser.CARAT)
+                    self.match(VisualFoxpro9Parser.COLON)
+                    pass
+                elif token in [VisualFoxpro9Parser.CARAT]:
                     self.state = 1681
-                    self.match(VisualFoxpro9Parser.NUMBER_LITERAL)
-                    self.state = 1682
-                    self.match(VisualFoxpro9Parser.MINUS_SIGN)
-                    self.state = 1683
-                    self.match(VisualFoxpro9Parser.NUMBER_LITERAL)
-                    self.state = 1684
-                    self.match(VisualFoxpro9Parser.MINUS_SIGN)
-                    self.state = 1685
-                    self.match(VisualFoxpro9Parser.NUMBER_LITERAL)
-                    self.state = 1699
+                    self.match(VisualFoxpro9Parser.CARAT)
+                    self.state = 1692
+                    self._errHandler.sync(self)
+                    la_ = self._interp.adaptivePredict(self._input,259,self._ctx)
+                    if la_ == 1:
+                        self.state = 1682
+                        self.match(VisualFoxpro9Parser.NUMBER_LITERAL)
+                        self.state = 1683
+                        self.match(VisualFoxpro9Parser.MINUS_SIGN)
+                        self.state = 1684
+                        self.match(VisualFoxpro9Parser.NUMBER_LITERAL)
+                        self.state = 1685
+                        self.match(VisualFoxpro9Parser.MINUS_SIGN)
+                        self.state = 1686
+                        self.match(VisualFoxpro9Parser.NUMBER_LITERAL)
+                        pass
+
+                    elif la_ == 2:
+                        self.state = 1687
+                        self.match(VisualFoxpro9Parser.NUMBER_LITERAL)
+                        self.state = 1688
+                        self.match(VisualFoxpro9Parser.FORWARDSLASH)
+                        self.state = 1689
+                        self.match(VisualFoxpro9Parser.NUMBER_LITERAL)
+                        self.state = 1690
+                        self.match(VisualFoxpro9Parser.FORWARDSLASH)
+                        self.state = 1691
+                        self.match(VisualFoxpro9Parser.NUMBER_LITERAL)
+                        pass
+
+
+                    self.state = 1707
                     self._errHandler.sync(self)
                     _la = self._input.LA(1)
                     if _la==VisualFoxpro9Parser.NUMBER_LITERAL or _la==VisualFoxpro9Parser.COMMA:
-                        self.state = 1687
+                        self.state = 1695
                         self._errHandler.sync(self)
                         _la = self._input.LA(1)
                         if _la==VisualFoxpro9Parser.COMMA:
-                            self.state = 1686
+                            self.state = 1694
                             self.match(VisualFoxpro9Parser.COMMA)
 
 
-                        self.state = 1689
+                        self.state = 1697
                         self.match(VisualFoxpro9Parser.NUMBER_LITERAL)
-                        self.state = 1696
+                        self.state = 1704
                         self._errHandler.sync(self)
                         _la = self._input.LA(1)
                         if _la==VisualFoxpro9Parser.COLON:
-                            self.state = 1690
+                            self.state = 1698
                             self.match(VisualFoxpro9Parser.COLON)
-                            self.state = 1691
+                            self.state = 1699
                             self.match(VisualFoxpro9Parser.NUMBER_LITERAL)
-                            self.state = 1694
+                            self.state = 1702
                             self._errHandler.sync(self)
                             _la = self._input.LA(1)
                             if _la==VisualFoxpro9Parser.COLON:
-                                self.state = 1692
+                                self.state = 1700
                                 self.match(VisualFoxpro9Parser.COLON)
-                                self.state = 1693
+                                self.state = 1701
                                 self.match(VisualFoxpro9Parser.NUMBER_LITERAL)
 
 
 
 
-                        self.state = 1698
+                        self.state = 1706
                         self.identifier()
 
 
                     pass
+                elif token in [VisualFoxpro9Parser.RIGHTBRACE]:
+                    pass
                 else:
-                    raise NoViableAltException(self)
-
-                self.state = 1703
+                    pass
+                self.state = 1711
                 self.match(VisualFoxpro9Parser.RIGHTBRACE)
                 pass
             elif token in [VisualFoxpro9Parser.STRING_LITERAL]:
                 localctx = VisualFoxpro9Parser.StringContext(self, localctx)
                 self.enterOuterAlt(localctx, 4)
-                self.state = 1704
+                self.state = 1712
                 self.match(VisualFoxpro9Parser.STRING_LITERAL)
                 pass
             elif token in [VisualFoxpro9Parser.BLOB_LITERAL]:
                 localctx = VisualFoxpro9Parser.BlobContext(self, localctx)
                 self.enterOuterAlt(localctx, 5)
-                self.state = 1705
+                self.state = 1713
                 self.match(VisualFoxpro9Parser.BLOB_LITERAL)
                 pass
             else:
@@ -11679,28 +11709,28 @@ class VisualFoxpro9Parser ( Parser ):
         self.enterRule(localctx, 122, self.RULE_assign)
         self._la = 0 # Token type
         try:
-            self.state = 1723
+            self.state = 1731
             self._errHandler.sync(self)
-            la_ = self._interp.adaptivePredict(self._input,266,self._ctx)
+            la_ = self._interp.adaptivePredict(self._input,267,self._ctx)
             if la_ == 1:
                 self.enterOuterAlt(localctx, 1)
-                self.state = 1708
-                self.match(VisualFoxpro9Parser.STORE)
-                self.state = 1709
-                self.expr(0)
-                self.state = 1710
-                self.match(VisualFoxpro9Parser.TO)
-                self.state = 1711
-                self.idAttr()
                 self.state = 1716
+                self.match(VisualFoxpro9Parser.STORE)
+                self.state = 1717
+                self.expr(0)
+                self.state = 1718
+                self.match(VisualFoxpro9Parser.TO)
+                self.state = 1719
+                self.idAttr()
+                self.state = 1724
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
                 while _la==VisualFoxpro9Parser.COMMA:
-                    self.state = 1712
+                    self.state = 1720
                     self.match(VisualFoxpro9Parser.COMMA)
-                    self.state = 1713
+                    self.state = 1721
                     self.idAttr()
-                    self.state = 1718
+                    self.state = 1726
                     self._errHandler.sync(self)
                     _la = self._input.LA(1)
 
@@ -11708,11 +11738,11 @@ class VisualFoxpro9Parser ( Parser ):
 
             elif la_ == 2:
                 self.enterOuterAlt(localctx, 2)
-                self.state = 1719
+                self.state = 1727
                 self.idAttr()
-                self.state = 1720
+                self.state = 1728
                 self.match(VisualFoxpro9Parser.EQUALS)
-                self.state = 1721
+                self.state = 1729
                 self.expr(0)
                 pass
 
@@ -11758,25 +11788,25 @@ class VisualFoxpro9Parser ( Parser ):
         self._la = 0 # Token type
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 1726
+            self.state = 1734
             self._errHandler.sync(self)
             _la = self._input.LA(1)
             if _la==VisualFoxpro9Parser.PERIOD:
-                self.state = 1725
+                self.state = 1733
                 localctx.startPeriod = self.match(VisualFoxpro9Parser.PERIOD)
 
 
-            self.state = 1728
+            self.state = 1736
             self.identifier()
-            self.state = 1733
+            self.state = 1741
             self._errHandler.sync(self)
             _la = self._input.LA(1)
             while _la==VisualFoxpro9Parser.PERIOD:
-                self.state = 1729
+                self.state = 1737
                 self.match(VisualFoxpro9Parser.PERIOD)
-                self.state = 1730
+                self.state = 1738
                 self.identifier()
-                self.state = 1735
+                self.state = 1743
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
 
@@ -11824,21 +11854,21 @@ class VisualFoxpro9Parser ( Parser ):
         self._la = 0 # Token type
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 1737
+            self.state = 1745
             self._errHandler.sync(self)
             _la = self._input.LA(1)
             if _la==VisualFoxpro9Parser.PERIOD:
-                self.state = 1736
+                self.state = 1744
                 self.match(VisualFoxpro9Parser.PERIOD)
 
 
-            self.state = 1739
+            self.state = 1747
             self.identifier()
-            self.state = 1741
+            self.state = 1749
             self._errHandler.sync(self)
-            la_ = self._interp.adaptivePredict(self._input,270,self._ctx)
+            la_ = self._interp.adaptivePredict(self._input,271,self._ctx)
             if la_ == 1:
-                self.state = 1740
+                self.state = 1748
                 self.trailer()
 
 
@@ -11881,11 +11911,11 @@ class VisualFoxpro9Parser ( Parser ):
         self.enterRule(localctx, 128, self.RULE_twoExpr)
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 1743
+            self.state = 1751
             self.expr(0)
-            self.state = 1744
+            self.state = 1752
             self.match(VisualFoxpro9Parser.COMMA)
-            self.state = 1745
+            self.state = 1753
             self.expr(0)
         except RecognitionException as re:
             localctx.exception = re
@@ -11926,49 +11956,49 @@ class VisualFoxpro9Parser ( Parser ):
         localctx = VisualFoxpro9Parser.ArrayIndexContext(self, self._ctx, self.state)
         self.enterRule(localctx, 130, self.RULE_arrayIndex)
         try:
-            self.state = 1761
+            self.state = 1769
             self._errHandler.sync(self)
             token = self._input.LA(1)
             if token in [VisualFoxpro9Parser.LEFTPAREN]:
                 self.enterOuterAlt(localctx, 1)
-                self.state = 1747
+                self.state = 1755
                 self.match(VisualFoxpro9Parser.LEFTPAREN)
-                self.state = 1750
+                self.state = 1758
                 self._errHandler.sync(self)
-                la_ = self._interp.adaptivePredict(self._input,271,self._ctx)
+                la_ = self._interp.adaptivePredict(self._input,272,self._ctx)
                 if la_ == 1:
-                    self.state = 1748
+                    self.state = 1756
                     self.expr(0)
                     pass
 
                 elif la_ == 2:
-                    self.state = 1749
+                    self.state = 1757
                     self.twoExpr()
                     pass
 
 
-                self.state = 1752
+                self.state = 1760
                 self.match(VisualFoxpro9Parser.RIGHTPAREN)
                 pass
             elif token in [VisualFoxpro9Parser.LEFTBRACKET]:
                 self.enterOuterAlt(localctx, 2)
-                self.state = 1754
+                self.state = 1762
                 self.match(VisualFoxpro9Parser.LEFTBRACKET)
-                self.state = 1757
+                self.state = 1765
                 self._errHandler.sync(self)
-                la_ = self._interp.adaptivePredict(self._input,272,self._ctx)
+                la_ = self._interp.adaptivePredict(self._input,273,self._ctx)
                 if la_ == 1:
-                    self.state = 1755
+                    self.state = 1763
                     self.expr(0)
                     pass
 
                 elif la_ == 2:
-                    self.state = 1756
+                    self.state = 1764
                     self.twoExpr()
                     pass
 
 
-                self.state = 1759
+                self.state = 1767
                 self.match(VisualFoxpro9Parser.RIGHTBRACKET)
                 pass
             else:
@@ -12010,7 +12040,7 @@ class VisualFoxpro9Parser ( Parser ):
         self.enterRule(localctx, 132, self.RULE_datatype)
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 1763
+            self.state = 1771
             self.identifier()
         except RecognitionException as re:
             localctx.exception = re
@@ -12059,31 +12089,31 @@ class VisualFoxpro9Parser ( Parser ):
         localctx = VisualFoxpro9Parser.ScopeClauseContext(self, self._ctx, self.state)
         self.enterRule(localctx, 134, self.RULE_scopeClause)
         try:
-            self.state = 1771
+            self.state = 1779
             self._errHandler.sync(self)
             token = self._input.LA(1)
             if token in [VisualFoxpro9Parser.ALL]:
                 self.enterOuterAlt(localctx, 1)
-                self.state = 1765
+                self.state = 1773
                 self.match(VisualFoxpro9Parser.ALL)
                 pass
             elif token in [VisualFoxpro9Parser.NEXT]:
                 self.enterOuterAlt(localctx, 2)
-                self.state = 1766
+                self.state = 1774
                 self.match(VisualFoxpro9Parser.NEXT)
-                self.state = 1767
+                self.state = 1775
                 self.expr(0)
                 pass
             elif token in [VisualFoxpro9Parser.RECORD]:
                 self.enterOuterAlt(localctx, 3)
-                self.state = 1768
+                self.state = 1776
                 self.match(VisualFoxpro9Parser.RECORD)
-                self.state = 1769
+                self.state = 1777
                 self.expr(0)
                 pass
             elif token in [VisualFoxpro9Parser.REST]:
                 self.enterOuterAlt(localctx, 4)
-                self.state = 1770
+                self.state = 1778
                 self.match(VisualFoxpro9Parser.REST)
                 pass
             else:
@@ -12788,7 +12818,7 @@ class VisualFoxpro9Parser ( Parser ):
         self._la = 0 # Token type
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 1773
+            self.state = 1781
             _la = self._input.LA(1)
             if not(((((_la - 40)) & ~0x3f) == 0 and ((1 << (_la - 40)) & ((1 << (VisualFoxpro9Parser.ASSERT - 40)) | (1 << (VisualFoxpro9Parser.TO - 40)) | (1 << (VisualFoxpro9Parser.DO - 40)) | (1 << (VisualFoxpro9Parser.IN - 40)) | (1 << (VisualFoxpro9Parser.AS - 40)) | (1 << (VisualFoxpro9Parser.IF - 40)) | (1 << (VisualFoxpro9Parser.ELIF - 40)) | (1 << (VisualFoxpro9Parser.ELSE - 40)) | (1 << (VisualFoxpro9Parser.ENDIF - 40)) | (1 << (VisualFoxpro9Parser.ON - 40)) | (1 << (VisualFoxpro9Parser.OFF - 40)) | (1 << (VisualFoxpro9Parser.ERROR - 40)) | (1 << (VisualFoxpro9Parser.QUIT - 40)) | (1 << (VisualFoxpro9Parser.EXIT - 40)) | (1 << (VisualFoxpro9Parser.WITH - 40)) | (1 << (VisualFoxpro9Parser.STORE - 40)) | (1 << (VisualFoxpro9Parser.PUBLIC - 40)) | (1 << (VisualFoxpro9Parser.PRIVATE - 40)) | (1 << (VisualFoxpro9Parser.LOCAL - 40)) | (1 << (VisualFoxpro9Parser.ARRAY - 40)) | (1 << (VisualFoxpro9Parser.DELETE - 40)) | (1 << (VisualFoxpro9Parser.RECALL - 40)) | (1 << (VisualFoxpro9Parser.FILE - 40)) | (1 << (VisualFoxpro9Parser.SET - 40)) | (1 << (VisualFoxpro9Parser.RELEASE - 40)) | (1 << (VisualFoxpro9Parser.RECYCLE - 40)) | (1 << (VisualFoxpro9Parser.CREATE - 40)) | (1 << (VisualFoxpro9Parser.TABLE - 40)) | (1 << (VisualFoxpro9Parser.DBF - 40)) | (1 << (VisualFoxpro9Parser.NAME - 40)) | (1 << (VisualFoxpro9Parser.FREE - 40)) | (1 << (VisualFoxpro9Parser.SELECT - 40)) | (1 << (VisualFoxpro9Parser.USE - 40)) | (1 << (VisualFoxpro9Parser.READ - 40)) | (1 << (VisualFoxpro9Parser.EVENTS - 40)) | (1 << (VisualFoxpro9Parser.SHUTDOWN - 40)) | (1 << (VisualFoxpro9Parser.CLEAR - 40)) | (1 << (VisualFoxpro9Parser.PROCEDURE - 40)) | (1 << (VisualFoxpro9Parser.FUNCTION - 40)) | (1 << (VisualFoxpro9Parser.ENDPROC - 40)) | (1 << (VisualFoxpro9Parser.ENDFUNC - 40)) | (1 << (VisualFoxpro9Parser.DEFINE - 40)) | (1 << (VisualFoxpro9Parser.CLASS - 40)) | (1 << (VisualFoxpro9Parser.ENDDEFINE - 40)) | (1 << (VisualFoxpro9Parser.LOCATE - 40)) | (1 << (VisualFoxpro9Parser.CONTINUE - 40)) | (1 << (VisualFoxpro9Parser.FOR - 40)) | (1 << (VisualFoxpro9Parser.ENDFOR - 40)) | (1 << (VisualFoxpro9Parser.WHILE - 40)) | (1 << (VisualFoxpro9Parser.NOOPTIMIZE - 40)) | (1 << (VisualFoxpro9Parser.STATUS - 40)) | (1 << (VisualFoxpro9Parser.BAR - 40)) | (1 << (VisualFoxpro9Parser.MEMOWIDTH - 40)) | (1 << (VisualFoxpro9Parser.CURSOR - 40)) | (1 << (VisualFoxpro9Parser.REFRESH - 40)) | (1 << (VisualFoxpro9Parser.BELL - 40)) | (1 << (VisualFoxpro9Parser.CENTURY - 40)) | (1 << (VisualFoxpro9Parser.COMPATIBLE - 40)) | (1 << (VisualFoxpro9Parser.DATE - 40)) | (1 << (VisualFoxpro9Parser.ADD - 40)) | (1 << (VisualFoxpro9Parser.OBJECT - 40)))) != 0) or ((((_la - 104)) & ~0x3f) == 0 and ((1 << (_la - 104)) & ((1 << (VisualFoxpro9Parser.REPLACE - 104)) | (1 << (VisualFoxpro9Parser.LIBRARY - 104)) | (1 << (VisualFoxpro9Parser.SHARED - 104)) | (1 << (VisualFoxpro9Parser.WAIT - 104)) | (1 << (VisualFoxpro9Parser.WINDOW - 104)) | (1 << (VisualFoxpro9Parser.NOWAIT - 104)) | (1 << (VisualFoxpro9Parser.NOCLEAR - 104)) | (1 << (VisualFoxpro9Parser.NOTIFY - 104)) | (1 << (VisualFoxpro9Parser.ENDDO - 104)) | (1 << (VisualFoxpro9Parser.DECLARE - 104)) | (1 << (VisualFoxpro9Parser.ERASE - 104)) | (1 << (VisualFoxpro9Parser.SYSMENU - 104)) | (1 << (VisualFoxpro9Parser.CLOCK - 104)) | (1 << (VisualFoxpro9Parser.RETURN - 104)) | (1 << (VisualFoxpro9Parser.LPARAMETERS - 104)) | (1 << (VisualFoxpro9Parser.LPARAMETER - 104)) | (1 << (VisualFoxpro9Parser.PARAMETERS - 104)) | (1 << (VisualFoxpro9Parser.ALTERNATE - 104)) | (1 << (VisualFoxpro9Parser.EXACT - 104)) | (1 << (VisualFoxpro9Parser.ALL - 104)) | (1 << (VisualFoxpro9Parser.COUNT - 104)) | (1 << (VisualFoxpro9Parser.GOTO - 104)) | (1 << (VisualFoxpro9Parser.GO - 104)) | (1 << (VisualFoxpro9Parser.TOP - 104)) | (1 << (VisualFoxpro9Parser.BOTTOM - 104)) | (1 << (VisualFoxpro9Parser.RECORD - 104)) | (1 << (VisualFoxpro9Parser.CLOSE - 104)) | (1 << (VisualFoxpro9Parser.APPEND - 104)) | (1 << (VisualFoxpro9Parser.BLANK - 104)) | (1 << (VisualFoxpro9Parser.NOMENU - 104)) | (1 << (VisualFoxpro9Parser.CASE - 104)) | (1 << (VisualFoxpro9Parser.ENDCASE - 104)) | (1 << (VisualFoxpro9Parser.OTHERWISE - 104)) | (1 << (VisualFoxpro9Parser.FROM - 104)) | (1 << (VisualFoxpro9Parser.REPORT - 104)) | (1 << (VisualFoxpro9Parser.FORM - 104)) | (1 << (VisualFoxpro9Parser.NOEJECT - 104)) | (1 << (VisualFoxpro9Parser.PRINTER - 104)) | (1 << (VisualFoxpro9Parser.PROMPT - 104)) | (1 << (VisualFoxpro9Parser.NOPROMPT - 104)) | (1 << (VisualFoxpro9Parser.DB4 - 104)) | (1 << (VisualFoxpro9Parser.FOXPLUS - 104)) | (1 << (VisualFoxpro9Parser.NOCONSOLE - 104)) | (1 << (VisualFoxpro9Parser.COPY - 104)) | (1 << (VisualFoxpro9Parser.STRUCTURE - 104)) | (1 << (VisualFoxpro9Parser.DELETED - 104)) | (1 << (VisualFoxpro9Parser.SUM - 104)) | (1 << (VisualFoxpro9Parser.DISTINCT - 104)) | (1 << (VisualFoxpro9Parser.INTO - 104)) | (1 << (VisualFoxpro9Parser.NEXT - 104)) | (1 << (VisualFoxpro9Parser.REST - 104)) | (1 << (VisualFoxpro9Parser.SKIPKW - 104)) | (1 << (VisualFoxpro9Parser.EXCLUSIVE - 104)) | (1 << (VisualFoxpro9Parser.NEAR - 104)) | (1 << (VisualFoxpro9Parser.MKDIR - 104)) | (1 << (VisualFoxpro9Parser.RMDIR - 104)) | (1 << (VisualFoxpro9Parser.KEY - 104)) | (1 << (VisualFoxpro9Parser.KEYBOARD - 104)) | (1 << (VisualFoxpro9Parser.LABEL - 104)) | (1 << (VisualFoxpro9Parser.PLAIN - 104)) | (1 << (VisualFoxpro9Parser.MENU - 104)) | (1 << (VisualFoxpro9Parser.AT - 104)) | (1 << (VisualFoxpro9Parser.LINE - 104)) | (1 << (VisualFoxpro9Parser.SCREEN - 104)))) != 0) or ((((_la - 168)) & ~0x3f) == 0 and ((1 << (_la - 168)) & ((1 << (VisualFoxpro9Parser.NOMARGIN - 168)) | (1 << (VisualFoxpro9Parser.PAD - 168)) | (1 << (VisualFoxpro9Parser.OF - 168)) | (1 << (VisualFoxpro9Parser.COLOR - 168)) | (1 << (VisualFoxpro9Parser.SCHEME - 168)) | (1 << (VisualFoxpro9Parser.BEFORE - 168)) | (1 << (VisualFoxpro9Parser.AFTER - 168)) | (1 << (VisualFoxpro9Parser.NEGOTIATE - 168)) | (1 << (VisualFoxpro9Parser.FONT - 168)) | (1 << (VisualFoxpro9Parser.STYLE - 168)) | (1 << (VisualFoxpro9Parser.MARK - 168)) | (1 << (VisualFoxpro9Parser.MESSAGE - 168)) | (1 << (VisualFoxpro9Parser.ACTIVATE - 168)) | (1 << (VisualFoxpro9Parser.POPUP - 168)) | (1 << (VisualFoxpro9Parser.POPUPS - 168)) | (1 << (VisualFoxpro9Parser.EXTENDED - 168)) | (1 << (VisualFoxpro9Parser.SHADOW - 168)) | (1 << (VisualFoxpro9Parser.MARGIN - 168)) | (1 << (VisualFoxpro9Parser.RELATIVE - 168)) | (1 << (VisualFoxpro9Parser.SELECTION - 168)) | (1 << (VisualFoxpro9Parser.DEACTIVATE - 168)) | (1 << (VisualFoxpro9Parser.SAME - 168)) | (1 << (VisualFoxpro9Parser.NOSHOW - 168)) | (1 << (VisualFoxpro9Parser.STEP - 168)) | (1 << (VisualFoxpro9Parser.THEN - 168)) | (1 << (VisualFoxpro9Parser.UNDEFINE - 168)) | (1 << (VisualFoxpro9Parser.IFDEF - 168)) | (1 << (VisualFoxpro9Parser.PUSH - 168)) | (1 << (VisualFoxpro9Parser.POP - 168)) | (1 << (VisualFoxpro9Parser.TIMEOUT - 168)) | (1 << (VisualFoxpro9Parser.ENDWITH - 168)) | (1 << (VisualFoxpro9Parser.TYPEAHEAD - 168)) | (1 << (VisualFoxpro9Parser.ALIAS - 168)) | (1 << (VisualFoxpro9Parser.ORDER - 168)) | (1 << (VisualFoxpro9Parser.SEEK - 168)) | (1 << (VisualFoxpro9Parser.WHERE - 168)) | (1 << (VisualFoxpro9Parser.FILTER - 168)) | (1 << (VisualFoxpro9Parser.RENAME - 168)) | (1 << (VisualFoxpro9Parser.INCLUDE - 168)) | (1 << (VisualFoxpro9Parser.CLASSLIB - 168)) | (1 << (VisualFoxpro9Parser.BY - 168)) | (1 << (VisualFoxpro9Parser.UNIQUE - 168)) | (1 << (VisualFoxpro9Parser.INDEX - 168)) | (1 << (VisualFoxpro9Parser.TAG - 168)) | (1 << (VisualFoxpro9Parser.COMPACT - 168)) | (1 << (VisualFoxpro9Parser.ASCENDING - 168)) | (1 << (VisualFoxpro9Parser.DESCENDING - 168)) | (1 << (VisualFoxpro9Parser.CANDIDATE - 168)) | (1 << (VisualFoxpro9Parser.ADDITIVE - 168)) | (1 << (VisualFoxpro9Parser.DIMENSION - 168)) | (1 << (VisualFoxpro9Parser.NOT - 168)) | (1 << (VisualFoxpro9Parser.AND - 168)) | (1 << (VisualFoxpro9Parser.OR - 168)) | (1 << (VisualFoxpro9Parser.SCAN - 168)) | (1 << (VisualFoxpro9Parser.ENDSCAN - 168)) | (1 << (VisualFoxpro9Parser.NULL - 168)) | (1 << (VisualFoxpro9Parser.BOOLEANCHAR - 168)) | (1 << (VisualFoxpro9Parser.NODEFAULT - 168)) | (1 << (VisualFoxpro9Parser.DLLS - 168)) | (1 << (VisualFoxpro9Parser.MACROS - 168)) | (1 << (VisualFoxpro9Parser.NUMBER - 168)) | (1 << (VisualFoxpro9Parser.ZAP - 168)) | (1 << (VisualFoxpro9Parser.ROLLOVER - 168)) | (1 << (VisualFoxpro9Parser.DEFAULT - 168)))) != 0) or ((((_la - 232)) & ~0x3f) == 0 and ((1 << (_la - 232)) & ((1 << (VisualFoxpro9Parser.SAVE - 232)) | (1 << (VisualFoxpro9Parser.NOSAVE - 232)) | (1 << (VisualFoxpro9Parser.DATABASE - 232)) | (1 << (VisualFoxpro9Parser.DATABASES - 232)) | (1 << (VisualFoxpro9Parser.TABLES - 232)) | (1 << (VisualFoxpro9Parser.INDEXES - 232)) | (1 << (VisualFoxpro9Parser.PACK - 232)) | (1 << (VisualFoxpro9Parser.REINDEX - 232)) | (1 << (VisualFoxpro9Parser.PROGRAM - 232)) | (1 << (VisualFoxpro9Parser.PROTECTED - 232)) | (1 << (VisualFoxpro9Parser.THROW - 232)) | (1 << (VisualFoxpro9Parser.EACH - 232)) | (1 << (VisualFoxpro9Parser.CAST - 232)) | (1 << (VisualFoxpro9Parser.RUN - 232)) | (1 << (VisualFoxpro9Parser.TRY - 232)) | (1 << (VisualFoxpro9Parser.CATCH - 232)) | (1 << (VisualFoxpro9Parser.FINALLY - 232)) | (1 << (VisualFoxpro9Parser.ENDTRY - 232)) | (1 << (VisualFoxpro9Parser.BROWSE - 232)) | (1 << (VisualFoxpro9Parser.INSERT - 232)) | (1 << (VisualFoxpro9Parser.VALUES - 232)) | (1 << (VisualFoxpro9Parser.MEMVAR - 232)) | (1 << (VisualFoxpro9Parser.TYPE - 232)) | (1 << (VisualFoxpro9Parser.SCATTER - 232)) | (1 << (VisualFoxpro9Parser.GATHER - 232)) | (1 << (VisualFoxpro9Parser.EXCEPT - 232)) | (1 << (VisualFoxpro9Parser.LIKE - 232)) | (1 << (VisualFoxpro9Parser.FIELDS - 232)) | (1 << (VisualFoxpro9Parser.ALTER - 232)) | (1 << (VisualFoxpro9Parser.COLUMN - 232)) | (1 << (VisualFoxpro9Parser.DROP - 232)) | (1 << (VisualFoxpro9Parser.SAY - 232)) | (1 << (VisualFoxpro9Parser.ID - 232)))) != 0)):
                 self._errHandler.recoverInline(self)

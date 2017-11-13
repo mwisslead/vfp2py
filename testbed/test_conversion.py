@@ -25,6 +25,7 @@ blob_val = 0h
 BOOL_VAL = .F.
 NULL_VAL = NULL
 NULLDATE_VAL = { / / }
+NULLDATE_VAL = {:}
 DATE_VAL = {^2017-5-6}
 DATETIME_VAL = {^2017-5-6 5P}
 ?(float_val + INT_VAL + INT_VAL + - - FLOAT_VAL + int_VAL - FLOAT_val) / ++3 / --4 * -5 - INT_VAL * 3
@@ -79,6 +80,7 @@ blob_val = bytearray(b\'\\x00\\x124Vx\\x9a\\xbc\\xde\')
 blob_val = bytearray(b\'\')
 bool_val = False
 null_val = None
+nulldate_val = None
 nulldate_val = None
 date_val = dt.date(2017, 5, 6)
 datetime_val = dt.datetime(2017, 5, 6, 17)

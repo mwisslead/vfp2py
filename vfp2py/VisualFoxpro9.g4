@@ -408,7 +408,7 @@ specialExpr
 constant
  : '$'? NUMBER_LITERAL #numberOrCurrency
  | ('.' (BOOLEANCHAR | NULL) '.' | NULL) #boolOrNull
- | '{' ( '/' '/'  | '^' NUMBER_LITERAL '-' NUMBER_LITERAL '-' NUMBER_LITERAL (','? NUMBER_LITERAL (':' NUMBER_LITERAL (':' NUMBER_LITERAL)?)? identifier)? ) '}' #date
+ | '{' ( '/' '/'  | ':' | '^' (NUMBER_LITERAL '-' NUMBER_LITERAL '-' NUMBER_LITERAL | NUMBER_LITERAL '/' NUMBER_LITERAL '/' NUMBER_LITERAL) (','? NUMBER_LITERAL (':' NUMBER_LITERAL (':' NUMBER_LITERAL)?)? identifier)? )? '}' #date
  | STRING_LITERAL #string
  | BLOB_LITERAL #blob
  ;
