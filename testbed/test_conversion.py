@@ -7,6 +7,9 @@ import vfp2py
 
 def Test0():
     input_str = '''
+*comment;
+  continued on another line;
+  and another
 LOCAL STRING_VAL, FLOAT_VAL, MONEY_VAL, INT_VAL, BLOB_VAL, BOOL_VAL, NULL_VAL, NULLDATE_VAL, DATE_VAL, DATETIME_VAL, OBJ_VAL
 STRING_VAL = \'str\'
 float_val = 3.0
@@ -63,6 +66,9 @@ DO CASE
 ENDCASE
 '''.strip()
     output_str = '''
+# comment
+# continued on another line
+# and another
 string_val = float_val = money_val = int_val = blob_val = bool_val = null_val = nulldate_val = date_val = datetime_val = obj_val = False  # LOCAL Declaration
 string_val = \'str\'
 float_val = 3.0
@@ -134,7 +140,9 @@ def Test1():
 #DEFINE THREE 3 &&the number 3
 #IFDEF cantbewrong
 #IF FILE ( \'test.h\' )
-   ***comment***
+   ***************
+   *** comment ***
+   ***************
    # include  test.h
    # include  \'test.h\'
    # include  \'test\' + \'.h\'
@@ -174,7 +182,9 @@ from vfp2py.vfpfunc import variable as vfpvar
 def _program_main():
     vfpvar.pushscope()
     # comment with spaces
-    ###comment###
+    ###############
+    ### comment ###
+    ###############
     vfpvar[\'x\'] = \'\\n\'
     vfpvar[\'x\'] = \'\\n\'
     vfpvar[\'x\'] = \'\\n\'
