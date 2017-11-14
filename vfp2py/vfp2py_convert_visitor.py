@@ -163,16 +163,18 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             retval = [CodeStr('#FIX ME: {}'.format(line)) for line in lines.split('\n') if line]
         return retval if isinstance(retval, list) else [retval]
 
-    andfix = re.compile('^&&')
-    frontfix = re.compile('^\**')
-    endfix = re.compile('\**$')
-
     def visitLineComment(self, ctx):
-        repl = lambda x: '#' * len(x.group())
-        comment = ctx.getText().split('\n')[0].strip()
-        comment = self.andfix.sub('', comment)
-        comment = self.frontfix.sub(repl, comment)
-        return [CodeStr(self.endfix.sub(repl, comment))]
+        fixer = re.compile('^\s*(&&|\**)(.*[^*; ]\s*|.*[^* ];\s*|;\s*)?(\**)\s*;*$')
+        def repl(match):
+            groups = match.groups()
+            if not any(groups):
+                return ''
+            start = '*' if not groups[0] or groups[0] == '&&' else groups[0]
+            middle = groups[1] or ''
+            end = groups[2] or ''
+            return ('#' * len(start) + middle + '#' * len(end)).strip()
+        comments = [comment.strip() for comment in ctx.getText().splitlines()]
+        return [CodeStr(fixer.sub(repl, comment)) for comment in comments]
 
     def visitCmdStmt(self, ctx):
         return self.visit(ctx.cmd() or ctx.setup())

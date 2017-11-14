@@ -129,12 +129,6 @@ class PreprocessVisitor(VisualFoxpro9Visitor):
                     tok.text = '*' + tok.text[2:] + '\n'
                     hidden_tokens.append(tok)
                     continue
-                elif tok.type == ctx.parser.LINECOMMENT:
-                    if tok.text.strip():
-                        tok.text = re.sub(r';[ \t]*\r*\n', '\n', tok.text.strip())
-                        lines = tok.text.split('\n')
-                        lines = [re.sub(r'^\s*\*?', '*', line) + '\n' for line in lines]
-                        tok.text = ''.join(lines)
                 retval.append(tok)
         return hidden_tokens + retval
 
