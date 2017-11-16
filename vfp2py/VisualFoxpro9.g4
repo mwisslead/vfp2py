@@ -346,7 +346,7 @@ expr
  | expr op=('*'|'/') expr #multiplication
  | expr '%' expr #modulo
  | expr op=('+'|'-') expr #addition
- | expr op=('=='|NOTEQUALS|'='|'#'|'>'|'>='|'<'|'<='|'$') expr #comparison
+ | expr op=('=='|NOTEQUALS|'='|'#'|'>'|GTEQ|'<'|LTEQ|'$') expr #comparison
  | expr op=(OR|AND) expr #booleanOperation
  | constant #constantExpr
  | CAST '(' expr AS datatype ')' #castExpr
@@ -502,8 +502,8 @@ EXCLAMATION: '!';
 HASH: '#';
 DOUBLEEQUALS: '==';
 NOTEQUALS: ('!='|'<>');
-GTEQ: '>=';
-LTEQ: '<=';
+GTEQ: ('>='|'=>');
+LTEQ: ('<='|'=<');
 MODULO: '%';
 EQUALS: '=';
 CARAT: '^';

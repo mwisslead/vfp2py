@@ -43,6 +43,10 @@ DATETIME_VAL = {^2017-5-6 5P}
 ?2 ** 3 ** 4
 ?2 ** (3 ** 4)
 ?(((2)))
+?10 >= 5
+?10 => 5
+?10 <= 5
+?10 =< 5
 OBJ_VAL = CREATEOBJECT(\'TEST\')
 OBJ_VAL = CREATEOBJECT(\'FORM\')
 RELEASE STRING_VAL, INT_VAL, BOOL_VAL, NULL_VAL
@@ -102,6 +106,10 @@ print(\'chr(65) = A, just letting you know.\\r\\n\')
 print((2 ** 3) ** 4)
 print(2 ** 3 ** 4)
 print(2)
+print(10 >= 5)
+print(10 >= 5)
+print(10 <= 5)
+print(10 <= 5)
 obj_val = vfpfunc.create_object(\'Test\')
 obj_val = vfpfunc.Form()
 del string_val, int_val, bool_val, null_val

@@ -1077,8 +1077,8 @@ class VisualFoxpro9Parser ( Parser ):
                      u"'&'", u"'@'", u"'*'", u"'+'", u"'-'", u"'/'", u"'.'", 
                      u"'['", u"']'", u"'{'", u"'}'", u"'('", u"')'", u"'\\'", 
                      u"'<'", u"'>'", u"'!'", u"'#'", u"'=='", u"<INVALID>", 
-                     u"'>='", u"'<='", u"'%'", u"'='", u"'^'", u"','", u"'$'", 
-                     u"':'", u"'?'", u"'\"'", u"'''", u"<INVALID>", u"<INVALID>", 
+                     u"<INVALID>", u"<INVALID>", u"'%'", u"'='", u"'^'", 
+                     u"','", u"'$'", u"':'", u"'?'", u"'\"'", u"'''", u"<INVALID>", 
                      u"<INVALID>", u"<INVALID>", u"<INVALID>", u"<INVALID>", 
                      u"<INVALID>", u"<INVALID>", u"<INVALID>", u"<INVALID>", 
                      u"<INVALID>", u"<INVALID>", u"<INVALID>", u"<INVALID>", 
@@ -1138,7 +1138,7 @@ class VisualFoxpro9Parser ( Parser ):
                      u"<INVALID>", u"<INVALID>", u"<INVALID>", u"<INVALID>", 
                      u"<INVALID>", u"<INVALID>", u"<INVALID>", u"<INVALID>", 
                      u"<INVALID>", u"<INVALID>", u"<INVALID>", u"<INVALID>", 
-                     u"<INVALID>", u"'\n'" ]
+                     u"<INVALID>", u"<INVALID>", u"'\n'" ]
 
     symbolicNames = [ u"<INVALID>", u"<INVALID>", u"NUMBER_LITERAL", u"BLOB_LITERAL", 
                       u"SEMICOLON", u"AMPERSAND", u"COMMERCIALAT", u"ASTERISK", 
@@ -10407,6 +10407,10 @@ class VisualFoxpro9Parser ( Parser ):
 
         def NOTEQUALS(self):
             return self.getToken(VisualFoxpro9Parser.NOTEQUALS, 0)
+        def GTEQ(self):
+            return self.getToken(VisualFoxpro9Parser.GTEQ, 0)
+        def LTEQ(self):
+            return self.getToken(VisualFoxpro9Parser.LTEQ, 0)
 
         def accept(self, visitor):
             if hasattr(visitor, "visitComparison"):

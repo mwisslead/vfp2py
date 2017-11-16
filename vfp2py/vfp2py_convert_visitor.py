@@ -543,18 +543,19 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         return [self.visit(c) for c in ctx.specialExpr()]
 
     def visitComparison(self, ctx):
-        symbol_dict = {ctx.parser.GREATERTHAN: '>',
-                       ctx.parser.GTEQ: '>=',
-                       ctx.parser.LESSTHAN: '<',
-                       ctx.parser.LTEQ: '<=',
-                       ctx.parser.NOTEQUALS: '!=',
-                       ctx.parser.HASH: '!=',
-                       ctx.parser.EQUALS: '==',
-                       ctx.parser.DOUBLEEQUALS: '==',
-                       ctx.parser.DOLLAR: 'in',
-                       ctx.parser.OR: 'or',
-                       ctx.parser.AND: 'and'
-                      }
+        symbol_dict = {
+            ctx.parser.GREATERTHAN: '>',
+            ctx.parser.GTEQ: '>=',
+            ctx.parser.LESSTHAN: '<',
+            ctx.parser.LTEQ: '<=',
+            ctx.parser.NOTEQUALS: '!=',
+            ctx.parser.HASH: '!=',
+            ctx.parser.EQUALS: '==',
+            ctx.parser.DOUBLEEQUALS: '==',
+            ctx.parser.DOLLAR: 'in',
+            ctx.parser.OR: 'or',
+            ctx.parser.AND: 'and'
+        }
         left = self.visit(ctx.expr(0))
         right = self.visit(ctx.expr(1))
         symbol = symbol_dict[ctx.op.type]
