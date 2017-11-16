@@ -1103,7 +1103,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         return make_func_code('dt.datetime', *numbers)
 
     def visitString(self, ctx):
-        return create_string(ctx.getText()[1:-1])
+        return create_string(self.getCtxText(ctx)[1:-1])
 
     def visitPower(self, ctx):
         return self.operationExpr(ctx, '**')
@@ -1706,7 +1706,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             start = ctx.identifier().getSourceInterval()[0]
         tokens = ctx.parser._input.tokens[start + 1:stop + 1]
         # FIXME: Need more cleanup on the arguments.
-        command = ''.join(create_string(tok.text if tok.type != ctx.parser.STRING_LITERAL else tok.text[1:-1]) for tok in tokens).strip().split()
+        command = ''.join(create_string(tok.text) for tok in tokens).strip().split()
         for i, arg in enumerate(command):
             if arg.startswith('&'):
                 command[i] = CodeStr(arg[1:])

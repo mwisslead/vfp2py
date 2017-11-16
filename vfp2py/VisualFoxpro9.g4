@@ -182,8 +182,8 @@ otherCmds
  | DEFINE MENU identifier (BAR (AT LINE NUMBER_LITERAL)?) (IN (WINDOW? identifier | SCREEN))? NOMARGIN? #defineMenu
  | DEFINE PAD identifier OF expr PROMPT expr (AT NUMBER_LITERAL ',' NUMBER_LITERAL)?
          (BEFORE identifier | AFTER identifier)? (NEGOTIATE identifier (',' identifier)?)?
-         (FONT identifier (',' NUMBER_LITERAL (',' STRING_LITERAL (',' identifier)?)?)?)? (STYLE identifier)?
-         (MESSAGE expr)? (KEY identifier ('+' identifier)? (',' STRING_LITERAL)?)? (MARK identifier)?
+         (FONT identifier (',' NUMBER_LITERAL (',' expr (',' identifier)?)?)?)? (STYLE identifier)?
+         (MESSAGE expr)? (KEY identifier ('+' identifier)? (',' expr)?)? (MARK identifier)?
          (SKIPKW (FOR expr)?)? (COLOR SCHEME NUMBER_LITERAL)? #definePad
  | DEFINE POPUP identifier SHADOW? MARGIN? RELATIVE? (COLOR SCHEME NUMBER_LITERAL)? #definePopup
  | DEFINE BAR NUMBER_LITERAL OF identifier PROMPT expr (MESSAGE expr)? #defineBar
@@ -409,7 +409,7 @@ constant
  : '$'? NUMBER_LITERAL #numberOrCurrency
  | ('.' (BOOLEANCHAR | NULL) '.' | NULL) #boolOrNull
  | '{' ( '/' '/'  | ':' | '^' (NUMBER_LITERAL '-' NUMBER_LITERAL '-' NUMBER_LITERAL | NUMBER_LITERAL '/' NUMBER_LITERAL '/' NUMBER_LITERAL) (','? NUMBER_LITERAL (':' NUMBER_LITERAL (':' NUMBER_LITERAL)?)? identifier)? )? '}' #date
- | STRING_LITERAL #string
+ | ('\'' (~(NL | '\''))* '\'' | '"' (~(NL | '"'))* '"' | '[' (~(NL | ']'))* ']') #string
  | BLOB_LITERAL #blob
  ;
 
@@ -512,10 +512,6 @@ COLON: ':';
 QUESTION: '?';
 DOUBLEQUOTE: '"';
 SINGLEQUOTE: '\'';
-
-STRING_LITERAL: '\'' ~('\'' | '\n' | '\r')* '\''
-              | '"' ~('"' | '\n' | '\r')* '"'
-              ;
 
 LINECOMMENT: WS* (('*' | N O T E | '&&') (LINECONT | ~'\n')*)? NL {_tokenStartCharPositionInLine == 0}?;
 
