@@ -231,6 +231,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         assign_scope = self.used_scope
 
         funcs = OrderedDict()
+        funcs['_assign'] = None
         for funcdef in ctx.funcDef():
             self.used_scope = False
             funcname, parameters, funcbody = self.visit(funcdef)

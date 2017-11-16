@@ -255,15 +255,14 @@ def _program_main():
 
 class Subobj(vfpfunc.Custom):
 
-    def init(self, x=False):
-        super(type(self), self).init()
-        self.x = x
-
     def _assign(self, *args, **kwargs):
         vfpfunc.Custom._assign(self)
         self.x = 3
 
         # comment
+    def init(self, x=False):
+        super(type(self), self).init()
+        self.x = x
 
 # comment about subobj2
 
@@ -277,14 +276,14 @@ class Subobj2(Subobj):
 
 class Testclass(vfpfunc.Commandbutton):
 
-    def init(self, x=False):
-        pass
-
     def _assign(self, *args, **kwargs):
         vfpfunc.Commandbutton._assign(self)
         self.test1 = vfpfunc.Custom(name=\'test1\', parent=self)
         self.test2 = Subobj(x=4, name=\'test2\', parent=self)
         self.test3 = vfpfunc.create_object(\'Unknownobj\', x=\'4\', name=\'test3\', parent=self)
+
+    def init(self, x=False):
+        pass
 
 
 def random_function():
