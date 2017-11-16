@@ -19,7 +19,7 @@ preprocessorLine
  | '#' UNDEFINE identifier lineEnd #preprocessorUndefine
  | '#' INCLUDE specialExpr lineEnd #preprocessorInclude
  | '#' (~(IF | ELSE | ENDIF | DEFINE | INCLUDE | NL) (~NL)*) lineEnd #preprocessorJunk
- | (LINECOMMENT | ~('#' | NL | EOF) (~NL)* lineEnd) #nonpreprocessorLine
+ | (NL | ~('#' | NL | EOF) (~NL)* lineEnd) #nonpreprocessorLine
  ;
 
 prg
@@ -27,7 +27,8 @@ prg
  ;
 
 lineComment
- : LINECOMMENT
+ : ('*' | NOTE) (~NL)* lineEnd
+ | NL
  ;
 
 line
@@ -513,12 +514,11 @@ QUESTION: '?';
 DOUBLEQUOTE: '"';
 SINGLEQUOTE: '\'';
 
-LINECOMMENT: WS* (('*' | N O T E | '&&') (LINECONT | ~'\n')*)? NL {_tokenStartCharPositionInLine == 0}?;
-
 COMMENT: ('&&' (~'\n')* | ';' WS* '&&' (~'\n')* NL) -> channel(1);
 
-LINECONT : ';' WS* NL -> skip;
+LINECONT : ';' WS* NL -> channel(2);
 
+NOTE: N O T E;
 ASSERT: A S S E R T;
 ASSERTS: ASSERT S;
 TO : T O;

@@ -175,7 +175,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             middle = groups[1] or ''
             end = groups[2] or ''
             return ('#' * len(start) + middle + '#' * len(end)).strip()
-        comments = [comment.strip() for comment in ctx.getText().splitlines()]
+        comments = [comment.strip() for comment in self.getCtxText(ctx).splitlines()]
         return [CodeStr(fixer.sub(repl, comment)) for comment in comments]
 
     def visitCmdStmt(self, ctx):
