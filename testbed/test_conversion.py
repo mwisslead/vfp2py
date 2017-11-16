@@ -213,12 +213,16 @@ def Test2():
     input_str = '''
 DEFINE CLASS SUBOBJ AS CUSTOM
    X = 3
+
    FUNCTION INIT(X)
       DODEFAULT()
       THIS.X = X
    ENDFUNC
+
+   *comment
 ENDDEFINE
 
+*comment about subobj2
 DEFINE CLASS SUBOBJ2 AS SUBOBJ
    X = 4
 ENDDEFINE
@@ -231,6 +235,10 @@ DEFINE CLASS TESTCLASS AS COMMANDBUTTON
    ENDFUNC
 ENDDEFINE
 
+FUNCTION RANDOM_FUNCTION
+ENDFUNC
+
+*comment about testclass2
 DEFINE CLASS TESTCLASS2 AS UNKNOWNCLASS
 ENDDEFINE
 '''.strip()
@@ -255,6 +263,10 @@ class Subobj(vfpfunc.Custom):
         vfpfunc.Custom._assign(self)
         self.x = 3
 
+        # comment
+
+# comment about subobj2
+
 
 class Subobj2(Subobj):
 
@@ -273,6 +285,12 @@ class Testclass(vfpfunc.Commandbutton):
         self.test1 = vfpfunc.Custom(name=\'test1\', parent=self)
         self.test2 = Subobj(x=4, name=\'test2\', parent=self)
         self.test3 = vfpfunc.create_object(\'Unknownobj\', x=\'4\', name=\'test3\', parent=self)
+
+
+def random_function():
+    pass
+
+# comment about testclass2
 
 
 class Testclass2(vfpfunc.classes[\'Unknownclass\']):

@@ -146,6 +146,8 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
                 self.used_scope = False
                 funcname, parameters, funcbody = self.visit(child)
                 defs += [CodeStr('def {}({}):'.format(funcname, ', '.join([str(repr(p)) + '=False' for p in parameters]))), funcbody]
+                if child.funcDefEnd():
+                    defs += sum((self.visit(comment) for comment in child.funcDefEnd().lineComment()), [])
             elif not isinstance(child, antlr4.tree.Tree.TerminalNodeImpl):
                 defs += self.visit(child)
 
@@ -228,10 +230,6 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
                         assignments.append(CodeStr('self.' + ident + value))
         assign_scope = self.used_scope
 
-        comments = []
-        for comment in ctx.lineComment():
-            comments.append(self.visit(comment) + [comment.start.line])
-
         funcs = OrderedDict()
         for funcdef in ctx.funcDef():
             self.used_scope = False
@@ -242,6 +240,8 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             parameters = [add_args_to_code('{}=False', (p,)) for p in parameters]
             if '.' not in funcname:
                 funcs.update({funcname: [[CodeStr('self')] + parameters, funcbody, funcdef.start.line]})
+            if funcdef.funcDefEnd():
+                assignments += sum((self.visit(comment) for comment in funcdef.funcDefEnd().lineComment()), [])
 
         classname, supername = self.visit(ctx.classDefStart())
 
@@ -268,16 +268,12 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
                 retval.append(subclass_code)
             for funcname in funcs:
                 parameters, funcbody, line_number = funcs[funcname]
-                while comments and comments[0][1] < line_number:
-                    retval.append([comments.pop(0)[0]])
                 func = make_func_code(funcname, *parameters)
                 retval.append([add_args_to_code('def {}:', (func,)), funcbody])
         else:
             retval.append([CodeStr('pass')])
-        while comments:
-            retval.append([comments.pop(0)[0]])
 
-        return retval
+        return retval + sum((self.visit(comment) for comment in ctx.lineComment()), [])
 
     def visitClassDefStart(self, ctx):
         names = [CodeStr(self.visit(identifier).title()) for identifier in ctx.identifier()]
