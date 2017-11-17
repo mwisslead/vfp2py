@@ -653,12 +653,14 @@ PUBLIC ARRAY somearray[2, 5]
 SOMEARRAY(1, 4) = 3
 PRIVATE TEST, somearray[2, 5]
 EXTERNAL ARRAY someotherarray[3]
+EXTERNAL PROCEDURE test
 '''.strip()
     output_str = '''
 vfpvar.add_public(\'somearray\', somearray_init_val=vfpfunc.Array(2, 5))
 vfpvar[\'somearray\'][1, 4] = 3
 vfpvar.add_private(\'test\', \'somearray\', somearray_init_val=vfpfunc.Array(2, 5))
 # FIX ME: EXTERNAL ARRAY someotherarray[3]
+# FIX ME: EXTERNAL PROCEDURE test
 '''.strip()
     test_output_str = vfp2py.vfp2py.prg2py(input_str, parser_start='lines', prepend_data='').strip()
     try:
