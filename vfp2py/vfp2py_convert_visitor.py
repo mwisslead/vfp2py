@@ -4,6 +4,7 @@ import __builtin__
 
 import sys
 import os
+import logging
 import ntpath
 import datetime as dt
 import re
@@ -159,7 +160,8 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             retval = self.visitChildren(ctx)
             if retval is None:
                 raise Exception('just to jump to except block')
-        except:
+        except Exception as err:
+            logging.getLogger(__name__).exception(err.message)
             lines = self.getCtxText(ctx)
             print(lines)
             retval = [CodeStr('#FIX ME: {}'.format(line)) for line in lines.split('\n') if line]
