@@ -494,27 +494,36 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         return CodeStr('continue')
 
     def visitDeclaration(self, ctx):
-        if ctx.ARRAY() or ctx.DIMENSION() or ctx.DEFINE():
-            names = [self.visit(ctx.identifier())]
-            arrays = [make_func_code('vfpfunc.Array', *self.visit(ctx.arrayIndex()))]
-            if ctx.LOCAL():
-                for name in names:
-                    self.scope[name] = False
-                return [add_args_to_code('{} = {}', (name, array)) for name, array in zip(names, arrays)]
-            func = 'vfpvar.add_public' if ctx.PUBLIC() else 'vfpvar.add_private'
-            self.used_scope = True
-            args = [str(name) for name in names]
-            kwargs = {'{}_init_val'.format(name): array for name, array in zip(names, arrays)}
-            return make_func_code(func, *args, **kwargs)
+        if ctx.EXTERNAL():
+            return
+        scope = ctx.SCOPE().getText().lower() if ctx.SCOPE() else None
+        names = [self.visit_with_disabled_scope(x)[0] for x in ctx.declarationItem()]
+        inds = [self.visit(x)[1] for x in ctx.declarationItem()]
+        if ctx.ARRAY() or ctx.DIMENSION() or ctx.DECLARE():
+            inds = [ind or (1,) for ind in inds]
+
+        if scope in ('hidden', 'protected'):
+            names = [add_args_to_code('self.{}', [name]) for name in names]
+        elif scope == 'local':
+            for name in names:
+                self.scope[name] = False
         else:
-            names = self.visit_with_disabled_scope(ctx.parameters())
-            if ctx.LOCAL():
-                for name in names:
-                    self.scope[name] = False
-                return CodeStr(' = '.join([repr(arg) for arg in (names + [False])]) + ' #LOCAL Declaration')
             self.used_scope = True
-            func = 'vfpvar.add_public' if ctx.PUBLIC() else 'vfpvar.add_private'
-            return make_func_code(func, *[str(name) for name in names])
+
+        arrays = [(name, make_func_code('vfpfunc.Array', *ind)) for name, ind in zip(names, inds) if ind]
+
+        if scope in ('public', 'private'):
+            func = 'vfpvar.add_'  + scope
+            kwargs = {'{}_init_val'.format(name): array for name, array in arrays}
+            names = [str(name) for name in names]
+            return make_func_code(func, *names, **kwargs)
+        else:
+            names = [name for name, ind in zip(names, inds) if not ind]
+            return [CodeStr(' = '.join(repr(arg) for arg in (names + [False])) + ' #LOCAL Declaration')] if names else [] + \
+                   [add_args_to_code('{} = {}', (name, array)) for name, array in arrays]
+
+    def visitDeclarationItem(self, ctx):
+        return self.visit(ctx.idAttr() or ctx.idAttr2()), self.visit(ctx.arrayIndex())
 
     def visitAssign(self, ctx):
         value = self.visit(ctx.expr())

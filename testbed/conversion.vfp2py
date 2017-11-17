@@ -541,11 +541,15 @@ print(pydict['one'])
 @begin=vfp@&&lines
 PUBLIC ARRAY somearray[2, 5]
 SOMEARRAY(1, 4) = 3
+PRIVATE TEST, somearray[2, 5]
+EXTERNAL ARRAY someotherarray[3]
 @end=vfp@
 
 @begin=python@
 vfpvar.add_public('somearray', somearray_init_val=vfpfunc.Array(2, 5))
 vfpvar['somearray'][1, 4] = 3
+vfpvar.add_private('test', 'somearray', somearray_init_val=vfpfunc.Array(2, 5))
+# FIX ME: EXTERNAL ARRAY someotherarray[3]
 @end=python@
 
 @begin=vfp@&&lines
