@@ -1,5 +1,6 @@
 from __future__ import print_function
 
+import sys
 import argparse
 import os
 import ntpath
@@ -14,14 +15,17 @@ import antlr4
 
 import autopep8
 
-from VisualFoxpro9Lexer import VisualFoxpro9Lexer
-from VisualFoxpro9Parser import VisualFoxpro9Parser
-from VisualFoxpro9Visitor import VisualFoxpro9Visitor
+from .VisualFoxpro9Lexer import VisualFoxpro9Lexer
+from .VisualFoxpro9Parser import VisualFoxpro9Parser
+from .VisualFoxpro9Visitor import VisualFoxpro9Visitor
 
-import vfpfunc
-from vfp2py_convert_visitor import PythonConvertVisitor
+from . import vfpfunc
+from .vfp2py_convert_visitor import PythonConvertVisitor
 
 SEARCH_PATH = ['.']
+
+if sys.version_info >= (3,):
+    unicode=str
 
 def which(filename):
     '''find file on path'''

@@ -1,2 +1,2 @@
-import vfpfunc
-import vfp2py
+from . import vfpfunc
+from . import vfp2py

@@ -18,9 +18,12 @@ import isort
 
 import antlr4
 
-from VisualFoxpro9Visitor import VisualFoxpro9Visitor
+from .VisualFoxpro9Visitor import VisualFoxpro9Visitor
 
-import vfpfunc
+from . import vfpfunc
+
+if sys.version_info >= (3,):
+    unicode=str
 
 class RedirectedBuiltin(object):
     def __init__(self, name):
@@ -35,9 +38,6 @@ class RedirectedBuiltin(object):
 
 for func in ('chr', 'int', 'str', 'float'):
     globals()[func] = RedirectedBuiltin(func)
-
-if sys.version_info >= (3,):
-    unicode=str
 
 def isinstance(obj, istype):
     if not __builtin__.isinstance(istype, tuple):
