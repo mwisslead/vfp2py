@@ -157,7 +157,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
 
     def visitLine(self, ctx):
         try:
-            retval = self.visitChildren(ctx)
+            retval = self.visit(ctx.cmd() or ctx.controlStmt() or ctx.lineComment())
             if retval is None:
                 raise Exception('just to jump to except block')
         except Exception as err:

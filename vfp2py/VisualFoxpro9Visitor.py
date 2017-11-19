@@ -195,11 +195,6 @@ class VisualFoxpro9Visitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by VisualFoxpro9Parser#cmdStmt.
-    def visitCmdStmt(self, ctx):
-        return self.visitChildren(ctx)
-
-
     # Visit a parse tree produced by VisualFoxpro9Parser#cmd.
     def visitCmd(self, ctx):
         return self.visitChildren(ctx)

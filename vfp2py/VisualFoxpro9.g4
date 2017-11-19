@@ -32,9 +32,8 @@ lineComment
  ;
 
 line
- : controlStmt
- | cmdStmt
- | lineComment
+ : lineComment
+ | (controlStmt | cmd) lineEnd
  ;
 
 lineEnd
@@ -89,7 +88,7 @@ ifStart
  ;
 
 ifStmt
- : ifStart ifBody=lines (ELSE NL elseBody=lines)? ENDIF lineEnd
+ : ifStart ifBody=lines (ELSE NL elseBody=lines)? ENDIF
  ;
 
 forStart
@@ -102,7 +101,7 @@ forEnd
  ;
 
 forStmt
- : forStart lines forEnd lineEnd
+ : forStart lines forEnd
  ;
 
 singleCase
@@ -114,7 +113,7 @@ otherwise
  ;
 
 caseStmt
- : DO CASE NL lineComment* singleCase* otherwise? ENDCASE lineEnd
+ : DO CASE NL lineComment* singleCase* otherwise? ENDCASE
  ;
 
 whileStart
@@ -122,19 +121,19 @@ whileStart
  ;
 
 whileStmt
- : whileStart lines ENDDO lineEnd
+ : whileStart lines ENDDO
  ;
 
 withStmt
- : WITH idAttr NL lines ENDWITH lineEnd
+ : WITH idAttr NL lines ENDWITH
  ;
 
 scanStmt
- : SCAN scopeClause? (FOR expr)? NL lines ENDSCAN lineEnd
+ : SCAN scopeClause? (FOR expr)? NL lines ENDSCAN
  ;
 
 tryStmt
- : TRY NL tryLines=lines (CATCH (TO identifier)? NL catchLines=lines)? (FINALLY NL finallyLines=lines)? ENDTRY lineEnd
+ : TRY NL tryLines=lines (CATCH (TO identifier)? NL catchLines=lines)? (FINALLY NL finallyLines=lines)? ENDTRY
  ;
 
 controlStmt
@@ -145,10 +144,6 @@ controlStmt
  | withStmt
  | scanStmt
  | tryStmt
- ;
-
-cmdStmt
- : cmd lineEnd
  ;
 
 cmd
