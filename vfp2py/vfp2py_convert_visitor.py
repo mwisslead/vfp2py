@@ -1310,7 +1310,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         if args is not None:
             if ctx.PROCEDURE():
                 retval.append(make_func_code('vfpfunc.function.release_procedure', *args))
-            elif ctx.POPUPS():
+            elif ctx.POPUP():
                 kwargs = {}
                 if ctx.EXTENDED():
                     kwargs['extended'] = True
@@ -1337,7 +1337,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             return make_func_code('vfpfunc.db.close_tables', allflag)
         if ctx.INDEXES():
             return make_func_code('vfpfunc.db.close_indexes', allflag)
-        if ctx.DATABASES():
+        if ctx.DATABASE():
             return make_func_code('vfpfunc.db.close_databases', allflag)
         return make_func_code('vfpfunc.db.close_all')
 
