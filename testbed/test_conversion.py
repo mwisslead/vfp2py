@@ -68,6 +68,9 @@ DO CASE
    OTHERWISE
       ?Test
 ENDCASE
+QUIT
+CANCEL
+RESUME
 '''.strip()
     output_str = '''
 # comment
@@ -130,6 +133,9 @@ elif vfpvar[\'x\'] == 2:
     pass
 else:
     print(vfpvar[\'test\'])
+vfpfunc.quit()
+# FIX ME: CANCEL
+# FIX ME: RESUME
 '''.strip()
     test_output_str = vfp2py.vfp2py.prg2py(input_str, parser_start='lines', prepend_data='').strip()
     try:

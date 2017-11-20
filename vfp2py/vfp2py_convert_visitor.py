@@ -487,11 +487,13 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
 
         return try_lines + catch_lines + finally_lines
 
-    def visitBreakLoop(self, ctx):
-        return CodeStr('break')
-
-    def visitContinueLoop(self, ctx):
-        return CodeStr('continue')
+    def visitProgramControl(self, ctx):
+        action = ctx.PROGRAMCONTROL().symbol.text.lower()
+        return CodeStr({
+            'loop': 'continue',
+            'exit': 'break',
+            'quit': 'vfpfunc.quit()',
+        }[action])
 
     def visitDeclaration(self, ctx):
         if ctx.EXTERNAL():
@@ -1282,9 +1284,6 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
 
     def visitTwoExpr(self, ctx):
         return [self.visit(expr) for expr in ctx.expr()]
-
-    def visitQuit(self, ctx):
-        return [CodeStr('vfpfunc.quit()')]
 
     def visitFile(self, ctx):
         return ctx.getText()

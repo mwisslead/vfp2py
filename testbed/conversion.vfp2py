@@ -61,6 +61,9 @@ DO CASE
    OTHERWISE
       ?Test
 ENDCASE
+QUIT
+CANCEL
+RESUME
 @end=vfp@
 
 @begin=python@
@@ -124,6 +127,9 @@ elif vfpvar['x'] == 2:
     pass
 else:
     print(vfpvar['test'])
+vfpfunc.quit()
+# FIX ME: CANCEL
+# FIX ME: RESUME
 @end=python@
 
 Preprocessor Directives
