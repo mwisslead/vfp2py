@@ -2,6 +2,7 @@ from __future__ import print_function
 
 import sys
 import argparse
+import logging
 import os
 import ntpath
 import time
@@ -450,8 +451,6 @@ def convert_project(infile, directory):
             SEARCH_PATH = search
             convert_file(project_files[name] or name, outfile)
         except Exception as err:
-            import logging
-            logging.basicConfig(level=logging.DEBUG)
             logging.getLogger().exception(err)
             print('failed to convert {}'.format(name))
     if 'config.fpw' in project_files:
