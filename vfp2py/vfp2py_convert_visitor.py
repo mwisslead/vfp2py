@@ -168,14 +168,16 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         return retval if isinstance(retval, list) else [retval]
 
     def visitLineComment(self, ctx):
-        fixer = re.compile('^\s*(&&|\**)(.*[^*; ]\s*|.*[^* ];\s*|;\s*)?(\**)\s*;*$')
+        fixer = re.compile('^\s*(&&|\*!\*|\**)(.*[^*; ]\s*|.*[^* ];\s*|;\s*)?(\**)\s*;*$')
         def repl(match):
             groups = match.groups()
             if not any(groups):
                 return ''
-            start = '*' if not groups[0] or groups[0] == '&&' else groups[0]
+            start = '*' if not groups[0] or groups[0] in ('&&', '*!*') else groups[0]
             middle = groups[1] or ''
             end = groups[2] or ''
+            if len(start) == 1 and not end:
+                middle = middle.strip()
             return ('#' * len(start) + middle + '#' * len(end)).strip()
         comments = [comment.strip() for comment in self.getCtxText(ctx).splitlines()]
         return [CodeStr(fixer.sub(repl, comment)) for comment in comments]

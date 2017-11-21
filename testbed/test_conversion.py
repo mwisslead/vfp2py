@@ -55,6 +55,9 @@ LOCAL ITEM
 FOR EACH ITEM IN ITEMS
     IF NOT ITEM
        LOOP
+*!*    IF
+*!*       TEST()
+*!*    ENDIF
     ENDIF
     EXIT
 ENDFOR
@@ -121,6 +124,9 @@ item = False  # LOCAL Declaration
 for item in items:
     if not item:
         continue
+        # IF
+        # TEST()
+        # ENDIF
     break
 del items, item
 # line comment1
