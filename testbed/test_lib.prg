@@ -87,6 +87,7 @@ procedure string_tests
    assert strextract('This {{is}} a {{template}}', '{{', '}}', 2) == 'template'
    assert strextract('This {{is}} a {{template}}', '{{is}}') ==  ' a {{template}}'
    assert strextract('This {{is}} a {{template}}', '{{IS}}', '', 1, 1) ==  ' a {{template}}'
+   assert atc('aab', '123AAbbB') == 4
 ENDPROC
 
 procedure path_tests
