@@ -15,7 +15,7 @@ import pyodbc
 
 import dateutil.relativedelta
 
-from vfpdatabase import DatabaseContext
+from .vfpdatabase import DatabaseContext
 
 SET_PROPS = {
     'bell': ['ON', ''],
