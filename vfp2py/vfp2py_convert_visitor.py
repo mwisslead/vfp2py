@@ -1,7 +1,5 @@
 from __future__ import print_function
 
-import __builtin__
-
 import sys
 import os
 import logging
@@ -27,9 +25,9 @@ if sys.version_info >= (3,):
     unicode=str
 
 class RedirectedBuiltin(object):
-    def __init__(self, name):
-        self.name = name
-        self.func = getattr(__builtin__, name)
+    def __init__(self, func):
+        self.func = func
+        self.name = func.__name__
 
     def __call__(self, *args, **kwargs):
         try:
@@ -37,14 +35,15 @@ class RedirectedBuiltin(object):
         except:
             return make_func_code(self.name, *args, **kwargs)
 
-for func in ('chr', 'int', 'str', 'float'):
-    globals()[func] = RedirectedBuiltin(func)
+for func in (chr, int, str, float):
+    globals()[func.__name__] = RedirectedBuiltin(func)
 
+real_isinstance = isinstance
 def isinstance(obj, istype):
-    if not __builtin__.isinstance(istype, tuple):
+    if not real_isinstance(istype, tuple):
         istype = (istype,)
-    istype = tuple(x.func if __builtin__.isinstance(x, RedirectedBuiltin) else x for x in istype)
-    return __builtin__.isinstance(obj, istype)
+    istype = tuple(x.func if real_isinstance(x, RedirectedBuiltin) else x for x in istype)
+    return real_isinstance(obj, istype)
 
 def random_variable(length=10):
     return '_' + ''.join(random.choice(string.ascii_lowercase + string.digits) for _ in range(length))
