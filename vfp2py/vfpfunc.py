@@ -15,8 +15,6 @@ import pyodbc
 
 import dateutil.relativedelta
 
-from PySide import QtGui, QtCore
-
 from vfpdatabase import DatabaseContext
 
 SET_PROPS = {
@@ -43,711 +41,794 @@ HOME = os.path.dirname(os.path.abspath(HOME))
 
 SEARCH_PATH = [HOME]
 
-QTGUICLASSES = [c[1] for c in inspect.getmembers(QtGui, inspect.isclass)]
+try:
+    from PySide import QtGui, QtCore
 
-def _in_qtgui(cls):
-    if cls in QTGUICLASSES:
-        return True
-    return any(_in_qtgui(c) for c in inspect.getmro(cls) if c is not cls)
+    QTGUICLASSES = [c[1] for c in inspect.getmembers(QtGui, inspect.isclass)]
 
-class HasColor(object):
-    @property
-    def backcolor(self):
-        return self.palette().color(QtGui.QPalette.Background)
+    def _in_qtgui(cls):
+        if cls in QTGUICLASSES:
+            return True
+        return any(_in_qtgui(c) for c in inspect.getmro(cls) if c is not cls)
 
-    @backcolor.setter
-    def backcolor(self, color):
-        palette = self.palette()
-        palette.setColor(self.backgroundRole(), color)
-        self.setPalette(palette)
+    class HasColor(object):
+        @property
+        def backcolor(self):
+            return self.palette().color(QtGui.QPalette.Background)
 
-    @property
-    def forecolor(self):
-        return self.palette().color(QtGui.QPalette.Foreground)
+        @backcolor.setter
+        def backcolor(self, color):
+            palette = self.palette()
+            palette.setColor(self.backgroundRole(), color)
+            self.setPalette(palette)
 
-    @forecolor.setter
-    def forecolor(self, color):
-        palette = self.palette()
-        palette.setColor(self.foregroundRole(), color)
-        self.setPalette(palette)
+        @property
+        def forecolor(self):
+            return self.palette().color(QtGui.QPalette.Foreground)
 
-class HasFont(object):
-    @property
-    def fontname(self):
-        return self.font().family()
+        @forecolor.setter
+        def forecolor(self, color):
+            palette = self.palette()
+            palette.setColor(self.foregroundRole(), color)
+            self.setPalette(palette)
 
-    @fontname.setter
-    def fontname(self, val):
-        font = self.font()
-        font.setFamily(val)
-        self.setFont(font)
+    class HasFont(object):
+        @property
+        def fontname(self):
+            return self.font().family()
 
-    @property
-    def fontbold(self):
-        return self.font().bold()
+        @fontname.setter
+        def fontname(self, val):
+            font = self.font()
+            font.setFamily(val)
+            self.setFont(font)
 
-    @fontbold.setter
-    def fontbold(self, val):
-        font = self.font()
-        font.setBold(val)
-        self.setFont(font)
+        @property
+        def fontbold(self):
+            return self.font().bold()
 
-    @property
-    def fontitalic(self):
-        return self.font().italic()
+        @fontbold.setter
+        def fontbold(self, val):
+            font = self.font()
+            font.setBold(val)
+            self.setFont(font)
 
-    @fontitalic.setter
-    def fontitalic(self, val):
-        font = self.font()
-        font.setItalic(val)
-        self.setFont(font)
+        @property
+        def fontitalic(self):
+            return self.font().italic()
 
-    @property
-    def fontstrikethru(self):
-        return self.font().strikeOut()
+        @fontitalic.setter
+        def fontitalic(self, val):
+            font = self.font()
+            font.setItalic(val)
+            self.setFont(font)
 
-    @fontstrikethru.setter
-    def fontstrikethru(self, val):
-        font = self.font()
-        font.setStrikeOut(val)
-        self.setFont(font)
+        @property
+        def fontstrikethru(self):
+            return self.font().strikeOut()
 
-    @property
-    def fontunderline(self):
-        return self.font().fontunderline()
+        @fontstrikethru.setter
+        def fontstrikethru(self, val):
+            font = self.font()
+            font.setStrikeOut(val)
+            self.setFont(font)
 
-    @fontunderline.setter
-    def fontunderline(self, val):
-        font = self.font()
-        font.setUnderline(val)
-        self.setFont(font)
+        @property
+        def fontunderline(self):
+            return self.font().fontunderline()
 
-    @property
-    def fontsize(self):
-        return self.font().pointSize()
+        @fontunderline.setter
+        def fontunderline(self, val):
+            font = self.font()
+            font.setUnderline(val)
+            self.setFont(font)
 
-    @fontsize.setter
-    def fontsize(self, val):
-        font = self.font()
-        font.setPointSize(val)
-        self.setFont(font)
+        @property
+        def fontsize(self):
+            return self.font().pointSize()
 
-class Custom(object):
-    def __init__(self, *args, **kwargs):
-        self._assign()
-        for key in kwargs:
-            setattr(self, key, kwargs[key])
-        if _in_qtgui(type(self)) and 'parent' in kwargs:
-            self.parent.add_object(self)
-        self.init(*args)
+        @fontsize.setter
+        def fontsize(self, val):
+            font = self.font()
+            font.setPointSize(val)
+            self.setFont(font)
 
-    def init(self, *args, **kwargs):
-        pass
+    class Custom(object):
+        def __init__(self, *args, **kwargs):
+            self._assign()
+            for key in kwargs:
+                setattr(self, key, kwargs[key])
+            if _in_qtgui(type(self)) and 'parent' in kwargs:
+                self.parent.add_object(self)
+            self.init(*args)
 
-    def add_object(self, obj):
-        try:
-            self.addWidget(obj)
-        except:
+        def init(self, *args, **kwargs):
             pass
 
-    def addobject(self, name, *args):
-        name = name.lower()
-        setattr(self, name, create_object(*args, name=name, parent=self))
+        def add_object(self, obj):
+            try:
+                self.addWidget(obj)
+            except:
+                pass
 
-    @property
-    def parentform(self):
-        try:
-            t = self
-            while not isinstance(t, (Form, Toolbar)):
-                t = t.parent
-            return t
-        except:
-            raise Exception('object is not a member of a form')
+        def addobject(self, name, *args):
+            name = name.lower()
+            setattr(self, name, create_object(*args, name=name, parent=self))
 
-    def _assign(self):
+        @property
+        def parentform(self):
+            try:
+                t = self
+                while not isinstance(t, (Form, Toolbar)):
+                    t = t.parent
+                return t
+            except:
+                raise Exception('object is not a member of a form')
+
+        def _assign(self):
+            pass
+
+    class MainWindow(QtGui.QMainWindow):
+        def __init__(self):
+            super(type(self), self).__init__()
+            self.mdiarea = QtGui.QMdiArea()
+            self.mdiarea.setSizePolicy(QtGui.QSizePolicy.Expanding,QtGui.QSizePolicy.Expanding);
+            self.setCentralWidget(self.mdiarea)
+
+        def add_object(self, obj):
+            if isinstance(obj, Toolbar):
+                self.addToolBar(obj)
+            else:
+                self.mdiarea.addSubWindow(obj)
+
+        @property
+        def caption(self):
+            return self.windowTitle()
+
+        @caption.setter
+        def caption(self, val):
+            self.setWindowTitle(val)
+
+        @property
+        def height(self):
+            return QtGui.QMainWindow.height(self)
+
+        @height.setter
+        def height(self, val):
+            self.setFixedHeight(val)
+
+        @property
+        def icon(self):
+            return self.windowIcon()
+
+        @icon.setter
+        def icon(self, iconfile):
+            self.setWindowIcon(QtGui.QIcon(iconfile))
+
+    class Formset(Custom):
         pass
 
-class MainWindow(QtGui.QMainWindow):
-    def __init__(self):
-        super(type(self), self).__init__()
-        self.mdiarea = QtGui.QMdiArea()
-        self.mdiarea.setSizePolicy(QtGui.QSizePolicy.Expanding,QtGui.QSizePolicy.Expanding);
-        self.setCentralWidget(self.mdiarea)
-
-    def add_object(self, obj):
-        if isinstance(obj, Toolbar):
-            self.addToolBar(obj)
-        else:
-            self.mdiarea.addSubWindow(obj)
-
-    @property
-    def caption(self):
-        return self.windowTitle()
-
-    @caption.setter
-    def caption(self, val):
-        self.setWindowTitle(val)
-
-    @property
-    def height(self):
-        return QtGui.QMainWindow.height(self)
-
-    @height.setter
-    def height(self, val):
-        self.setFixedHeight(val)
-
-    @property
-    def icon(self):
-        return self.windowIcon()
-
-    @icon.setter
-    def icon(self, iconfile):
-        self.setWindowIcon(QtGui.QIcon(iconfile))
-
-class Formset(Custom):
-    pass
-
-class Form(QtGui.QMdiSubWindow, Custom, HasFont):
-    def __init__(self, *args, **kwargs):
-        QtGui.QMdiSubWindow.__init__(self)
-        self._centralwidget = QtGui.QWidget(self)
-        self._vbox = QtGui.QVBoxLayout()
-        self._centralwidget.setLayout(self._vbox)
-        self.setWidget(self._centralwidget)
-        Custom.__init__(self, *args, **kwargs)
-
-    def addWidget(self, obj):
-        self._vbox.addWidget(obj)
-
-    def release(self):
-        self.close()
-
-    def destroy(self):
-        pass
-
-    def closeEvent(self, event):
-        self.destroy()
-
-    @property
-    def caption(self):
-        return self.windowTitle()
-
-    @caption.setter
-    def caption(self, val):
-        self.setWindowTitle(val)
-
-    @property
-    def height(self):
-        return self._centralwidget.height()
-
-    @height.setter
-    def height(self, val):
-        self._centralwidget.setFixedHeight(val)
-
-    @property
-    def width(self):
-        return self._centralwidget.width()
-
-    @height.setter
-    def width(self, val):
-        self._centralwidget.setFixedWidth(val)
-
-    @property
-    def icon(self):
-        return self.windowIcon()
-
-    @icon.setter
-    def icon(self, iconfile):
-        self.setWindowIcon(QtGui.QIcon(iconfile))
-
-class Commandbutton(QtGui.QPushButton, Custom, HasFont):
-    def __init__(self, *args, **kwargs):
-        QtGui.QPushButton.__init__(self)
-        Custom.__init__(self, *args, **kwargs)
-        self.clicked.connect(self.click)
-
-    def click(self):
-        pass
-
-    @property
-    def caption(self):
-        return self.text()
-
-    @caption.setter
-    def caption(self, val):
-        self.setText(val)
-
-    @property
-    def height(self):
-        return QtGui.QPushButton.height(self)
-
-    @height.setter
-    def height(self, val):
-        self.setFixedHeight(val)
-
-    @property
-    def width(self):
-        return QtGui.QPushButton.width(self)
-
-    @height.setter
-    def width(self, val):
-        self.setFixedWidth(val)
-
-    @property
-    def enabled(self):
-        return self.isEnabled()
-
-    @enabled.setter
-    def enabled(self, val):
-        self.setEnabled(val)
-
-    @property
-    def visible(self):
-        return self.isVisible()
-
-    @visible.setter
-    def visible(self, val):
-        self.setVisible(val)
-
-    @property
-    def picture(self):
-        return QtGui.QPushButton.icon(self)
-
-    @picture.setter
-    def picture(self, iconfile):
-        self.setIcon(QtGui.QIcon(iconfile))
-
-    @property
-    def tooltiptext(self):
-        return self.toolTip()
-
-    @tooltiptext.setter
-    def tooltiptext(self, val):
-        self.setToolTip(val)
-
-    @property
-    def specialeffect(self):
-        if self.isFlat():
-            return 2
-        else:
-            return 0
-
-    @specialeffect.setter
-    def specialeffect(self, val):
-        self.setFlat(val == 2)
-
-class Label(QtGui.QLabel, Custom, HasFont):
-    def __init__(self, *args, **kwargs):
-        QtGui.QLabel.__init__(self)
-        Custom.__init__(self, *args, **kwargs)
-
-    @property
-    def caption(self):
-        return self.text()
-
-    @caption.setter
-    def caption(self, val):
-        self.setText(val)
-
-    @property
-    def height(self):
-        return QtGui.QLabel.height(self)
-
-    @height.setter
-    def height(self, val):
-        self.setFixedHeight(val)
-
-    @property
-    def width(self):
-        return QtGui.QLabel.width(self)
-
-    @height.setter
-    def width(self, val):
-        self.setFixedWidth(val)
-
-class Textbox(QtGui.QLineEdit, Custom, HasColor, HasFont):
-    def __init__(self, *args, **kwargs):
-        QtGui.QLineEdit.__init__(self)
-        Custom.__init__(self, *args, **kwargs)
-
-    @property
-    def height(self):
-        return QtGui.QLabel.height(self)
-
-    @height.setter
-    def height(self, val):
-        self.setFixedHeight(val)
-
-    @property
-    def value(self):
-        return self.text()
-
-    @value.setter
-    def value(self, val):
-        self.setText(val)
-
-    @property
-    def visible(self):
-        return self.isVisible()
-
-    @visible.setter
-    def visible(self, val):
-        self.setVisible(val)
-
-    def focusInEvent(self, event):
-        self.gotfocus()
-
-    def focusOutEvent(self, event):
-        self.lostfocus()
-
-    def setfocus(self):
-        self.setFocus()
-
-class Checkbox(QtGui.QCheckBox, Custom, HasFont):
-    def __init__(self, *args, **kwargs):
-        QtGui.QCheckBox.__init__(self)
-        Custom.__init__(self, *args, **kwargs)
-        self.clicked.connect(self.click)
-        self.clicked.connect(self.interactivechange)
-
-    def click(self):
-        pass
-
-    def interactivechange(self):
-        pass
-
-    @property
-    def caption(self):
-        return self.text()
-
-    @caption.setter
-    def caption(self, val):
-        self.setText(val)
-
-    @property
-    def height(self):
-        return QtGui.QLabel.height(self)
-
-    @height.setter
-    def height(self, val):
-        self.setFixedHeight(val)
-
-class Combobox(QtGui.QComboBox, Custom, HasFont):
-    def __init__(self, *args, **kwargs):
-        QtGui.QComboBox.__init__(self)
-        Custom.__init__(self, *args, **kwargs)
-        self.currentIndexChanged.connect(self.interactivechange)
-
-    def additem(self, val):
-        index = self.currentIndex()
-        self.blockSignals(True)
-        self.addItem(val)
-        self.setCurrentIndex(index)
-        self.blockSignals(False)
-
-    @property
-    def value(self):
-        return self.currentText()
-
-    @value.setter
-    def value(self, val):
-        index = self.findText(val, QtCore.Qt.MatchFixedString)
-        self.blockSignals(True)
-        self.setCurrentIndex(index)
-        self.blockSignals(False)
-        self.programmaticchange()
-
-    def programmaticchange(self):
-        pass
-
-    def interactivechange(self):
-        pass
-
-    @property
-    def caption(self):
-        return self.text()
-
-    @caption.setter
-    def caption(self, val):
-        self.setText(val)
-
-    @property
-    def height(self):
-        return QtGui.QComboBox.height(self)
-
-    @height.setter
-    def height(self, val):
-        self.setFixedHeight(val)
-
-    @property
-    def width(self):
-        return QtGui.QComboBox.width(self)
-
-    @height.setter
-    def width(self, val):
-        self.setFixedWidth(val)
-
-    @property
-    def style(self):
-        if self.isEditable():
-            return 0
-        else:
-            return 2
-
-    @style.setter
-    def style(self, val):
-        self.setEditable(val == 0)
-
-class Spinner(QtGui.QSpinBox, Custom, HasFont, HasColor):
-    def __init__(self, *args, **kwargs):
-        QtGui.QSpinBox.__init__(self)
-        Custom.__init__(self, *args, **kwargs)
-        self.pressed = False
-        self.installEventFilter(self)
-        self.valueChanged.connect(self.interactivechange)
-
-    def eventFilter(self, widget, event):
-        if event.type() == QtCore.QEvent.Type.MouseButtonPress:
-            self.pressed = True
-        if event.type() == QtCore.QEvent.Type.MouseButtonRelease:
-            if self.pressed:
-                self.click()
+    class Form(QtGui.QMdiSubWindow, Custom, HasFont):
+        def __init__(self, *args, **kwargs):
+            QtGui.QMdiSubWindow.__init__(self)
+            self._centralwidget = QtGui.QWidget(self)
+            self._vbox = QtGui.QVBoxLayout()
+            self._centralwidget.setLayout(self._vbox)
+            self.setWidget(self._centralwidget)
+            Custom.__init__(self, *args, **kwargs)
+
+        def addWidget(self, obj):
+            self._vbox.addWidget(obj)
+
+        def release(self):
+            self.close()
+
+        def destroy(self):
+            pass
+
+        def closeEvent(self, event):
+            self.destroy()
+
+        @property
+        def caption(self):
+            return self.windowTitle()
+
+        @caption.setter
+        def caption(self, val):
+            self.setWindowTitle(val)
+
+        @property
+        def height(self):
+            return self._centralwidget.height()
+
+        @height.setter
+        def height(self, val):
+            self._centralwidget.setFixedHeight(val)
+
+        @property
+        def width(self):
+            return self._centralwidget.width()
+
+        @height.setter
+        def width(self, val):
+            self._centralwidget.setFixedWidth(val)
+
+        @property
+        def icon(self):
+            return self.windowIcon()
+
+        @icon.setter
+        def icon(self, iconfile):
+            self.setWindowIcon(QtGui.QIcon(iconfile))
+
+    class Commandbutton(QtGui.QPushButton, Custom, HasFont):
+        def __init__(self, *args, **kwargs):
+            QtGui.QPushButton.__init__(self)
+            Custom.__init__(self, *args, **kwargs)
+            self.clicked.connect(self.click)
+
+        def click(self):
+            pass
+
+        @property
+        def caption(self):
+            return self.text()
+
+        @caption.setter
+        def caption(self, val):
+            self.setText(val)
+
+        @property
+        def height(self):
+            return QtGui.QPushButton.height(self)
+
+        @height.setter
+        def height(self, val):
+            self.setFixedHeight(val)
+
+        @property
+        def width(self):
+            return QtGui.QPushButton.width(self)
+
+        @height.setter
+        def width(self, val):
+            self.setFixedWidth(val)
+
+        @property
+        def enabled(self):
+            return self.isEnabled()
+
+        @enabled.setter
+        def enabled(self, val):
+            self.setEnabled(val)
+
+        @property
+        def visible(self):
+            return self.isVisible()
+
+        @visible.setter
+        def visible(self, val):
+            self.setVisible(val)
+
+        @property
+        def picture(self):
+            return QtGui.QPushButton.icon(self)
+
+        @picture.setter
+        def picture(self, iconfile):
+            self.setIcon(QtGui.QIcon(iconfile))
+
+        @property
+        def tooltiptext(self):
+            return self.toolTip()
+
+        @tooltiptext.setter
+        def tooltiptext(self, val):
+            self.setToolTip(val)
+
+        @property
+        def specialeffect(self):
+            if self.isFlat():
+                return 2
+            else:
+                return 0
+
+        @specialeffect.setter
+        def specialeffect(self, val):
+            self.setFlat(val == 2)
+
+    class Label(QtGui.QLabel, Custom, HasFont):
+        def __init__(self, *args, **kwargs):
+            QtGui.QLabel.__init__(self)
+            Custom.__init__(self, *args, **kwargs)
+
+        @property
+        def caption(self):
+            return self.text()
+
+        @caption.setter
+        def caption(self, val):
+            self.setText(val)
+
+        @property
+        def height(self):
+            return QtGui.QLabel.height(self)
+
+        @height.setter
+        def height(self, val):
+            self.setFixedHeight(val)
+
+        @property
+        def width(self):
+            return QtGui.QLabel.width(self)
+
+        @height.setter
+        def width(self, val):
+            self.setFixedWidth(val)
+
+    class Textbox(QtGui.QLineEdit, Custom, HasColor, HasFont):
+        def __init__(self, *args, **kwargs):
+            QtGui.QLineEdit.__init__(self)
+            Custom.__init__(self, *args, **kwargs)
+
+        @property
+        def height(self):
+            return QtGui.QLabel.height(self)
+
+        @height.setter
+        def height(self, val):
+            self.setFixedHeight(val)
+
+        @property
+        def value(self):
+            return self.text()
+
+        @value.setter
+        def value(self, val):
+            self.setText(val)
+
+        @property
+        def visible(self):
+            return self.isVisible()
+
+        @visible.setter
+        def visible(self, val):
+            self.setVisible(val)
+
+        def focusInEvent(self, event):
+            self.gotfocus()
+
+        def focusOutEvent(self, event):
+            self.lostfocus()
+
+        def setfocus(self):
+            self.setFocus()
+
+    class Checkbox(QtGui.QCheckBox, Custom, HasFont):
+        def __init__(self, *args, **kwargs):
+            QtGui.QCheckBox.__init__(self)
+            Custom.__init__(self, *args, **kwargs)
+            self.clicked.connect(self.click)
+            self.clicked.connect(self.interactivechange)
+
+        def click(self):
+            pass
+
+        def interactivechange(self):
+            pass
+
+        @property
+        def caption(self):
+            return self.text()
+
+        @caption.setter
+        def caption(self, val):
+            self.setText(val)
+
+        @property
+        def height(self):
+            return QtGui.QLabel.height(self)
+
+        @height.setter
+        def height(self, val):
+            self.setFixedHeight(val)
+
+    class Combobox(QtGui.QComboBox, Custom, HasFont):
+        def __init__(self, *args, **kwargs):
+            QtGui.QComboBox.__init__(self)
+            Custom.__init__(self, *args, **kwargs)
+            self.currentIndexChanged.connect(self.interactivechange)
+
+        def additem(self, val):
+            index = self.currentIndex()
+            self.blockSignals(True)
+            self.addItem(val)
+            self.setCurrentIndex(index)
+            self.blockSignals(False)
+
+        @property
+        def value(self):
+            return self.currentText()
+
+        @value.setter
+        def value(self, val):
+            index = self.findText(val, QtCore.Qt.MatchFixedString)
+            self.blockSignals(True)
+            self.setCurrentIndex(index)
+            self.blockSignals(False)
+            self.programmaticchange()
+
+        def programmaticchange(self):
+            pass
+
+        def interactivechange(self):
+            pass
+
+        @property
+        def caption(self):
+            return self.text()
+
+        @caption.setter
+        def caption(self, val):
+            self.setText(val)
+
+        @property
+        def height(self):
+            return QtGui.QComboBox.height(self)
+
+        @height.setter
+        def height(self, val):
+            self.setFixedHeight(val)
+
+        @property
+        def width(self):
+            return QtGui.QComboBox.width(self)
+
+        @height.setter
+        def width(self, val):
+            self.setFixedWidth(val)
+
+        @property
+        def style(self):
+            if self.isEditable():
+                return 0
+            else:
+                return 2
+
+        @style.setter
+        def style(self, val):
+            self.setEditable(val == 0)
+
+    class Spinner(QtGui.QSpinBox, Custom, HasFont, HasColor):
+        def __init__(self, *args, **kwargs):
+            QtGui.QSpinBox.__init__(self)
+            Custom.__init__(self, *args, **kwargs)
             self.pressed = False
-        return QtGui.QWidget.eventFilter(self, widget, event)
+            self.installEventFilter(self)
+            self.valueChanged.connect(self.interactivechange)
 
-    def click(self):
+        def eventFilter(self, widget, event):
+            if event.type() == QtCore.QEvent.Type.MouseButtonPress:
+                self.pressed = True
+            if event.type() == QtCore.QEvent.Type.MouseButtonRelease:
+                if self.pressed:
+                    self.click()
+                self.pressed = False
+            return QtGui.QWidget.eventFilter(self, widget, event)
+
+        def click(self):
+            pass
+
+        def interactivechange(self):
+            pass
+
+        def programmaticchange(self):
+            pass
+
+        @property
+        def value(self):
+            return QtGui.QSpinBox.value(self)
+
+        @value.setter
+        def value(self, val):
+            self.blockSignals(True)
+            self.setValue(val)
+            self.blockSignals(False)
+            self.programmaticchange()
+
+    class Shape(QtGui.QFrame, Custom):
+        def __init__(self, *args, **kwargs):
+            QtGui.QFrame.__init__(self)
+            Custom.__init__(self, *args, **kwargs)
+            self.setFrameStyle(QtGui.QFrame.Box | QtGui.QFrame.Plain)
+
+        @property
+        def height(self):
+            return QtGui.QComboBox.height(self)
+
+        @height.setter
+        def height(self, val):
+            self.setFixedHeight(val)
+
+        @property
+        def width(self):
+            return QtGui.QComboBox.width(self)
+
+        @height.setter
+        def width(self, val):
+            self.setFixedWidth(val)
+
+    class Separator(QtGui.QFrame, Custom):
+        def __init__(self, *args, **kwargs):
+            QtGui.QFrame.__init__(self)
+            Custom.__init__(self, *args, **kwargs)
+            self.setFrameStyle(QtGui.QFrame.VLine | QtGui.QFrame.Plain)
+            palette = self.palette()
+            palette.setColor(self.foregroundRole(), QtGui.QColor(0, 0, 0, 0))
+            self.setPalette(palette)
+            margin = 4
+            self.setContentsMargins(margin, 0, margin, 0)
+
+    class Toolbar(QtGui.QToolBar, Custom):
+        def __init__(self, *args, **kwargs):
+            QtGui.QToolBar.__init__(self)
+            Custom.__init__(self, *args, **kwargs)
+
+    class Listbox(QtGui.QListWidget, Custom):
+        def __init__(self, *args, **kwargs):
+            QtGui.QListWidget.__init__(self)
+            self.multiselect = 0
+            Custom.__init__(self, *args, **kwargs)
+            self._source = ''
+
+        @property
+        def rowsource(self):
+            return self._source
+
+        @rowsource.setter
+        def rowsource(self, source):
+            self._source = source
+            table = db._get_table_info(source).table
+            for record in table:
+                self.addItem(QtGui.QListWidgetItem(str(record[0])))
+
+        @property
+        def multiselect(self):
+            return int(self.selectionMode() == QtGui.QAbstractItemView.MultiSelection)
+
+        @multiselect.setter
+        def multiselect(self, mode):
+            self.setSelectionMode(QtGui.QAbstractItemView.MultiSelection if mode else QtGui.QAbstractItemView.SingleSelection)
+
+    class Grid(QtGui.QTableWidget, Custom, HasFont):
+        def __init__(self, *args, **kwargs):
+            QtGui.QTableWidget.__init__(self)
+            Custom.__init__(self, *args, **kwargs)
+            self.setSelectionMode(QtGui.QAbstractItemView.SingleSelection)
+            self._source = ''
+            self.cellClicked.connect(self._update_recno)
+            self.cellClicked.connect(self.click)
+            self.cellDoubleClicked.connect(self.dblclick)
+
+        def _update_recno(self):
+            table = db._get_table_info(self._source).table.goto(self.currentRow())
+            self.refresh()
+
+        def click(self):
+            pass
+
+        def dblclick(self):
+            pass
+
+        def refresh(self):
+            table = db._get_table_info(self._source).table
+            labels = table.field_names
+            self.setColumnCount(len(labels))
+            self.setRowCount(len(table))
+            self.setVerticalHeaderLabels(['>' if record is table.current_record else '  ' for record in table])
+            self.setHorizontalHeaderLabels(labels)
+
+            for i, record in enumerate(table):
+                for j, val in enumerate(record):
+                    self.setItem(i, j, QtGui.QTableWidgetItem(str(val)))
+
+        def focusInEvent(self, event):
+            self.refresh()
+
+        @property
+        def allowrowsizing(self):
+            return self.verticalHeader().resizeMode(0) == QtGui.QHeaderView.Interactive
+
+        @allowrowsizing.setter
+        def allowrowsizing(self, val):
+            self.verticalHeader().setResizeMode(QtGui.QHeaderView.Interactive if val else QtGui.QHeaderView.Fixed)
+
+        @property
+        def recordsource(self):
+            return self._source
+
+        @recordsource.setter
+        def recordsource(self, source):
+            self._source = source
+            self.refresh()
+
+        @property
+        def allowcellselection(self):
+            return self.selectionBehavior() != QtGui.QAbstractItemView.SelectItems
+
+        @allowcellselection.setter
+        def allowcellselection(self, mode):
+            self.setSelectionBehavior(QtGui.QAbstractItemView.SelectItems if mode else QtGui.QAbstractItemView.SelectRows)
+            self.setEditTriggers(QtGui.QAbstractItemView.AllEditTriggers if mode else QtGui.QAbstractItemView.NoEditTriggers)
+
+    class Optiongroup(QtGui.QWidget, Custom):
+        def __init__(self, *args, **kwargs):
+            QtGui.QWidget.__init__(self)
+            self._group = QtGui.QButtonGroup()
+            self._vbox = QtGui.QVBoxLayout()
+            self.setLayout(self._vbox)
+            Custom.__init__(self, *args, **kwargs)
+
+        def add_object(self, obj):
+            self._vbox.addWidget(obj)
+            self._group.addButton(obj)
+
+        @property
+        def enabled(self):
+            return any(button.enabled for button in self._group.buttons())
+
+        @enabled.setter
+        def enabled(self, val):
+            for button in self._group.buttons():
+                button.enabled = val
+
+        @property
+        def buttoncount(self):
+            return len(self._group.buttons())
+
+        @buttoncount.setter
+        def buttoncount(self, val):
+            for i in range(val, self.buttoncount):
+                self._group.buttons()[-1].deleteLater()
+            for i in range(self.buttoncount, val):
+                caption = 'option {}'.format(i + 1)
+                name = caption.replace(' ', '')
+                setattr(self, name, Optionbutton(caption=caption, name=name, parent=self))
+
+    class Optionbutton(QtGui.QRadioButton, Custom, HasFont):
+        def __init__(self, *args, **kwargs):
+            QtGui.QRadioButton.__init__(self)
+            Custom.__init__(self, *args, **kwargs)
+
+        @property
+        def caption(self):
+            return self.text()
+
+        @caption.setter
+        def caption(self, val):
+            self.setText(val)
+
+        @property
+        def enabled(self):
+            return self.isEnabled()
+
+        @enabled.setter
+        def enabled(self, val):
+            self.setEnabled(val)
+
+    class Pageframe(QtGui.QTabWidget, Custom, HasFont):
+        def __init__(self, *args, **kwargs):
+            QtGui.QTabWidget.__init__(self)
+            Custom.__init__(self, *args, **kwargs)
+
+        def addWidget(self, widget):
+            self.addTab(widget, widget.caption)
+
+    class Page(QtGui.QWidget, Custom, HasFont):
+        def __init__(self, *args, **kwargs):
+            QtGui.QWidget.__init__(self)
+            self._vbox = QtGui.QVBoxLayout()
+            self.setLayout(self._vbox)
+            self.caption = kwargs['name']
+            Custom.__init__(self, *args, **kwargs)
+
+        def addWidget(self, widget):
+            self._vbox.addWidget(widget)
+
+    class Image(Custom):
         pass
 
-    def interactivechange(self):
+    class Timer(Custom):
         pass
 
-    def programmaticchange(self):
+    class Container(Custom):
         pass
 
-    @property
-    def value(self):
-        return QtGui.QSpinBox.value(self)
-
-    @value.setter
-    def value(self, val):
-        self.blockSignals(True)
-        self.setValue(val)
-        self.blockSignals(False)
-        self.programmaticchange()
-
-class Shape(QtGui.QFrame, Custom):
-    def __init__(self, *args, **kwargs):
-        QtGui.QFrame.__init__(self)
-        Custom.__init__(self, *args, **kwargs)
-        self.setFrameStyle(QtGui.QFrame.Box | QtGui.QFrame.Plain)
-
-    @property
-    def height(self):
-        return QtGui.QComboBox.height(self)
-
-    @height.setter
-    def height(self, val):
-        self.setFixedHeight(val)
-
-    @property
-    def width(self):
-        return QtGui.QComboBox.width(self)
-
-    @height.setter
-    def width(self, val):
-        self.setFixedWidth(val)
-
-class Separator(QtGui.QFrame, Custom):
-    def __init__(self, *args, **kwargs):
-        QtGui.QFrame.__init__(self)
-        Custom.__init__(self, *args, **kwargs)
-        self.setFrameStyle(QtGui.QFrame.VLine | QtGui.QFrame.Plain)
-        palette = self.palette()
-        palette.setColor(self.foregroundRole(), QtGui.QColor(0, 0, 0, 0))
-        self.setPalette(palette)
-        margin = 4
-        self.setContentsMargins(margin, 0, margin, 0)
-
-class Toolbar(QtGui.QToolBar, Custom):
-    def __init__(self, *args, **kwargs):
-        QtGui.QToolBar.__init__(self)
-        Custom.__init__(self, *args, **kwargs)
-
-class Listbox(QtGui.QListWidget, Custom):
-    def __init__(self, *args, **kwargs):
-        QtGui.QListWidget.__init__(self)
-        self.multiselect = 0
-        Custom.__init__(self, *args, **kwargs)
-        self._source = ''
-
-    @property
-    def rowsource(self):
-        return self._source
-
-    @rowsource.setter
-    def rowsource(self, source):
-        self._source = source
-        table = db._get_table_info(source).table
-        for record in table:
-            self.addItem(QtGui.QListWidgetItem(str(record[0])))
-
-    @property
-    def multiselect(self):
-        return int(self.selectionMode() == QtGui.QAbstractItemView.MultiSelection)
-
-    @multiselect.setter
-    def multiselect(self, mode):
-        self.setSelectionMode(QtGui.QAbstractItemView.MultiSelection if mode else QtGui.QAbstractItemView.SingleSelection)
-
-class Grid(QtGui.QTableWidget, Custom, HasFont):
-    def __init__(self, *args, **kwargs):
-        QtGui.QTableWidget.__init__(self)
-        Custom.__init__(self, *args, **kwargs)
-        self.setSelectionMode(QtGui.QAbstractItemView.SingleSelection)
-        self._source = ''
-        self.cellClicked.connect(self._update_recno)
-        self.cellClicked.connect(self.click)
-        self.cellDoubleClicked.connect(self.dblclick)
-
-    def _update_recno(self):
-        table = db._get_table_info(self._source).table.goto(self.currentRow())
-        self.refresh()
-
-    def click(self):
+    class Editbox(Custom):
         pass
 
-    def dblclick(self):
+    class Dataenvironment(Custom):
         pass
 
-    def refresh(self):
-        table = db._get_table_info(self._source).table
-        labels = table.field_names
-        self.setColumnCount(len(labels))
-        self.setRowCount(len(table))
-        self.setVerticalHeaderLabels(['>' if record is table.current_record else '  ' for record in table])
-        self.setHorizontalHeaderLabels(labels)
+    qt_app = QtGui.QApplication(())
 
-        for i, record in enumerate(table):
-            for j, val in enumerate(record):
-                self.setItem(i, j, QtGui.QTableWidgetItem(str(val)))
+    def _exec():
+        variable['_vfp'].show()
+        return qt_app.exec_()
 
-    def focusInEvent(self, event):
-        self.refresh()
+except ImportError:
+    class Custom(object):
+        pass
 
-    @property
-    def allowrowsizing(self):
-        return self.verticalHeader().resizeMode(0) == QtGui.QHeaderView.Interactive
+    class MainWindow(Custom):
+        pass
 
-    @allowrowsizing.setter
-    def allowrowsizing(self, val):
-        self.verticalHeader().setResizeMode(QtGui.QHeaderView.Interactive if val else QtGui.QHeaderView.Fixed)
+    class Formset(Custom):
+        pass
 
-    @property
-    def recordsource(self):
-        return self._source
+    class Form(Custom):
+        pass
 
-    @recordsource.setter
-    def recordsource(self, source):
-        self._source = source
-        self.refresh()
+    class Commandbutton(Custom):
+        pass
 
-    @property
-    def allowcellselection(self):
-        return self.selectionBehavior() != QtGui.QAbstractItemView.SelectItems
+    class Label(Custom):
+        pass
 
-    @allowcellselection.setter
-    def allowcellselection(self, mode):
-        self.setSelectionBehavior(QtGui.QAbstractItemView.SelectItems if mode else QtGui.QAbstractItemView.SelectRows)
-        self.setEditTriggers(QtGui.QAbstractItemView.AllEditTriggers if mode else QtGui.QAbstractItemView.NoEditTriggers)
+    class Textbox(Custom):
+        pass
 
-class Optiongroup(QtGui.QWidget, Custom):
-    def __init__(self, *args, **kwargs):
-        QtGui.QWidget.__init__(self)
-        self._group = QtGui.QButtonGroup()
-        self._vbox = QtGui.QVBoxLayout()
-        self.setLayout(self._vbox)
-        Custom.__init__(self, *args, **kwargs)
+    class Checkbox(Custom):
+        pass
 
-    def add_object(self, obj):
-        self._vbox.addWidget(obj)
-        self._group.addButton(obj)
+    class Combobox(Custom):
+        pass
 
-    @property
-    def enabled(self):
-        return any(button.enabled for button in self._group.buttons())
+    class Spinner(Custom):
+        pass
 
-    @enabled.setter
-    def enabled(self, val):
-        for button in self._group.buttons():
-            button.enabled = val
+    class Shape(Custom):
+        pass
 
-    @property
-    def buttoncount(self):
-        return len(self._group.buttons())
+    class Separator(Custom):
+        pass
 
-    @buttoncount.setter
-    def buttoncount(self, val):
-        for i in range(val, self.buttoncount):
-            self._group.buttons()[-1].deleteLater()
-        for i in range(self.buttoncount, val):
-            caption = 'option {}'.format(i + 1)
-            name = caption.replace(' ', '')
-            setattr(self, name, Optionbutton(caption=caption, name=name, parent=self))
+    class Toolbar(Custom):
+        pass
 
-class Optionbutton(QtGui.QRadioButton, Custom, HasFont):
-    def __init__(self, *args, **kwargs):
-        QtGui.QRadioButton.__init__(self)
-        Custom.__init__(self, *args, **kwargs)
+    class Listbox(Custom):
+        pass
 
-    @property
-    def caption(self):
-        return self.text()
+    class Grid(Custom):
+        pass
 
-    @caption.setter
-    def caption(self, val):
-        self.setText(val)
+    class Optiongroup(Custom):
+        pass
 
-    @property
-    def enabled(self):
-        return self.isEnabled()
+    class Optionbutton(Custom):
+        pass
 
-    @enabled.setter
-    def enabled(self, val):
-        self.setEnabled(val)
+    class Pageframe(Custom):
+        pass
 
-class Pageframe(QtGui.QTabWidget, Custom, HasFont):
-    def __init__(self, *args, **kwargs):
-        QtGui.QTabWidget.__init__(self)
-        Custom.__init__(self, *args, **kwargs)
+    class Page(Custom):
+        pass
 
-    def addWidget(self, widget):
-        self.addTab(widget, widget.caption)
+    class Image(Custom):
+        pass
 
-class Page(QtGui.QWidget, Custom, HasFont):
-    def __init__(self, *args, **kwargs):
-        QtGui.QWidget.__init__(self)
-        self._vbox = QtGui.QVBoxLayout()
-        self.setLayout(self._vbox)
-        self.caption = kwargs['name']
-        Custom.__init__(self, *args, **kwargs)
+    class Timer(Custom):
+        pass
 
-    def addWidget(self, widget):
-        self._vbox.addWidget(widget)
+    class Container(Custom):
+        pass
 
-class Image(Custom):
-    pass
+    class Editbox(Custom):
+        pass
 
-class Timer(Custom):
-    pass
+    class Dataenvironment(Custom):
+        pass
 
-class Container(Custom):
-    pass
-
-class Editbox(Custom):
-    pass
-
-class Dataenvironment(Custom):
-    pass
 
 class Array(object):
     def __init__(self, dim1, dim2=0, offset=0):
@@ -1469,10 +1550,6 @@ def create_object(objtype, *args, **kwargs):
 def clearall():
     pass
 
-def _exec():
-    variable['_vfp'].show()
-    return qt_app.exec_()
-
 db = DatabaseContext()
 variable = _Variable(db)
 function = _Function()
@@ -1482,7 +1559,6 @@ def module(module_name):
 
 error_func = None
 variable.pushscope()
-qt_app = QtGui.QApplication(())
 variable.add_public('_vfp')
 variable['_vfp'] = MainWindow()
 variable['_vfp'].caption = 'VFP To Python'
