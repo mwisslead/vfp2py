@@ -830,6 +830,29 @@ except ImportError:
         pass
 
 
+class Exception(object):
+    def __init__(self):
+        self.message = ''
+        self.lineno = 0
+        self.errorno = 0
+        self.procedure = ''
+        self.stacklevel = 0
+        self.linecontents = ''
+
+    @classmethod
+    def from_pyexception(cls, exc):
+        trace = traceback.extract_stack()
+        obj = cls()
+        obj.message = str(exc)
+        try:
+            tb = exc.__traceback__
+        except:
+            tb = sys.exc_info()[2]
+        obj.lineno = tb.tb_lineno
+        obj.procedure = tb.tb_frame.f_code.co_name
+        obj.stacklevel = len(trace) - 1
+        return obj
+
 class Array(object):
     def __init__(self, dim1, dim2=0, offset=0):
         self.columns = bool(dim2)

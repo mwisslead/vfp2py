@@ -695,7 +695,7 @@ endtry
 try:
     assert False
 except Exception as oerr:
-    # vfpfunc.pyexception_to_foxexception(oerr)
+    oerr = vfpfunc.Exception.from_pyexception(oerr)
     raise
 '''.strip()
     test_output_str = vfp2py.vfp2py.prg2py(input_str, parser_start='lines', prepend_data='').strip()

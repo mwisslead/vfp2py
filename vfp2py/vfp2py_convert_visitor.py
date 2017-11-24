@@ -476,7 +476,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
 
         if identifier:
             catch_lines = [CodeStr('except Exception as {}:'.format(identifier))]
-            catch_lines.append(make_func_code('#vfpfunc.pyexception_to_foxexception', identifier))
+            catch_lines.append([add_args_to_code('{} = {}', [identifier, make_func_code('vfpfunc.Exception.from_pyexception', identifier)])])
         else:
             catch_lines = [CodeStr('except:')]
         catch_lines.append(self.visit(ctx.catchLines))

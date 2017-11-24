@@ -167,7 +167,7 @@ def database_tests():
             vfpfunc.db.use('report', 0, 'shared')
             assert False
         except Exception as oerr:
-            # vfpfunc.pyexception_to_foxexception(oerr)
+            oerr = vfpfunc.Exception.from_pyexception(oerr)
             print(oerr.message)
             assert oerr.message == 'File is in use.'
         _add_db_record(0)
@@ -261,7 +261,7 @@ def database_tests():
         vfpfunc.db.use(None, None, None)
         os.remove('report2.dbf')
     except Exception as err:
-        # vfpfunc.pyexception_to_foxexception(err)
+        err = vfpfunc.Exception.from_pyexception(err)
         print(err.message)
         vfpfunc.db.browse()
         raise
