@@ -478,6 +478,11 @@ def convert_project(infile, directory):
     with open(os.path.join(directory, 'setup.py'), 'wb') as fid:
         pass
 
+class ParseKill(antlr4.error.ErrorListener.ErrorListener):
+    def syntaxError(self, parser, token, line, char, msg, unknown):
+        linetxt = token.getInputStream().strdata.splitlines()[line - 1].strip()
+        raise Exception('Syntax Error on line {}: {}'.format(line, linetxt))
+
 def run_parser(stream, parser, parser_start):
     parser._interp.PredictionMode = antlr4.PredictionMode.SLL
     parser.removeErrorListeners()
@@ -487,7 +492,7 @@ def run_parser(stream, parser, parser_start):
     except antlr4.error.Errors.ParseCancellationException as err:
         stream.reset();
         parser.reset();
-        parser.addErrorListener(antlr4.error.ErrorListener.ConsoleErrorListener.INSTANCE)
+        parser.addErrorListener(ParseKill())
         parser._errHandler = antlr4.error.ErrorStrategy.DefaultErrorStrategy()
         parser._interp.PredictionMode = antlr4.PredictionMode.LL
         return getattr(parser, parser_start)()
