@@ -1,7 +1,7 @@
 import argparse
 import logging
 
-import vfp2py
+from . import vfp2py
 
 def parse_args(argv=None):
     parser = argparse.ArgumentParser(description='Tool for rewriting Foxpro code in Python')
