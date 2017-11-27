@@ -70,7 +70,7 @@ class TestsGenVisitor(conversionVisitor):
 
 
 def generate_tests(filename):
-    with open(filename) as fid:
+    with open(filename, 'rb') as fid:
         file_contents = fid.read().decode('utf-8')
     input_stream = antlr4.InputStream(file_contents)
     lexer = conversionLexer(input_stream)
