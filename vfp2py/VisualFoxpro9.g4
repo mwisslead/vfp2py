@@ -42,7 +42,7 @@ lineEnd
  ;
 
 lines
- : line*?
+ : line*
  ;
 
 classDefStart
