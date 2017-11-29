@@ -68,14 +68,7 @@ class PreprocessVisitor(VisualFoxpro9Visitor):
         return self.visit(ctx.preprocessorLines())
 
     def visitPreprocessorLines(self, ctx):
-        retval = []
-        for child in ctx.getChildren():
-            toks = self.visit(child)
-            if toks:
-                retval += toks
-            elif toks is None:
-                print('toks was None')
-        return retval
+        return sum((self.visit(line) for line in ctx.preprocessorLine()), [])
 
     def visitPreprocessorDefine(self, ctx):
         name = ctx.identifier().getText().lower()
