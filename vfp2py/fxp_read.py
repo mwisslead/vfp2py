@@ -594,6 +594,7 @@ SETCODES = {
     0x0E: 'DEFAULT',
     0x0D: 'DECIMALS',
     0x0F: 'DELETED',
+    0x15: 'ESCAPE',
     0x16: 'EXACT',
     0x18: 'FIELDS',
     0x1A: 'FILTER',
