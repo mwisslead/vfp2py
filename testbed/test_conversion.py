@@ -11,6 +11,7 @@ def Test0():
   continued on another line;
   and another
 LOCAL STRING_VAL, FLOAT_VAL, MONEY_VAL, INT_VAL, BLOB_VAL, BOOL_VAL, NULL_VAL, NULLDATE_VAL, DATE_VAL, DATETIME_VAL, OBJ_VAL
+LOCAL Y, Z, W
 STRING_VAL = \'str\'
 float_val = 3.0
 float_val = .5e-5
@@ -47,6 +48,8 @@ DATETIME_VAL = {^2017-5-6 5P}
 ?10 => 5
 ?10 <= 5
 ?10 =< 5
+?.t. or .f. AND .f. or .f.
+?x .or. y AND w .or. z
 OBJ_VAL = CREATEOBJECT(\'TEST\')
 OBJ_VAL = CREATEOBJECT(\'FORM\')
 RELEASE STRING_VAL, INT_VAL, BOOL_VAL, NULL_VAL
@@ -80,6 +83,7 @@ RESUME
 # continued on another line
 # and another
 string_val = float_val = money_val = int_val = blob_val = bool_val = null_val = nulldate_val = date_val = datetime_val = obj_val = False  # LOCAL Declaration
+y = z = w = False  # LOCAL Declaration
 string_val = \'str\'
 float_val = 3.0
 float_val = .5e-5
@@ -116,6 +120,8 @@ print(10 >= 5)
 print(10 >= 5)
 print(10 <= 5)
 print(10 <= 5)
+print(True or False and False or False)
+print(vfpvar[\'x\'] or y and w or z)
 obj_val = vfpfunc.create_object(\'Test\')
 obj_val = vfpfunc.Form()
 del string_val, int_val, bool_val, null_val

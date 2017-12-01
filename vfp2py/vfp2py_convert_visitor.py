@@ -568,7 +568,9 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             ctx.parser.DOUBLEEQUALS: '==',
             ctx.parser.DOLLAR: 'in',
             ctx.parser.OR: 'or',
-            ctx.parser.AND: 'and'
+            ctx.parser.OTHEROR: 'or',
+            ctx.parser.AND: 'and',
+            ctx.parser.OTHERAND: 'and',
         }
         left = self.visit(ctx.expr(0))
         right = self.visit(ctx.expr(1))

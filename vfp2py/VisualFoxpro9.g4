@@ -340,7 +340,7 @@ expr
  | expr '%' expr #modulo
  | expr op=('+'|'-') expr #addition
  | expr op=('=='|NOTEQUALS|'='|'#'|'>'|GTEQ|'<'|LTEQ|'$') expr #comparison
- | expr op=(OR|AND) expr #booleanOperation
+ | expr op=(OR|OTHEROR|AND|OTHERAND) expr #booleanOperation
  | constant #constantExpr
  | CAST '(' expr AS datatype ')' #castExpr
  | PERIOD? atom trailer? #atomExpr
@@ -683,7 +683,9 @@ ADDITIVE : A D D I T I V E;
 DIMENSION : D I M E N S I O N;
 NOT : N O T;
 AND : A N D;
+OTHERAND : '.' AND '.';
 OR : O R;
+OTHEROR : '.' OR '.';
 SCAN : S C A N;
 ENDSCAN : E N D S C A N;
 NULL : N U L L;
