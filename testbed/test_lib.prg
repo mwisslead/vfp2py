@@ -212,7 +212,7 @@ procedure database_tests
       go top
       DELETE REST FOR QUANTITY > 60
       PACK
-      go top
+      goto top
       assert reccount() == 2
       REPLACE REPORT.NAME WITH 'N/A'
       assert alltrim(name) == 'N/A'

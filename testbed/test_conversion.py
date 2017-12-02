@@ -181,7 +181,7 @@ def Test1():
 #ELSE
 _SCREEN.LOGO.TOP = (_SCREEN.HEIGHT-_SCREEN.LOGO.HEIGHT)/2-3
 
-WAIT WINDOW space(3) + \'please wait\' + CHR(32) NOWAIT TIMEOUT 1.3
+WAIT WIND space(3) + \'please wait\' + CHR(32) NOWAIT TIMEOUT 1.3
 #ENDIF
 #IF NOT FILE(\'test.h\')
    ?"This shouldn\'t be here"
