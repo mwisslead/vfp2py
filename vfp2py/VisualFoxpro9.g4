@@ -282,7 +282,9 @@ setCmd
  | setword=DATE TO? identifier
  | setword=DELETED (ON | OFF)
  | setword=EXACT (ON | OFF)
+ | setword=EXCLUSIVE (ON | OFF)
  | setword=FILTER TO (specialExpr (IN specialExpr)?)?
+ | setword=HELP (ON | OFF | TO specialExpr? | COLLECTION specialExpr? | SYSTEM)
  | setword=INDEX TO specialExpr?
  | setword=LIBRARY TO (specialExpr ADDITIVE?)
  | setword=MEMOWIDTH TO expr
@@ -293,10 +295,12 @@ setCmd
  | setword=PRINTER (ON PROMPT? | OFF | TO (DEFAULT | NAME specialExpr | specialExpr ADDITIVE?)?)
  | setword=PROCEDURE TO specialExpr (',' specialExpr)* ADDITIVE?
  | setword=REFRESH TO expr (',' expr)?
+ | setword=RELATION TO expr INTO specialExpr (IN specialExpr)? ADDITIVE?
  | setword=SAFETY (ON | OFF)
  | setword=STATUS BAR? (ON | OFF)
  | setword=SYSMENU (ON | OFF | TO (DEFAULT | expr)? | SAVE | NOSAVE)
  | setword=TABLEPROMPT (ON | OFF)
+ | setword=TALK (ON | OFF)
  | setword=TYPEAHEAD TO expr
  | setword=UNIQUE (ON | OFF)
  ;
@@ -464,8 +468,13 @@ identifier
  | COLUMN
  | DROP
  | ID
+ | HELP
  | SAY
+ | COLLECTION
+ | SYSTEM
+ | TALK
  | PROGRAMCONTROL
+ | RELATION
  ;
 
 NUMBER_LITERAL : (DIGIT* '.')? DIGIT+ (E [+-]? DIGIT*)?
@@ -736,8 +745,13 @@ DEBUGOUT: DEBUG O U T;
 MEMORY: M E M O R Y;
 MENUS: M E N U S;
 RESOURCES: R E S O U R C E S;
+HELP: H E L P;
 SAY: S A Y;
+COLLECTION: C O L L E C T I O N;
+SYSTEM: S Y S T E M;
+TALK: T A L K;
 PROGRAMCONTROL: (C A N C E L | S U S P E N D | R E S U M E | Q U I T | E X I T | L O O P);
+RELATION: R E L A T I O N;
 
 ID : [A-Za-z_] [a-zA-Z0-9_]*;
 

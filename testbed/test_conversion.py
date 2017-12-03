@@ -532,6 +532,13 @@ SET CLASSLIB TO TEST IN TEST
 SET CLASSLIB TO TEST ALIAS NOTTEST
 SET CLASSLIB TO TEST IN TEST ALIAS NOTTEST ADDITIVE
 SET TABLEPROMPT ON
+SET EXCLUSIVE ON
+SET HELP OFF
+SET HELP TO TEST
+SET HELP COLLECTION test
+SET HELP SYSTEM
+SET RELATION TO a=b INTO test
+SET TALK OFF
 '''.strip()
     output_str = '''
 vfpfunc.set(u\'compatible\', \'OFF\', set_value=True)
@@ -545,6 +552,13 @@ vfpfunc.set(u\'classlib\', \'test\', set_value=True, in=\'test\')
 vfpfunc.set(u\'classlib\', \'test\', alias=\'nottest\', set_value=True)
 vfpfunc.set(u\'classlib\', \'test\', alias=\'nottest\', set_value=True, additive=True, in=\'test\')
 vfpfunc.set(u\'tableprompt\', \'ON\', set_value=True)
+vfpfunc.set(u\'exclusive\', \'ON\', set_value=True)
+# FIX ME: SET HELP OFF
+# FIX ME: SET HELP TO TEST
+# FIX ME: SET HELP COLLECTION test
+# FIX ME: SET HELP SYSTEM
+# FIX ME: SET RELATION TO a=b INTO test
+vfpfunc.set(u\'talk\', \'OFF\', set_value=True)
 '''.strip()
     test_output_str = vfp2py.vfp2py.prg2py(input_str, parser_start='lines', prepend_data='').strip()
     try:
