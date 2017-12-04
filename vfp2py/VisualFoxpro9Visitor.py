@@ -455,6 +455,11 @@ class VisualFoxpro9Visitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by VisualFoxpro9Parser#queryCondition.
+    def visitQueryCondition(self, ctx):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by VisualFoxpro9Parser#dllArgs.
     def visitDllArgs(self, ctx):
         return self.visitChildren(ctx)

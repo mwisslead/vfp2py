@@ -212,7 +212,7 @@ def database_tests():
             'name'].strip() + ' should be Joshua Wood'
         assert vfpfunc.db.recno() == 4
         vfpfunc.db.goto(None, 1)
-        vfpfunc.db.locate(for_cond=lambda: vfpvar['st'] == 'ID', nooptimize=None)
+        vfpfunc.db.locate(for_cond=lambda: vfpvar['st'] == 'ID')
         assert vfpvar['name'].strip() == 'Norma Fisher', vfpvar[
             'name'].strip() + ' should be Norma Fisher'
         assert vfpfunc.db.found()

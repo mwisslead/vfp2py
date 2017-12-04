@@ -1454,13 +1454,16 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
     def visitLocate(self, ctx):
         self.imports.append('from vfp2py import vfpfunc')
         kwargs = OrderedDict()
-        if ctx.FOR() and ctx.WHILE():
-            raise Exception('cannont have both FOR and WHILE in LOCATE command')
-        if ctx.FOR():
-            kwargs['for_cond'] = add_args_to_code('lambda: {}', [self.visit(ctx.expr(0))])
-        if ctx.WHILE():
-            kwargs['while_cond'] = add_args_to_code('lambda: {}', [self.visit(ctx.expr(0))])
-        kwargs['nooptimize'] = ctx.NOOPTIMIZE()
+        scope, for_cond, while_cond, nooptimize = self.getQueryConditions(ctx.queryCondition())
+        if for_cond:
+            kwargs['for_cond'] = for_cond
+        if while_cond:
+            kwargs['while_cond'] = while_cond
+            scope = scope or ('rest',)
+        else:
+            scope = scope or ('all',)
+        if nooptimize:
+            kwargs['nooptimize'] = True
         return make_func_code('vfpfunc.db.locate', **kwargs)
 
     def visitContinueLocate(self, ctx):
@@ -1503,8 +1506,9 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
 
     def visitReplace(self, ctx):
         value = self.visit(ctx.expr(0))
-        scope = self.visit(ctx.scopeClause()) or ('next', 1)
-        field = self.visit_with_disabled_scope(ctx.specialExpr())
+        field = self.visit_with_disabled_scope(ctx.specialExpr(0))
+        scope, for_cond, while_cond, nooptimize = self.getQueryConditions(ctx.queryCondition())
+        scope = scope or ('next', 1)
         if string_type(field):
             field = field.lower().rsplit('.', 1)
             tablename = field[0] if len(field) == 2 else None
@@ -1525,12 +1529,13 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
 
     def visitDeleteRecord(self, ctx):
         kwargs = OrderedDict()
-        scope = self.visit(ctx.scopeClause()) or ('next', 1)
+        scope, for_cond, while_cond, nooptimize = self.getQueryConditions(ctx.queryCondition())
+        scope = scope or ('next', 1)
         name = self.visit(ctx.inExpr)
-        if ctx.forExpr:
-            kwargs['for_cond'] = add_args_to_code('lambda: {}', [self.visit(ctx.forExpr)])
-        if ctx.whileExpr:
-            kwargs['while_cond'] = add_args_to_code('lambda: {}', [self.visit(ctx.whileExpr)])
+        if for_cond:
+            kwargs['for_cond'] = for_cond
+        if while_cond:
+            kwargs['while_cond'] = while_cond
         if ctx.RECALL():
             kwargs['recall'] = True
         return make_func_code('vfpfunc.db.delete_record', name, scope, **kwargs)
@@ -1561,22 +1566,50 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
 
     def visitCount(self, ctx):
         kwargs = OrderedDict()
-        scope = self.visit(ctx.scopeClause()) or (('rest',) if ctx.whileExpr else ('all',))
-        if ctx.forExpr:
-            kwargs['for_cond'] = add_args_to_code('lambda: {}', [self.visit(ctx.forExpr)])
-        if ctx.whileExpr:
-            kwargs['while_cond'] = add_args_to_code('lambda: {}', [self.visit(ctx.whileExpr)])
+        scope, for_cond, while_cond, nooptimize = self.getQueryConditions(ctx.queryCondition())
+        if for_cond:
+            kwargs['for_cond'] = for_cond
+        if while_cond:
+            kwargs['while_cond'] = while_cond
+            scope = scope or ('rest',)
+        else:
+            scope = scope or ('all',)
+        if nooptimize:
+            kwargs['nooptimize'] = True
         return add_args_to_code('{} = {}', (self.visit(ctx.toExpr), make_func_code('vfpfunc.db.count', None, scope, **kwargs)))
 
     def visitSum(self, ctx):
         kwargs = OrderedDict()
-        scope = self.visit(ctx.scopeClause()) or (('rest',) if ctx.whileExpr else ('all',))
-        if ctx.forExpr:
-            kwargs['for_cond'] = add_args_to_code('lambda: {}', [self.visit(ctx.forExpr)])
-        if ctx.whileExpr:
-            kwargs['while_cond'] = add_args_to_code('lambda: {}', [self.visit(ctx.whileExpr)])
+        scope, for_cond, while_cond, nooptimize = self.getQueryConditions(ctx.queryCondition())
+        if for_cond:
+            kwargs['for_cond'] = for_cond
+        if while_cond:
+            kwargs['while_cond'] = while_cond
+            scope = scope or ('rest',)
+        else:
+            scope = scope or ('all',)
+        if nooptimize:
+            kwargs['nooptimize'] = True
         sumexpr = add_args_to_code('lambda: {}', [self.visit(ctx.sumExpr)])
         return add_args_to_code('{} = {}', (self.visit(ctx.toExpr), make_func_code('vfpfunc.db.sum', None, scope, sumexpr, **kwargs)))
+
+    def getQueryConditions(self, conditions):
+        scope, for_cond, while_cond, nooptimize = None, None, None, None
+        condition_types = [(condition.FOR() or condition.WHILE() or condition.NOOPTIMIZE() or type(condition.scopeClause())) for condition in conditions]
+        condition_types = [condition_type or condition_type.symbol.type for condition_type in condition_types]
+        if len(set(condition_types)) < len(condition_types):
+            raise Exception('Bad Query Condition')
+        for condition in conditions:
+            if condition.FOR():
+                for_cond = add_args_to_code('lambda: {}', [self.visit(condition.expr())])
+            if condition.WHILE():
+                while_cond = add_args_to_code('lambda: {}', [self.visit(condition.expr())])
+            if condition.scopeClause():
+                scope = self.visit(condition.scopeClause())
+            if condition.NOOPTIMIZE():
+                nooptimize = True
+        return scope, for_cond, while_cond, nooptimize
+
 
     def visitReindex(self, ctx):
         return make_func_code('vfpfunc.db.reindex', not not ctx.COMPACT())

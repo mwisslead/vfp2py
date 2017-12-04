@@ -195,13 +195,13 @@ otherCmds
  | ALTER TABLE specialExpr (ADD COLUMN identifier identifier arrayIndex | DROP COLUMN identifier) #alterTable
  | SELECT (tablename=specialExpr | (DISTINCT? (specialArgs | '*') (FROM fromExpr=specialExpr)? (WHERE whereExpr=expr)? (INTO (TABLE | CURSOR) intoExpr=specialExpr)? (ORDER BY orderbyid=identifier)?)) #select
  | USE (SHARED | EXCLUSIVE)? (IN workArea=specialExpr | name=specialExpr IN workArea=specialExpr | name=specialExpr)? (SHARED | EXCLUSIVE)? (ALIAS aliasExpr=specialExpr)? #use
- | LOCATE (FOR expr)? (WHILE expr)? NOOPTIMIZE? #locate
+ | LOCATE queryCondition* #locate
  | CONTINUE #continueLocate
- | REPLACE scopeClause? specialExpr WITH expr (FOR expr)? #replace
+ | REPLACE (queryCondition | specialExpr WITH expr)* #replace
  | INDEX ON specialExpr (TAG | TO) specialExpr COMPACT? (ASCENDING | DESCENDING)? (UNIQUE | CANDIDATE)? ADDITIVE? #indexOn
- | COUNT scopeClause? ((FOR forExpr=expr) | (WHILE whileExpr=expr) | (TO toExpr=expr))* NOOPTIMIZE? #count
- | SUM scopeClause? sumExpr=expr (FOR forExpr=expr | WHILE whileExpr=expr | TO toExpr=expr | NOOPTIMIZE)+ #sum
- | (RECALL | DELETE) scopeClause? (FOR forExpr=expr)? (WHILE whileExpr=expr)? (IN inExpr=specialExpr NOOPTIMIZE | IN inExpr=specialExpr)? #deleteRecord
+ | COUNT (TO toExpr=expr | queryCondition)* #count
+ | SUM (TO toExpr=expr | queryCondition | sumExpr=expr)* #sum
+ | (RECALL | DELETE) (queryCondition | IN inExpr=specialExpr)* #deleteRecord
  | APPEND FROM (ARRAY expr | specialExpr FOR expr | specialExpr ) (TYPE typeExpr=specialExpr)? #appendFrom
  | APPEND BLANK? (IN specialExpr NOMENU | IN specialExpr)? #append
  | INSERT INTO specialExpr (FROM (ARRAY expr | MEMVAR | NAME expr) | ('(' specialArgs ')')? VALUES '(' args ')') #insert
@@ -224,6 +224,13 @@ otherCmds
  | NODEFAULT #nodefault
  | (RUN | EXCLAMATION) ('/' identifier)? (~NL)* #shellRun
  | ASSERT expr (MESSAGE expr)? #assert
+ ;
+
+queryCondition
+ : scopeClause
+ | FOR expr
+ | WHILE expr
+ | NOOPTIMIZE
  ;
 
 dllArgs
