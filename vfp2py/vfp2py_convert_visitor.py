@@ -973,8 +973,10 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
 
     def visitCastExpr(self, ctx):
         func = {
+            'currency': 'float',
             'integer': 'int',
             'logical': 'bool',
+            'blob': 'bytearray',
         }[self.visit(ctx.datatype())]
         expr = self.visit(ctx.expr())
         return make_func_code(func, expr)

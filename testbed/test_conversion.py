@@ -50,6 +50,8 @@ DATETIME_VAL = {^2017-5-6 5P}
 ?10 =< 5
 ?.t. or .f. AND .f. or .f.
 ?x .or. y AND w .or. z
+?CAST(string_val as blob)
+?cast(float_val as currency)
 OBJ_VAL = CREATEOBJECT(\'TEST\')
 OBJ_VAL = CREATEOBJECT(\'FORM\')
 RELEASE STRING_VAL, INT_VAL, BOOL_VAL, NULL_VAL
@@ -122,6 +124,8 @@ print(10 <= 5)
 print(10 <= 5)
 print(True or False and False or False)
 print(vfpvar[\'x\'] or y and w or z)
+print(bytearray(string_val))
+print(float(float_val))
 obj_val = vfpfunc.create_object(\'Test\')
 obj_val = vfpfunc.Form()
 del string_val, int_val, bool_val, null_val
