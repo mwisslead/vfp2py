@@ -358,11 +358,35 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
 
     def visitFuncDef(self, ctx):
         name, parameters = self.visit(ctx.funcDefStart())
-        self.new_scope()
+        body = []
+        if parameters:
+            self.new_scope()
+            self.scope.update({key: False for key in parameters})
+        else:
+            try:
+                parameter_line = next(line for line in ctx.lines().line() if not line.lineComment())
+                parameter_cmd = parameter_line.cmd().declaration()
+                keyword = parameter_cmd.PARAMETER().symbol.text.lower()
+                parameters = [self.visit_with_disabled_scope(p)[0] for p in parameter_cmd.declarationItem()]
+                lines = ctx.lines()
+                children = [c for c in lines.children if c is not parameter_line]
+                while lines.children:
+                    lines.removeLastChild()
+                for child in children:
+                    lines.addChild(child)
+                self.new_scope()
+                if keyword.startswith('l'):
+                    self.scope.update({key: False for key in parameters})
+                else:
+                    self.used_scope = True
+                    decls = tuple(self.visit(p)[0] for p in parameter_cmd.declarationItem())
+                    body.append(add_args_to_code('{} = {}', (decls, tuple(parameters))))
+            except (StopIteration, AttributeError):
+                parameters = []
+                self.new_scope()
         global FUNCNAME
         FUNCNAME = name
-        self.scope.update({key: False for key in parameters})
-        body = self.visit(ctx.lines())
+        body += self.visit(ctx.lines())
         self.delete_scope()
         body = self.modify_func_body(body)
         return name, parameters, body
@@ -496,6 +520,8 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         if ctx.EXTERNAL():
             return
         scope = ctx.SCOPE().getText().lower() if ctx.SCOPE() else None
+        if ctx.PARAMETER():
+            return
         names = [self.visit_with_disabled_scope(x)[0] for x in ctx.declarationItem()]
         inds = [self.visit(x)[1] for x in ctx.declarationItem()]
         if ctx.ARRAY() or ctx.DIMENSION() or ctx.DECLARE():

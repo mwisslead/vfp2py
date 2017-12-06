@@ -266,11 +266,22 @@ DEFINE CLASS TESTCLASS AS COMMANDBUTTON
 ENDDEFINE
 
 FUNCTION RANDOM_FUNCTION
+
+   * something
+   LPARAMETERS X
+   ?x
 ENDFUNC
 
 *comment about testclass2
 DEFINE CLASS TESTCLASS2 AS UNKNOWNCLASS
 ENDDEFINE
+
+FUNCTION ANOTHER_RANDOM_FUNCTION
+
+   * something
+   PARAMETERS X, Y
+   ?x
+ENDFUNC
 '''.strip()
     output_str = '''
 from __future__ import division, print_function
@@ -316,8 +327,10 @@ class Testclass(vfpfunc.Commandbutton):
         pass
 
 
-def random_function():
-    pass
+def random_function(x=False):
+
+    # something
+    print(x)
 
 # comment about testclass2
 
@@ -326,6 +339,15 @@ class Testclass2(vfpfunc.classes[\'Unknownclass\']):
 
     def _assign(self, *args, **kwargs):
         vfpfunc.classes[\'Unknownclass\']._assign(self)
+
+
+def another_random_function(x=False, y=False):
+    vfpvar.pushscope()
+    (vfpvar[\'x\'], vfpvar[\'y\']) = (x, y)
+
+    # something
+    print(vfpvar[\'x\'])
+    vfpvar.popscope()
 '''.strip()
     test_output_str = vfp2py.vfp2py.prg2py(input_str).strip()
     try:

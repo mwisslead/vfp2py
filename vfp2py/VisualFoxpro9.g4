@@ -305,7 +305,7 @@ setCmd
  ;
 
 declaration
- : ((SCOPE|EXTERNAL) (ARRAY | DIMENSION | DECLARE)? | DIMENSION | DECLARE) declarationItem (',' declarationItem)*
+ : ((SCOPE|EXTERNAL) (ARRAY | DIMENSION | DECLARE)? | DIMENSION | DECLARE | PARAMETER) declarationItem (',' declarationItem)*
  | EXTERNAL PROCEDURE specialExpr
  ;
 
