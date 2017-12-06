@@ -535,6 +535,16 @@ class VisualFoxpro9Visitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by VisualFoxpro9Parser#asType.
+    def visitAsType(self, ctx):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by VisualFoxpro9Parser#asTypeOf.
+    def visitAsTypeOf(self, ctx):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by VisualFoxpro9Parser#args.
     def visitArgs(self, ctx):
         return self.visitChildren(ctx)

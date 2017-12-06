@@ -46,7 +46,7 @@ lines
  ;
 
 classDefStart
- : DEFINE CLASS identifier (AS identifier)? NL
+ : DEFINE CLASS identifier asTypeOf? NL
  ;
 
 classDef
@@ -54,7 +54,7 @@ classDef
  ;
 
 classDefProperty
- : ADD OBJECT identifier AS idAttr (WITH idAttr '=' expr (',' idAttr '=' expr)*)? NL #classDefAddObject
+ : ADD OBJECT identifier asType (WITH idAttr '=' expr (',' idAttr '=' expr)*)? NL #classDefAddObject
  | assign NL #classDefAssign
  | lineComment #classDefLineComment
  ;
@@ -76,7 +76,7 @@ funcDef
  ;
 
 parameter
- : idAttr (AS idAttr)?
+ : idAttr asType?
  ;
 
 parameters
@@ -318,7 +318,15 @@ declaration
  ;
 
 declarationItem
- : (idAttr2 arrayIndex | idAttr (AS datatype (OF specialExpr)?)?)
+ : (idAttr2 arrayIndex | idAttr asTypeOf?)
+ ;
+
+asType
+ : AS datatype
+ ;
+
+asTypeOf
+ : asType (OF specialExpr)?
  ;
 
 args
@@ -353,7 +361,7 @@ expr
  | expr op=('=='|NOTEQUALS|'='|'#'|'>'|GTEQ|'<'|LTEQ|'$') expr #comparison
  | expr op=(OR|OTHEROR|AND|OTHERAND) expr #booleanOperation
  | constant #constantExpr
- | CAST '(' expr AS datatype ')' #castExpr
+ | CAST '(' expr asType ')' #castExpr
  | PERIOD? atom trailer? #atomExpr
  ;
 

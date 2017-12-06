@@ -280,7 +280,8 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         return retval + sum((self.visit(comment) for comment in ctx.lineComment()), [])
 
     def visitClassDefStart(self, ctx):
-        names = [CodeStr(self.visit(identifier).title()) for identifier in ctx.identifier()]
+        names = [self.visit(ctx.identifier())] + [self.visit(ctx.asTypeOf())[0]]
+        names = [CodeStr(name.title()) for name in names]
         if len(names) < 2:
             names.append('Custom')
         classname, supername = names
@@ -311,9 +312,9 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
 
     def visitClassDefAddObject(self, ctx):
         name = str(self.visit_with_disabled_scope(ctx.identifier()))
-        keywords = [self.visit_with_disabled_scope(idAttr) for idAttr in ctx.idAttr()[1:]]
+        keywords = [self.visit_with_disabled_scope(idAttr) for idAttr in ctx.idAttr()]
         kwargs = {key: self.visit(expr) for key, expr in zip(keywords, ctx.expr())}
-        objtype = create_string(self.visit_with_disabled_scope(ctx.idAttr()[0])).title()
+        objtype = create_string(self.visit_with_disabled_scope(ctx.asType())).title()
         return name, {'parent_type': objtype, 'args': kwargs}
 
     def visitNodefault(self, ctx):
@@ -328,7 +329,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         return self.visit(ctx.parameters())
 
     def visitParameter(self, ctx):
-        return self.visit(ctx.idAttr()[0])
+        return self.visit(ctx.idAttr())
 
     def visitParameters(self, ctx):
         return [self.visit(parameter) for parameter in ctx.parameter()]
@@ -527,6 +528,12 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
 
     def visitDeclarationItem(self, ctx):
         return self.visit(ctx.idAttr() or ctx.idAttr2()), self.visit(ctx.arrayIndex())
+
+    def visitAsTypeOf(self, ctx):
+        return self.visit(ctx.asType()), self.visit(ctx.specialExpr())
+
+    def visitAsType(self, ctx):
+        return self.visit(ctx.datatype().identifier())
 
     def visitAssign(self, ctx):
         value = self.visit(ctx.expr())
@@ -977,7 +984,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             'integer': 'int',
             'logical': 'bool',
             'blob': 'bytearray',
-        }[self.visit(ctx.datatype())]
+        }[self.visit(ctx.asType())]
         expr = self.visit(ctx.expr())
         return make_func_code(func, expr)
 
