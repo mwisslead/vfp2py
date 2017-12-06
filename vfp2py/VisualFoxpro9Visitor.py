@@ -95,26 +95,6 @@ class VisualFoxpro9Visitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by VisualFoxpro9Parser#funcDefStart.
-    def visitFuncDefStart(self, ctx):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by VisualFoxpro9Parser#funcDefEnd.
-    def visitFuncDefEnd(self, ctx):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by VisualFoxpro9Parser#parameterDef.
-    def visitParameterDef(self, ctx):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by VisualFoxpro9Parser#funcDef.
-    def visitFuncDef(self, ctx):
-        return self.visitChildren(ctx)
-
-
     # Visit a parse tree produced by VisualFoxpro9Parser#parameter.
     def visitParameter(self, ctx):
         return self.visitChildren(ctx)
@@ -122,6 +102,16 @@ class VisualFoxpro9Visitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by VisualFoxpro9Parser#parameters.
     def visitParameters(self, ctx):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by VisualFoxpro9Parser#funcDefStart.
+    def visitFuncDefStart(self, ctx):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by VisualFoxpro9Parser#funcDef.
+    def visitFuncDef(self, ctx):
         return self.visitChildren(ctx)
 
 

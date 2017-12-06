@@ -59,28 +59,20 @@ classDefProperty
  | lineComment #classDefLineComment
  ;
 
-funcDefStart
- : SCOPE? PROCEDURE idAttr2 ('(' parameters? ')')? NL parameterDef?
- ;
-
-funcDefEnd
- : ENDPROC lineEnd lineComment*
- ;
-
-parameterDef
- : PARAMETER parameters NL
- ;
-
-funcDef
- :  funcDefStart lines funcDefEnd?
- ;
-
 parameter
  : idAttr asType?
  ;
 
 parameters
  : parameter (',' parameter)*
+ ;
+
+funcDefStart
+ : SCOPE? PROCEDURE idAttr2 ('(' parameters? ')')? NL
+ ;
+
+funcDef
+ : funcDefStart lines (ENDPROC lineEnd lineComment*)?
  ;
 
 ifStart

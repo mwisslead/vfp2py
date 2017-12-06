@@ -146,8 +146,8 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
                 self.used_scope = False
                 funcname, parameters, funcbody = self.visit(child)
                 defs += [CodeStr('def {}({}):'.format(funcname, ', '.join([str(repr(p)) + '=False' for p in parameters]))), funcbody]
-                if child.funcDefEnd():
-                    defs += sum((self.visit(comment) for comment in child.funcDefEnd().lineComment()), [])
+                if child.lineComment():
+                    defs += sum((self.visit(comment) for comment in child.lineComment()), [])
             elif not isinstance(child, antlr4.tree.Tree.TerminalNodeImpl):
                 defs += self.visit(child)
 
@@ -244,8 +244,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             parameters = [add_args_to_code('{}=False', (p,)) for p in parameters]
             if '.' not in funcname:
                 funcs.update({funcname: [[CodeStr('self')] + parameters, funcbody, funcdef.start.line]})
-            if funcdef.funcDefEnd():
-                assignments += sum((self.visit(comment) for comment in funcdef.funcDefEnd().lineComment()), [])
+            assignments += sum((self.visit(comment) for comment in funcdef.lineComment()), [])
 
         classname, supername = self.visit(ctx.classDefStart())
 
@@ -322,11 +321,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
 
     def visitFuncDefStart(self, ctx):
         params = self.visit_with_disabled_scope(ctx.parameters()) or []
-        params += self.visit_with_disabled_scope(ctx.parameterDef()) or []
         return self.visit(ctx.idAttr2()), params
-
-    def visitParameterDef(self, ctx):
-        return self.visit(ctx.parameters())
 
     def visitParameter(self, ctx):
         return self.visit(ctx.idAttr())
