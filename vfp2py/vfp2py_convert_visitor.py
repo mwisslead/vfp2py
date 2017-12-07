@@ -999,53 +999,64 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
     def visitIdAttr2(self, ctx):
         return CodeStr('.'.join(([self.withid] if ctx.startPeriod else []) + [self.visit(identifier) for identifier in ctx.identifier()]))
 
+    datatypes_map = {
+        'w': 'blob',
+        'blob': 'blob',
+        'c': 'character',
+        'char': 'character',
+        'character': 'character',
+        'y': 'currency',
+        'currency': 'currency',
+        'd': 'date',
+        'date': 'date',
+        't': 'datetime',
+        'datetime': 'datetime',
+        'b': 'double',
+        'double': 'double',
+        'f': 'float',
+        'float': 'float',
+        'g': 'general',
+        'general': 'general',
+        'i': 'integer',
+        'int': 'integer',
+        'integer': 'integer',
+        'l': 'logical',
+        'logical': 'logical',
+        'm': 'memo',
+        'memo': 'memo',
+        'n': 'numeric',
+        'num': 'numeric',
+        'numeric': 'numeric',
+        'q': 'varbinary',
+        'varbinary': 'varbinary',
+        'v': 'varchar',
+        'varchar': 'varchar',
+    }
+
     def visitCastExpr(self, ctx):
         func = {
+            'character': 'str',
+            'varchar': 'str',
+            'memo': 'str',
+            'general': 'str',
+            'numeric': 'float',
             'currency': 'float',
+            'float': 'float',
+            'double': 'float',
             'integer': 'int',
             'logical': 'bool',
             'blob': 'bytearray',
-        }[self.visit(ctx.asType())]
+            'varbinary': 'bytearray',
+            'date': 'dt.date',
+            'datetime': 'dt.datetime',
+        }[self.datatypes_map[self.visit(ctx.asType())]]
         expr = self.visit(ctx.expr())
         return make_func_code(func, expr)
 
     def visitDatatype(self, ctx):
-        name_map = {
-            'w': 'blob',
-            'blob': 'blob',
-            'c': 'character',
-            'char': 'character',
-            'character': 'character',
-            'y': 'currency',
-            'currency': 'currency',
-            'd': 'date',
-            'date': 'date',
-            't': 'datetime',
-            'datetime': 'datetime',
-            'b': 'double',
-            'double': 'double',
-            'f': 'float',
-            'float': 'float',
-            'g': 'general',
-            'general': 'general',
-            'i': 'integer',
-            'int': 'integer',
-            'integer': 'integer',
-            'l': 'logical',
-            'logical': 'logical',
-            'm': 'memo',
-            'memo': 'memo',
-            'n': 'numeric',
-            'num': 'numeric',
-            'numeric': 'numeric',
-            'q': 'varbinary',
-            'varbinary': 'varbinary',
-            'v': 'varchar',
-            'varchar': 'varchar',
-        }
         dtype = self.visit_with_disabled_scope(ctx.idAttr())
         try:
-            return name_map[dtype]
+            return self.datatypes_map[dtype]
         except KeyError:
             raise ValueError("invalid datatype '{}'".format(dtype))
 
