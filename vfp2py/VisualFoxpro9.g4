@@ -441,7 +441,7 @@ arrayIndex
  ;
 
 datatype
- : identifier
+ : idAttr
  ;
 
 scopeClause

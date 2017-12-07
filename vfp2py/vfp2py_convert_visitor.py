@@ -554,7 +554,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         return self.visit(ctx.asType()), self.visit(ctx.specialExpr())
 
     def visitAsType(self, ctx):
-        return self.visit(ctx.datatype().identifier())
+        return self.visit_with_disabled_scope(ctx.datatype().idAttr())
 
     def visitAssign(self, ctx):
         value = self.visit(ctx.expr())
@@ -1043,7 +1043,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             'v': 'varchar',
             'varchar': 'varchar',
         }
-        dtype = self.visit(ctx.identifier())
+        dtype = self.visit_with_disabled_scope(ctx.idAttr())
         try:
             return name_map[dtype]
         except KeyError:
