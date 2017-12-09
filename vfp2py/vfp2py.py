@@ -68,7 +68,10 @@ class PreprocessVisitor(VisualFoxpro9Visitor):
         return self.visit(ctx.preprocessorLines())
 
     def visitPreprocessorLines(self, ctx):
-        return sum((self.visit(line) for line in ctx.preprocessorLine()), [])
+        lines = []
+        for line in ctx.preprocessorLine():
+            lines += self.visit(line)
+        return lines
 
     def visitPreprocessorDefine(self, ctx):
         name = ctx.identifier().getText().lower()
