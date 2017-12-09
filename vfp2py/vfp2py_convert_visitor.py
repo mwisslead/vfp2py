@@ -365,7 +365,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         else:
             try:
                 parameter_line = next(line for line in ctx.lines().line() if not line.lineComment())
-                parameter_cmd = parameter_line.cmd().declaration()
+                parameter_cmd = parameter_line.cmd()
                 keyword = parameter_cmd.PARAMETER().symbol.text.lower()
                 parameters = [self.visit_with_disabled_scope(p)[0] for p in parameter_cmd.declarationItem()]
                 lines = ctx.lines()

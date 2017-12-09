@@ -139,28 +139,24 @@ controlStmt
  ;
 
 cmd
- : funcDo
- | assign
- | declaration
- | printStmt
- | waitCmd
- | filesystemCmd
- | returnStmt
- | release
- | setup
- | otherCmds
- | '=' expr
- | complexId
- ;
-
-release
- : RELEASE (ALL | vartype=(PROCEDURE|CLASSLIB)? args | POPUP args EXTENDED?)
- ;
-
-otherCmds
  : ON KEY (LABEL identifier ('+' identifier)?)? cmd #onKey
  | (PROGRAMCONTROL) #programControl
  | '@' args (SAY sayExpr=expr | STYLE styleExpr=expr)* #atSay
+ | (DO FORM specialExpr
+   | DO specialExpr (IN specialExpr)? (WITH args)?) #funcDo
+ | assign #assignCmd
+ | (((SCOPE|EXTERNAL) (ARRAY | DIMENSION | DECLARE)? | DIMENSION | DECLARE | PARAMETER) declarationItem (',' declarationItem)*
+   | EXTERNAL PROCEDURE specialExpr) #declaration
+ | ('?' '?'? | DEBUGOUT) args? #printStmt
+ | WAIT (TO toExpr=expr | WINDOW (AT atExpr1=expr ',' atExpr2=expr)? | NOWAIT | CLEAR | NOCLEAR | TIMEOUT timeout=expr | message=expr)* #waitCmd
+ | (ERASE | DELETE FILE) (specialExpr|'?') RECYCLE? #deleteFile
+ | (RENAME | COPY FILE) specialExpr TO specialExpr #copyMoveFile
+ | (CHDIR | MKDIR | RMDIR) specialExpr #chMkRmDir
+ | RETURN expr? #returnStmt
+ | onError #onErrorCmd
+ | onShutdown #onShutdownCmd
+ | RELEASE (ALL | vartype=(PROCEDURE|CLASSLIB)? args | POPUP args EXTENDED?) #release
+ | SET setCmd #setStmt
  | PUSH KEY CLEAR? #pushKey
  | POP KEY ALL? #popKey
  | KEYBOARD expr PLAIN? CLEAR? #keyboard
@@ -216,6 +212,8 @@ otherCmds
  | NODEFAULT #nodefault
  | (RUN | EXCLAMATION) ('/' identifier)? (~NL)* #shellRun
  | ASSERT expr (MESSAGE expr)? #assert
+ | '=' expr #exprCmd
+ | complexId #complexIdCmd
  ;
 
 queryCondition
@@ -233,40 +231,12 @@ dllArg
  : datatype '@'? identifier?
  ;
 
-printStmt
- : ('?' '?'? | DEBUGOUT) args?
- ;
-
-waitCmd
- : WAIT (TO toExpr=expr | WINDOW (AT atExpr1=expr ',' atExpr2=expr)? | NOWAIT | CLEAR | NOCLEAR | TIMEOUT timeout=expr | message=expr)*
- ;
-
-filesystemCmd
- : (ERASE | DELETE FILE) (specialExpr|'?') RECYCLE? #deleteFile
- | (RENAME | COPY FILE) specialExpr TO specialExpr #copyMoveFile
- | (CHDIR | MKDIR | RMDIR) specialExpr #chMkRmDir
- ;
-
-returnStmt
- : RETURN expr?
- ;
-
-setup
- : onError
- | setStmt
- | onShutdown
- ;
-
 onError
  : ON ERROR cmd?
  ;
 
 onShutdown
  : ON SHUTDOWN cmd?
- ;
-
-setStmt
- : SET setCmd
  ;
 
 setCmd
@@ -304,11 +274,6 @@ setCmd
  | setword=UNIQUE (ON | OFF)
  ;
 
-declaration
- : ((SCOPE|EXTERNAL) (ARRAY | DIMENSION | DECLARE)? | DIMENSION | DECLARE | PARAMETER) declarationItem (',' declarationItem)*
- | EXTERNAL PROCEDURE specialExpr
- ;
-
 declarationItem
  : (idAttr2 arrayIndex | idAttr asTypeOf?)
  ;
@@ -327,11 +292,6 @@ args
 
 specialArgs
  : specialExpr (',' specialExpr)*
- ;
-
-funcDo
- : DO FORM specialExpr
- | DO specialExpr (IN specialExpr)? (WITH args)?
  ;
 
 reference

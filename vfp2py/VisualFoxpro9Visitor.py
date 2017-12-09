@@ -185,16 +185,6 @@ class VisualFoxpro9Visitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by VisualFoxpro9Parser#cmd.
-    def visitCmd(self, ctx):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by VisualFoxpro9Parser#release.
-    def visitRelease(self, ctx):
-        return self.visitChildren(ctx)
-
-
     # Visit a parse tree produced by VisualFoxpro9Parser#onKey.
     def visitOnKey(self, ctx):
         return self.visitChildren(ctx)
@@ -207,6 +197,71 @@ class VisualFoxpro9Visitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by VisualFoxpro9Parser#atSay.
     def visitAtSay(self, ctx):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by VisualFoxpro9Parser#funcDo.
+    def visitFuncDo(self, ctx):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by VisualFoxpro9Parser#assignCmd.
+    def visitAssignCmd(self, ctx):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by VisualFoxpro9Parser#declaration.
+    def visitDeclaration(self, ctx):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by VisualFoxpro9Parser#printStmt.
+    def visitPrintStmt(self, ctx):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by VisualFoxpro9Parser#waitCmd.
+    def visitWaitCmd(self, ctx):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by VisualFoxpro9Parser#deleteFile.
+    def visitDeleteFile(self, ctx):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by VisualFoxpro9Parser#copyMoveFile.
+    def visitCopyMoveFile(self, ctx):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by VisualFoxpro9Parser#chMkRmDir.
+    def visitChMkRmDir(self, ctx):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by VisualFoxpro9Parser#returnStmt.
+    def visitReturnStmt(self, ctx):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by VisualFoxpro9Parser#onErrorCmd.
+    def visitOnErrorCmd(self, ctx):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by VisualFoxpro9Parser#onShutdownCmd.
+    def visitOnShutdownCmd(self, ctx):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by VisualFoxpro9Parser#release.
+    def visitRelease(self, ctx):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by VisualFoxpro9Parser#setStmt.
+    def visitSetStmt(self, ctx):
         return self.visitChildren(ctx)
 
 
@@ -445,6 +500,16 @@ class VisualFoxpro9Visitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by VisualFoxpro9Parser#exprCmd.
+    def visitExprCmd(self, ctx):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by VisualFoxpro9Parser#complexIdCmd.
+    def visitComplexIdCmd(self, ctx):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by VisualFoxpro9Parser#queryCondition.
     def visitQueryCondition(self, ctx):
         return self.visitChildren(ctx)
@@ -460,41 +525,6 @@ class VisualFoxpro9Visitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by VisualFoxpro9Parser#printStmt.
-    def visitPrintStmt(self, ctx):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by VisualFoxpro9Parser#waitCmd.
-    def visitWaitCmd(self, ctx):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by VisualFoxpro9Parser#deleteFile.
-    def visitDeleteFile(self, ctx):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by VisualFoxpro9Parser#copyMoveFile.
-    def visitCopyMoveFile(self, ctx):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by VisualFoxpro9Parser#chMkRmDir.
-    def visitChMkRmDir(self, ctx):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by VisualFoxpro9Parser#returnStmt.
-    def visitReturnStmt(self, ctx):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by VisualFoxpro9Parser#setup.
-    def visitSetup(self, ctx):
-        return self.visitChildren(ctx)
-
-
     # Visit a parse tree produced by VisualFoxpro9Parser#onError.
     def visitOnError(self, ctx):
         return self.visitChildren(ctx)
@@ -505,18 +535,8 @@ class VisualFoxpro9Visitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by VisualFoxpro9Parser#setStmt.
-    def visitSetStmt(self, ctx):
-        return self.visitChildren(ctx)
-
-
     # Visit a parse tree produced by VisualFoxpro9Parser#setCmd.
     def visitSetCmd(self, ctx):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by VisualFoxpro9Parser#declaration.
-    def visitDeclaration(self, ctx):
         return self.visitChildren(ctx)
 
 
@@ -542,11 +562,6 @@ class VisualFoxpro9Visitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by VisualFoxpro9Parser#specialArgs.
     def visitSpecialArgs(self, ctx):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by VisualFoxpro9Parser#funcDo.
-    def visitFuncDo(self, ctx):
         return self.visitChildren(ctx)
 
 
