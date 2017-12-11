@@ -50,13 +50,13 @@ classDefStart
  ;
 
 classDef
- : classDefStart (classDefProperty | funcDef)* ENDDEFINE lineEnd lineComment*
+ : classDefStart classProperty* ENDDEFINE lineEnd lineComment*
  ;
 
-classDefProperty
- : ADD OBJECT identifier asType (WITH idAttr '=' expr (',' idAttr '=' expr)*)? NL #classDefAddObject
- | assign NL #classDefAssign
- | lineComment #classDefLineComment
+classProperty
+ : cmd NL
+ | lineComment
+ | funcDef
  ;
 
 parameter
@@ -140,11 +140,13 @@ controlStmt
 
 cmd
  : ON KEY (LABEL identifier ('+' identifier)?)? cmd #onKey
+ | ADD OBJECT identifier asType (WITH idAttr '=' expr (',' idAttr '=' expr)*)? #addObject
  | (PROGRAMCONTROL) #programControl
  | '@' args (SAY sayExpr=expr | STYLE styleExpr=expr)* #atSay
  | (DO FORM specialExpr
    | DO specialExpr (IN specialExpr)? (WITH args)?) #funcDo
- | assign #assignCmd
+ | (STORE expr TO idAttr (',' idAttr)*
+   | idAttr '=' expr) #assign
  | (((SCOPE|EXTERNAL) (ARRAY | DIMENSION | DECLARE)? | DIMENSION | DECLARE | PARAMETER) declarationItem (',' declarationItem)*
    | EXTERNAL PROCEDURE specialExpr) #declaration
  | ('?' '?'? | DEBUGOUT) args? #printStmt
@@ -376,11 +378,6 @@ constant
  | '{' ( '/' '/'  | ':' | '^' (NUMBER_LITERAL '-' NUMBER_LITERAL '-' NUMBER_LITERAL | NUMBER_LITERAL '/' NUMBER_LITERAL '/' NUMBER_LITERAL) (','? NUMBER_LITERAL (':' NUMBER_LITERAL (':' NUMBER_LITERAL)?)? identifier)? )? '}' #date
  | ('\'' (~(NL | '\''))* '\'' | '"' (~(NL | '"'))* '"' | '[' (~(NL | ']'))* ']') #string
  | BLOB_LITERAL #blob
- ;
-
-assign
- : STORE expr TO idAttr (',' idAttr)*
- | idAttr '=' expr
  ;
 
 idAttr2

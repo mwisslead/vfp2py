@@ -196,22 +196,25 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         assignments = []
         self.used_scope = False
         subclasses = {}
-        for stmt in ctx.classDefProperty():
-            assignment = self.visit(stmt)
-            if isinstance(stmt, ctx.parser.ClassDefLineCommentContext) and assignment:
-                assignments.append(assignment)
-            elif isinstance(stmt, ctx.parser.ClassDefAddObjectContext):
-                name, obj = assignment
-                for stmt in ctx.classDefProperty():
-                    if isinstance(stmt, ctx.parser.ClassDefAssignContext):
-                        assignment = self.visit(stmt)
-                        for (ident, value) in assignment:
-                            if '.' in ident:
-                                parent, ident = ident.split('.', 1)
-                                if parent == name:
-                                    obj['args'][ident] = CodeStr(value.replace(' = ', '', 1))
+
+        funcdefs = [x.funcDef() for x in ctx.classProperty() if x.funcDef()]
+        classassigns = [self.visitClassAssign(stmt.cmd()) for stmt in ctx.classProperty() if isinstance(stmt.cmd(), ctx.parser.AssignContext)]
+        for stmt in ctx.classProperty():
+            stmt = stmt.lineComment() or stmt.cmd()
+            if isinstance(stmt, ctx.parser.LineCommentContext):
+                assignments += self.visit(stmt)
+            elif isinstance(stmt, ctx.parser.AssignContext):
+                assignments += [CodeStr('self.' + ident + value) for (ident, value) in self.visitClassAssign(stmt) if '.' not in ident]
+            elif isinstance(stmt, ctx.parser.AddObjectContext):
+                name, obj = self.visit(stmt)
+                for assignment in classassigns:
+                    for (ident, value) in assignment:
+                        if '.' in ident:
+                            parent, ident = ident.split('.', 1)
+                            if parent == name:
+                                obj['args'][ident] = CodeStr(value.replace(' = ', '', 1))
                 obj['functions'] = {}
-                for funcdef in ctx.funcDef():
+                for funcdef in funcdefs:
                     self.used_scope = False
                     funcname, parameters, funcbody = self.visit(funcdef)
                     if '.' in funcname:
@@ -227,15 +230,12 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
                     obj['parent_type'] = 'self.' + subclass
                     self.class_list.append(obj['parent_type'])
                 assignments.append(add_args_to_code('self.{} = {}', [CodeStr(name), self.func_call('createobject', obj['parent_type'], **obj['args'])]))
-            else:
-                for (ident, value) in assignment:
-                    if '.' not in ident:
-                        assignments.append(CodeStr('self.' + ident + value))
+
         assign_scope = self.used_scope
 
         funcs = OrderedDict()
         funcs['_assign'] = None
-        for funcdef in ctx.funcDef():
+        for funcdef in funcdefs:
             self.used_scope = False
             funcname, parameters, funcbody = self.visit(funcdef)
             if funcname == 'init' and assign_scope and not self.used_scope:
@@ -294,11 +294,11 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             pass
         return classname, supername
 
-    def visitClassDefAssign(self, ctx):
+    def visitClassAssign(self, assign):
         #FIXME - come up with a less hacky way to make this work
-        args1 = self.visit_with_disabled_scope(ctx.assign())
+        args1 = self.visit_with_disabled_scope(assign)
         used_scope = self.used_scope
-        args2 = self.visit(ctx.assign())
+        args2 = self.visit(assign)
         args = []
         for arg1, arg2 in zip(args1, args2):
             ident = arg1[:arg1.find(' = ')]
@@ -309,7 +309,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         self.used_scope = used_scope
         return args
 
-    def visitClassDefAddObject(self, ctx):
+    def visitAddObject(self, ctx):
         name = str(self.visit_with_disabled_scope(ctx.identifier()))
         keywords = [self.visit_with_disabled_scope(idAttr) for idAttr in ctx.idAttr()]
         kwargs = {key: self.visit(expr) for key, expr in zip(keywords, ctx.expr())}
