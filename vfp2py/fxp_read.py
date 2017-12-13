@@ -100,6 +100,9 @@ def read_double(fid, *args):
     dec_digits = fid.read(1)[0]
     return FXPNumber(struct.unpack('<d', fid.read(8))[0], digits, dec_digits)
 
+def read_float(fid, *args):
+    return FXPNumber(struct.unpack('<i', fid.read(4))[0] / 65536., 10, 4)
+
 def read_currency(fid, *args):
     digits = fid.read(1)[0] - 1
     dec_digits = fid.read(1)[0]
@@ -262,10 +265,12 @@ SYSTEM_NAMES = {
     0x1E: '_TEXT',
     0x1F: '_PRETEXT',
     0x20: '_TALLY',
+    0x21: '_CUROBJ',
     0x22: '_MLINE',
     0x23: '_THROTTLE',
     0x24: '_GENMENU',
     0x2F: '_STARTUP',
+    0x30: '_TRANSPORT',
     0x31: '_BEAUTIFY',
     0x32: '_DOS',
     0x33: '_MAC',
@@ -591,11 +596,13 @@ SETCODES = {
     0x09: 'CONFIRM',
     0x0A: 'CONSOLE',
     0x0B: 'DATE',
+    0x0C: 'DEBUG',
     0x0E: 'DEFAULT',
     0x0D: 'DECIMALS',
     0x0F: 'DELETED',
     0x15: 'ESCAPE',
     0x16: 'EXACT',
+    0x17: 'EXCLUSIVE',
     0x18: 'FIELDS',
     0x1A: 'FILTER',
     0x1B: 'FIXED',
@@ -752,6 +759,7 @@ CLAUSES = {
     0x3D: 'NOWINDOW',
     0x40: 'FONT',
     0x41: 'STYLE',
+    0x42: 'RGB',
     0x48: 'CASE',
     0x49: 'ID',
     0x4A: 'NAME',
@@ -791,7 +799,7 @@ CLAUSES = {
     0xD0: 'NOCLEAR',
     0xD1: '(WITH or INTEGER or CONNECTION)',
     0xD2: 'NOMARGIN',
-    0xD3: 'UNIQUE',
+    0xD3: '(UNIQUE or SIZE)',
     0xD4: '(TYPE or LONG)',
     0xD5: '(EVENTS or CSV or COLUMN)',
     0xD6: '(STRING or SHEET or NORM)',
@@ -816,6 +824,7 @@ VALUES = {
     0xE2: '.',
     0xE3: read_alias,
     0xE6: read_datetime,
+    0xE7: read_float,
     SQL_SUBQUERY: 'SQL SUBQUERY', #0xE8
     0xE9: read_int32,
     0xEB: read_next_code,
