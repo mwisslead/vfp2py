@@ -1815,3 +1815,13 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             return add_args_to_code('assert {}, {}', (self.visit(ctx.expr(0)), self.visit(ctx.expr(1))))
         else:
             return add_args_to_code('assert {}', (self.visit(ctx.expr(0)),))
+
+    def visitTextBlock(self, ctx):
+        if not ctx.NOSHOW():
+            return
+        name = self.visit(ctx.idAttr(0))
+        text = CodeStr(' + '.join(repr(chunk) for chunk in self.visit(ctx.textChunk())))
+        return add_args_to_code('{} = {}', [name, text])
+
+    def visitTextChunk(self, ctx):
+        return [line.strip() for line in self.getCtxText(ctx).splitlines()]

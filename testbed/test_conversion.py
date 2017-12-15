@@ -76,6 +76,13 @@ DO CASE
    OTHERWISE
       ?Test
 ENDCASE
+TEXT TO SOMESTRING NOSHOW
+       1234567890
+       0123456789
+       ABCDEFGHIJ
+       KLMNOPQRST
+       UVWXYZ
+ENDTEXT
 QUIT
 CANCEL
 RESUME
@@ -149,6 +156,7 @@ elif vfpvar[\'x\'] == 2:
     pass
 else:
     print(vfpvar[\'test\'])
+vfpvar[\'somestring\'] = u\'1234567890\' + u\'0123456789\' + u\'ABCDEFGHIJ\' + u\'KLMNOPQRST\' + u\'UVWXYZ\'
 vfpfunc.quit()
 # FIX ME: CANCEL
 # FIX ME: RESUME

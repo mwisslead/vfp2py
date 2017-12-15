@@ -214,6 +214,7 @@ cmd
  | NODEFAULT #nodefault
  | (RUN | EXCLAMATION) ('/' identifier)? (~NL)* #shellRun
  | ASSERT expr (MESSAGE expr)? #assert
+ | TEXT (TO idAttr | NOSHOW)* NL textChunk ENDTEXT #textBlock
  | '=' expr #exprCmd
  | complexId #complexIdCmd
  ;
@@ -227,6 +228,10 @@ queryCondition
 
 dllArgs
  : dllArg (',' dllArg)*
+ ;
+
+textChunk
+ : (~ENDTEXT)*
  ;
 
 dllArg
@@ -439,6 +444,8 @@ identifier
  | TALK
  | PROGRAMCONTROL
  | RELATION
+ | TEXT
+ | ENDTEXT
  ;
 
 NUMBER_LITERAL : (DIGIT* '.')? DIGIT+ (E [+-]? DIGIT*)?
@@ -716,6 +723,8 @@ SYSTEM: S Y S T E M;
 TALK: T A L K;
 PROGRAMCONTROL: (C A N C E L | S U S P E N D | R E S U M E | Q U I T | E X I T | L O O P);
 RELATION: R E L A T I O N;
+TEXT: T E X T;
+ENDTEXT: E N D TEXT;
 
 ID : [A-Za-z_] [a-zA-Z0-9_]*;
 
