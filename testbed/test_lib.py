@@ -106,6 +106,11 @@ def string_tests():
     assert vfpfunc.strextract('This {{is}} a {{template}}', '{{is}}') == ' a {{template}}'
     assert vfpfunc.strextract('This {{is}} a {{template}}', '{{IS}}', '', 1, 1) == ' a {{template}}'
     assert '123AAbbB'.lower().find('aab'.lower()) + 1 == 4
+    vfpvar['cstring'] = vfpfunc.text([u'      123AAbbbB',
+                                      u'      TESTTEST',
+                                      u'      TEXTLINES',
+                                      u'   '])
+    assert vfpvar['cstring'] == '123AAbbbBTESTTESTTEXTLINES'
     vfpvar.popscope()
 
 

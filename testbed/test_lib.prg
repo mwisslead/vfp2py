@@ -88,6 +88,12 @@ procedure string_tests
    assert strextract('This {{is}} a {{template}}', '{{is}}') ==  ' a {{template}}'
    assert strextract('This {{is}} a {{template}}', '{{IS}}', '', 1, 1) ==  ' a {{template}}'
    assert atc('aab', '123AAbbB') == 4
+   TEXT TO CSTRING NOSHOW
+      123AAbbbB
+      TESTTEST
+      TEXTLINES
+   ENDTEXT
+   assert cstring == '123AAbbbBTESTTESTTEXTLINES'
 ENDPROC
 
 procedure path_tests

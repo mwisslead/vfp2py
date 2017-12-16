@@ -1819,9 +1819,18 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
     def visitTextBlock(self, ctx):
         if not ctx.NOSHOW():
             return
-        name = self.visit(ctx.idAttr(0))
-        text = CodeStr(' + '.join(repr(chunk) for chunk in self.visit(ctx.textChunk())))
-        return add_args_to_code('{} = {}', [name, text])
+        text = self.visit(ctx.textChunk())
+        val = make_func_code('vfpfunc.text', text)
+        if ctx.TO():
+            name = self.visit(ctx.idAttr(0))
+            return add_args_to_code('{} = {}', [name, val])
+        else:
+            return val
 
     def visitTextChunk(self, ctx):
-        return [line.strip() for line in self.getCtxText(ctx).splitlines()]
+        start, stop = ctx.getSourceInterval()
+        ltoks = ctx.parser._input.getHiddenTokensToLeft(start) or []
+        rtoks = ctx.parser._input.getHiddenTokensToRight(stop) or []
+        toks = ctx.parser._input.tokens[start:stop+1]
+        text = ''.join(t.text for t in ltoks + toks + rtoks)
+        return CodeStr('[' + ',\n'.join(repr(l) for l in text.splitlines()) + ']')

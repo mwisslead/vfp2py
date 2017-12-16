@@ -1563,6 +1563,9 @@ def set(setword, *args, **kwargs):
         settings = args
     SET_PROPS[setword] = settings
 
+def text(text_lines):
+    return ''.join(l.strip() for l in text_lines)
+
 def create_object(objtype, *args, **kwargs):
     objtype = objtype.title()
     frame = inspect.getouterframes(inspect.currentframe())[2][0]
