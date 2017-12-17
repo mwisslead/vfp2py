@@ -109,7 +109,7 @@ def string_tests():
     vfpvar['cstring'] = vfpfunc.text([u'      123AAbbbB',
                                       u'      TESTTEST',
                                       u'      TEXTLINES',
-                                      u'   '])
+                                      u'   '], show=False)
     assert vfpvar['cstring'] == '123AAbbbBTESTTESTTEXTLINES'
     vfpvar.popscope()
 

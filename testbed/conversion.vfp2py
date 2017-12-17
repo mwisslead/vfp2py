@@ -154,7 +154,7 @@ vfpvar['somestring'] = vfpfunc.text([u'       1234567890',
                                      u'       0123456789',
                                      u'       ABCDEFGHIJ',
                                      u'       KLMNOPQRST',
-                                     u'       UVWXYZ'])
+                                     u'       UVWXYZ'], show=False)
 vfpfunc.quit()
 # FIX ME: CANCEL
 # FIX ME: RESUME

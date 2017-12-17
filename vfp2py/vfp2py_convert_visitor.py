@@ -1817,10 +1817,11 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             return add_args_to_code('assert {}', (self.visit(ctx.expr(0)),))
 
     def visitTextBlock(self, ctx):
-        if not ctx.NOSHOW():
-            return
+        kwargs = {}
+        if ctx.NOSHOW():
+            kwargs['show'] = False
         text = self.visit(ctx.textChunk())
-        val = make_func_code('vfpfunc.text', text)
+        val = make_func_code('vfpfunc.text', text, **kwargs)
         if ctx.TO():
             name = self.visit(ctx.idAttr(0))
             return add_args_to_code('{} = {}', [name, val])

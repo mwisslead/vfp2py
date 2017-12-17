@@ -1563,8 +1563,11 @@ def set(setword, *args, **kwargs):
         settings = args
     SET_PROPS[setword] = settings
 
-def text(text_lines):
-    return ''.join(l.strip() for l in text_lines)
+def text(text_lines, show=True):
+    text = ''.join(l.strip() for l in text_lines)
+    if show:
+        print(text)
+    return text
 
 def create_object(objtype, *args, **kwargs):
     objtype = objtype.title()
