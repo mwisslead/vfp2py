@@ -852,7 +852,8 @@ class Exception(object):
         else:
             tb = sys.exc_info()[2]
         obj.lineno = tb.tb_lineno
-        obj.procedure = tb.tb_frame.f_code.co_name
+        filename = os.path.splitext(os.path.basename(tb.tb_frame.f_code.co_filename))[0]
+        obj.procedure = filename + '.' + tb.tb_frame.f_code.co_name
         obj.stacklevel = len(trace) - 1
         return obj
 
