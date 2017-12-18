@@ -163,7 +163,7 @@ try:
                     t = t.parent
                 return t
             except:
-                raise Exception('object is not a member of a form')
+                raise _EXCEPTION('object is not a member of a form')
 
         def _assign(self):
             pass
@@ -830,6 +830,9 @@ except ImportError:
         pass
 
 
+_EXCEPTION = Exception
+
+
 class Exception(object):
     def __init__(self):
         self.message = ''
@@ -1019,7 +1022,7 @@ class _Function(object):
         for scope in variable.public_scopes:
             if key in scope and isinstance(scope[key], Array):
                 return scope[key]
-        raise Exception('{} is not a procedure'.format(key))
+        raise _EXCEPTION('{} is not a procedure'.format(key))
 
     def __setitem__(self, key, val):
         self.functions[key] = {'func': val, 'source': None}
@@ -1096,7 +1099,7 @@ def dow_fix(weekday, firstday=0):
     return (weekday + 2 - (firstday or 1)) % 7 + 1
 
 def error(txt):
-    raise Exception(txt)
+    raise _EXCEPTION(txt)
 
 def fdate(filename, datetype=0):
     if datetype not in (0, 1):
@@ -1139,7 +1142,7 @@ def gomonth(dateval, delta):
 
 def home(location=0):
     if location != 0:
-        raise Exception('not implemented')
+        raise _EXCEPTION('not implemented')
     return HOME
 
 def inkey(seconds=0, hide_cursor=False):
@@ -1444,7 +1447,7 @@ def _odbc_cursor_to_db(results, cursor_name):
     try:
         values = results.fetchall()
         if not values:
-            raise Exception('')
+            raise _EXCEPTION('')
         column_info = values[0].cursor_description
         columns = []
         for i, column in enumerate(column_info):
@@ -1574,7 +1577,7 @@ def create_object(objtype, *args, **kwargs):
     frame = inspect.getouterframes(inspect.currentframe())[2][0]
     if objtype in frame.f_globals:
         return frame.f_globals[objtype](*args, **kwargs)
-    raise Exception('create_object not fully implemented')
+    raise _EXCEPTION('create_object not fully implemented')
 
 def clearall():
     pass
