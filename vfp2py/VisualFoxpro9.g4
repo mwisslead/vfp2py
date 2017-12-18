@@ -199,6 +199,7 @@ cmd
  | PACK (DATABASE | (MEMO | DBF)? (IN workArea=specialExpr | tableName=specialExpr IN workArea=specialExpr | tableName=specialExpr)?) #pack
  | REINDEX COMPACT? #reindex
  | SEEK seekExpr=expr ((ORDER orderExpr=expr | TAG tagName=specialExpr (OF cdxFileExpr=specialExpr)? | idxFileExpr=specialExpr) (ASCENDING | DESCENDING)?)? (IN tablenameExpr=specialExpr)? #seekRecord
+ | UPDATE tableExpr=specialExpr SET identifier '=' expr (',' identifier '=' expr)* (FROM FORCE? fromArgs=specialArgs | JOIN joinArgs=specialArgs | WHERE whereExpr=expr)* #updateCmd
  | GOTO (TOP | BOTTOM | RECORD? expr) (IN specialExpr)? #goRecord
  | COPY STRUCTURE? TO specialExpr #copyTo
  | ZAP (IN specialExpr)? #zapTable
@@ -444,6 +445,9 @@ identifier
  | TALK
  | PROGRAMCONTROL
  | RELATION
+ | UPDATE
+ | FORCE
+ | JOIN
  | TEXT
  | ENDTEXT
  ;
@@ -723,6 +727,9 @@ SYSTEM: S Y S T E M;
 TALK: T A L K;
 PROGRAMCONTROL: (C A N C E L | S U S P E N D | R E S U M E | Q U I T | E X I T | L O O P);
 RELATION: R E L A T I O N;
+UPDATE: U P D A T E;
+FORCE: F O R C E;
+JOIN: J O I N;
 TEXT: T E X T;
 ENDTEXT: E N D TEXT;
 

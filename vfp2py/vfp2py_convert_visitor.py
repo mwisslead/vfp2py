@@ -1655,6 +1655,18 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
     def visitReindex(self, ctx):
         return make_func_code('vfpfunc.db.reindex', not not ctx.COMPACT())
 
+    def visitUpdateCmd(self, ctx):
+        table = self.visit(ctx.tableExpr)
+        set_fields = [(str(self.visit_with_disabled_scope(i)), self.visit(e)) for i, e in zip(ctx.identifier(), ctx.expr())]
+        kwargs = {}
+        if ctx.whereExpr:
+            kwargs['where'] = add_args_to_code('lambda: {}', [self.visit(ctx.whereExpr)])
+        if ctx.joinArgs:
+            kwargs['join'] = self.visit(ctx.joinArgs)
+        if ctx.fromArgs:
+            kwargs['from'] = self.visit(ctx.fromArgs)
+        return make_func_code('vfpfunc.db.update', table, set_fields, **kwargs)
+
     def visitSeekRecord(self, ctx):
         tablename = self.visit(ctx.tablenameExpr)
         seek_expr = self.visit(ctx.seekExpr)

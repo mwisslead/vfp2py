@@ -425,6 +425,11 @@ class VisualFoxpro9Visitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by VisualFoxpro9Parser#updateCmd.
+    def visitUpdateCmd(self, ctx):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by VisualFoxpro9Parser#goRecord.
     def visitGoRecord(self, ctx):
         return self.visitChildren(ctx)
