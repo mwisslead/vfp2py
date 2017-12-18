@@ -847,9 +847,9 @@ class Exception(object):
         trace = traceback.extract_stack()
         obj = cls()
         obj.message = str(exc)
-        try:
+        if hasattr(exc, '__traceback__'):
             tb = exc.__traceback__
-        except:
+        else:
             tb = sys.exc_info()[2]
         obj.lineno = tb.tb_lineno
         obj.procedure = tb.tb_frame.f_code.co_name
