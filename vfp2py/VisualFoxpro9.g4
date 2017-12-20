@@ -322,12 +322,12 @@ expr
  | expr op=(OR|OTHEROR|AND|OTHERAND) expr #booleanOperation
  | constant #constantExpr
  | CAST '(' expr asType ')' #castExpr
- | PERIOD? atom trailer? #atomExpr
+ | (PERIOD | idAttr ':' ':')? atom trailer? #atomExpr
  ;
 
 complexId
- : PERIOD? atom trailer
- | PERIOD atom trailer?
+ : (PERIOD | idAttr ':' ':')? atom trailer
+ | (PERIOD | idAttr ':' ':') atom trailer?
  ;
 
 atom

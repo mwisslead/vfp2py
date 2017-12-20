@@ -277,6 +277,12 @@ DEFINE CLASS TESTCLASS AS COMMANDBUTTON
    ENDFUNC
 ENDDEFINE
 
+DEFINE CLASS ABUTTON AS testclass
+  PROCEDURE Click
+     TestClass::Click
+
+ENDDEFINE
+
 FUNCTION RANDOM_FUNCTION
 
    * something
@@ -337,6 +343,15 @@ class Testclass(vfpfunc.Commandbutton):
 
     def init(self, x=False):
         pass
+
+
+class Abutton(Testclass):
+
+    def _assign(self, *args, **kwargs):
+        Testclass._assign(self)
+
+    def click(self):
+        Testclass.click()
 
 
 def random_function(x=False):

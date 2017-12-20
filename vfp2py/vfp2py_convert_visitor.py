@@ -966,7 +966,8 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             trailer = self.convert_trailer_args(trailer)
         else:
             trailer = CodeStr('')
-        identifier = self.scopeId(identifier, 'val')
+        if identifier.islower():
+            identifier = self.scopeId(identifier, 'val')
         return add_args_to_code('{}{}', (identifier, trailer))
 
     def convert_trailer_args(self, trailers):
@@ -1066,6 +1067,10 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         if ctx.PERIOD() and self.withid:
             trailer = [atom] + (trailer or [])
             atom = self.withid
+
+        if ctx.idAttr():
+            trailer = [atom] + (trailer or [])
+            atom = CodeStr(self.visit_with_disabled_scope(ctx.idAttr()).title())
 
         if trailer and len(trailer) > 0 and not isinstance(trailer[-1], list) and isinstance(atom, CodeStr) and isinstance(ctx.parentCtx, ctx.parser.CmdContext):
             return make_func_code(self.createIdAttr(atom, trailer))

@@ -8,7 +8,7 @@ import sys
 def serializedATN():
     with StringIO() as buf:
         buf.write(u"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3")
-        buf.write(u"\u0117\u0736\4\2\t\2\4\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6")
+        buf.write(u"\u0117\u0744\4\2\t\2\4\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6")
         buf.write(u"\4\7\t\7\4\b\t\b\4\t\t\t\4\n\t\n\4\13\t\13\4\f\t\f\4")
         buf.write(u"\r\t\r\4\16\t\16\4\17\t\17\4\20\t\20\4\21\t\21\4\22\t")
         buf.write(u"\22\4\23\t\23\4\24\t\24\4\25\t\25\4\26\t\26\4\27\t\27")
@@ -175,32 +175,33 @@ def serializedATN():
         buf.write(u")\5)\u061a\n)\3*\3*\3*\7*\u061f\n*\f*\16*\u0622\13*\3")
         buf.write(u"*\5*\u0625\n*\3+\3+\3+\7+\u062a\n+\f+\16+\u062d\13+\3")
         buf.write(u",\3,\3,\3-\3-\3-\3.\3.\3.\3.\3.\3.\3.\3.\3.\3.\3.\3.")
-        buf.write(u"\3.\3.\3.\3.\3.\5.\u0646\n.\3.\3.\5.\u064a\n.\5.\u064c")
-        buf.write(u"\n.\3.\3.\3.\3.\5.\u0652\n.\3.\3.\3.\3.\3.\3.\3.\3.\3")
-        buf.write(u".\3.\3.\3.\3.\3.\3.\3.\7.\u0664\n.\f.\16.\u0667\13.\3")
-        buf.write(u"/\5/\u066a\n/\3/\3/\3/\3/\3/\3/\5/\u0672\n/\5/\u0674")
-        buf.write(u"\n/\3\60\3\60\3\60\5\60\u0679\n\60\3\61\3\61\5\61\u067d")
-        buf.write(u"\n\61\3\61\3\61\3\61\5\61\u0682\n\61\3\61\5\61\u0685")
-        buf.write(u"\n\61\3\61\5\61\u0688\n\61\3\61\3\61\3\61\5\61\u068d")
-        buf.write(u"\n\61\5\61\u068f\n\61\3\62\3\62\3\62\5\62\u0694\n\62")
-        buf.write(u"\3\62\6\62\u0697\n\62\r\62\16\62\u0698\3\63\3\63\3\63")
+        buf.write(u"\3.\3.\3.\3.\3.\3.\3.\3.\3.\5.\u064a\n.\3.\3.\5.\u064e")
+        buf.write(u"\n.\5.\u0650\n.\3.\3.\3.\3.\5.\u0656\n.\3.\3.\3.\3.\3")
+        buf.write(u".\3.\3.\3.\3.\3.\3.\3.\3.\3.\3.\3.\7.\u0668\n.\f.\16")
+        buf.write(u".\u066b\13.\3/\3/\3/\3/\3/\5/\u0672\n/\3/\3/\3/\3/\3")
+        buf.write(u"/\3/\3/\3/\5/\u067c\n/\3/\3/\5/\u0680\n/\5/\u0682\n/")
+        buf.write(u"\3\60\3\60\3\60\5\60\u0687\n\60\3\61\3\61\5\61\u068b")
+        buf.write(u"\n\61\3\61\3\61\3\61\5\61\u0690\n\61\3\61\5\61\u0693")
+        buf.write(u"\n\61\3\61\5\61\u0696\n\61\3\61\3\61\3\61\5\61\u069b")
+        buf.write(u"\n\61\5\61\u069d\n\61\3\62\3\62\3\62\5\62\u06a2\n\62")
+        buf.write(u"\3\62\6\62\u06a5\n\62\r\62\16\62\u06a6\3\63\3\63\3\63")
         buf.write(u"\3\63\3\63\3\63\3\63\3\63\3\63\3\63\3\63\3\63\3\63\3")
         buf.write(u"\63\3\63\3\63\3\63\3\63\3\63\3\63\3\63\3\63\3\63\3\63")
-        buf.write(u"\3\63\5\63\u06b4\n\63\3\64\3\64\5\64\u06b8\n\64\3\65")
-        buf.write(u"\5\65\u06bb\n\65\3\65\3\65\3\65\3\65\3\65\5\65\u06c2")
+        buf.write(u"\3\63\5\63\u06c2\n\63\3\64\3\64\5\64\u06c6\n\64\3\65")
+        buf.write(u"\5\65\u06c9\n\65\3\65\3\65\3\65\3\65\3\65\5\65\u06d0")
         buf.write(u"\n\65\3\65\3\65\3\65\3\65\3\65\3\65\3\65\3\65\3\65\3")
-        buf.write(u"\65\3\65\3\65\3\65\3\65\3\65\5\65\u06d3\n\65\3\65\5\65")
-        buf.write(u"\u06d6\n\65\3\65\3\65\3\65\3\65\3\65\5\65\u06dd\n\65")
-        buf.write(u"\5\65\u06df\n\65\3\65\5\65\u06e2\n\65\5\65\u06e4\n\65")
-        buf.write(u"\3\65\3\65\3\65\7\65\u06e9\n\65\f\65\16\65\u06ec\13\65")
-        buf.write(u"\3\65\3\65\3\65\7\65\u06f1\n\65\f\65\16\65\u06f4\13\65")
-        buf.write(u"\3\65\3\65\3\65\7\65\u06f9\n\65\f\65\16\65\u06fc\13\65")
-        buf.write(u"\3\65\5\65\u06ff\n\65\3\65\5\65\u0702\n\65\3\66\5\66")
-        buf.write(u"\u0705\n\66\3\66\3\66\3\66\7\66\u070a\n\66\f\66\16\66")
-        buf.write(u"\u070d\13\66\3\67\5\67\u0710\n\67\3\67\3\67\5\67\u0714")
-        buf.write(u"\n\67\38\38\38\38\39\39\39\59\u071d\n9\39\39\39\39\3")
-        buf.write(u"9\59\u0724\n9\39\39\59\u0728\n9\3:\3:\3;\3;\3;\3;\3;")
-        buf.write(u"\3;\5;\u0732\n;\3<\3<\3<\3\u0698\3Z=\2\4\6\b\n\f\16\20")
+        buf.write(u"\65\3\65\3\65\3\65\3\65\3\65\5\65\u06e1\n\65\3\65\5\65")
+        buf.write(u"\u06e4\n\65\3\65\3\65\3\65\3\65\3\65\5\65\u06eb\n\65")
+        buf.write(u"\5\65\u06ed\n\65\3\65\5\65\u06f0\n\65\5\65\u06f2\n\65")
+        buf.write(u"\3\65\3\65\3\65\7\65\u06f7\n\65\f\65\16\65\u06fa\13\65")
+        buf.write(u"\3\65\3\65\3\65\7\65\u06ff\n\65\f\65\16\65\u0702\13\65")
+        buf.write(u"\3\65\3\65\3\65\7\65\u0707\n\65\f\65\16\65\u070a\13\65")
+        buf.write(u"\3\65\5\65\u070d\n\65\3\65\5\65\u0710\n\65\3\66\5\66")
+        buf.write(u"\u0713\n\66\3\66\3\66\3\66\7\66\u0718\n\66\f\66\16\66")
+        buf.write(u"\u071b\13\66\3\67\5\67\u071e\n\67\3\67\3\67\5\67\u0722")
+        buf.write(u"\n\67\38\38\38\38\39\39\39\59\u072b\n9\39\39\39\39\3")
+        buf.write(u"9\59\u0732\n9\39\39\59\u0736\n9\3:\3:\3;\3;\3;\3;\3;")
+        buf.write(u"\3;\5;\u0740\n;\3<\3<\3<\3\u06a6\3Z=\2\4\6\b\n\f\16\20")
         buf.write(u"\22\24\26\30\32\34\36 \"$&(*,.\60\62\64\668:<>@BDFHJ")
         buf.write(u"LNPRTVXZ\\^`bdfhjlnprtv\2&\3\2\u0115\u0115\7\2//\61\62")
         buf.write(u"NN\u00c5\u00c5\u0115\u0115\4\3\30\30\u0115\u0115\4\2")
@@ -216,7 +217,7 @@ def serializedATN():
         buf.write(u"\3\2\u00d8\u00d9\4\2%%\u0115\u0115\4\2$$\u0115\u0115")
         buf.write(u"\4\2\17\17\u0115\u0115\f\2))+ACVX\u00d2\u00d4\u00d4\u00d6")
         buf.write(u"\u00e7\u00e9\u00ee\u00f0\u00f8\u00fa\u0101\u0108\u0114")
-        buf.write(u"\2\u08e9\2x\3\2\2\2\4~\3\2\2\2\6\u00bd\3\2\2\2\b\u00c3")
+        buf.write(u"\2\u08fa\2x\3\2\2\2\4~\3\2\2\2\6\u00bd\3\2\2\2\b\u00c3")
         buf.write(u"\3\2\2\2\n\u00d1\3\2\2\2\f\u00da\3\2\2\2\16\u00dc\3\2")
         buf.write(u"\2\2\20\u00e1\3\2\2\2\22\u00e4\3\2\2\2\24\u00ec\3\2\2")
         buf.write(u"\2\26\u0100\3\2\2\2\30\u0102\3\2\2\2\32\u0106\3\2\2\2")
@@ -229,11 +230,11 @@ def serializedATN():
         buf.write(u"\2\2\2F\u0521\3\2\2\2H\u0526\3\2\2\2J\u0608\3\2\2\2L")
         buf.write(u"\u0611\3\2\2\2N\u0613\3\2\2\2P\u0616\3\2\2\2R\u061b\3")
         buf.write(u"\2\2\2T\u0626\3\2\2\2V\u062e\3\2\2\2X\u0631\3\2\2\2Z")
-        buf.write(u"\u064b\3\2\2\2\\\u0673\3\2\2\2^\u0678\3\2\2\2`\u068e")
-        buf.write(u"\3\2\2\2b\u0693\3\2\2\2d\u06b3\3\2\2\2f\u06b7\3\2\2\2")
-        buf.write(u"h\u0701\3\2\2\2j\u0704\3\2\2\2l\u070f\3\2\2\2n\u0715")
-        buf.write(u"\3\2\2\2p\u0727\3\2\2\2r\u0729\3\2\2\2t\u0731\3\2\2\2")
-        buf.write(u"v\u0733\3\2\2\2xy\5\4\3\2yz\7\2\2\3z\3\3\2\2\2{}\5\6")
+        buf.write(u"\u064f\3\2\2\2\\\u0681\3\2\2\2^\u0686\3\2\2\2`\u069c")
+        buf.write(u"\3\2\2\2b\u06a1\3\2\2\2d\u06c1\3\2\2\2f\u06c5\3\2\2\2")
+        buf.write(u"h\u070f\3\2\2\2j\u0712\3\2\2\2l\u071d\3\2\2\2n\u0723")
+        buf.write(u"\3\2\2\2p\u0735\3\2\2\2r\u0737\3\2\2\2t\u073f\3\2\2\2")
+        buf.write(u"v\u0741\3\2\2\2xy\5\4\3\2yz\7\2\2\3z\3\3\2\2\2{}\5\6")
         buf.write(u"\4\2|{\3\2\2\2}\u0080\3\2\2\2~|\3\2\2\2~\177\3\2\2\2")
         buf.write(u"\177\5\3\2\2\2\u0080~\3\2\2\2\u0081\u0086\7\30\2\2\u0082")
         buf.write(u"\u0083\7/\2\2\u0083\u0087\5Z.\2\u0084\u0085\7\u00b9\2")
@@ -942,162 +943,169 @@ def serializedATN():
         buf.write(u"\u062b\3\2\2\2\u062e\u062f\7\b\2\2\u062f\u0630\5l\67")
         buf.write(u"\2\u0630W\3\2\2\2\u0631\u0632\7\7\2\2\u0632\u0633\5v")
         buf.write(u"<\2\u0633Y\3\2\2\2\u0634\u0635\b.\1\2\u0635\u0636\7\22")
-        buf.write(u"\2\2\u0636\u0637\5Z.\2\u0637\u0638\7\23\2\2\u0638\u064c")
-        buf.write(u"\3\2\2\2\u0639\u063a\t\34\2\2\u063a\u064c\5Z.\r\u063b")
-        buf.write(u"\u063c\t\35\2\2\u063c\u064c\5Z.\f\u063d\u064c\5h\65\2")
+        buf.write(u"\2\2\u0636\u0637\5Z.\2\u0637\u0638\7\23\2\2\u0638\u0650")
+        buf.write(u"\3\2\2\2\u0639\u063a\t\34\2\2\u063a\u0650\5Z.\r\u063b")
+        buf.write(u"\u063c\t\35\2\2\u063c\u0650\5Z.\f\u063d\u0650\5h\65\2")
         buf.write(u"\u063e\u063f\7\u00ed\2\2\u063f\u0640\7\22\2\2\u0640\u0641")
-        buf.write(u"\5Z.\2\u0641\u0642\5N(\2\u0642\u0643\7\23\2\2\u0643\u064c")
-        buf.write(u"\3\2\2\2\u0644\u0646\7\r\2\2\u0645\u0644\3\2\2\2\u0645")
-        buf.write(u"\u0646\3\2\2\2\u0646\u0647\3\2\2\2\u0647\u0649\5^\60")
-        buf.write(u"\2\u0648\u064a\5`\61\2\u0649\u0648\3\2\2\2\u0649\u064a")
-        buf.write(u"\3\2\2\2\u064a\u064c\3\2\2\2\u064b\u0634\3\2\2\2\u064b")
-        buf.write(u"\u0639\3\2\2\2\u064b\u063b\3\2\2\2\u064b\u063d\3\2\2")
-        buf.write(u"\2\u064b\u063e\3\2\2\2\u064b\u0645\3\2\2\2\u064c\u0665")
-        buf.write(u"\3\2\2\2\u064d\u0651\f\13\2\2\u064e\u064f\7\t\2\2\u064f")
-        buf.write(u"\u0652\7\t\2\2\u0650\u0652\7\37\2\2\u0651\u064e\3\2\2")
-        buf.write(u"\2\u0651\u0650\3\2\2\2\u0652\u0653\3\2\2\2\u0653\u0664")
-        buf.write(u"\5Z.\f\u0654\u0655\f\n\2\2\u0655\u0656\t\36\2\2\u0656")
-        buf.write(u"\u0664\5Z.\13\u0657\u0658\f\t\2\2\u0658\u0659\7\35\2")
-        buf.write(u"\2\u0659\u0664\5Z.\n\u065a\u065b\f\b\2\2\u065b\u065c")
-        buf.write(u"\t\34\2\2\u065c\u0664\5Z.\t\u065d\u065e\f\7\2\2\u065e")
-        buf.write(u"\u065f\t\37\2\2\u065f\u0664\5Z.\b\u0660\u0661\f\6\2\2")
-        buf.write(u"\u0661\u0662\t \2\2\u0662\u0664\5Z.\7\u0663\u064d\3\2")
-        buf.write(u"\2\2\u0663\u0654\3\2\2\2\u0663\u0657\3\2\2\2\u0663\u065a")
-        buf.write(u"\3\2\2\2\u0663\u065d\3\2\2\2\u0663\u0660\3\2\2\2\u0664")
-        buf.write(u"\u0667\3\2\2\2\u0665\u0663\3\2\2\2\u0665\u0666\3\2\2")
-        buf.write(u"\2\u0666[\3\2\2\2\u0667\u0665\3\2\2\2\u0668\u066a\7\r")
-        buf.write(u"\2\2\u0669\u0668\3\2\2\2\u0669\u066a\3\2\2\2\u066a\u066b")
-        buf.write(u"\3\2\2\2\u066b\u066c\5^\60\2\u066c\u066d\5`\61\2\u066d")
-        buf.write(u"\u0674\3\2\2\2\u066e\u066f\7\r\2\2\u066f\u0671\5^\60")
-        buf.write(u"\2\u0670\u0672\5`\61\2\u0671\u0670\3\2\2\2\u0671\u0672")
-        buf.write(u"\3\2\2\2\u0672\u0674\3\2\2\2\u0673\u0669\3\2\2\2\u0673")
-        buf.write(u"\u066e\3\2\2\2\u0674]\3\2\2\2\u0675\u0679\5v<\2\u0676")
-        buf.write(u"\u0679\5V,\2\u0677\u0679\5X-\2\u0678\u0675\3\2\2\2\u0678")
-        buf.write(u"\u0676\3\2\2\2\u0678\u0677\3\2\2\2\u0679_\3\2\2\2\u067a")
-        buf.write(u"\u067c\7\22\2\2\u067b\u067d\5R*\2\u067c\u067b\3\2\2\2")
-        buf.write(u"\u067c\u067d\3\2\2\2\u067d\u067e\3\2\2\2\u067e\u0685")
-        buf.write(u"\7\23\2\2\u067f\u0681\7\16\2\2\u0680\u0682\5R*\2\u0681")
-        buf.write(u"\u0680\3\2\2\2\u0681\u0682\3\2\2\2\u0682\u0683\3\2\2")
-        buf.write(u"\2\u0683\u0685\7\17\2\2\u0684\u067a\3\2\2\2\u0684\u067f")
-        buf.write(u"\3\2\2\2\u0685\u0687\3\2\2\2\u0686\u0688\5`\61\2\u0687")
-        buf.write(u"\u0686\3\2\2\2\u0687\u0688\3\2\2\2\u0688\u068f\3\2\2")
-        buf.write(u"\2\u0689\u068a\7\r\2\2\u068a\u068c\5v<\2\u068b\u068d")
-        buf.write(u"\5`\61\2\u068c\u068b\3\2\2\2\u068c\u068d\3\2\2\2\u068d")
-        buf.write(u"\u068f\3\2\2\2\u068e\u0684\3\2\2\2\u068e\u0689\3\2\2")
-        buf.write(u"\2\u068fa\3\2\2\2\u0690\u0691\5v<\2\u0691\u0692\7\"\2")
-        buf.write(u"\2\u0692\u0694\3\2\2\2\u0693\u0690\3\2\2\2\u0693\u0694")
-        buf.write(u"\3\2\2\2\u0694\u0696\3\2\2\2\u0695\u0697\5d\63\2\u0696")
-        buf.write(u"\u0695\3\2\2\2\u0697\u0698\3\2\2\2\u0698\u0699\3\2\2")
-        buf.write(u"\2\u0698\u0696\3\2\2\2\u0699c\3\2\2\2\u069a\u06b4\5v")
-        buf.write(u"<\2\u069b\u06b4\7\4\2\2\u069c\u06b4\7\24\2\2\u069d\u06b4")
-        buf.write(u"\7\6\2\2\u069e\u06b4\7\7\2\2\u069f\u06b4\7\b\2\2\u06a0")
-        buf.write(u"\u06b4\7\n\2\2\u06a1\u06b4\7\13\2\2\u06a2\u06b4\7\r\2")
-        buf.write(u"\2\u06a3\u06b4\7\16\2\2\u06a4\u06b4\7\17\2\2\u06a5\u06b4")
-        buf.write(u"\7\20\2\2\u06a6\u06b4\7\21\2\2\u06a7\u06b4\7\22\2\2\u06a8")
-        buf.write(u"\u06b4\7\23\2\2\u06a9\u06b4\7\27\2\2\u06aa\u06b4\7\30")
-        buf.write(u"\2\2\u06ab\u06b4\7\31\2\2\u06ac\u06b4\7\32\2\2\u06ad")
-        buf.write(u"\u06b4\7\35\2\2\u06ae\u06b4\7\36\2\2\u06af\u06b4\7\37")
-        buf.write(u"\2\2\u06b0\u06b4\7 \2\2\u06b1\u06b4\7!\2\2\u06b2\u06b4")
-        buf.write(u"\7\3\2\2\u06b3\u069a\3\2\2\2\u06b3\u069b\3\2\2\2\u06b3")
-        buf.write(u"\u069c\3\2\2\2\u06b3\u069d\3\2\2\2\u06b3\u069e\3\2\2")
-        buf.write(u"\2\u06b3\u069f\3\2\2\2\u06b3\u06a0\3\2\2\2\u06b3\u06a1")
-        buf.write(u"\3\2\2\2\u06b3\u06a2\3\2\2\2\u06b3\u06a3\3\2\2\2\u06b3")
-        buf.write(u"\u06a4\3\2\2\2\u06b3\u06a5\3\2\2\2\u06b3\u06a6\3\2\2")
-        buf.write(u"\2\u06b3\u06a7\3\2\2\2\u06b3\u06a8\3\2\2\2\u06b3\u06a9")
-        buf.write(u"\3\2\2\2\u06b3\u06aa\3\2\2\2\u06b3\u06ab\3\2\2\2\u06b3")
-        buf.write(u"\u06ac\3\2\2\2\u06b3\u06ad\3\2\2\2\u06b3\u06ae\3\2\2")
-        buf.write(u"\2\u06b3\u06af\3\2\2\2\u06b3\u06b0\3\2\2\2\u06b3\u06b1")
-        buf.write(u"\3\2\2\2\u06b3\u06b2\3\2\2\2\u06b4e\3\2\2\2\u06b5\u06b8")
-        buf.write(u"\5Z.\2\u06b6\u06b8\5b\62\2\u06b7\u06b5\3\2\2\2\u06b7")
-        buf.write(u"\u06b6\3\2\2\2\u06b8g\3\2\2\2\u06b9\u06bb\7!\2\2\u06ba")
-        buf.write(u"\u06b9\3\2\2\2\u06ba\u06bb\3\2\2\2\u06bb\u06bc\3\2\2")
-        buf.write(u"\2\u06bc\u0702\7\4\2\2\u06bd\u06be\7\r\2\2\u06be\u06bf")
-        buf.write(u"\t!\2\2\u06bf\u06c2\7\r\2\2\u06c0\u06c2\7\u00d8\2\2\u06c1")
-        buf.write(u"\u06bd\3\2\2\2\u06c1\u06c0\3\2\2\2\u06c2\u0702\3\2\2")
-        buf.write(u"\2\u06c3\u06e3\7\20\2\2\u06c4\u06c5\7\f\2\2\u06c5\u06e4")
-        buf.write(u"\7\f\2\2\u06c6\u06e4\7\"\2\2\u06c7\u06d2\7\37\2\2\u06c8")
-        buf.write(u"\u06c9\7\4\2\2\u06c9\u06ca\7\13\2\2\u06ca\u06cb\7\4\2")
-        buf.write(u"\2\u06cb\u06cc\7\13\2\2\u06cc\u06d3\7\4\2\2\u06cd\u06ce")
-        buf.write(u"\7\4\2\2\u06ce\u06cf\7\f\2\2\u06cf\u06d0\7\4\2\2\u06d0")
-        buf.write(u"\u06d1\7\f\2\2\u06d1\u06d3\7\4\2\2\u06d2\u06c8\3\2\2")
-        buf.write(u"\2\u06d2\u06cd\3\2\2\2\u06d3\u06e1\3\2\2\2\u06d4\u06d6")
-        buf.write(u"\7 \2\2\u06d5\u06d4\3\2\2\2\u06d5\u06d6\3\2\2\2\u06d6")
-        buf.write(u"\u06d7\3\2\2\2\u06d7\u06de\7\4\2\2\u06d8\u06d9\7\"\2")
-        buf.write(u"\2\u06d9\u06dc\7\4\2\2\u06da\u06db\7\"\2\2\u06db\u06dd")
-        buf.write(u"\7\4\2\2\u06dc\u06da\3\2\2\2\u06dc\u06dd\3\2\2\2\u06dd")
-        buf.write(u"\u06df\3\2\2\2\u06de\u06d8\3\2\2\2\u06de\u06df\3\2\2")
-        buf.write(u"\2\u06df\u06e0\3\2\2\2\u06e0\u06e2\5v<\2\u06e1\u06d5")
-        buf.write(u"\3\2\2\2\u06e1\u06e2\3\2\2\2\u06e2\u06e4\3\2\2\2\u06e3")
-        buf.write(u"\u06c4\3\2\2\2\u06e3\u06c6\3\2\2\2\u06e3\u06c7\3\2\2")
-        buf.write(u"\2\u06e3\u06e4\3\2\2\2\u06e4\u06e5\3\2\2\2\u06e5\u0702")
-        buf.write(u"\7\21\2\2\u06e6\u06ea\7%\2\2\u06e7\u06e9\n\"\2\2\u06e8")
-        buf.write(u"\u06e7\3\2\2\2\u06e9\u06ec\3\2\2\2\u06ea\u06e8\3\2\2")
-        buf.write(u"\2\u06ea\u06eb\3\2\2\2\u06eb\u06ed\3\2\2\2\u06ec\u06ea")
-        buf.write(u"\3\2\2\2\u06ed\u06ff\7%\2\2\u06ee\u06f2\7$\2\2\u06ef")
-        buf.write(u"\u06f1\n#\2\2\u06f0\u06ef\3\2\2\2\u06f1\u06f4\3\2\2\2")
-        buf.write(u"\u06f2\u06f0\3\2\2\2\u06f2\u06f3\3\2\2\2\u06f3\u06f5")
-        buf.write(u"\3\2\2\2\u06f4\u06f2\3\2\2\2\u06f5\u06ff\7$\2\2\u06f6")
-        buf.write(u"\u06fa\7\16\2\2\u06f7\u06f9\n$\2\2\u06f8\u06f7\3\2\2")
-        buf.write(u"\2\u06f9\u06fc\3\2\2\2\u06fa\u06f8\3\2\2\2\u06fa\u06fb")
-        buf.write(u"\3\2\2\2\u06fb\u06fd\3\2\2\2\u06fc\u06fa\3\2\2\2\u06fd")
-        buf.write(u"\u06ff\7\17\2\2\u06fe\u06e6\3\2\2\2\u06fe\u06ee\3\2\2")
-        buf.write(u"\2\u06fe\u06f6\3\2\2\2\u06ff\u0702\3\2\2\2\u0700\u0702")
-        buf.write(u"\7\5\2\2\u0701\u06ba\3\2\2\2\u0701\u06c1\3\2\2\2\u0701")
-        buf.write(u"\u06c3\3\2\2\2\u0701\u06fe\3\2\2\2\u0701\u0700\3\2\2")
-        buf.write(u"\2\u0702i\3\2\2\2\u0703\u0705\7\r\2\2\u0704\u0703\3\2")
-        buf.write(u"\2\2\u0704\u0705\3\2\2\2\u0705\u0706\3\2\2\2\u0706\u070b")
-        buf.write(u"\5v<\2\u0707\u0708\7\r\2\2\u0708\u070a\5v<\2\u0709\u0707")
-        buf.write(u"\3\2\2\2\u070a\u070d\3\2\2\2\u070b\u0709\3\2\2\2\u070b")
-        buf.write(u"\u070c\3\2\2\2\u070ck\3\2\2\2\u070d\u070b\3\2\2\2\u070e")
-        buf.write(u"\u0710\7\r\2\2\u070f\u070e\3\2\2\2\u070f\u0710\3\2\2")
-        buf.write(u"\2\u0710\u0711\3\2\2\2\u0711\u0713\5v<\2\u0712\u0714")
-        buf.write(u"\5`\61\2\u0713\u0712\3\2\2\2\u0713\u0714\3\2\2\2\u0714")
-        buf.write(u"m\3\2\2\2\u0715\u0716\5Z.\2\u0716\u0717\7 \2\2\u0717")
-        buf.write(u"\u0718\5Z.\2\u0718o\3\2\2\2\u0719\u071c\7\22\2\2\u071a")
-        buf.write(u"\u071d\5Z.\2\u071b\u071d\5n8\2\u071c\u071a\3\2\2\2\u071c")
-        buf.write(u"\u071b\3\2\2\2\u071d\u071e\3\2\2\2\u071e\u071f\7\23\2")
-        buf.write(u"\2\u071f\u0728\3\2\2\2\u0720\u0723\7\16\2\2\u0721\u0724")
-        buf.write(u"\5Z.\2\u0722\u0724\5n8\2\u0723\u0721\3\2\2\2\u0723\u0722")
-        buf.write(u"\3\2\2\2\u0724\u0725\3\2\2\2\u0725\u0726\7\17\2\2\u0726")
-        buf.write(u"\u0728\3\2\2\2\u0727\u0719\3\2\2\2\u0727\u0720\3\2\2")
-        buf.write(u"\2\u0728q\3\2\2\2\u0729\u072a\5l\67\2\u072as\3\2\2\2")
-        buf.write(u"\u072b\u0732\7t\2\2\u072c\u072d\7\u0091\2\2\u072d\u0732")
-        buf.write(u"\5Z.\2\u072e\u072f\7y\2\2\u072f\u0732\5Z.\2\u0730\u0732")
-        buf.write(u"\7\u0092\2\2\u0731\u072b\3\2\2\2\u0731\u072c\3\2\2\2")
-        buf.write(u"\u0731\u072e\3\2\2\2\u0731\u0730\3\2\2\2\u0732u\3\2\2")
-        buf.write(u"\2\u0733\u0734\t%\2\2\u0734w\3\2\2\2\u0124~\u0086\u008e")
-        buf.write(u"\u009a\u00ae\u00b7\u00bb\u00bd\u00c1\u00c3\u00cc\u00d1")
-        buf.write(u"\u00d6\u00da\u00e1\u00e8\u00f0\u00f8\u0100\u0104\u010b")
-        buf.write(u"\u010f\u0115\u0118\u0123\u0126\u012b\u0134\u0140\u014b")
-        buf.write(u"\u0150\u0152\u0167\u016d\u0171\u0176\u0188\u018c\u0198")
-        buf.write(u"\u019c\u01a1\u01ac\u01b4\u01b6\u01c8\u01cb\u01d4\u01d6")
-        buf.write(u"\u01e0\u01e4\u01e6\u01f0\u01f7\u01fb\u0200\u0207\u020d")
-        buf.write(u"\u0211\u0214\u0217\u0222\u022a\u022c\u0232\u0236\u0239")
-        buf.write(u"\u023e\u0248\u024f\u0255\u0257\u025e\u0263\u0268\u026b")
-        buf.write(u"\u0274\u0278\u027c\u027e\u0281\u028e\u0294\u029a\u029c")
-        buf.write(u"\u02a6\u02a8\u02aa\u02ac\u02b0\u02b4\u02ba\u02be\u02c0")
-        buf.write(u"\u02c4\u02c9\u02cb\u02d0\u02d6\u02d9\u02dc\u02e1\u02ec")
-        buf.write(u"\u02f6\u0300\u030e\u0312\u0316\u0318\u031b\u031e\u0324")
-        buf.write(u"\u0328\u032e\u0332\u0336\u033c\u0349\u035a\u035f\u0363")
-        buf.write(u"\u0367\u036b\u0370\u0375\u0377\u037b\u0384\u0387\u038b")
-        buf.write(u"\u0391\u039b\u039d\u03a6\u03a9\u03ac\u03af\u03b5\u03b7")
-        buf.write(u"\u03bf\u03c1\u03c8\u03ca\u03d6\u03da\u03de\u03e6\u03f1")
-        buf.write(u"\u03f7\u03fe\u0402\u0406\u040b\u0414\u0416\u041a\u0424")
-        buf.write(u"\u0427\u042a\u042c\u0430\u043f\u0444\u044b\u044d\u0454")
-        buf.write(u"\u0457\u045b\u045f\u0466\u046c\u0472\u0475\u0478\u047b")
-        buf.write(u"\u0481\u0485\u048a\u048d\u0490\u0497\u049c\u049f\u04b8")
-        buf.write(u"\u04be\u04c4\u04ca\u04cd\u04cf\u04d4\u04db\u04de\u04e4")
-        buf.write(u"\u04e9\u04f0\u04f6\u04f8\u0502\u050a\u0511\u0517\u051c")
-        buf.write(u"\u051f\u0524\u0529\u0531\u0533\u053c\u0545\u0547\u0549")
-        buf.write(u"\u0550\u0554\u0557\u0562\u0564\u0569\u056f\u057d\u057f")
-        buf.write(u"\u0586\u058a\u058d\u0592\u0598\u05a3\u05aa\u05af\u05b3")
-        buf.write(u"\u05b6\u05b8\u05bd\u05c6\u05c8\u05ca\u05d3\u05d7\u05de")
-        buf.write(u"\u05e7\u05ea\u05f0\u05f9\u05fd\u0608\u060f\u0611\u0619")
-        buf.write(u"\u0620\u0624\u062b\u0645\u0649\u064b\u0651\u0663\u0665")
-        buf.write(u"\u0669\u0671\u0673\u0678\u067c\u0681\u0684\u0687\u068c")
-        buf.write(u"\u068e\u0693\u0698\u06b3\u06b7\u06ba\u06c1\u06d2\u06d5")
-        buf.write(u"\u06dc\u06de\u06e1\u06e3\u06ea\u06f2\u06fa\u06fe\u0701")
-        buf.write(u"\u0704\u070b\u070f\u0713\u071c\u0723\u0727\u0731")
+        buf.write(u"\5Z.\2\u0641\u0642\5N(\2\u0642\u0643\7\23\2\2\u0643\u0650")
+        buf.write(u"\3\2\2\2\u0644\u064a\7\r\2\2\u0645\u0646\5l\67\2\u0646")
+        buf.write(u"\u0647\7\"\2\2\u0647\u0648\7\"\2\2\u0648\u064a\3\2\2")
+        buf.write(u"\2\u0649\u0644\3\2\2\2\u0649\u0645\3\2\2\2\u0649\u064a")
+        buf.write(u"\3\2\2\2\u064a\u064b\3\2\2\2\u064b\u064d\5^\60\2\u064c")
+        buf.write(u"\u064e\5`\61\2\u064d\u064c\3\2\2\2\u064d\u064e\3\2\2")
+        buf.write(u"\2\u064e\u0650\3\2\2\2\u064f\u0634\3\2\2\2\u064f\u0639")
+        buf.write(u"\3\2\2\2\u064f\u063b\3\2\2\2\u064f\u063d\3\2\2\2\u064f")
+        buf.write(u"\u063e\3\2\2\2\u064f\u0649\3\2\2\2\u0650\u0669\3\2\2")
+        buf.write(u"\2\u0651\u0655\f\13\2\2\u0652\u0653\7\t\2\2\u0653\u0656")
+        buf.write(u"\7\t\2\2\u0654\u0656\7\37\2\2\u0655\u0652\3\2\2\2\u0655")
+        buf.write(u"\u0654\3\2\2\2\u0656\u0657\3\2\2\2\u0657\u0668\5Z.\f")
+        buf.write(u"\u0658\u0659\f\n\2\2\u0659\u065a\t\36\2\2\u065a\u0668")
+        buf.write(u"\5Z.\13\u065b\u065c\f\t\2\2\u065c\u065d\7\35\2\2\u065d")
+        buf.write(u"\u0668\5Z.\n\u065e\u065f\f\b\2\2\u065f\u0660\t\34\2\2")
+        buf.write(u"\u0660\u0668\5Z.\t\u0661\u0662\f\7\2\2\u0662\u0663\t")
+        buf.write(u"\37\2\2\u0663\u0668\5Z.\b\u0664\u0665\f\6\2\2\u0665\u0666")
+        buf.write(u"\t \2\2\u0666\u0668\5Z.\7\u0667\u0651\3\2\2\2\u0667\u0658")
+        buf.write(u"\3\2\2\2\u0667\u065b\3\2\2\2\u0667\u065e\3\2\2\2\u0667")
+        buf.write(u"\u0661\3\2\2\2\u0667\u0664\3\2\2\2\u0668\u066b\3\2\2")
+        buf.write(u"\2\u0669\u0667\3\2\2\2\u0669\u066a\3\2\2\2\u066a[\3\2")
+        buf.write(u"\2\2\u066b\u0669\3\2\2\2\u066c\u0672\7\r\2\2\u066d\u066e")
+        buf.write(u"\5l\67\2\u066e\u066f\7\"\2\2\u066f\u0670\7\"\2\2\u0670")
+        buf.write(u"\u0672\3\2\2\2\u0671\u066c\3\2\2\2\u0671\u066d\3\2\2")
+        buf.write(u"\2\u0671\u0672\3\2\2\2\u0672\u0673\3\2\2\2\u0673\u0674")
+        buf.write(u"\5^\60\2\u0674\u0675\5`\61\2\u0675\u0682\3\2\2\2\u0676")
+        buf.write(u"\u067c\7\r\2\2\u0677\u0678\5l\67\2\u0678\u0679\7\"\2")
+        buf.write(u"\2\u0679\u067a\7\"\2\2\u067a\u067c\3\2\2\2\u067b\u0676")
+        buf.write(u"\3\2\2\2\u067b\u0677\3\2\2\2\u067c\u067d\3\2\2\2\u067d")
+        buf.write(u"\u067f\5^\60\2\u067e\u0680\5`\61\2\u067f\u067e\3\2\2")
+        buf.write(u"\2\u067f\u0680\3\2\2\2\u0680\u0682\3\2\2\2\u0681\u0671")
+        buf.write(u"\3\2\2\2\u0681\u067b\3\2\2\2\u0682]\3\2\2\2\u0683\u0687")
+        buf.write(u"\5v<\2\u0684\u0687\5V,\2\u0685\u0687\5X-\2\u0686\u0683")
+        buf.write(u"\3\2\2\2\u0686\u0684\3\2\2\2\u0686\u0685\3\2\2\2\u0687")
+        buf.write(u"_\3\2\2\2\u0688\u068a\7\22\2\2\u0689\u068b\5R*\2\u068a")
+        buf.write(u"\u0689\3\2\2\2\u068a\u068b\3\2\2\2\u068b\u068c\3\2\2")
+        buf.write(u"\2\u068c\u0693\7\23\2\2\u068d\u068f\7\16\2\2\u068e\u0690")
+        buf.write(u"\5R*\2\u068f\u068e\3\2\2\2\u068f\u0690\3\2\2\2\u0690")
+        buf.write(u"\u0691\3\2\2\2\u0691\u0693\7\17\2\2\u0692\u0688\3\2\2")
+        buf.write(u"\2\u0692\u068d\3\2\2\2\u0693\u0695\3\2\2\2\u0694\u0696")
+        buf.write(u"\5`\61\2\u0695\u0694\3\2\2\2\u0695\u0696\3\2\2\2\u0696")
+        buf.write(u"\u069d\3\2\2\2\u0697\u0698\7\r\2\2\u0698\u069a\5v<\2")
+        buf.write(u"\u0699\u069b\5`\61\2\u069a\u0699\3\2\2\2\u069a\u069b")
+        buf.write(u"\3\2\2\2\u069b\u069d\3\2\2\2\u069c\u0692\3\2\2\2\u069c")
+        buf.write(u"\u0697\3\2\2\2\u069da\3\2\2\2\u069e\u069f\5v<\2\u069f")
+        buf.write(u"\u06a0\7\"\2\2\u06a0\u06a2\3\2\2\2\u06a1\u069e\3\2\2")
+        buf.write(u"\2\u06a1\u06a2\3\2\2\2\u06a2\u06a4\3\2\2\2\u06a3\u06a5")
+        buf.write(u"\5d\63\2\u06a4\u06a3\3\2\2\2\u06a5\u06a6\3\2\2\2\u06a6")
+        buf.write(u"\u06a7\3\2\2\2\u06a6\u06a4\3\2\2\2\u06a7c\3\2\2\2\u06a8")
+        buf.write(u"\u06c2\5v<\2\u06a9\u06c2\7\4\2\2\u06aa\u06c2\7\24\2\2")
+        buf.write(u"\u06ab\u06c2\7\6\2\2\u06ac\u06c2\7\7\2\2\u06ad\u06c2")
+        buf.write(u"\7\b\2\2\u06ae\u06c2\7\n\2\2\u06af\u06c2\7\13\2\2\u06b0")
+        buf.write(u"\u06c2\7\r\2\2\u06b1\u06c2\7\16\2\2\u06b2\u06c2\7\17")
+        buf.write(u"\2\2\u06b3\u06c2\7\20\2\2\u06b4\u06c2\7\21\2\2\u06b5")
+        buf.write(u"\u06c2\7\22\2\2\u06b6\u06c2\7\23\2\2\u06b7\u06c2\7\27")
+        buf.write(u"\2\2\u06b8\u06c2\7\30\2\2\u06b9\u06c2\7\31\2\2\u06ba")
+        buf.write(u"\u06c2\7\32\2\2\u06bb\u06c2\7\35\2\2\u06bc\u06c2\7\36")
+        buf.write(u"\2\2\u06bd\u06c2\7\37\2\2\u06be\u06c2\7 \2\2\u06bf\u06c2")
+        buf.write(u"\7!\2\2\u06c0\u06c2\7\3\2\2\u06c1\u06a8\3\2\2\2\u06c1")
+        buf.write(u"\u06a9\3\2\2\2\u06c1\u06aa\3\2\2\2\u06c1\u06ab\3\2\2")
+        buf.write(u"\2\u06c1\u06ac\3\2\2\2\u06c1\u06ad\3\2\2\2\u06c1\u06ae")
+        buf.write(u"\3\2\2\2\u06c1\u06af\3\2\2\2\u06c1\u06b0\3\2\2\2\u06c1")
+        buf.write(u"\u06b1\3\2\2\2\u06c1\u06b2\3\2\2\2\u06c1\u06b3\3\2\2")
+        buf.write(u"\2\u06c1\u06b4\3\2\2\2\u06c1\u06b5\3\2\2\2\u06c1\u06b6")
+        buf.write(u"\3\2\2\2\u06c1\u06b7\3\2\2\2\u06c1\u06b8\3\2\2\2\u06c1")
+        buf.write(u"\u06b9\3\2\2\2\u06c1\u06ba\3\2\2\2\u06c1\u06bb\3\2\2")
+        buf.write(u"\2\u06c1\u06bc\3\2\2\2\u06c1\u06bd\3\2\2\2\u06c1\u06be")
+        buf.write(u"\3\2\2\2\u06c1\u06bf\3\2\2\2\u06c1\u06c0\3\2\2\2\u06c2")
+        buf.write(u"e\3\2\2\2\u06c3\u06c6\5Z.\2\u06c4\u06c6\5b\62\2\u06c5")
+        buf.write(u"\u06c3\3\2\2\2\u06c5\u06c4\3\2\2\2\u06c6g\3\2\2\2\u06c7")
+        buf.write(u"\u06c9\7!\2\2\u06c8\u06c7\3\2\2\2\u06c8\u06c9\3\2\2\2")
+        buf.write(u"\u06c9\u06ca\3\2\2\2\u06ca\u0710\7\4\2\2\u06cb\u06cc")
+        buf.write(u"\7\r\2\2\u06cc\u06cd\t!\2\2\u06cd\u06d0\7\r\2\2\u06ce")
+        buf.write(u"\u06d0\7\u00d8\2\2\u06cf\u06cb\3\2\2\2\u06cf\u06ce\3")
+        buf.write(u"\2\2\2\u06d0\u0710\3\2\2\2\u06d1\u06f1\7\20\2\2\u06d2")
+        buf.write(u"\u06d3\7\f\2\2\u06d3\u06f2\7\f\2\2\u06d4\u06f2\7\"\2")
+        buf.write(u"\2\u06d5\u06e0\7\37\2\2\u06d6\u06d7\7\4\2\2\u06d7\u06d8")
+        buf.write(u"\7\13\2\2\u06d8\u06d9\7\4\2\2\u06d9\u06da\7\13\2\2\u06da")
+        buf.write(u"\u06e1\7\4\2\2\u06db\u06dc\7\4\2\2\u06dc\u06dd\7\f\2")
+        buf.write(u"\2\u06dd\u06de\7\4\2\2\u06de\u06df\7\f\2\2\u06df\u06e1")
+        buf.write(u"\7\4\2\2\u06e0\u06d6\3\2\2\2\u06e0\u06db\3\2\2\2\u06e1")
+        buf.write(u"\u06ef\3\2\2\2\u06e2\u06e4\7 \2\2\u06e3\u06e2\3\2\2\2")
+        buf.write(u"\u06e3\u06e4\3\2\2\2\u06e4\u06e5\3\2\2\2\u06e5\u06ec")
+        buf.write(u"\7\4\2\2\u06e6\u06e7\7\"\2\2\u06e7\u06ea\7\4\2\2\u06e8")
+        buf.write(u"\u06e9\7\"\2\2\u06e9\u06eb\7\4\2\2\u06ea\u06e8\3\2\2")
+        buf.write(u"\2\u06ea\u06eb\3\2\2\2\u06eb\u06ed\3\2\2\2\u06ec\u06e6")
+        buf.write(u"\3\2\2\2\u06ec\u06ed\3\2\2\2\u06ed\u06ee\3\2\2\2\u06ee")
+        buf.write(u"\u06f0\5v<\2\u06ef\u06e3\3\2\2\2\u06ef\u06f0\3\2\2\2")
+        buf.write(u"\u06f0\u06f2\3\2\2\2\u06f1\u06d2\3\2\2\2\u06f1\u06d4")
+        buf.write(u"\3\2\2\2\u06f1\u06d5\3\2\2\2\u06f1\u06f2\3\2\2\2\u06f2")
+        buf.write(u"\u06f3\3\2\2\2\u06f3\u0710\7\21\2\2\u06f4\u06f8\7%\2")
+        buf.write(u"\2\u06f5\u06f7\n\"\2\2\u06f6\u06f5\3\2\2\2\u06f7\u06fa")
+        buf.write(u"\3\2\2\2\u06f8\u06f6\3\2\2\2\u06f8\u06f9\3\2\2\2\u06f9")
+        buf.write(u"\u06fb\3\2\2\2\u06fa\u06f8\3\2\2\2\u06fb\u070d\7%\2\2")
+        buf.write(u"\u06fc\u0700\7$\2\2\u06fd\u06ff\n#\2\2\u06fe\u06fd\3")
+        buf.write(u"\2\2\2\u06ff\u0702\3\2\2\2\u0700\u06fe\3\2\2\2\u0700")
+        buf.write(u"\u0701\3\2\2\2\u0701\u0703\3\2\2\2\u0702\u0700\3\2\2")
+        buf.write(u"\2\u0703\u070d\7$\2\2\u0704\u0708\7\16\2\2\u0705\u0707")
+        buf.write(u"\n$\2\2\u0706\u0705\3\2\2\2\u0707\u070a\3\2\2\2\u0708")
+        buf.write(u"\u0706\3\2\2\2\u0708\u0709\3\2\2\2\u0709\u070b\3\2\2")
+        buf.write(u"\2\u070a\u0708\3\2\2\2\u070b\u070d\7\17\2\2\u070c\u06f4")
+        buf.write(u"\3\2\2\2\u070c\u06fc\3\2\2\2\u070c\u0704\3\2\2\2\u070d")
+        buf.write(u"\u0710\3\2\2\2\u070e\u0710\7\5\2\2\u070f\u06c8\3\2\2")
+        buf.write(u"\2\u070f\u06cf\3\2\2\2\u070f\u06d1\3\2\2\2\u070f\u070c")
+        buf.write(u"\3\2\2\2\u070f\u070e\3\2\2\2\u0710i\3\2\2\2\u0711\u0713")
+        buf.write(u"\7\r\2\2\u0712\u0711\3\2\2\2\u0712\u0713\3\2\2\2\u0713")
+        buf.write(u"\u0714\3\2\2\2\u0714\u0719\5v<\2\u0715\u0716\7\r\2\2")
+        buf.write(u"\u0716\u0718\5v<\2\u0717\u0715\3\2\2\2\u0718\u071b\3")
+        buf.write(u"\2\2\2\u0719\u0717\3\2\2\2\u0719\u071a\3\2\2\2\u071a")
+        buf.write(u"k\3\2\2\2\u071b\u0719\3\2\2\2\u071c\u071e\7\r\2\2\u071d")
+        buf.write(u"\u071c\3\2\2\2\u071d\u071e\3\2\2\2\u071e\u071f\3\2\2")
+        buf.write(u"\2\u071f\u0721\5v<\2\u0720\u0722\5`\61\2\u0721\u0720")
+        buf.write(u"\3\2\2\2\u0721\u0722\3\2\2\2\u0722m\3\2\2\2\u0723\u0724")
+        buf.write(u"\5Z.\2\u0724\u0725\7 \2\2\u0725\u0726\5Z.\2\u0726o\3")
+        buf.write(u"\2\2\2\u0727\u072a\7\22\2\2\u0728\u072b\5Z.\2\u0729\u072b")
+        buf.write(u"\5n8\2\u072a\u0728\3\2\2\2\u072a\u0729\3\2\2\2\u072b")
+        buf.write(u"\u072c\3\2\2\2\u072c\u072d\7\23\2\2\u072d\u0736\3\2\2")
+        buf.write(u"\2\u072e\u0731\7\16\2\2\u072f\u0732\5Z.\2\u0730\u0732")
+        buf.write(u"\5n8\2\u0731\u072f\3\2\2\2\u0731\u0730\3\2\2\2\u0732")
+        buf.write(u"\u0733\3\2\2\2\u0733\u0734\7\17\2\2\u0734\u0736\3\2\2")
+        buf.write(u"\2\u0735\u0727\3\2\2\2\u0735\u072e\3\2\2\2\u0736q\3\2")
+        buf.write(u"\2\2\u0737\u0738\5l\67\2\u0738s\3\2\2\2\u0739\u0740\7")
+        buf.write(u"t\2\2\u073a\u073b\7\u0091\2\2\u073b\u0740\5Z.\2\u073c")
+        buf.write(u"\u073d\7y\2\2\u073d\u0740\5Z.\2\u073e\u0740\7\u0092\2")
+        buf.write(u"\2\u073f\u0739\3\2\2\2\u073f\u073a\3\2\2\2\u073f\u073c")
+        buf.write(u"\3\2\2\2\u073f\u073e\3\2\2\2\u0740u\3\2\2\2\u0741\u0742")
+        buf.write(u"\t%\2\2\u0742w\3\2\2\2\u0125~\u0086\u008e\u009a\u00ae")
+        buf.write(u"\u00b7\u00bb\u00bd\u00c1\u00c3\u00cc\u00d1\u00d6\u00da")
+        buf.write(u"\u00e1\u00e8\u00f0\u00f8\u0100\u0104\u010b\u010f\u0115")
+        buf.write(u"\u0118\u0123\u0126\u012b\u0134\u0140\u014b\u0150\u0152")
+        buf.write(u"\u0167\u016d\u0171\u0176\u0188\u018c\u0198\u019c\u01a1")
+        buf.write(u"\u01ac\u01b4\u01b6\u01c8\u01cb\u01d4\u01d6\u01e0\u01e4")
+        buf.write(u"\u01e6\u01f0\u01f7\u01fb\u0200\u0207\u020d\u0211\u0214")
+        buf.write(u"\u0217\u0222\u022a\u022c\u0232\u0236\u0239\u023e\u0248")
+        buf.write(u"\u024f\u0255\u0257\u025e\u0263\u0268\u026b\u0274\u0278")
+        buf.write(u"\u027c\u027e\u0281\u028e\u0294\u029a\u029c\u02a6\u02a8")
+        buf.write(u"\u02aa\u02ac\u02b0\u02b4\u02ba\u02be\u02c0\u02c4\u02c9")
+        buf.write(u"\u02cb\u02d0\u02d6\u02d9\u02dc\u02e1\u02ec\u02f6\u0300")
+        buf.write(u"\u030e\u0312\u0316\u0318\u031b\u031e\u0324\u0328\u032e")
+        buf.write(u"\u0332\u0336\u033c\u0349\u035a\u035f\u0363\u0367\u036b")
+        buf.write(u"\u0370\u0375\u0377\u037b\u0384\u0387\u038b\u0391\u039b")
+        buf.write(u"\u039d\u03a6\u03a9\u03ac\u03af\u03b5\u03b7\u03bf\u03c1")
+        buf.write(u"\u03c8\u03ca\u03d6\u03da\u03de\u03e6\u03f1\u03f7\u03fe")
+        buf.write(u"\u0402\u0406\u040b\u0414\u0416\u041a\u0424\u0427\u042a")
+        buf.write(u"\u042c\u0430\u043f\u0444\u044b\u044d\u0454\u0457\u045b")
+        buf.write(u"\u045f\u0466\u046c\u0472\u0475\u0478\u047b\u0481\u0485")
+        buf.write(u"\u048a\u048d\u0490\u0497\u049c\u049f\u04b8\u04be\u04c4")
+        buf.write(u"\u04ca\u04cd\u04cf\u04d4\u04db\u04de\u04e4\u04e9\u04f0")
+        buf.write(u"\u04f6\u04f8\u0502\u050a\u0511\u0517\u051c\u051f\u0524")
+        buf.write(u"\u0529\u0531\u0533\u053c\u0545\u0547\u0549\u0550\u0554")
+        buf.write(u"\u0557\u0562\u0564\u0569\u056f\u057d\u057f\u0586\u058a")
+        buf.write(u"\u058d\u0592\u0598\u05a3\u05aa\u05af\u05b3\u05b6\u05b8")
+        buf.write(u"\u05bd\u05c6\u05c8\u05ca\u05d3\u05d7\u05de\u05e7\u05ea")
+        buf.write(u"\u05f0\u05f9\u05fd\u0608\u060f\u0611\u0619\u0620\u0624")
+        buf.write(u"\u062b\u0649\u064d\u064f\u0655\u0667\u0669\u0671\u067b")
+        buf.write(u"\u067f\u0681\u0686\u068a\u068f\u0692\u0695\u069a\u069c")
+        buf.write(u"\u06a1\u06a6\u06c1\u06c5\u06c8\u06cf\u06e0\u06e3\u06ea")
+        buf.write(u"\u06ec\u06ef\u06f1\u06f8\u0700\u0708\u070c\u070f\u0712")
+        buf.write(u"\u0719\u071d\u0721\u072a\u0731\u0735\u073f")
         return buf.getvalue()
 
 
@@ -10492,6 +10500,9 @@ class VisualFoxpro9Parser ( Parser ):
 
         def PERIOD(self):
             return self.getToken(VisualFoxpro9Parser.PERIOD, 0)
+        def idAttr(self):
+            return self.getTypedRuleContext(VisualFoxpro9Parser.IdAttrContext,0)
+
         def trailer(self):
             return self.getTypedRuleContext(VisualFoxpro9Parser.TrailerContext,0)
 
@@ -10678,7 +10689,7 @@ class VisualFoxpro9Parser ( Parser ):
         self._la = 0 # Token type
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 1609
+            self.state = 1613
             self._errHandler.sync(self)
             la_ = self._interp.adaptivePredict(self._input,251,self._ctx)
             if la_ == 1:
@@ -10753,21 +10764,29 @@ class VisualFoxpro9Parser ( Parser ):
                 localctx = VisualFoxpro9Parser.AtomExprContext(self, localctx)
                 self._ctx = localctx
                 _prevctx = localctx
-                self.state = 1603
+                self.state = 1607
                 self._errHandler.sync(self)
-                _la = self._input.LA(1)
-                if _la==VisualFoxpro9Parser.PERIOD:
+                la_ = self._interp.adaptivePredict(self._input,249,self._ctx)
+                if la_ == 1:
                     self.state = 1602
                     self.match(VisualFoxpro9Parser.PERIOD)
 
+                elif la_ == 2:
+                    self.state = 1603
+                    self.idAttr()
+                    self.state = 1604
+                    self.match(VisualFoxpro9Parser.COLON)
+                    self.state = 1605
+                    self.match(VisualFoxpro9Parser.COLON)
 
-                self.state = 1605
+
+                self.state = 1609
                 self.atom()
-                self.state = 1607
+                self.state = 1611
                 self._errHandler.sync(self)
                 la_ = self._interp.adaptivePredict(self._input,250,self._ctx)
                 if la_ == 1:
-                    self.state = 1606
+                    self.state = 1610
                     self.trailer()
 
 
@@ -10775,7 +10794,7 @@ class VisualFoxpro9Parser ( Parser ):
 
 
             self._ctx.stop = self._input.LT(-1)
-            self.state = 1635
+            self.state = 1639
             self._errHandler.sync(self)
             _alt = self._interp.adaptivePredict(self._input,254,self._ctx)
             while _alt!=2 and _alt!=ATN.INVALID_ALT_NUMBER:
@@ -10783,44 +10802,44 @@ class VisualFoxpro9Parser ( Parser ):
                     if self._parseListeners is not None:
                         self.triggerExitRuleEvent()
                     _prevctx = localctx
-                    self.state = 1633
+                    self.state = 1637
                     self._errHandler.sync(self)
                     la_ = self._interp.adaptivePredict(self._input,253,self._ctx)
                     if la_ == 1:
                         localctx = VisualFoxpro9Parser.PowerContext(self, VisualFoxpro9Parser.ExprContext(self, _parentctx, _parentState))
                         self.pushNewRecursionContext(localctx, _startState, self.RULE_expr)
-                        self.state = 1611
+                        self.state = 1615
                         if not self.precpred(self._ctx, 9):
                             from antlr4.error.Errors import FailedPredicateException
                             raise FailedPredicateException(self, "self.precpred(self._ctx, 9)")
-                        self.state = 1615
+                        self.state = 1619
                         self._errHandler.sync(self)
                         token = self._input.LA(1)
                         if token in [VisualFoxpro9Parser.ASTERISK]:
-                            self.state = 1612
+                            self.state = 1616
                             self.match(VisualFoxpro9Parser.ASTERISK)
-                            self.state = 1613
+                            self.state = 1617
                             self.match(VisualFoxpro9Parser.ASTERISK)
                             pass
                         elif token in [VisualFoxpro9Parser.CARAT]:
-                            self.state = 1614
+                            self.state = 1618
                             self.match(VisualFoxpro9Parser.CARAT)
                             pass
                         else:
                             raise NoViableAltException(self)
 
-                        self.state = 1617
+                        self.state = 1621
                         self.expr(10)
                         pass
 
                     elif la_ == 2:
                         localctx = VisualFoxpro9Parser.MultiplicationContext(self, VisualFoxpro9Parser.ExprContext(self, _parentctx, _parentState))
                         self.pushNewRecursionContext(localctx, _startState, self.RULE_expr)
-                        self.state = 1618
+                        self.state = 1622
                         if not self.precpred(self._ctx, 8):
                             from antlr4.error.Errors import FailedPredicateException
                             raise FailedPredicateException(self, "self.precpred(self._ctx, 8)")
-                        self.state = 1619
+                        self.state = 1623
                         localctx.op = self._input.LT(1)
                         _la = self._input.LA(1)
                         if not(_la==VisualFoxpro9Parser.ASTERISK or _la==VisualFoxpro9Parser.FORWARDSLASH):
@@ -10828,31 +10847,31 @@ class VisualFoxpro9Parser ( Parser ):
                         else:
                             self._errHandler.reportMatch(self)
                             self.consume()
-                        self.state = 1620
+                        self.state = 1624
                         self.expr(9)
                         pass
 
                     elif la_ == 3:
                         localctx = VisualFoxpro9Parser.ModuloContext(self, VisualFoxpro9Parser.ExprContext(self, _parentctx, _parentState))
                         self.pushNewRecursionContext(localctx, _startState, self.RULE_expr)
-                        self.state = 1621
+                        self.state = 1625
                         if not self.precpred(self._ctx, 7):
                             from antlr4.error.Errors import FailedPredicateException
                             raise FailedPredicateException(self, "self.precpred(self._ctx, 7)")
-                        self.state = 1622
+                        self.state = 1626
                         self.match(VisualFoxpro9Parser.MODULO)
-                        self.state = 1623
+                        self.state = 1627
                         self.expr(8)
                         pass
 
                     elif la_ == 4:
                         localctx = VisualFoxpro9Parser.AdditionContext(self, VisualFoxpro9Parser.ExprContext(self, _parentctx, _parentState))
                         self.pushNewRecursionContext(localctx, _startState, self.RULE_expr)
-                        self.state = 1624
+                        self.state = 1628
                         if not self.precpred(self._ctx, 6):
                             from antlr4.error.Errors import FailedPredicateException
                             raise FailedPredicateException(self, "self.precpred(self._ctx, 6)")
-                        self.state = 1625
+                        self.state = 1629
                         localctx.op = self._input.LT(1)
                         _la = self._input.LA(1)
                         if not(_la==VisualFoxpro9Parser.PLUS_SIGN or _la==VisualFoxpro9Parser.MINUS_SIGN):
@@ -10860,18 +10879,18 @@ class VisualFoxpro9Parser ( Parser ):
                         else:
                             self._errHandler.reportMatch(self)
                             self.consume()
-                        self.state = 1626
+                        self.state = 1630
                         self.expr(7)
                         pass
 
                     elif la_ == 5:
                         localctx = VisualFoxpro9Parser.ComparisonContext(self, VisualFoxpro9Parser.ExprContext(self, _parentctx, _parentState))
                         self.pushNewRecursionContext(localctx, _startState, self.RULE_expr)
-                        self.state = 1627
+                        self.state = 1631
                         if not self.precpred(self._ctx, 5):
                             from antlr4.error.Errors import FailedPredicateException
                             raise FailedPredicateException(self, "self.precpred(self._ctx, 5)")
-                        self.state = 1628
+                        self.state = 1632
                         localctx.op = self._input.LT(1)
                         _la = self._input.LA(1)
                         if not((((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << VisualFoxpro9Parser.LESSTHAN) | (1 << VisualFoxpro9Parser.GREATERTHAN) | (1 << VisualFoxpro9Parser.HASH) | (1 << VisualFoxpro9Parser.DOUBLEEQUALS) | (1 << VisualFoxpro9Parser.NOTEQUALS) | (1 << VisualFoxpro9Parser.GTEQ) | (1 << VisualFoxpro9Parser.LTEQ) | (1 << VisualFoxpro9Parser.EQUALS) | (1 << VisualFoxpro9Parser.DOLLAR))) != 0)):
@@ -10879,18 +10898,18 @@ class VisualFoxpro9Parser ( Parser ):
                         else:
                             self._errHandler.reportMatch(self)
                             self.consume()
-                        self.state = 1629
+                        self.state = 1633
                         self.expr(6)
                         pass
 
                     elif la_ == 6:
                         localctx = VisualFoxpro9Parser.BooleanOperationContext(self, VisualFoxpro9Parser.ExprContext(self, _parentctx, _parentState))
                         self.pushNewRecursionContext(localctx, _startState, self.RULE_expr)
-                        self.state = 1630
+                        self.state = 1634
                         if not self.precpred(self._ctx, 4):
                             from antlr4.error.Errors import FailedPredicateException
                             raise FailedPredicateException(self, "self.precpred(self._ctx, 4)")
-                        self.state = 1631
+                        self.state = 1635
                         localctx.op = self._input.LT(1)
                         _la = self._input.LA(1)
                         if not(((((_la - 208)) & ~0x3f) == 0 and ((1 << (_la - 208)) & ((1 << (VisualFoxpro9Parser.AND - 208)) | (1 << (VisualFoxpro9Parser.OTHERAND - 208)) | (1 << (VisualFoxpro9Parser.OR - 208)) | (1 << (VisualFoxpro9Parser.OTHEROR - 208)))) != 0)):
@@ -10898,12 +10917,12 @@ class VisualFoxpro9Parser ( Parser ):
                         else:
                             self._errHandler.reportMatch(self)
                             self.consume()
-                        self.state = 1632
+                        self.state = 1636
                         self.expr(5)
                         pass
 
              
-                self.state = 1637
+                self.state = 1641
                 self._errHandler.sync(self)
                 _alt = self._interp.adaptivePredict(self._input,254,self._ctx)
 
@@ -10932,6 +10951,10 @@ class VisualFoxpro9Parser ( Parser ):
         def PERIOD(self):
             return self.getToken(VisualFoxpro9Parser.PERIOD, 0)
 
+        def idAttr(self):
+            return self.getTypedRuleContext(VisualFoxpro9Parser.IdAttrContext,0)
+
+
         def getRuleIndex(self):
             return VisualFoxpro9Parser.RULE_complexId
 
@@ -10950,36 +10973,60 @@ class VisualFoxpro9Parser ( Parser ):
         self.enterRule(localctx, 90, self.RULE_complexId)
         self._la = 0 # Token type
         try:
-            self.state = 1649
+            self.state = 1663
             self._errHandler.sync(self)
-            la_ = self._interp.adaptivePredict(self._input,257,self._ctx)
+            la_ = self._interp.adaptivePredict(self._input,258,self._ctx)
             if la_ == 1:
                 self.enterOuterAlt(localctx, 1)
-                self.state = 1639
+                self.state = 1647
                 self._errHandler.sync(self)
-                _la = self._input.LA(1)
-                if _la==VisualFoxpro9Parser.PERIOD:
-                    self.state = 1638
+                la_ = self._interp.adaptivePredict(self._input,255,self._ctx)
+                if la_ == 1:
+                    self.state = 1642
                     self.match(VisualFoxpro9Parser.PERIOD)
 
+                elif la_ == 2:
+                    self.state = 1643
+                    self.idAttr()
+                    self.state = 1644
+                    self.match(VisualFoxpro9Parser.COLON)
+                    self.state = 1645
+                    self.match(VisualFoxpro9Parser.COLON)
 
-                self.state = 1641
+
+                self.state = 1649
                 self.atom()
-                self.state = 1642
+                self.state = 1650
                 self.trailer()
                 pass
 
             elif la_ == 2:
                 self.enterOuterAlt(localctx, 2)
-                self.state = 1644
-                self.match(VisualFoxpro9Parser.PERIOD)
-                self.state = 1645
+                self.state = 1657
+                self._errHandler.sync(self)
+                la_ = self._interp.adaptivePredict(self._input,256,self._ctx)
+                if la_ == 1:
+                    self.state = 1652
+                    self.match(VisualFoxpro9Parser.PERIOD)
+                    pass
+
+                elif la_ == 2:
+                    self.state = 1653
+                    self.idAttr()
+                    self.state = 1654
+                    self.match(VisualFoxpro9Parser.COLON)
+                    self.state = 1655
+                    self.match(VisualFoxpro9Parser.COLON)
+                    pass
+
+
+                self.state = 1659
                 self.atom()
-                self.state = 1647
+                self.state = 1661
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
                 if (((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << VisualFoxpro9Parser.PERIOD) | (1 << VisualFoxpro9Parser.LEFTBRACKET) | (1 << VisualFoxpro9Parser.LEFTPAREN))) != 0):
-                    self.state = 1646
+                    self.state = 1660
                     self.trailer()
 
 
@@ -11029,22 +11076,22 @@ class VisualFoxpro9Parser ( Parser ):
         localctx = VisualFoxpro9Parser.AtomContext(self, self._ctx, self.state)
         self.enterRule(localctx, 92, self.RULE_atom)
         try:
-            self.state = 1654
+            self.state = 1668
             self._errHandler.sync(self)
             token = self._input.LA(1)
             if token in [VisualFoxpro9Parser.ASSERT, VisualFoxpro9Parser.TO, VisualFoxpro9Parser.DO, VisualFoxpro9Parser.IN, VisualFoxpro9Parser.AS, VisualFoxpro9Parser.IF, VisualFoxpro9Parser.ELIF, VisualFoxpro9Parser.ELSE, VisualFoxpro9Parser.ENDIF, VisualFoxpro9Parser.ON, VisualFoxpro9Parser.OFF, VisualFoxpro9Parser.ERROR, VisualFoxpro9Parser.WITH, VisualFoxpro9Parser.STORE, VisualFoxpro9Parser.EXTERNAL, VisualFoxpro9Parser.ARRAY, VisualFoxpro9Parser.DELETE, VisualFoxpro9Parser.RECALL, VisualFoxpro9Parser.FILE, VisualFoxpro9Parser.SET, VisualFoxpro9Parser.RELEASE, VisualFoxpro9Parser.RECYCLE, VisualFoxpro9Parser.CREATE, VisualFoxpro9Parser.TABLE, VisualFoxpro9Parser.DBF, VisualFoxpro9Parser.NAME, VisualFoxpro9Parser.FREE, VisualFoxpro9Parser.SELECT, VisualFoxpro9Parser.USE, VisualFoxpro9Parser.READ, VisualFoxpro9Parser.EVENTS, VisualFoxpro9Parser.SHUTDOWN, VisualFoxpro9Parser.CLEAR, VisualFoxpro9Parser.PROCEDURE, VisualFoxpro9Parser.ENDPROC, VisualFoxpro9Parser.DEFINE, VisualFoxpro9Parser.CLASS, VisualFoxpro9Parser.ENDDEFINE, VisualFoxpro9Parser.LOCATE, VisualFoxpro9Parser.CONTINUE, VisualFoxpro9Parser.FOR, VisualFoxpro9Parser.ENDFOR, VisualFoxpro9Parser.WHILE, VisualFoxpro9Parser.NOOPTIMIZE, VisualFoxpro9Parser.STATUS, VisualFoxpro9Parser.BAR, VisualFoxpro9Parser.MEMOWIDTH, VisualFoxpro9Parser.CURSOR, VisualFoxpro9Parser.REFRESH, VisualFoxpro9Parser.BELL, VisualFoxpro9Parser.CENTURY, VisualFoxpro9Parser.COMPATIBLE, VisualFoxpro9Parser.DATE, VisualFoxpro9Parser.ADD, VisualFoxpro9Parser.OBJECT, VisualFoxpro9Parser.REPLACE, VisualFoxpro9Parser.LIBRARY, VisualFoxpro9Parser.SHARED, VisualFoxpro9Parser.WAIT, VisualFoxpro9Parser.WINDOW, VisualFoxpro9Parser.NOWAIT, VisualFoxpro9Parser.NOCLEAR, VisualFoxpro9Parser.NOTIFY, VisualFoxpro9Parser.ENDDO, VisualFoxpro9Parser.DECLARE, VisualFoxpro9Parser.ERASE, VisualFoxpro9Parser.SYSMENU, VisualFoxpro9Parser.CLOCK, VisualFoxpro9Parser.RETURN, VisualFoxpro9Parser.PARAMETER, VisualFoxpro9Parser.ALTERNATE, VisualFoxpro9Parser.EXACT, VisualFoxpro9Parser.ALL, VisualFoxpro9Parser.COUNT, VisualFoxpro9Parser.GOTO, VisualFoxpro9Parser.TOP, VisualFoxpro9Parser.BOTTOM, VisualFoxpro9Parser.RECORD, VisualFoxpro9Parser.CLOSE, VisualFoxpro9Parser.APPEND, VisualFoxpro9Parser.BLANK, VisualFoxpro9Parser.NOMENU, VisualFoxpro9Parser.CASE, VisualFoxpro9Parser.ENDCASE, VisualFoxpro9Parser.OTHERWISE, VisualFoxpro9Parser.FROM, VisualFoxpro9Parser.REPORT, VisualFoxpro9Parser.FORM, VisualFoxpro9Parser.NOEJECT, VisualFoxpro9Parser.PRINTER, VisualFoxpro9Parser.PROMPT, VisualFoxpro9Parser.NOPROMPT, VisualFoxpro9Parser.DB4, VisualFoxpro9Parser.FOXPLUS, VisualFoxpro9Parser.NOCONSOLE, VisualFoxpro9Parser.COPY, VisualFoxpro9Parser.STRUCTURE, VisualFoxpro9Parser.DELETED, VisualFoxpro9Parser.SUM, VisualFoxpro9Parser.DISTINCT, VisualFoxpro9Parser.INTO, VisualFoxpro9Parser.NEXT, VisualFoxpro9Parser.REST, VisualFoxpro9Parser.SKIPKW, VisualFoxpro9Parser.EXCLUSIVE, VisualFoxpro9Parser.NEAR, VisualFoxpro9Parser.MKDIR, VisualFoxpro9Parser.RMDIR, VisualFoxpro9Parser.KEY, VisualFoxpro9Parser.KEYBOARD, VisualFoxpro9Parser.LABEL, VisualFoxpro9Parser.PLAIN, VisualFoxpro9Parser.MENU, VisualFoxpro9Parser.AT, VisualFoxpro9Parser.LINE, VisualFoxpro9Parser.SCREEN, VisualFoxpro9Parser.NOMARGIN, VisualFoxpro9Parser.PAD, VisualFoxpro9Parser.OF, VisualFoxpro9Parser.COLOR, VisualFoxpro9Parser.SCHEME, VisualFoxpro9Parser.BEFORE, VisualFoxpro9Parser.AFTER, VisualFoxpro9Parser.NEGOTIATE, VisualFoxpro9Parser.FONT, VisualFoxpro9Parser.STYLE, VisualFoxpro9Parser.MARK, VisualFoxpro9Parser.MESSAGE, VisualFoxpro9Parser.ACTIVATE, VisualFoxpro9Parser.POPUP, VisualFoxpro9Parser.EXTENDED, VisualFoxpro9Parser.SHADOW, VisualFoxpro9Parser.MARGIN, VisualFoxpro9Parser.RELATIVE, VisualFoxpro9Parser.SELECTION, VisualFoxpro9Parser.DEACTIVATE, VisualFoxpro9Parser.SAME, VisualFoxpro9Parser.NOSHOW, VisualFoxpro9Parser.STEP, VisualFoxpro9Parser.THEN, VisualFoxpro9Parser.UNDEFINE, VisualFoxpro9Parser.IFDEF, VisualFoxpro9Parser.PUSH, VisualFoxpro9Parser.POP, VisualFoxpro9Parser.TIMEOUT, VisualFoxpro9Parser.ENDWITH, VisualFoxpro9Parser.TYPEAHEAD, VisualFoxpro9Parser.ALIAS, VisualFoxpro9Parser.ORDER, VisualFoxpro9Parser.SEEK, VisualFoxpro9Parser.WHERE, VisualFoxpro9Parser.FILTER, VisualFoxpro9Parser.RENAME, VisualFoxpro9Parser.INCLUDE, VisualFoxpro9Parser.CLASSLIB, VisualFoxpro9Parser.BY, VisualFoxpro9Parser.UNIQUE, VisualFoxpro9Parser.INDEX, VisualFoxpro9Parser.TAG, VisualFoxpro9Parser.COMPACT, VisualFoxpro9Parser.ASCENDING, VisualFoxpro9Parser.DESCENDING, VisualFoxpro9Parser.CANDIDATE, VisualFoxpro9Parser.ADDITIVE, VisualFoxpro9Parser.DIMENSION, VisualFoxpro9Parser.NOT, VisualFoxpro9Parser.AND, VisualFoxpro9Parser.OR, VisualFoxpro9Parser.SCAN, VisualFoxpro9Parser.ENDSCAN, VisualFoxpro9Parser.NULL, VisualFoxpro9Parser.BOOLEANCHAR, VisualFoxpro9Parser.NODEFAULT, VisualFoxpro9Parser.DLLS, VisualFoxpro9Parser.MACROS, VisualFoxpro9Parser.NUMBER, VisualFoxpro9Parser.ZAP, VisualFoxpro9Parser.ROLLOVER, VisualFoxpro9Parser.DEFAULT, VisualFoxpro9Parser.SAVE, VisualFoxpro9Parser.NOSAVE, VisualFoxpro9Parser.DATABASE, VisualFoxpro9Parser.TABLES, VisualFoxpro9Parser.INDEXES, VisualFoxpro9Parser.PACK, VisualFoxpro9Parser.REINDEX, VisualFoxpro9Parser.PROGRAM, VisualFoxpro9Parser.SCOPE, VisualFoxpro9Parser.THROW, VisualFoxpro9Parser.EACH, VisualFoxpro9Parser.CAST, VisualFoxpro9Parser.RUN, VisualFoxpro9Parser.TRY, VisualFoxpro9Parser.CATCH, VisualFoxpro9Parser.FINALLY, VisualFoxpro9Parser.ENDTRY, VisualFoxpro9Parser.BROWSE, VisualFoxpro9Parser.INSERT, VisualFoxpro9Parser.VALUES, VisualFoxpro9Parser.MEMVAR, VisualFoxpro9Parser.TYPE, VisualFoxpro9Parser.SCATTER, VisualFoxpro9Parser.GATHER, VisualFoxpro9Parser.EXCEPT, VisualFoxpro9Parser.LIKE, VisualFoxpro9Parser.FIELDS, VisualFoxpro9Parser.ALTER, VisualFoxpro9Parser.COLUMN, VisualFoxpro9Parser.DROP, VisualFoxpro9Parser.HELP, VisualFoxpro9Parser.SAY, VisualFoxpro9Parser.COLLECTION, VisualFoxpro9Parser.SYSTEM, VisualFoxpro9Parser.TALK, VisualFoxpro9Parser.PROGRAMCONTROL, VisualFoxpro9Parser.RELATION, VisualFoxpro9Parser.UPDATE, VisualFoxpro9Parser.FORCE, VisualFoxpro9Parser.JOIN, VisualFoxpro9Parser.TEXT, VisualFoxpro9Parser.ENDTEXT, VisualFoxpro9Parser.ID]:
                 self.enterOuterAlt(localctx, 1)
-                self.state = 1651
+                self.state = 1665
                 self.identifier()
                 pass
             elif token in [VisualFoxpro9Parser.COMMERCIALAT]:
                 self.enterOuterAlt(localctx, 2)
-                self.state = 1652
+                self.state = 1666
                 self.reference()
                 pass
             elif token in [VisualFoxpro9Parser.AMPERSAND]:
                 self.enterOuterAlt(localctx, 3)
-                self.state = 1653
+                self.state = 1667
                 self.argReplace()
                 pass
             else:
@@ -11121,51 +11168,51 @@ class VisualFoxpro9Parser ( Parser ):
         self.enterRule(localctx, 94, self.RULE_trailer)
         self._la = 0 # Token type
         try:
-            self.state = 1676
+            self.state = 1690
             self._errHandler.sync(self)
             token = self._input.LA(1)
             if token in [VisualFoxpro9Parser.LEFTBRACKET, VisualFoxpro9Parser.LEFTPAREN]:
                 localctx = VisualFoxpro9Parser.FuncCallTrailerContext(self, localctx)
                 self.enterOuterAlt(localctx, 1)
-                self.state = 1666
+                self.state = 1680
                 self._errHandler.sync(self)
                 token = self._input.LA(1)
                 if token in [VisualFoxpro9Parser.LEFTPAREN]:
-                    self.state = 1656
+                    self.state = 1670
                     self.match(VisualFoxpro9Parser.LEFTPAREN)
-                    self.state = 1658
+                    self.state = 1672
                     self._errHandler.sync(self)
                     _la = self._input.LA(1)
                     if (((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << VisualFoxpro9Parser.NUMBER_LITERAL) | (1 << VisualFoxpro9Parser.BLOB_LITERAL) | (1 << VisualFoxpro9Parser.AMPERSAND) | (1 << VisualFoxpro9Parser.COMMERCIALAT) | (1 << VisualFoxpro9Parser.PLUS_SIGN) | (1 << VisualFoxpro9Parser.MINUS_SIGN) | (1 << VisualFoxpro9Parser.PERIOD) | (1 << VisualFoxpro9Parser.LEFTBRACKET) | (1 << VisualFoxpro9Parser.LEFTBRACE) | (1 << VisualFoxpro9Parser.LEFTPAREN) | (1 << VisualFoxpro9Parser.EXCLAMATION) | (1 << VisualFoxpro9Parser.DOLLAR) | (1 << VisualFoxpro9Parser.DOUBLEQUOTE) | (1 << VisualFoxpro9Parser.SINGLEQUOTE) | (1 << VisualFoxpro9Parser.ASSERT) | (1 << VisualFoxpro9Parser.TO) | (1 << VisualFoxpro9Parser.DO) | (1 << VisualFoxpro9Parser.IN) | (1 << VisualFoxpro9Parser.AS) | (1 << VisualFoxpro9Parser.IF) | (1 << VisualFoxpro9Parser.ELIF) | (1 << VisualFoxpro9Parser.ELSE) | (1 << VisualFoxpro9Parser.ENDIF) | (1 << VisualFoxpro9Parser.ON) | (1 << VisualFoxpro9Parser.OFF) | (1 << VisualFoxpro9Parser.ERROR) | (1 << VisualFoxpro9Parser.WITH) | (1 << VisualFoxpro9Parser.STORE) | (1 << VisualFoxpro9Parser.EXTERNAL) | (1 << VisualFoxpro9Parser.ARRAY) | (1 << VisualFoxpro9Parser.DELETE) | (1 << VisualFoxpro9Parser.RECALL) | (1 << VisualFoxpro9Parser.FILE) | (1 << VisualFoxpro9Parser.SET) | (1 << VisualFoxpro9Parser.RELEASE) | (1 << VisualFoxpro9Parser.RECYCLE) | (1 << VisualFoxpro9Parser.CREATE) | (1 << VisualFoxpro9Parser.TABLE))) != 0) or ((((_la - 65)) & ~0x3f) == 0 and ((1 << (_la - 65)) & ((1 << (VisualFoxpro9Parser.DBF - 65)) | (1 << (VisualFoxpro9Parser.NAME - 65)) | (1 << (VisualFoxpro9Parser.FREE - 65)) | (1 << (VisualFoxpro9Parser.SELECT - 65)) | (1 << (VisualFoxpro9Parser.USE - 65)) | (1 << (VisualFoxpro9Parser.READ - 65)) | (1 << (VisualFoxpro9Parser.EVENTS - 65)) | (1 << (VisualFoxpro9Parser.SHUTDOWN - 65)) | (1 << (VisualFoxpro9Parser.CLEAR - 65)) | (1 << (VisualFoxpro9Parser.PROCEDURE - 65)) | (1 << (VisualFoxpro9Parser.ENDPROC - 65)) | (1 << (VisualFoxpro9Parser.DEFINE - 65)) | (1 << (VisualFoxpro9Parser.CLASS - 65)) | (1 << (VisualFoxpro9Parser.ENDDEFINE - 65)) | (1 << (VisualFoxpro9Parser.LOCATE - 65)) | (1 << (VisualFoxpro9Parser.CONTINUE - 65)) | (1 << (VisualFoxpro9Parser.FOR - 65)) | (1 << (VisualFoxpro9Parser.ENDFOR - 65)) | (1 << (VisualFoxpro9Parser.WHILE - 65)) | (1 << (VisualFoxpro9Parser.NOOPTIMIZE - 65)) | (1 << (VisualFoxpro9Parser.STATUS - 65)) | (1 << (VisualFoxpro9Parser.BAR - 65)) | (1 << (VisualFoxpro9Parser.MEMOWIDTH - 65)) | (1 << (VisualFoxpro9Parser.CURSOR - 65)) | (1 << (VisualFoxpro9Parser.REFRESH - 65)) | (1 << (VisualFoxpro9Parser.BELL - 65)) | (1 << (VisualFoxpro9Parser.CENTURY - 65)) | (1 << (VisualFoxpro9Parser.COMPATIBLE - 65)) | (1 << (VisualFoxpro9Parser.DATE - 65)) | (1 << (VisualFoxpro9Parser.ADD - 65)) | (1 << (VisualFoxpro9Parser.OBJECT - 65)) | (1 << (VisualFoxpro9Parser.REPLACE - 65)) | (1 << (VisualFoxpro9Parser.LIBRARY - 65)) | (1 << (VisualFoxpro9Parser.SHARED - 65)) | (1 << (VisualFoxpro9Parser.WAIT - 65)) | (1 << (VisualFoxpro9Parser.WINDOW - 65)) | (1 << (VisualFoxpro9Parser.NOWAIT - 65)) | (1 << (VisualFoxpro9Parser.NOCLEAR - 65)) | (1 << (VisualFoxpro9Parser.NOTIFY - 65)) | (1 << (VisualFoxpro9Parser.ENDDO - 65)) | (1 << (VisualFoxpro9Parser.DECLARE - 65)) | (1 << (VisualFoxpro9Parser.ERASE - 65)) | (1 << (VisualFoxpro9Parser.SYSMENU - 65)) | (1 << (VisualFoxpro9Parser.CLOCK - 65)) | (1 << (VisualFoxpro9Parser.RETURN - 65)) | (1 << (VisualFoxpro9Parser.PARAMETER - 65)) | (1 << (VisualFoxpro9Parser.ALTERNATE - 65)) | (1 << (VisualFoxpro9Parser.EXACT - 65)) | (1 << (VisualFoxpro9Parser.ALL - 65)) | (1 << (VisualFoxpro9Parser.COUNT - 65)) | (1 << (VisualFoxpro9Parser.GOTO - 65)) | (1 << (VisualFoxpro9Parser.TOP - 65)) | (1 << (VisualFoxpro9Parser.BOTTOM - 65)) | (1 << (VisualFoxpro9Parser.RECORD - 65)) | (1 << (VisualFoxpro9Parser.CLOSE - 65)) | (1 << (VisualFoxpro9Parser.APPEND - 65)) | (1 << (VisualFoxpro9Parser.BLANK - 65)) | (1 << (VisualFoxpro9Parser.NOMENU - 65)) | (1 << (VisualFoxpro9Parser.CASE - 65)) | (1 << (VisualFoxpro9Parser.ENDCASE - 65)) | (1 << (VisualFoxpro9Parser.OTHERWISE - 65)) | (1 << (VisualFoxpro9Parser.FROM - 65)) | (1 << (VisualFoxpro9Parser.REPORT - 65)))) != 0) or ((((_la - 129)) & ~0x3f) == 0 and ((1 << (_la - 129)) & ((1 << (VisualFoxpro9Parser.FORM - 129)) | (1 << (VisualFoxpro9Parser.NOEJECT - 129)) | (1 << (VisualFoxpro9Parser.PRINTER - 129)) | (1 << (VisualFoxpro9Parser.PROMPT - 129)) | (1 << (VisualFoxpro9Parser.NOPROMPT - 129)) | (1 << (VisualFoxpro9Parser.DB4 - 129)) | (1 << (VisualFoxpro9Parser.FOXPLUS - 129)) | (1 << (VisualFoxpro9Parser.NOCONSOLE - 129)) | (1 << (VisualFoxpro9Parser.COPY - 129)) | (1 << (VisualFoxpro9Parser.STRUCTURE - 129)) | (1 << (VisualFoxpro9Parser.DELETED - 129)) | (1 << (VisualFoxpro9Parser.SUM - 129)) | (1 << (VisualFoxpro9Parser.DISTINCT - 129)) | (1 << (VisualFoxpro9Parser.INTO - 129)) | (1 << (VisualFoxpro9Parser.NEXT - 129)) | (1 << (VisualFoxpro9Parser.REST - 129)) | (1 << (VisualFoxpro9Parser.SKIPKW - 129)) | (1 << (VisualFoxpro9Parser.EXCLUSIVE - 129)) | (1 << (VisualFoxpro9Parser.NEAR - 129)) | (1 << (VisualFoxpro9Parser.MKDIR - 129)) | (1 << (VisualFoxpro9Parser.RMDIR - 129)) | (1 << (VisualFoxpro9Parser.KEY - 129)) | (1 << (VisualFoxpro9Parser.KEYBOARD - 129)) | (1 << (VisualFoxpro9Parser.LABEL - 129)) | (1 << (VisualFoxpro9Parser.PLAIN - 129)) | (1 << (VisualFoxpro9Parser.MENU - 129)) | (1 << (VisualFoxpro9Parser.AT - 129)) | (1 << (VisualFoxpro9Parser.LINE - 129)) | (1 << (VisualFoxpro9Parser.SCREEN - 129)) | (1 << (VisualFoxpro9Parser.NOMARGIN - 129)) | (1 << (VisualFoxpro9Parser.PAD - 129)) | (1 << (VisualFoxpro9Parser.OF - 129)) | (1 << (VisualFoxpro9Parser.COLOR - 129)) | (1 << (VisualFoxpro9Parser.SCHEME - 129)) | (1 << (VisualFoxpro9Parser.BEFORE - 129)) | (1 << (VisualFoxpro9Parser.AFTER - 129)) | (1 << (VisualFoxpro9Parser.NEGOTIATE - 129)) | (1 << (VisualFoxpro9Parser.FONT - 129)) | (1 << (VisualFoxpro9Parser.STYLE - 129)) | (1 << (VisualFoxpro9Parser.MARK - 129)) | (1 << (VisualFoxpro9Parser.MESSAGE - 129)) | (1 << (VisualFoxpro9Parser.ACTIVATE - 129)) | (1 << (VisualFoxpro9Parser.POPUP - 129)) | (1 << (VisualFoxpro9Parser.EXTENDED - 129)) | (1 << (VisualFoxpro9Parser.SHADOW - 129)) | (1 << (VisualFoxpro9Parser.MARGIN - 129)) | (1 << (VisualFoxpro9Parser.RELATIVE - 129)) | (1 << (VisualFoxpro9Parser.SELECTION - 129)) | (1 << (VisualFoxpro9Parser.DEACTIVATE - 129)) | (1 << (VisualFoxpro9Parser.SAME - 129)) | (1 << (VisualFoxpro9Parser.NOSHOW - 129)) | (1 << (VisualFoxpro9Parser.STEP - 129)) | (1 << (VisualFoxpro9Parser.THEN - 129)) | (1 << (VisualFoxpro9Parser.UNDEFINE - 129)) | (1 << (VisualFoxpro9Parser.IFDEF - 129)) | (1 << (VisualFoxpro9Parser.PUSH - 129)) | (1 << (VisualFoxpro9Parser.POP - 129)) | (1 << (VisualFoxpro9Parser.TIMEOUT - 129)) | (1 << (VisualFoxpro9Parser.ENDWITH - 129)) | (1 << (VisualFoxpro9Parser.TYPEAHEAD - 129)) | (1 << (VisualFoxpro9Parser.ALIAS - 129)) | (1 << (VisualFoxpro9Parser.ORDER - 129)) | (1 << (VisualFoxpro9Parser.SEEK - 129)) | (1 << (VisualFoxpro9Parser.WHERE - 129)))) != 0) or ((((_la - 193)) & ~0x3f) == 0 and ((1 << (_la - 193)) & ((1 << (VisualFoxpro9Parser.FILTER - 193)) | (1 << (VisualFoxpro9Parser.RENAME - 193)) | (1 << (VisualFoxpro9Parser.INCLUDE - 193)) | (1 << (VisualFoxpro9Parser.CLASSLIB - 193)) | (1 << (VisualFoxpro9Parser.BY - 193)) | (1 << (VisualFoxpro9Parser.UNIQUE - 193)) | (1 << (VisualFoxpro9Parser.INDEX - 193)) | (1 << (VisualFoxpro9Parser.TAG - 193)) | (1 << (VisualFoxpro9Parser.COMPACT - 193)) | (1 << (VisualFoxpro9Parser.ASCENDING - 193)) | (1 << (VisualFoxpro9Parser.DESCENDING - 193)) | (1 << (VisualFoxpro9Parser.CANDIDATE - 193)) | (1 << (VisualFoxpro9Parser.ADDITIVE - 193)) | (1 << (VisualFoxpro9Parser.DIMENSION - 193)) | (1 << (VisualFoxpro9Parser.NOT - 193)) | (1 << (VisualFoxpro9Parser.AND - 193)) | (1 << (VisualFoxpro9Parser.OR - 193)) | (1 << (VisualFoxpro9Parser.SCAN - 193)) | (1 << (VisualFoxpro9Parser.ENDSCAN - 193)) | (1 << (VisualFoxpro9Parser.NULL - 193)) | (1 << (VisualFoxpro9Parser.BOOLEANCHAR - 193)) | (1 << (VisualFoxpro9Parser.NODEFAULT - 193)) | (1 << (VisualFoxpro9Parser.DLLS - 193)) | (1 << (VisualFoxpro9Parser.MACROS - 193)) | (1 << (VisualFoxpro9Parser.NUMBER - 193)) | (1 << (VisualFoxpro9Parser.ZAP - 193)) | (1 << (VisualFoxpro9Parser.ROLLOVER - 193)) | (1 << (VisualFoxpro9Parser.DEFAULT - 193)) | (1 << (VisualFoxpro9Parser.SAVE - 193)) | (1 << (VisualFoxpro9Parser.NOSAVE - 193)) | (1 << (VisualFoxpro9Parser.DATABASE - 193)) | (1 << (VisualFoxpro9Parser.TABLES - 193)) | (1 << (VisualFoxpro9Parser.INDEXES - 193)) | (1 << (VisualFoxpro9Parser.PACK - 193)) | (1 << (VisualFoxpro9Parser.REINDEX - 193)) | (1 << (VisualFoxpro9Parser.PROGRAM - 193)) | (1 << (VisualFoxpro9Parser.SCOPE - 193)) | (1 << (VisualFoxpro9Parser.THROW - 193)) | (1 << (VisualFoxpro9Parser.EACH - 193)) | (1 << (VisualFoxpro9Parser.CAST - 193)) | (1 << (VisualFoxpro9Parser.RUN - 193)) | (1 << (VisualFoxpro9Parser.TRY - 193)) | (1 << (VisualFoxpro9Parser.CATCH - 193)) | (1 << (VisualFoxpro9Parser.FINALLY - 193)) | (1 << (VisualFoxpro9Parser.ENDTRY - 193)) | (1 << (VisualFoxpro9Parser.BROWSE - 193)) | (1 << (VisualFoxpro9Parser.INSERT - 193)) | (1 << (VisualFoxpro9Parser.VALUES - 193)) | (1 << (VisualFoxpro9Parser.MEMVAR - 193)) | (1 << (VisualFoxpro9Parser.TYPE - 193)) | (1 << (VisualFoxpro9Parser.SCATTER - 193)) | (1 << (VisualFoxpro9Parser.GATHER - 193)) | (1 << (VisualFoxpro9Parser.EXCEPT - 193)) | (1 << (VisualFoxpro9Parser.LIKE - 193)) | (1 << (VisualFoxpro9Parser.FIELDS - 193)) | (1 << (VisualFoxpro9Parser.ALTER - 193)) | (1 << (VisualFoxpro9Parser.COLUMN - 193)) | (1 << (VisualFoxpro9Parser.DROP - 193)))) != 0) or ((((_la - 262)) & ~0x3f) == 0 and ((1 << (_la - 262)) & ((1 << (VisualFoxpro9Parser.HELP - 262)) | (1 << (VisualFoxpro9Parser.SAY - 262)) | (1 << (VisualFoxpro9Parser.COLLECTION - 262)) | (1 << (VisualFoxpro9Parser.SYSTEM - 262)) | (1 << (VisualFoxpro9Parser.TALK - 262)) | (1 << (VisualFoxpro9Parser.PROGRAMCONTROL - 262)) | (1 << (VisualFoxpro9Parser.RELATION - 262)) | (1 << (VisualFoxpro9Parser.UPDATE - 262)) | (1 << (VisualFoxpro9Parser.FORCE - 262)) | (1 << (VisualFoxpro9Parser.JOIN - 262)) | (1 << (VisualFoxpro9Parser.TEXT - 262)) | (1 << (VisualFoxpro9Parser.ENDTEXT - 262)) | (1 << (VisualFoxpro9Parser.ID - 262)))) != 0):
-                        self.state = 1657
+                        self.state = 1671
                         self.args()
 
 
-                    self.state = 1660
+                    self.state = 1674
                     self.match(VisualFoxpro9Parser.RIGHTPAREN)
                     pass
                 elif token in [VisualFoxpro9Parser.LEFTBRACKET]:
-                    self.state = 1661
+                    self.state = 1675
                     self.match(VisualFoxpro9Parser.LEFTBRACKET)
-                    self.state = 1663
+                    self.state = 1677
                     self._errHandler.sync(self)
                     _la = self._input.LA(1)
                     if (((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << VisualFoxpro9Parser.NUMBER_LITERAL) | (1 << VisualFoxpro9Parser.BLOB_LITERAL) | (1 << VisualFoxpro9Parser.AMPERSAND) | (1 << VisualFoxpro9Parser.COMMERCIALAT) | (1 << VisualFoxpro9Parser.PLUS_SIGN) | (1 << VisualFoxpro9Parser.MINUS_SIGN) | (1 << VisualFoxpro9Parser.PERIOD) | (1 << VisualFoxpro9Parser.LEFTBRACKET) | (1 << VisualFoxpro9Parser.LEFTBRACE) | (1 << VisualFoxpro9Parser.LEFTPAREN) | (1 << VisualFoxpro9Parser.EXCLAMATION) | (1 << VisualFoxpro9Parser.DOLLAR) | (1 << VisualFoxpro9Parser.DOUBLEQUOTE) | (1 << VisualFoxpro9Parser.SINGLEQUOTE) | (1 << VisualFoxpro9Parser.ASSERT) | (1 << VisualFoxpro9Parser.TO) | (1 << VisualFoxpro9Parser.DO) | (1 << VisualFoxpro9Parser.IN) | (1 << VisualFoxpro9Parser.AS) | (1 << VisualFoxpro9Parser.IF) | (1 << VisualFoxpro9Parser.ELIF) | (1 << VisualFoxpro9Parser.ELSE) | (1 << VisualFoxpro9Parser.ENDIF) | (1 << VisualFoxpro9Parser.ON) | (1 << VisualFoxpro9Parser.OFF) | (1 << VisualFoxpro9Parser.ERROR) | (1 << VisualFoxpro9Parser.WITH) | (1 << VisualFoxpro9Parser.STORE) | (1 << VisualFoxpro9Parser.EXTERNAL) | (1 << VisualFoxpro9Parser.ARRAY) | (1 << VisualFoxpro9Parser.DELETE) | (1 << VisualFoxpro9Parser.RECALL) | (1 << VisualFoxpro9Parser.FILE) | (1 << VisualFoxpro9Parser.SET) | (1 << VisualFoxpro9Parser.RELEASE) | (1 << VisualFoxpro9Parser.RECYCLE) | (1 << VisualFoxpro9Parser.CREATE) | (1 << VisualFoxpro9Parser.TABLE))) != 0) or ((((_la - 65)) & ~0x3f) == 0 and ((1 << (_la - 65)) & ((1 << (VisualFoxpro9Parser.DBF - 65)) | (1 << (VisualFoxpro9Parser.NAME - 65)) | (1 << (VisualFoxpro9Parser.FREE - 65)) | (1 << (VisualFoxpro9Parser.SELECT - 65)) | (1 << (VisualFoxpro9Parser.USE - 65)) | (1 << (VisualFoxpro9Parser.READ - 65)) | (1 << (VisualFoxpro9Parser.EVENTS - 65)) | (1 << (VisualFoxpro9Parser.SHUTDOWN - 65)) | (1 << (VisualFoxpro9Parser.CLEAR - 65)) | (1 << (VisualFoxpro9Parser.PROCEDURE - 65)) | (1 << (VisualFoxpro9Parser.ENDPROC - 65)) | (1 << (VisualFoxpro9Parser.DEFINE - 65)) | (1 << (VisualFoxpro9Parser.CLASS - 65)) | (1 << (VisualFoxpro9Parser.ENDDEFINE - 65)) | (1 << (VisualFoxpro9Parser.LOCATE - 65)) | (1 << (VisualFoxpro9Parser.CONTINUE - 65)) | (1 << (VisualFoxpro9Parser.FOR - 65)) | (1 << (VisualFoxpro9Parser.ENDFOR - 65)) | (1 << (VisualFoxpro9Parser.WHILE - 65)) | (1 << (VisualFoxpro9Parser.NOOPTIMIZE - 65)) | (1 << (VisualFoxpro9Parser.STATUS - 65)) | (1 << (VisualFoxpro9Parser.BAR - 65)) | (1 << (VisualFoxpro9Parser.MEMOWIDTH - 65)) | (1 << (VisualFoxpro9Parser.CURSOR - 65)) | (1 << (VisualFoxpro9Parser.REFRESH - 65)) | (1 << (VisualFoxpro9Parser.BELL - 65)) | (1 << (VisualFoxpro9Parser.CENTURY - 65)) | (1 << (VisualFoxpro9Parser.COMPATIBLE - 65)) | (1 << (VisualFoxpro9Parser.DATE - 65)) | (1 << (VisualFoxpro9Parser.ADD - 65)) | (1 << (VisualFoxpro9Parser.OBJECT - 65)) | (1 << (VisualFoxpro9Parser.REPLACE - 65)) | (1 << (VisualFoxpro9Parser.LIBRARY - 65)) | (1 << (VisualFoxpro9Parser.SHARED - 65)) | (1 << (VisualFoxpro9Parser.WAIT - 65)) | (1 << (VisualFoxpro9Parser.WINDOW - 65)) | (1 << (VisualFoxpro9Parser.NOWAIT - 65)) | (1 << (VisualFoxpro9Parser.NOCLEAR - 65)) | (1 << (VisualFoxpro9Parser.NOTIFY - 65)) | (1 << (VisualFoxpro9Parser.ENDDO - 65)) | (1 << (VisualFoxpro9Parser.DECLARE - 65)) | (1 << (VisualFoxpro9Parser.ERASE - 65)) | (1 << (VisualFoxpro9Parser.SYSMENU - 65)) | (1 << (VisualFoxpro9Parser.CLOCK - 65)) | (1 << (VisualFoxpro9Parser.RETURN - 65)) | (1 << (VisualFoxpro9Parser.PARAMETER - 65)) | (1 << (VisualFoxpro9Parser.ALTERNATE - 65)) | (1 << (VisualFoxpro9Parser.EXACT - 65)) | (1 << (VisualFoxpro9Parser.ALL - 65)) | (1 << (VisualFoxpro9Parser.COUNT - 65)) | (1 << (VisualFoxpro9Parser.GOTO - 65)) | (1 << (VisualFoxpro9Parser.TOP - 65)) | (1 << (VisualFoxpro9Parser.BOTTOM - 65)) | (1 << (VisualFoxpro9Parser.RECORD - 65)) | (1 << (VisualFoxpro9Parser.CLOSE - 65)) | (1 << (VisualFoxpro9Parser.APPEND - 65)) | (1 << (VisualFoxpro9Parser.BLANK - 65)) | (1 << (VisualFoxpro9Parser.NOMENU - 65)) | (1 << (VisualFoxpro9Parser.CASE - 65)) | (1 << (VisualFoxpro9Parser.ENDCASE - 65)) | (1 << (VisualFoxpro9Parser.OTHERWISE - 65)) | (1 << (VisualFoxpro9Parser.FROM - 65)) | (1 << (VisualFoxpro9Parser.REPORT - 65)))) != 0) or ((((_la - 129)) & ~0x3f) == 0 and ((1 << (_la - 129)) & ((1 << (VisualFoxpro9Parser.FORM - 129)) | (1 << (VisualFoxpro9Parser.NOEJECT - 129)) | (1 << (VisualFoxpro9Parser.PRINTER - 129)) | (1 << (VisualFoxpro9Parser.PROMPT - 129)) | (1 << (VisualFoxpro9Parser.NOPROMPT - 129)) | (1 << (VisualFoxpro9Parser.DB4 - 129)) | (1 << (VisualFoxpro9Parser.FOXPLUS - 129)) | (1 << (VisualFoxpro9Parser.NOCONSOLE - 129)) | (1 << (VisualFoxpro9Parser.COPY - 129)) | (1 << (VisualFoxpro9Parser.STRUCTURE - 129)) | (1 << (VisualFoxpro9Parser.DELETED - 129)) | (1 << (VisualFoxpro9Parser.SUM - 129)) | (1 << (VisualFoxpro9Parser.DISTINCT - 129)) | (1 << (VisualFoxpro9Parser.INTO - 129)) | (1 << (VisualFoxpro9Parser.NEXT - 129)) | (1 << (VisualFoxpro9Parser.REST - 129)) | (1 << (VisualFoxpro9Parser.SKIPKW - 129)) | (1 << (VisualFoxpro9Parser.EXCLUSIVE - 129)) | (1 << (VisualFoxpro9Parser.NEAR - 129)) | (1 << (VisualFoxpro9Parser.MKDIR - 129)) | (1 << (VisualFoxpro9Parser.RMDIR - 129)) | (1 << (VisualFoxpro9Parser.KEY - 129)) | (1 << (VisualFoxpro9Parser.KEYBOARD - 129)) | (1 << (VisualFoxpro9Parser.LABEL - 129)) | (1 << (VisualFoxpro9Parser.PLAIN - 129)) | (1 << (VisualFoxpro9Parser.MENU - 129)) | (1 << (VisualFoxpro9Parser.AT - 129)) | (1 << (VisualFoxpro9Parser.LINE - 129)) | (1 << (VisualFoxpro9Parser.SCREEN - 129)) | (1 << (VisualFoxpro9Parser.NOMARGIN - 129)) | (1 << (VisualFoxpro9Parser.PAD - 129)) | (1 << (VisualFoxpro9Parser.OF - 129)) | (1 << (VisualFoxpro9Parser.COLOR - 129)) | (1 << (VisualFoxpro9Parser.SCHEME - 129)) | (1 << (VisualFoxpro9Parser.BEFORE - 129)) | (1 << (VisualFoxpro9Parser.AFTER - 129)) | (1 << (VisualFoxpro9Parser.NEGOTIATE - 129)) | (1 << (VisualFoxpro9Parser.FONT - 129)) | (1 << (VisualFoxpro9Parser.STYLE - 129)) | (1 << (VisualFoxpro9Parser.MARK - 129)) | (1 << (VisualFoxpro9Parser.MESSAGE - 129)) | (1 << (VisualFoxpro9Parser.ACTIVATE - 129)) | (1 << (VisualFoxpro9Parser.POPUP - 129)) | (1 << (VisualFoxpro9Parser.EXTENDED - 129)) | (1 << (VisualFoxpro9Parser.SHADOW - 129)) | (1 << (VisualFoxpro9Parser.MARGIN - 129)) | (1 << (VisualFoxpro9Parser.RELATIVE - 129)) | (1 << (VisualFoxpro9Parser.SELECTION - 129)) | (1 << (VisualFoxpro9Parser.DEACTIVATE - 129)) | (1 << (VisualFoxpro9Parser.SAME - 129)) | (1 << (VisualFoxpro9Parser.NOSHOW - 129)) | (1 << (VisualFoxpro9Parser.STEP - 129)) | (1 << (VisualFoxpro9Parser.THEN - 129)) | (1 << (VisualFoxpro9Parser.UNDEFINE - 129)) | (1 << (VisualFoxpro9Parser.IFDEF - 129)) | (1 << (VisualFoxpro9Parser.PUSH - 129)) | (1 << (VisualFoxpro9Parser.POP - 129)) | (1 << (VisualFoxpro9Parser.TIMEOUT - 129)) | (1 << (VisualFoxpro9Parser.ENDWITH - 129)) | (1 << (VisualFoxpro9Parser.TYPEAHEAD - 129)) | (1 << (VisualFoxpro9Parser.ALIAS - 129)) | (1 << (VisualFoxpro9Parser.ORDER - 129)) | (1 << (VisualFoxpro9Parser.SEEK - 129)) | (1 << (VisualFoxpro9Parser.WHERE - 129)))) != 0) or ((((_la - 193)) & ~0x3f) == 0 and ((1 << (_la - 193)) & ((1 << (VisualFoxpro9Parser.FILTER - 193)) | (1 << (VisualFoxpro9Parser.RENAME - 193)) | (1 << (VisualFoxpro9Parser.INCLUDE - 193)) | (1 << (VisualFoxpro9Parser.CLASSLIB - 193)) | (1 << (VisualFoxpro9Parser.BY - 193)) | (1 << (VisualFoxpro9Parser.UNIQUE - 193)) | (1 << (VisualFoxpro9Parser.INDEX - 193)) | (1 << (VisualFoxpro9Parser.TAG - 193)) | (1 << (VisualFoxpro9Parser.COMPACT - 193)) | (1 << (VisualFoxpro9Parser.ASCENDING - 193)) | (1 << (VisualFoxpro9Parser.DESCENDING - 193)) | (1 << (VisualFoxpro9Parser.CANDIDATE - 193)) | (1 << (VisualFoxpro9Parser.ADDITIVE - 193)) | (1 << (VisualFoxpro9Parser.DIMENSION - 193)) | (1 << (VisualFoxpro9Parser.NOT - 193)) | (1 << (VisualFoxpro9Parser.AND - 193)) | (1 << (VisualFoxpro9Parser.OR - 193)) | (1 << (VisualFoxpro9Parser.SCAN - 193)) | (1 << (VisualFoxpro9Parser.ENDSCAN - 193)) | (1 << (VisualFoxpro9Parser.NULL - 193)) | (1 << (VisualFoxpro9Parser.BOOLEANCHAR - 193)) | (1 << (VisualFoxpro9Parser.NODEFAULT - 193)) | (1 << (VisualFoxpro9Parser.DLLS - 193)) | (1 << (VisualFoxpro9Parser.MACROS - 193)) | (1 << (VisualFoxpro9Parser.NUMBER - 193)) | (1 << (VisualFoxpro9Parser.ZAP - 193)) | (1 << (VisualFoxpro9Parser.ROLLOVER - 193)) | (1 << (VisualFoxpro9Parser.DEFAULT - 193)) | (1 << (VisualFoxpro9Parser.SAVE - 193)) | (1 << (VisualFoxpro9Parser.NOSAVE - 193)) | (1 << (VisualFoxpro9Parser.DATABASE - 193)) | (1 << (VisualFoxpro9Parser.TABLES - 193)) | (1 << (VisualFoxpro9Parser.INDEXES - 193)) | (1 << (VisualFoxpro9Parser.PACK - 193)) | (1 << (VisualFoxpro9Parser.REINDEX - 193)) | (1 << (VisualFoxpro9Parser.PROGRAM - 193)) | (1 << (VisualFoxpro9Parser.SCOPE - 193)) | (1 << (VisualFoxpro9Parser.THROW - 193)) | (1 << (VisualFoxpro9Parser.EACH - 193)) | (1 << (VisualFoxpro9Parser.CAST - 193)) | (1 << (VisualFoxpro9Parser.RUN - 193)) | (1 << (VisualFoxpro9Parser.TRY - 193)) | (1 << (VisualFoxpro9Parser.CATCH - 193)) | (1 << (VisualFoxpro9Parser.FINALLY - 193)) | (1 << (VisualFoxpro9Parser.ENDTRY - 193)) | (1 << (VisualFoxpro9Parser.BROWSE - 193)) | (1 << (VisualFoxpro9Parser.INSERT - 193)) | (1 << (VisualFoxpro9Parser.VALUES - 193)) | (1 << (VisualFoxpro9Parser.MEMVAR - 193)) | (1 << (VisualFoxpro9Parser.TYPE - 193)) | (1 << (VisualFoxpro9Parser.SCATTER - 193)) | (1 << (VisualFoxpro9Parser.GATHER - 193)) | (1 << (VisualFoxpro9Parser.EXCEPT - 193)) | (1 << (VisualFoxpro9Parser.LIKE - 193)) | (1 << (VisualFoxpro9Parser.FIELDS - 193)) | (1 << (VisualFoxpro9Parser.ALTER - 193)) | (1 << (VisualFoxpro9Parser.COLUMN - 193)) | (1 << (VisualFoxpro9Parser.DROP - 193)))) != 0) or ((((_la - 262)) & ~0x3f) == 0 and ((1 << (_la - 262)) & ((1 << (VisualFoxpro9Parser.HELP - 262)) | (1 << (VisualFoxpro9Parser.SAY - 262)) | (1 << (VisualFoxpro9Parser.COLLECTION - 262)) | (1 << (VisualFoxpro9Parser.SYSTEM - 262)) | (1 << (VisualFoxpro9Parser.TALK - 262)) | (1 << (VisualFoxpro9Parser.PROGRAMCONTROL - 262)) | (1 << (VisualFoxpro9Parser.RELATION - 262)) | (1 << (VisualFoxpro9Parser.UPDATE - 262)) | (1 << (VisualFoxpro9Parser.FORCE - 262)) | (1 << (VisualFoxpro9Parser.JOIN - 262)) | (1 << (VisualFoxpro9Parser.TEXT - 262)) | (1 << (VisualFoxpro9Parser.ENDTEXT - 262)) | (1 << (VisualFoxpro9Parser.ID - 262)))) != 0):
-                        self.state = 1662
+                        self.state = 1676
                         self.args()
 
 
-                    self.state = 1665
+                    self.state = 1679
                     self.match(VisualFoxpro9Parser.RIGHTBRACKET)
                     pass
                 else:
                     raise NoViableAltException(self)
 
-                self.state = 1669
+                self.state = 1683
                 self._errHandler.sync(self)
-                la_ = self._interp.adaptivePredict(self._input,262,self._ctx)
+                la_ = self._interp.adaptivePredict(self._input,263,self._ctx)
                 if la_ == 1:
-                    self.state = 1668
+                    self.state = 1682
                     self.trailer()
 
 
@@ -11173,15 +11220,15 @@ class VisualFoxpro9Parser ( Parser ):
             elif token in [VisualFoxpro9Parser.PERIOD]:
                 localctx = VisualFoxpro9Parser.IdentTrailerContext(self, localctx)
                 self.enterOuterAlt(localctx, 2)
-                self.state = 1671
+                self.state = 1685
                 self.match(VisualFoxpro9Parser.PERIOD)
-                self.state = 1672
+                self.state = 1686
                 self.identifier()
-                self.state = 1674
+                self.state = 1688
                 self._errHandler.sync(self)
-                la_ = self._interp.adaptivePredict(self._input,263,self._ctx)
+                la_ = self._interp.adaptivePredict(self._input,264,self._ctx)
                 if la_ == 1:
-                    self.state = 1673
+                    self.state = 1687
                     self.trailer()
 
 
@@ -11232,29 +11279,29 @@ class VisualFoxpro9Parser ( Parser ):
         self.enterRule(localctx, 96, self.RULE_pathname)
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 1681
+            self.state = 1695
             self._errHandler.sync(self)
-            la_ = self._interp.adaptivePredict(self._input,265,self._ctx)
+            la_ = self._interp.adaptivePredict(self._input,266,self._ctx)
             if la_ == 1:
-                self.state = 1678
+                self.state = 1692
                 self.identifier()
-                self.state = 1679
+                self.state = 1693
                 self.match(VisualFoxpro9Parser.COLON)
 
 
-            self.state = 1684 
+            self.state = 1698 
             self._errHandler.sync(self)
             _alt = 1+1
             while _alt!=1 and _alt!=ATN.INVALID_ALT_NUMBER:
                 if _alt == 1+1:
-                    self.state = 1683
+                    self.state = 1697
                     self.pathElement()
 
                 else:
                     raise NoViableAltException(self)
-                self.state = 1686 
+                self.state = 1700 
                 self._errHandler.sync(self)
-                _alt = self._interp.adaptivePredict(self._input,266,self._ctx)
+                _alt = self._interp.adaptivePredict(self._input,267,self._ctx)
 
         except RecognitionException as re:
             localctx.exception = re
@@ -11300,132 +11347,132 @@ class VisualFoxpro9Parser ( Parser ):
         localctx = VisualFoxpro9Parser.PathElementContext(self, self._ctx, self.state)
         self.enterRule(localctx, 98, self.RULE_pathElement)
         try:
-            self.state = 1713
+            self.state = 1727
             self._errHandler.sync(self)
             token = self._input.LA(1)
             if token in [VisualFoxpro9Parser.ASSERT, VisualFoxpro9Parser.TO, VisualFoxpro9Parser.DO, VisualFoxpro9Parser.IN, VisualFoxpro9Parser.AS, VisualFoxpro9Parser.IF, VisualFoxpro9Parser.ELIF, VisualFoxpro9Parser.ELSE, VisualFoxpro9Parser.ENDIF, VisualFoxpro9Parser.ON, VisualFoxpro9Parser.OFF, VisualFoxpro9Parser.ERROR, VisualFoxpro9Parser.WITH, VisualFoxpro9Parser.STORE, VisualFoxpro9Parser.EXTERNAL, VisualFoxpro9Parser.ARRAY, VisualFoxpro9Parser.DELETE, VisualFoxpro9Parser.RECALL, VisualFoxpro9Parser.FILE, VisualFoxpro9Parser.SET, VisualFoxpro9Parser.RELEASE, VisualFoxpro9Parser.RECYCLE, VisualFoxpro9Parser.CREATE, VisualFoxpro9Parser.TABLE, VisualFoxpro9Parser.DBF, VisualFoxpro9Parser.NAME, VisualFoxpro9Parser.FREE, VisualFoxpro9Parser.SELECT, VisualFoxpro9Parser.USE, VisualFoxpro9Parser.READ, VisualFoxpro9Parser.EVENTS, VisualFoxpro9Parser.SHUTDOWN, VisualFoxpro9Parser.CLEAR, VisualFoxpro9Parser.PROCEDURE, VisualFoxpro9Parser.ENDPROC, VisualFoxpro9Parser.DEFINE, VisualFoxpro9Parser.CLASS, VisualFoxpro9Parser.ENDDEFINE, VisualFoxpro9Parser.LOCATE, VisualFoxpro9Parser.CONTINUE, VisualFoxpro9Parser.FOR, VisualFoxpro9Parser.ENDFOR, VisualFoxpro9Parser.WHILE, VisualFoxpro9Parser.NOOPTIMIZE, VisualFoxpro9Parser.STATUS, VisualFoxpro9Parser.BAR, VisualFoxpro9Parser.MEMOWIDTH, VisualFoxpro9Parser.CURSOR, VisualFoxpro9Parser.REFRESH, VisualFoxpro9Parser.BELL, VisualFoxpro9Parser.CENTURY, VisualFoxpro9Parser.COMPATIBLE, VisualFoxpro9Parser.DATE, VisualFoxpro9Parser.ADD, VisualFoxpro9Parser.OBJECT, VisualFoxpro9Parser.REPLACE, VisualFoxpro9Parser.LIBRARY, VisualFoxpro9Parser.SHARED, VisualFoxpro9Parser.WAIT, VisualFoxpro9Parser.WINDOW, VisualFoxpro9Parser.NOWAIT, VisualFoxpro9Parser.NOCLEAR, VisualFoxpro9Parser.NOTIFY, VisualFoxpro9Parser.ENDDO, VisualFoxpro9Parser.DECLARE, VisualFoxpro9Parser.ERASE, VisualFoxpro9Parser.SYSMENU, VisualFoxpro9Parser.CLOCK, VisualFoxpro9Parser.RETURN, VisualFoxpro9Parser.PARAMETER, VisualFoxpro9Parser.ALTERNATE, VisualFoxpro9Parser.EXACT, VisualFoxpro9Parser.ALL, VisualFoxpro9Parser.COUNT, VisualFoxpro9Parser.GOTO, VisualFoxpro9Parser.TOP, VisualFoxpro9Parser.BOTTOM, VisualFoxpro9Parser.RECORD, VisualFoxpro9Parser.CLOSE, VisualFoxpro9Parser.APPEND, VisualFoxpro9Parser.BLANK, VisualFoxpro9Parser.NOMENU, VisualFoxpro9Parser.CASE, VisualFoxpro9Parser.ENDCASE, VisualFoxpro9Parser.OTHERWISE, VisualFoxpro9Parser.FROM, VisualFoxpro9Parser.REPORT, VisualFoxpro9Parser.FORM, VisualFoxpro9Parser.NOEJECT, VisualFoxpro9Parser.PRINTER, VisualFoxpro9Parser.PROMPT, VisualFoxpro9Parser.NOPROMPT, VisualFoxpro9Parser.DB4, VisualFoxpro9Parser.FOXPLUS, VisualFoxpro9Parser.NOCONSOLE, VisualFoxpro9Parser.COPY, VisualFoxpro9Parser.STRUCTURE, VisualFoxpro9Parser.DELETED, VisualFoxpro9Parser.SUM, VisualFoxpro9Parser.DISTINCT, VisualFoxpro9Parser.INTO, VisualFoxpro9Parser.NEXT, VisualFoxpro9Parser.REST, VisualFoxpro9Parser.SKIPKW, VisualFoxpro9Parser.EXCLUSIVE, VisualFoxpro9Parser.NEAR, VisualFoxpro9Parser.MKDIR, VisualFoxpro9Parser.RMDIR, VisualFoxpro9Parser.KEY, VisualFoxpro9Parser.KEYBOARD, VisualFoxpro9Parser.LABEL, VisualFoxpro9Parser.PLAIN, VisualFoxpro9Parser.MENU, VisualFoxpro9Parser.AT, VisualFoxpro9Parser.LINE, VisualFoxpro9Parser.SCREEN, VisualFoxpro9Parser.NOMARGIN, VisualFoxpro9Parser.PAD, VisualFoxpro9Parser.OF, VisualFoxpro9Parser.COLOR, VisualFoxpro9Parser.SCHEME, VisualFoxpro9Parser.BEFORE, VisualFoxpro9Parser.AFTER, VisualFoxpro9Parser.NEGOTIATE, VisualFoxpro9Parser.FONT, VisualFoxpro9Parser.STYLE, VisualFoxpro9Parser.MARK, VisualFoxpro9Parser.MESSAGE, VisualFoxpro9Parser.ACTIVATE, VisualFoxpro9Parser.POPUP, VisualFoxpro9Parser.EXTENDED, VisualFoxpro9Parser.SHADOW, VisualFoxpro9Parser.MARGIN, VisualFoxpro9Parser.RELATIVE, VisualFoxpro9Parser.SELECTION, VisualFoxpro9Parser.DEACTIVATE, VisualFoxpro9Parser.SAME, VisualFoxpro9Parser.NOSHOW, VisualFoxpro9Parser.STEP, VisualFoxpro9Parser.THEN, VisualFoxpro9Parser.UNDEFINE, VisualFoxpro9Parser.IFDEF, VisualFoxpro9Parser.PUSH, VisualFoxpro9Parser.POP, VisualFoxpro9Parser.TIMEOUT, VisualFoxpro9Parser.ENDWITH, VisualFoxpro9Parser.TYPEAHEAD, VisualFoxpro9Parser.ALIAS, VisualFoxpro9Parser.ORDER, VisualFoxpro9Parser.SEEK, VisualFoxpro9Parser.WHERE, VisualFoxpro9Parser.FILTER, VisualFoxpro9Parser.RENAME, VisualFoxpro9Parser.INCLUDE, VisualFoxpro9Parser.CLASSLIB, VisualFoxpro9Parser.BY, VisualFoxpro9Parser.UNIQUE, VisualFoxpro9Parser.INDEX, VisualFoxpro9Parser.TAG, VisualFoxpro9Parser.COMPACT, VisualFoxpro9Parser.ASCENDING, VisualFoxpro9Parser.DESCENDING, VisualFoxpro9Parser.CANDIDATE, VisualFoxpro9Parser.ADDITIVE, VisualFoxpro9Parser.DIMENSION, VisualFoxpro9Parser.NOT, VisualFoxpro9Parser.AND, VisualFoxpro9Parser.OR, VisualFoxpro9Parser.SCAN, VisualFoxpro9Parser.ENDSCAN, VisualFoxpro9Parser.NULL, VisualFoxpro9Parser.BOOLEANCHAR, VisualFoxpro9Parser.NODEFAULT, VisualFoxpro9Parser.DLLS, VisualFoxpro9Parser.MACROS, VisualFoxpro9Parser.NUMBER, VisualFoxpro9Parser.ZAP, VisualFoxpro9Parser.ROLLOVER, VisualFoxpro9Parser.DEFAULT, VisualFoxpro9Parser.SAVE, VisualFoxpro9Parser.NOSAVE, VisualFoxpro9Parser.DATABASE, VisualFoxpro9Parser.TABLES, VisualFoxpro9Parser.INDEXES, VisualFoxpro9Parser.PACK, VisualFoxpro9Parser.REINDEX, VisualFoxpro9Parser.PROGRAM, VisualFoxpro9Parser.SCOPE, VisualFoxpro9Parser.THROW, VisualFoxpro9Parser.EACH, VisualFoxpro9Parser.CAST, VisualFoxpro9Parser.RUN, VisualFoxpro9Parser.TRY, VisualFoxpro9Parser.CATCH, VisualFoxpro9Parser.FINALLY, VisualFoxpro9Parser.ENDTRY, VisualFoxpro9Parser.BROWSE, VisualFoxpro9Parser.INSERT, VisualFoxpro9Parser.VALUES, VisualFoxpro9Parser.MEMVAR, VisualFoxpro9Parser.TYPE, VisualFoxpro9Parser.SCATTER, VisualFoxpro9Parser.GATHER, VisualFoxpro9Parser.EXCEPT, VisualFoxpro9Parser.LIKE, VisualFoxpro9Parser.FIELDS, VisualFoxpro9Parser.ALTER, VisualFoxpro9Parser.COLUMN, VisualFoxpro9Parser.DROP, VisualFoxpro9Parser.HELP, VisualFoxpro9Parser.SAY, VisualFoxpro9Parser.COLLECTION, VisualFoxpro9Parser.SYSTEM, VisualFoxpro9Parser.TALK, VisualFoxpro9Parser.PROGRAMCONTROL, VisualFoxpro9Parser.RELATION, VisualFoxpro9Parser.UPDATE, VisualFoxpro9Parser.FORCE, VisualFoxpro9Parser.JOIN, VisualFoxpro9Parser.TEXT, VisualFoxpro9Parser.ENDTEXT, VisualFoxpro9Parser.ID]:
                 self.enterOuterAlt(localctx, 1)
-                self.state = 1688
+                self.state = 1702
                 self.identifier()
                 pass
             elif token in [VisualFoxpro9Parser.NUMBER_LITERAL]:
                 self.enterOuterAlt(localctx, 2)
-                self.state = 1689
+                self.state = 1703
                 self.match(VisualFoxpro9Parser.NUMBER_LITERAL)
                 pass
             elif token in [VisualFoxpro9Parser.BACKSLASH]:
                 self.enterOuterAlt(localctx, 3)
-                self.state = 1690
+                self.state = 1704
                 self.match(VisualFoxpro9Parser.BACKSLASH)
                 pass
             elif token in [VisualFoxpro9Parser.SEMICOLON]:
                 self.enterOuterAlt(localctx, 4)
-                self.state = 1691
+                self.state = 1705
                 self.match(VisualFoxpro9Parser.SEMICOLON)
                 pass
             elif token in [VisualFoxpro9Parser.AMPERSAND]:
                 self.enterOuterAlt(localctx, 5)
-                self.state = 1692
+                self.state = 1706
                 self.match(VisualFoxpro9Parser.AMPERSAND)
                 pass
             elif token in [VisualFoxpro9Parser.COMMERCIALAT]:
                 self.enterOuterAlt(localctx, 6)
-                self.state = 1693
+                self.state = 1707
                 self.match(VisualFoxpro9Parser.COMMERCIALAT)
                 pass
             elif token in [VisualFoxpro9Parser.PLUS_SIGN]:
                 self.enterOuterAlt(localctx, 7)
-                self.state = 1694
+                self.state = 1708
                 self.match(VisualFoxpro9Parser.PLUS_SIGN)
                 pass
             elif token in [VisualFoxpro9Parser.MINUS_SIGN]:
                 self.enterOuterAlt(localctx, 8)
-                self.state = 1695
+                self.state = 1709
                 self.match(VisualFoxpro9Parser.MINUS_SIGN)
                 pass
             elif token in [VisualFoxpro9Parser.PERIOD]:
                 self.enterOuterAlt(localctx, 9)
-                self.state = 1696
+                self.state = 1710
                 self.match(VisualFoxpro9Parser.PERIOD)
                 pass
             elif token in [VisualFoxpro9Parser.LEFTBRACKET]:
                 self.enterOuterAlt(localctx, 10)
-                self.state = 1697
+                self.state = 1711
                 self.match(VisualFoxpro9Parser.LEFTBRACKET)
                 pass
             elif token in [VisualFoxpro9Parser.RIGHTBRACKET]:
                 self.enterOuterAlt(localctx, 11)
-                self.state = 1698
+                self.state = 1712
                 self.match(VisualFoxpro9Parser.RIGHTBRACKET)
                 pass
             elif token in [VisualFoxpro9Parser.LEFTBRACE]:
                 self.enterOuterAlt(localctx, 12)
-                self.state = 1699
+                self.state = 1713
                 self.match(VisualFoxpro9Parser.LEFTBRACE)
                 pass
             elif token in [VisualFoxpro9Parser.RIGHTBRACE]:
                 self.enterOuterAlt(localctx, 13)
-                self.state = 1700
+                self.state = 1714
                 self.match(VisualFoxpro9Parser.RIGHTBRACE)
                 pass
             elif token in [VisualFoxpro9Parser.LEFTPAREN]:
                 self.enterOuterAlt(localctx, 14)
-                self.state = 1701
+                self.state = 1715
                 self.match(VisualFoxpro9Parser.LEFTPAREN)
                 pass
             elif token in [VisualFoxpro9Parser.RIGHTPAREN]:
                 self.enterOuterAlt(localctx, 15)
-                self.state = 1702
+                self.state = 1716
                 self.match(VisualFoxpro9Parser.RIGHTPAREN)
                 pass
             elif token in [VisualFoxpro9Parser.EXCLAMATION]:
                 self.enterOuterAlt(localctx, 16)
-                self.state = 1703
+                self.state = 1717
                 self.match(VisualFoxpro9Parser.EXCLAMATION)
                 pass
             elif token in [VisualFoxpro9Parser.HASH]:
                 self.enterOuterAlt(localctx, 17)
-                self.state = 1704
+                self.state = 1718
                 self.match(VisualFoxpro9Parser.HASH)
                 pass
             elif token in [VisualFoxpro9Parser.DOUBLEEQUALS]:
                 self.enterOuterAlt(localctx, 18)
-                self.state = 1705
+                self.state = 1719
                 self.match(VisualFoxpro9Parser.DOUBLEEQUALS)
                 pass
             elif token in [VisualFoxpro9Parser.NOTEQUALS]:
                 self.enterOuterAlt(localctx, 19)
-                self.state = 1706
+                self.state = 1720
                 self.match(VisualFoxpro9Parser.NOTEQUALS)
                 pass
             elif token in [VisualFoxpro9Parser.MODULO]:
                 self.enterOuterAlt(localctx, 20)
-                self.state = 1707
+                self.state = 1721
                 self.match(VisualFoxpro9Parser.MODULO)
                 pass
             elif token in [VisualFoxpro9Parser.EQUALS]:
                 self.enterOuterAlt(localctx, 21)
-                self.state = 1708
+                self.state = 1722
                 self.match(VisualFoxpro9Parser.EQUALS)
                 pass
             elif token in [VisualFoxpro9Parser.CARAT]:
                 self.enterOuterAlt(localctx, 22)
-                self.state = 1709
+                self.state = 1723
                 self.match(VisualFoxpro9Parser.CARAT)
                 pass
             elif token in [VisualFoxpro9Parser.COMMA]:
                 self.enterOuterAlt(localctx, 23)
-                self.state = 1710
+                self.state = 1724
                 self.match(VisualFoxpro9Parser.COMMA)
                 pass
             elif token in [VisualFoxpro9Parser.DOLLAR]:
                 self.enterOuterAlt(localctx, 24)
-                self.state = 1711
+                self.state = 1725
                 self.match(VisualFoxpro9Parser.DOLLAR)
                 pass
             elif token in [VisualFoxpro9Parser.T__0]:
                 self.enterOuterAlt(localctx, 25)
-                self.state = 1712
+                self.state = 1726
                 self.match(VisualFoxpro9Parser.T__0)
                 pass
             else:
@@ -11470,18 +11517,18 @@ class VisualFoxpro9Parser ( Parser ):
         localctx = VisualFoxpro9Parser.SpecialExprContext(self, self._ctx, self.state)
         self.enterRule(localctx, 100, self.RULE_specialExpr)
         try:
-            self.state = 1717
+            self.state = 1731
             self._errHandler.sync(self)
-            la_ = self._interp.adaptivePredict(self._input,268,self._ctx)
+            la_ = self._interp.adaptivePredict(self._input,269,self._ctx)
             if la_ == 1:
                 self.enterOuterAlt(localctx, 1)
-                self.state = 1715
+                self.state = 1729
                 self.expr(0)
                 pass
 
             elif la_ == 2:
                 self.enterOuterAlt(localctx, 2)
-                self.state = 1716
+                self.state = 1730
                 self.pathname()
                 pass
 
@@ -11608,44 +11655,44 @@ class VisualFoxpro9Parser ( Parser ):
         self.enterRule(localctx, 102, self.RULE_constant)
         self._la = 0 # Token type
         try:
-            self.state = 1791
+            self.state = 1805
             self._errHandler.sync(self)
             token = self._input.LA(1)
             if token in [VisualFoxpro9Parser.NUMBER_LITERAL, VisualFoxpro9Parser.DOLLAR]:
                 localctx = VisualFoxpro9Parser.NumberOrCurrencyContext(self, localctx)
                 self.enterOuterAlt(localctx, 1)
-                self.state = 1720
+                self.state = 1734
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
                 if _la==VisualFoxpro9Parser.DOLLAR:
-                    self.state = 1719
+                    self.state = 1733
                     self.match(VisualFoxpro9Parser.DOLLAR)
 
 
-                self.state = 1722
+                self.state = 1736
                 self.match(VisualFoxpro9Parser.NUMBER_LITERAL)
                 pass
             elif token in [VisualFoxpro9Parser.PERIOD, VisualFoxpro9Parser.NULL]:
                 localctx = VisualFoxpro9Parser.BoolOrNullContext(self, localctx)
                 self.enterOuterAlt(localctx, 2)
-                self.state = 1727
+                self.state = 1741
                 self._errHandler.sync(self)
                 token = self._input.LA(1)
                 if token in [VisualFoxpro9Parser.PERIOD]:
-                    self.state = 1723
+                    self.state = 1737
                     self.match(VisualFoxpro9Parser.PERIOD)
-                    self.state = 1724
+                    self.state = 1738
                     _la = self._input.LA(1)
                     if not(_la==VisualFoxpro9Parser.NULL or _la==VisualFoxpro9Parser.BOOLEANCHAR):
                         self._errHandler.recoverInline(self)
                     else:
                         self._errHandler.reportMatch(self)
                         self.consume()
-                    self.state = 1725
+                    self.state = 1739
                     self.match(VisualFoxpro9Parser.PERIOD)
                     pass
                 elif token in [VisualFoxpro9Parser.NULL]:
-                    self.state = 1726
+                    self.state = 1740
                     self.match(VisualFoxpro9Parser.NULL)
                     pass
                 else:
@@ -11655,89 +11702,89 @@ class VisualFoxpro9Parser ( Parser ):
             elif token in [VisualFoxpro9Parser.LEFTBRACE]:
                 localctx = VisualFoxpro9Parser.DateContext(self, localctx)
                 self.enterOuterAlt(localctx, 3)
-                self.state = 1729
+                self.state = 1743
                 self.match(VisualFoxpro9Parser.LEFTBRACE)
-                self.state = 1761
+                self.state = 1775
                 self._errHandler.sync(self)
                 token = self._input.LA(1)
                 if token in [VisualFoxpro9Parser.FORWARDSLASH]:
-                    self.state = 1730
+                    self.state = 1744
                     self.match(VisualFoxpro9Parser.FORWARDSLASH)
-                    self.state = 1731
+                    self.state = 1745
                     self.match(VisualFoxpro9Parser.FORWARDSLASH)
                     pass
                 elif token in [VisualFoxpro9Parser.COLON]:
-                    self.state = 1732
+                    self.state = 1746
                     self.match(VisualFoxpro9Parser.COLON)
                     pass
                 elif token in [VisualFoxpro9Parser.CARAT]:
-                    self.state = 1733
+                    self.state = 1747
                     self.match(VisualFoxpro9Parser.CARAT)
-                    self.state = 1744
+                    self.state = 1758
                     self._errHandler.sync(self)
-                    la_ = self._interp.adaptivePredict(self._input,271,self._ctx)
+                    la_ = self._interp.adaptivePredict(self._input,272,self._ctx)
                     if la_ == 1:
-                        self.state = 1734
+                        self.state = 1748
                         self.match(VisualFoxpro9Parser.NUMBER_LITERAL)
-                        self.state = 1735
+                        self.state = 1749
                         self.match(VisualFoxpro9Parser.MINUS_SIGN)
-                        self.state = 1736
+                        self.state = 1750
                         self.match(VisualFoxpro9Parser.NUMBER_LITERAL)
-                        self.state = 1737
+                        self.state = 1751
                         self.match(VisualFoxpro9Parser.MINUS_SIGN)
-                        self.state = 1738
+                        self.state = 1752
                         self.match(VisualFoxpro9Parser.NUMBER_LITERAL)
                         pass
 
                     elif la_ == 2:
-                        self.state = 1739
+                        self.state = 1753
                         self.match(VisualFoxpro9Parser.NUMBER_LITERAL)
-                        self.state = 1740
+                        self.state = 1754
                         self.match(VisualFoxpro9Parser.FORWARDSLASH)
-                        self.state = 1741
+                        self.state = 1755
                         self.match(VisualFoxpro9Parser.NUMBER_LITERAL)
-                        self.state = 1742
+                        self.state = 1756
                         self.match(VisualFoxpro9Parser.FORWARDSLASH)
-                        self.state = 1743
+                        self.state = 1757
                         self.match(VisualFoxpro9Parser.NUMBER_LITERAL)
                         pass
 
 
-                    self.state = 1759
+                    self.state = 1773
                     self._errHandler.sync(self)
                     _la = self._input.LA(1)
                     if _la==VisualFoxpro9Parser.NUMBER_LITERAL or _la==VisualFoxpro9Parser.COMMA:
-                        self.state = 1747
+                        self.state = 1761
                         self._errHandler.sync(self)
                         _la = self._input.LA(1)
                         if _la==VisualFoxpro9Parser.COMMA:
-                            self.state = 1746
+                            self.state = 1760
                             self.match(VisualFoxpro9Parser.COMMA)
 
 
-                        self.state = 1749
+                        self.state = 1763
                         self.match(VisualFoxpro9Parser.NUMBER_LITERAL)
-                        self.state = 1756
+                        self.state = 1770
                         self._errHandler.sync(self)
                         _la = self._input.LA(1)
                         if _la==VisualFoxpro9Parser.COLON:
-                            self.state = 1750
+                            self.state = 1764
                             self.match(VisualFoxpro9Parser.COLON)
-                            self.state = 1751
+                            self.state = 1765
                             self.match(VisualFoxpro9Parser.NUMBER_LITERAL)
-                            self.state = 1754
+                            self.state = 1768
                             self._errHandler.sync(self)
                             _la = self._input.LA(1)
                             if _la==VisualFoxpro9Parser.COLON:
-                                self.state = 1752
+                                self.state = 1766
                                 self.match(VisualFoxpro9Parser.COLON)
-                                self.state = 1753
+                                self.state = 1767
                                 self.match(VisualFoxpro9Parser.NUMBER_LITERAL)
 
 
 
 
-                        self.state = 1758
+                        self.state = 1772
                         self.identifier()
 
 
@@ -11746,76 +11793,76 @@ class VisualFoxpro9Parser ( Parser ):
                     pass
                 else:
                     pass
-                self.state = 1763
+                self.state = 1777
                 self.match(VisualFoxpro9Parser.RIGHTBRACE)
                 pass
             elif token in [VisualFoxpro9Parser.LEFTBRACKET, VisualFoxpro9Parser.DOUBLEQUOTE, VisualFoxpro9Parser.SINGLEQUOTE]:
                 localctx = VisualFoxpro9Parser.StringContext(self, localctx)
                 self.enterOuterAlt(localctx, 4)
-                self.state = 1788
+                self.state = 1802
                 self._errHandler.sync(self)
                 token = self._input.LA(1)
                 if token in [VisualFoxpro9Parser.SINGLEQUOTE]:
-                    self.state = 1764
+                    self.state = 1778
                     self.match(VisualFoxpro9Parser.SINGLEQUOTE)
-                    self.state = 1768
+                    self.state = 1782
                     self._errHandler.sync(self)
                     _la = self._input.LA(1)
                     while (((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << VisualFoxpro9Parser.T__0) | (1 << VisualFoxpro9Parser.NUMBER_LITERAL) | (1 << VisualFoxpro9Parser.BLOB_LITERAL) | (1 << VisualFoxpro9Parser.SEMICOLON) | (1 << VisualFoxpro9Parser.AMPERSAND) | (1 << VisualFoxpro9Parser.COMMERCIALAT) | (1 << VisualFoxpro9Parser.ASTERISK) | (1 << VisualFoxpro9Parser.PLUS_SIGN) | (1 << VisualFoxpro9Parser.MINUS_SIGN) | (1 << VisualFoxpro9Parser.FORWARDSLASH) | (1 << VisualFoxpro9Parser.PERIOD) | (1 << VisualFoxpro9Parser.LEFTBRACKET) | (1 << VisualFoxpro9Parser.RIGHTBRACKET) | (1 << VisualFoxpro9Parser.LEFTBRACE) | (1 << VisualFoxpro9Parser.RIGHTBRACE) | (1 << VisualFoxpro9Parser.LEFTPAREN) | (1 << VisualFoxpro9Parser.RIGHTPAREN) | (1 << VisualFoxpro9Parser.BACKSLASH) | (1 << VisualFoxpro9Parser.LESSTHAN) | (1 << VisualFoxpro9Parser.GREATERTHAN) | (1 << VisualFoxpro9Parser.EXCLAMATION) | (1 << VisualFoxpro9Parser.HASH) | (1 << VisualFoxpro9Parser.DOUBLEEQUALS) | (1 << VisualFoxpro9Parser.NOTEQUALS) | (1 << VisualFoxpro9Parser.GTEQ) | (1 << VisualFoxpro9Parser.LTEQ) | (1 << VisualFoxpro9Parser.MODULO) | (1 << VisualFoxpro9Parser.EQUALS) | (1 << VisualFoxpro9Parser.CARAT) | (1 << VisualFoxpro9Parser.COMMA) | (1 << VisualFoxpro9Parser.DOLLAR) | (1 << VisualFoxpro9Parser.COLON) | (1 << VisualFoxpro9Parser.QUESTION) | (1 << VisualFoxpro9Parser.DOUBLEQUOTE) | (1 << VisualFoxpro9Parser.COMMENT) | (1 << VisualFoxpro9Parser.LINECONT) | (1 << VisualFoxpro9Parser.NOTE) | (1 << VisualFoxpro9Parser.ASSERT) | (1 << VisualFoxpro9Parser.ASSERTS) | (1 << VisualFoxpro9Parser.TO) | (1 << VisualFoxpro9Parser.DO) | (1 << VisualFoxpro9Parser.IN) | (1 << VisualFoxpro9Parser.AS) | (1 << VisualFoxpro9Parser.IF) | (1 << VisualFoxpro9Parser.ELIF) | (1 << VisualFoxpro9Parser.ELSE) | (1 << VisualFoxpro9Parser.ENDIF) | (1 << VisualFoxpro9Parser.ON) | (1 << VisualFoxpro9Parser.OFF) | (1 << VisualFoxpro9Parser.ERROR) | (1 << VisualFoxpro9Parser.WITH) | (1 << VisualFoxpro9Parser.STORE) | (1 << VisualFoxpro9Parser.EXTERNAL) | (1 << VisualFoxpro9Parser.ARRAY) | (1 << VisualFoxpro9Parser.DELETE) | (1 << VisualFoxpro9Parser.RECALL) | (1 << VisualFoxpro9Parser.FILE) | (1 << VisualFoxpro9Parser.SET) | (1 << VisualFoxpro9Parser.RELEASE) | (1 << VisualFoxpro9Parser.RECYCLE) | (1 << VisualFoxpro9Parser.CREATE) | (1 << VisualFoxpro9Parser.TABLE))) != 0) or ((((_la - 64)) & ~0x3f) == 0 and ((1 << (_la - 64)) & ((1 << (VisualFoxpro9Parser.TABLEPROMPT - 64)) | (1 << (VisualFoxpro9Parser.DBF - 64)) | (1 << (VisualFoxpro9Parser.NAME - 64)) | (1 << (VisualFoxpro9Parser.FREE - 64)) | (1 << (VisualFoxpro9Parser.SELECT - 64)) | (1 << (VisualFoxpro9Parser.USE - 64)) | (1 << (VisualFoxpro9Parser.READ - 64)) | (1 << (VisualFoxpro9Parser.EVENTS - 64)) | (1 << (VisualFoxpro9Parser.SHUTDOWN - 64)) | (1 << (VisualFoxpro9Parser.CLEAR - 64)) | (1 << (VisualFoxpro9Parser.PROCEDURE - 64)) | (1 << (VisualFoxpro9Parser.ENDPROC - 64)) | (1 << (VisualFoxpro9Parser.DEFINE - 64)) | (1 << (VisualFoxpro9Parser.CLASS - 64)) | (1 << (VisualFoxpro9Parser.ENDDEFINE - 64)) | (1 << (VisualFoxpro9Parser.LOCATE - 64)) | (1 << (VisualFoxpro9Parser.CONTINUE - 64)) | (1 << (VisualFoxpro9Parser.FOR - 64)) | (1 << (VisualFoxpro9Parser.ENDFOR - 64)) | (1 << (VisualFoxpro9Parser.WHILE - 64)) | (1 << (VisualFoxpro9Parser.NOOPTIMIZE - 64)) | (1 << (VisualFoxpro9Parser.SAFETY - 64)) | (1 << (VisualFoxpro9Parser.STATUS - 64)) | (1 << (VisualFoxpro9Parser.BAR - 64)) | (1 << (VisualFoxpro9Parser.MEMOWIDTH - 64)) | (1 << (VisualFoxpro9Parser.CURSOR - 64)) | (1 << (VisualFoxpro9Parser.REFRESH - 64)) | (1 << (VisualFoxpro9Parser.BELL - 64)) | (1 << (VisualFoxpro9Parser.CENTURY - 64)) | (1 << (VisualFoxpro9Parser.COMPATIBLE - 64)) | (1 << (VisualFoxpro9Parser.DATE - 64)) | (1 << (VisualFoxpro9Parser.ADD - 64)) | (1 << (VisualFoxpro9Parser.OBJECT - 64)) | (1 << (VisualFoxpro9Parser.REPLACE - 64)) | (1 << (VisualFoxpro9Parser.LIBRARY - 64)) | (1 << (VisualFoxpro9Parser.SHARED - 64)) | (1 << (VisualFoxpro9Parser.WAIT - 64)) | (1 << (VisualFoxpro9Parser.WINDOW - 64)) | (1 << (VisualFoxpro9Parser.NOWAIT - 64)) | (1 << (VisualFoxpro9Parser.NOCLEAR - 64)) | (1 << (VisualFoxpro9Parser.NOTIFY - 64)) | (1 << (VisualFoxpro9Parser.ENDDO - 64)) | (1 << (VisualFoxpro9Parser.DECLARE - 64)) | (1 << (VisualFoxpro9Parser.ERASE - 64)) | (1 << (VisualFoxpro9Parser.SYSMENU - 64)) | (1 << (VisualFoxpro9Parser.CLOCK - 64)) | (1 << (VisualFoxpro9Parser.RETURN - 64)) | (1 << (VisualFoxpro9Parser.PARAMETER - 64)) | (1 << (VisualFoxpro9Parser.ALTERNATE - 64)) | (1 << (VisualFoxpro9Parser.EXACT - 64)) | (1 << (VisualFoxpro9Parser.ALL - 64)) | (1 << (VisualFoxpro9Parser.COUNT - 64)) | (1 << (VisualFoxpro9Parser.GOTO - 64)) | (1 << (VisualFoxpro9Parser.TOP - 64)) | (1 << (VisualFoxpro9Parser.BOTTOM - 64)) | (1 << (VisualFoxpro9Parser.RECORD - 64)) | (1 << (VisualFoxpro9Parser.CLOSE - 64)) | (1 << (VisualFoxpro9Parser.APPEND - 64)) | (1 << (VisualFoxpro9Parser.BLANK - 64)) | (1 << (VisualFoxpro9Parser.NOMENU - 64)) | (1 << (VisualFoxpro9Parser.CASE - 64)) | (1 << (VisualFoxpro9Parser.ENDCASE - 64)) | (1 << (VisualFoxpro9Parser.OTHERWISE - 64)) | (1 << (VisualFoxpro9Parser.FROM - 64)))) != 0) or ((((_la - 128)) & ~0x3f) == 0 and ((1 << (_la - 128)) & ((1 << (VisualFoxpro9Parser.REPORT - 128)) | (1 << (VisualFoxpro9Parser.FORM - 128)) | (1 << (VisualFoxpro9Parser.NOEJECT - 128)) | (1 << (VisualFoxpro9Parser.PRINTER - 128)) | (1 << (VisualFoxpro9Parser.PROMPT - 128)) | (1 << (VisualFoxpro9Parser.NOPROMPT - 128)) | (1 << (VisualFoxpro9Parser.DB4 - 128)) | (1 << (VisualFoxpro9Parser.FOXPLUS - 128)) | (1 << (VisualFoxpro9Parser.NOCONSOLE - 128)) | (1 << (VisualFoxpro9Parser.COPY - 128)) | (1 << (VisualFoxpro9Parser.STRUCTURE - 128)) | (1 << (VisualFoxpro9Parser.DELETED - 128)) | (1 << (VisualFoxpro9Parser.SUM - 128)) | (1 << (VisualFoxpro9Parser.DISTINCT - 128)) | (1 << (VisualFoxpro9Parser.INTO - 128)) | (1 << (VisualFoxpro9Parser.NEXT - 128)) | (1 << (VisualFoxpro9Parser.REST - 128)) | (1 << (VisualFoxpro9Parser.SKIPKW - 128)) | (1 << (VisualFoxpro9Parser.EXCLUSIVE - 128)) | (1 << (VisualFoxpro9Parser.NEAR - 128)) | (1 << (VisualFoxpro9Parser.MKDIR - 128)) | (1 << (VisualFoxpro9Parser.RMDIR - 128)) | (1 << (VisualFoxpro9Parser.KEY - 128)) | (1 << (VisualFoxpro9Parser.KEYBOARD - 128)) | (1 << (VisualFoxpro9Parser.LABEL - 128)) | (1 << (VisualFoxpro9Parser.PLAIN - 128)) | (1 << (VisualFoxpro9Parser.MENU - 128)) | (1 << (VisualFoxpro9Parser.AT - 128)) | (1 << (VisualFoxpro9Parser.LINE - 128)) | (1 << (VisualFoxpro9Parser.SCREEN - 128)) | (1 << (VisualFoxpro9Parser.NOMARGIN - 128)) | (1 << (VisualFoxpro9Parser.PAD - 128)) | (1 << (VisualFoxpro9Parser.OF - 128)) | (1 << (VisualFoxpro9Parser.COLOR - 128)) | (1 << (VisualFoxpro9Parser.SCHEME - 128)) | (1 << (VisualFoxpro9Parser.BEFORE - 128)) | (1 << (VisualFoxpro9Parser.AFTER - 128)) | (1 << (VisualFoxpro9Parser.NEGOTIATE - 128)) | (1 << (VisualFoxpro9Parser.FONT - 128)) | (1 << (VisualFoxpro9Parser.STYLE - 128)) | (1 << (VisualFoxpro9Parser.MARK - 128)) | (1 << (VisualFoxpro9Parser.MESSAGE - 128)) | (1 << (VisualFoxpro9Parser.ACTIVATE - 128)) | (1 << (VisualFoxpro9Parser.POPUP - 128)) | (1 << (VisualFoxpro9Parser.EXTENDED - 128)) | (1 << (VisualFoxpro9Parser.SHADOW - 128)) | (1 << (VisualFoxpro9Parser.MARGIN - 128)) | (1 << (VisualFoxpro9Parser.RELATIVE - 128)) | (1 << (VisualFoxpro9Parser.SELECTION - 128)) | (1 << (VisualFoxpro9Parser.DEACTIVATE - 128)) | (1 << (VisualFoxpro9Parser.SAME - 128)) | (1 << (VisualFoxpro9Parser.NOSHOW - 128)) | (1 << (VisualFoxpro9Parser.STEP - 128)) | (1 << (VisualFoxpro9Parser.THEN - 128)) | (1 << (VisualFoxpro9Parser.UNDEFINE - 128)) | (1 << (VisualFoxpro9Parser.IFDEF - 128)) | (1 << (VisualFoxpro9Parser.PUSH - 128)) | (1 << (VisualFoxpro9Parser.POP - 128)) | (1 << (VisualFoxpro9Parser.TIMEOUT - 128)) | (1 << (VisualFoxpro9Parser.ENDWITH - 128)) | (1 << (VisualFoxpro9Parser.TYPEAHEAD - 128)) | (1 << (VisualFoxpro9Parser.ALIAS - 128)) | (1 << (VisualFoxpro9Parser.ORDER - 128)) | (1 << (VisualFoxpro9Parser.SEEK - 128)))) != 0) or ((((_la - 192)) & ~0x3f) == 0 and ((1 << (_la - 192)) & ((1 << (VisualFoxpro9Parser.WHERE - 192)) | (1 << (VisualFoxpro9Parser.FILTER - 192)) | (1 << (VisualFoxpro9Parser.RENAME - 192)) | (1 << (VisualFoxpro9Parser.INCLUDE - 192)) | (1 << (VisualFoxpro9Parser.CLASSLIB - 192)) | (1 << (VisualFoxpro9Parser.BY - 192)) | (1 << (VisualFoxpro9Parser.UNIQUE - 192)) | (1 << (VisualFoxpro9Parser.INDEX - 192)) | (1 << (VisualFoxpro9Parser.TAG - 192)) | (1 << (VisualFoxpro9Parser.COMPACT - 192)) | (1 << (VisualFoxpro9Parser.ASCENDING - 192)) | (1 << (VisualFoxpro9Parser.DESCENDING - 192)) | (1 << (VisualFoxpro9Parser.CANDIDATE - 192)) | (1 << (VisualFoxpro9Parser.ADDITIVE - 192)) | (1 << (VisualFoxpro9Parser.DIMENSION - 192)) | (1 << (VisualFoxpro9Parser.NOT - 192)) | (1 << (VisualFoxpro9Parser.AND - 192)) | (1 << (VisualFoxpro9Parser.OTHERAND - 192)) | (1 << (VisualFoxpro9Parser.OR - 192)) | (1 << (VisualFoxpro9Parser.OTHEROR - 192)) | (1 << (VisualFoxpro9Parser.SCAN - 192)) | (1 << (VisualFoxpro9Parser.ENDSCAN - 192)) | (1 << (VisualFoxpro9Parser.NULL - 192)) | (1 << (VisualFoxpro9Parser.BOOLEANCHAR - 192)) | (1 << (VisualFoxpro9Parser.NODEFAULT - 192)) | (1 << (VisualFoxpro9Parser.DLLS - 192)) | (1 << (VisualFoxpro9Parser.MACROS - 192)) | (1 << (VisualFoxpro9Parser.NUMBER - 192)) | (1 << (VisualFoxpro9Parser.ZAP - 192)) | (1 << (VisualFoxpro9Parser.ROLLOVER - 192)) | (1 << (VisualFoxpro9Parser.DEFAULT - 192)) | (1 << (VisualFoxpro9Parser.SAVE - 192)) | (1 << (VisualFoxpro9Parser.NOSAVE - 192)) | (1 << (VisualFoxpro9Parser.DATABASE - 192)) | (1 << (VisualFoxpro9Parser.TABLES - 192)) | (1 << (VisualFoxpro9Parser.INDEXES - 192)) | (1 << (VisualFoxpro9Parser.PACK - 192)) | (1 << (VisualFoxpro9Parser.REINDEX - 192)) | (1 << (VisualFoxpro9Parser.MEMO - 192)) | (1 << (VisualFoxpro9Parser.PROGRAM - 192)) | (1 << (VisualFoxpro9Parser.SCOPE - 192)) | (1 << (VisualFoxpro9Parser.THROW - 192)) | (1 << (VisualFoxpro9Parser.EACH - 192)) | (1 << (VisualFoxpro9Parser.CAST - 192)) | (1 << (VisualFoxpro9Parser.RUN - 192)) | (1 << (VisualFoxpro9Parser.MULTILOCKS - 192)) | (1 << (VisualFoxpro9Parser.TRY - 192)) | (1 << (VisualFoxpro9Parser.CATCH - 192)) | (1 << (VisualFoxpro9Parser.FINALLY - 192)) | (1 << (VisualFoxpro9Parser.ENDTRY - 192)) | (1 << (VisualFoxpro9Parser.BROWSE - 192)) | (1 << (VisualFoxpro9Parser.INSERT - 192)) | (1 << (VisualFoxpro9Parser.VALUES - 192)) | (1 << (VisualFoxpro9Parser.MEMVAR - 192)) | (1 << (VisualFoxpro9Parser.TYPE - 192)) | (1 << (VisualFoxpro9Parser.CHDIR - 192)) | (1 << (VisualFoxpro9Parser.SCATTER - 192)) | (1 << (VisualFoxpro9Parser.GATHER - 192)) | (1 << (VisualFoxpro9Parser.EXCEPT - 192)) | (1 << (VisualFoxpro9Parser.LIKE - 192)) | (1 << (VisualFoxpro9Parser.FIELDS - 192)) | (1 << (VisualFoxpro9Parser.ALTER - 192)) | (1 << (VisualFoxpro9Parser.COLUMN - 192)) | (1 << (VisualFoxpro9Parser.DROP - 192)))) != 0) or ((((_la - 256)) & ~0x3f) == 0 and ((1 << (_la - 256)) & ((1 << (VisualFoxpro9Parser.DEBUG - 256)) | (1 << (VisualFoxpro9Parser.GETS - 256)) | (1 << (VisualFoxpro9Parser.DEBUGOUT - 256)) | (1 << (VisualFoxpro9Parser.MEMORY - 256)) | (1 << (VisualFoxpro9Parser.MENUS - 256)) | (1 << (VisualFoxpro9Parser.RESOURCES - 256)) | (1 << (VisualFoxpro9Parser.HELP - 256)) | (1 << (VisualFoxpro9Parser.SAY - 256)) | (1 << (VisualFoxpro9Parser.COLLECTION - 256)) | (1 << (VisualFoxpro9Parser.SYSTEM - 256)) | (1 << (VisualFoxpro9Parser.TALK - 256)) | (1 << (VisualFoxpro9Parser.PROGRAMCONTROL - 256)) | (1 << (VisualFoxpro9Parser.RELATION - 256)) | (1 << (VisualFoxpro9Parser.UPDATE - 256)) | (1 << (VisualFoxpro9Parser.FORCE - 256)) | (1 << (VisualFoxpro9Parser.JOIN - 256)) | (1 << (VisualFoxpro9Parser.TEXT - 256)) | (1 << (VisualFoxpro9Parser.ENDTEXT - 256)) | (1 << (VisualFoxpro9Parser.ID - 256)) | (1 << (VisualFoxpro9Parser.WS - 256)) | (1 << (VisualFoxpro9Parser.UNMATCHED - 256)))) != 0):
-                        self.state = 1765
+                        self.state = 1779
                         _la = self._input.LA(1)
                         if _la <= 0 or _la==VisualFoxpro9Parser.SINGLEQUOTE or _la==VisualFoxpro9Parser.NL:
                             self._errHandler.recoverInline(self)
                         else:
                             self._errHandler.reportMatch(self)
                             self.consume()
-                        self.state = 1770
+                        self.state = 1784
                         self._errHandler.sync(self)
                         _la = self._input.LA(1)
 
-                    self.state = 1771
+                    self.state = 1785
                     self.match(VisualFoxpro9Parser.SINGLEQUOTE)
                     pass
                 elif token in [VisualFoxpro9Parser.DOUBLEQUOTE]:
-                    self.state = 1772
+                    self.state = 1786
                     self.match(VisualFoxpro9Parser.DOUBLEQUOTE)
-                    self.state = 1776
+                    self.state = 1790
                     self._errHandler.sync(self)
                     _la = self._input.LA(1)
                     while (((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << VisualFoxpro9Parser.T__0) | (1 << VisualFoxpro9Parser.NUMBER_LITERAL) | (1 << VisualFoxpro9Parser.BLOB_LITERAL) | (1 << VisualFoxpro9Parser.SEMICOLON) | (1 << VisualFoxpro9Parser.AMPERSAND) | (1 << VisualFoxpro9Parser.COMMERCIALAT) | (1 << VisualFoxpro9Parser.ASTERISK) | (1 << VisualFoxpro9Parser.PLUS_SIGN) | (1 << VisualFoxpro9Parser.MINUS_SIGN) | (1 << VisualFoxpro9Parser.FORWARDSLASH) | (1 << VisualFoxpro9Parser.PERIOD) | (1 << VisualFoxpro9Parser.LEFTBRACKET) | (1 << VisualFoxpro9Parser.RIGHTBRACKET) | (1 << VisualFoxpro9Parser.LEFTBRACE) | (1 << VisualFoxpro9Parser.RIGHTBRACE) | (1 << VisualFoxpro9Parser.LEFTPAREN) | (1 << VisualFoxpro9Parser.RIGHTPAREN) | (1 << VisualFoxpro9Parser.BACKSLASH) | (1 << VisualFoxpro9Parser.LESSTHAN) | (1 << VisualFoxpro9Parser.GREATERTHAN) | (1 << VisualFoxpro9Parser.EXCLAMATION) | (1 << VisualFoxpro9Parser.HASH) | (1 << VisualFoxpro9Parser.DOUBLEEQUALS) | (1 << VisualFoxpro9Parser.NOTEQUALS) | (1 << VisualFoxpro9Parser.GTEQ) | (1 << VisualFoxpro9Parser.LTEQ) | (1 << VisualFoxpro9Parser.MODULO) | (1 << VisualFoxpro9Parser.EQUALS) | (1 << VisualFoxpro9Parser.CARAT) | (1 << VisualFoxpro9Parser.COMMA) | (1 << VisualFoxpro9Parser.DOLLAR) | (1 << VisualFoxpro9Parser.COLON) | (1 << VisualFoxpro9Parser.QUESTION) | (1 << VisualFoxpro9Parser.SINGLEQUOTE) | (1 << VisualFoxpro9Parser.COMMENT) | (1 << VisualFoxpro9Parser.LINECONT) | (1 << VisualFoxpro9Parser.NOTE) | (1 << VisualFoxpro9Parser.ASSERT) | (1 << VisualFoxpro9Parser.ASSERTS) | (1 << VisualFoxpro9Parser.TO) | (1 << VisualFoxpro9Parser.DO) | (1 << VisualFoxpro9Parser.IN) | (1 << VisualFoxpro9Parser.AS) | (1 << VisualFoxpro9Parser.IF) | (1 << VisualFoxpro9Parser.ELIF) | (1 << VisualFoxpro9Parser.ELSE) | (1 << VisualFoxpro9Parser.ENDIF) | (1 << VisualFoxpro9Parser.ON) | (1 << VisualFoxpro9Parser.OFF) | (1 << VisualFoxpro9Parser.ERROR) | (1 << VisualFoxpro9Parser.WITH) | (1 << VisualFoxpro9Parser.STORE) | (1 << VisualFoxpro9Parser.EXTERNAL) | (1 << VisualFoxpro9Parser.ARRAY) | (1 << VisualFoxpro9Parser.DELETE) | (1 << VisualFoxpro9Parser.RECALL) | (1 << VisualFoxpro9Parser.FILE) | (1 << VisualFoxpro9Parser.SET) | (1 << VisualFoxpro9Parser.RELEASE) | (1 << VisualFoxpro9Parser.RECYCLE) | (1 << VisualFoxpro9Parser.CREATE) | (1 << VisualFoxpro9Parser.TABLE))) != 0) or ((((_la - 64)) & ~0x3f) == 0 and ((1 << (_la - 64)) & ((1 << (VisualFoxpro9Parser.TABLEPROMPT - 64)) | (1 << (VisualFoxpro9Parser.DBF - 64)) | (1 << (VisualFoxpro9Parser.NAME - 64)) | (1 << (VisualFoxpro9Parser.FREE - 64)) | (1 << (VisualFoxpro9Parser.SELECT - 64)) | (1 << (VisualFoxpro9Parser.USE - 64)) | (1 << (VisualFoxpro9Parser.READ - 64)) | (1 << (VisualFoxpro9Parser.EVENTS - 64)) | (1 << (VisualFoxpro9Parser.SHUTDOWN - 64)) | (1 << (VisualFoxpro9Parser.CLEAR - 64)) | (1 << (VisualFoxpro9Parser.PROCEDURE - 64)) | (1 << (VisualFoxpro9Parser.ENDPROC - 64)) | (1 << (VisualFoxpro9Parser.DEFINE - 64)) | (1 << (VisualFoxpro9Parser.CLASS - 64)) | (1 << (VisualFoxpro9Parser.ENDDEFINE - 64)) | (1 << (VisualFoxpro9Parser.LOCATE - 64)) | (1 << (VisualFoxpro9Parser.CONTINUE - 64)) | (1 << (VisualFoxpro9Parser.FOR - 64)) | (1 << (VisualFoxpro9Parser.ENDFOR - 64)) | (1 << (VisualFoxpro9Parser.WHILE - 64)) | (1 << (VisualFoxpro9Parser.NOOPTIMIZE - 64)) | (1 << (VisualFoxpro9Parser.SAFETY - 64)) | (1 << (VisualFoxpro9Parser.STATUS - 64)) | (1 << (VisualFoxpro9Parser.BAR - 64)) | (1 << (VisualFoxpro9Parser.MEMOWIDTH - 64)) | (1 << (VisualFoxpro9Parser.CURSOR - 64)) | (1 << (VisualFoxpro9Parser.REFRESH - 64)) | (1 << (VisualFoxpro9Parser.BELL - 64)) | (1 << (VisualFoxpro9Parser.CENTURY - 64)) | (1 << (VisualFoxpro9Parser.COMPATIBLE - 64)) | (1 << (VisualFoxpro9Parser.DATE - 64)) | (1 << (VisualFoxpro9Parser.ADD - 64)) | (1 << (VisualFoxpro9Parser.OBJECT - 64)) | (1 << (VisualFoxpro9Parser.REPLACE - 64)) | (1 << (VisualFoxpro9Parser.LIBRARY - 64)) | (1 << (VisualFoxpro9Parser.SHARED - 64)) | (1 << (VisualFoxpro9Parser.WAIT - 64)) | (1 << (VisualFoxpro9Parser.WINDOW - 64)) | (1 << (VisualFoxpro9Parser.NOWAIT - 64)) | (1 << (VisualFoxpro9Parser.NOCLEAR - 64)) | (1 << (VisualFoxpro9Parser.NOTIFY - 64)) | (1 << (VisualFoxpro9Parser.ENDDO - 64)) | (1 << (VisualFoxpro9Parser.DECLARE - 64)) | (1 << (VisualFoxpro9Parser.ERASE - 64)) | (1 << (VisualFoxpro9Parser.SYSMENU - 64)) | (1 << (VisualFoxpro9Parser.CLOCK - 64)) | (1 << (VisualFoxpro9Parser.RETURN - 64)) | (1 << (VisualFoxpro9Parser.PARAMETER - 64)) | (1 << (VisualFoxpro9Parser.ALTERNATE - 64)) | (1 << (VisualFoxpro9Parser.EXACT - 64)) | (1 << (VisualFoxpro9Parser.ALL - 64)) | (1 << (VisualFoxpro9Parser.COUNT - 64)) | (1 << (VisualFoxpro9Parser.GOTO - 64)) | (1 << (VisualFoxpro9Parser.TOP - 64)) | (1 << (VisualFoxpro9Parser.BOTTOM - 64)) | (1 << (VisualFoxpro9Parser.RECORD - 64)) | (1 << (VisualFoxpro9Parser.CLOSE - 64)) | (1 << (VisualFoxpro9Parser.APPEND - 64)) | (1 << (VisualFoxpro9Parser.BLANK - 64)) | (1 << (VisualFoxpro9Parser.NOMENU - 64)) | (1 << (VisualFoxpro9Parser.CASE - 64)) | (1 << (VisualFoxpro9Parser.ENDCASE - 64)) | (1 << (VisualFoxpro9Parser.OTHERWISE - 64)) | (1 << (VisualFoxpro9Parser.FROM - 64)))) != 0) or ((((_la - 128)) & ~0x3f) == 0 and ((1 << (_la - 128)) & ((1 << (VisualFoxpro9Parser.REPORT - 128)) | (1 << (VisualFoxpro9Parser.FORM - 128)) | (1 << (VisualFoxpro9Parser.NOEJECT - 128)) | (1 << (VisualFoxpro9Parser.PRINTER - 128)) | (1 << (VisualFoxpro9Parser.PROMPT - 128)) | (1 << (VisualFoxpro9Parser.NOPROMPT - 128)) | (1 << (VisualFoxpro9Parser.DB4 - 128)) | (1 << (VisualFoxpro9Parser.FOXPLUS - 128)) | (1 << (VisualFoxpro9Parser.NOCONSOLE - 128)) | (1 << (VisualFoxpro9Parser.COPY - 128)) | (1 << (VisualFoxpro9Parser.STRUCTURE - 128)) | (1 << (VisualFoxpro9Parser.DELETED - 128)) | (1 << (VisualFoxpro9Parser.SUM - 128)) | (1 << (VisualFoxpro9Parser.DISTINCT - 128)) | (1 << (VisualFoxpro9Parser.INTO - 128)) | (1 << (VisualFoxpro9Parser.NEXT - 128)) | (1 << (VisualFoxpro9Parser.REST - 128)) | (1 << (VisualFoxpro9Parser.SKIPKW - 128)) | (1 << (VisualFoxpro9Parser.EXCLUSIVE - 128)) | (1 << (VisualFoxpro9Parser.NEAR - 128)) | (1 << (VisualFoxpro9Parser.MKDIR - 128)) | (1 << (VisualFoxpro9Parser.RMDIR - 128)) | (1 << (VisualFoxpro9Parser.KEY - 128)) | (1 << (VisualFoxpro9Parser.KEYBOARD - 128)) | (1 << (VisualFoxpro9Parser.LABEL - 128)) | (1 << (VisualFoxpro9Parser.PLAIN - 128)) | (1 << (VisualFoxpro9Parser.MENU - 128)) | (1 << (VisualFoxpro9Parser.AT - 128)) | (1 << (VisualFoxpro9Parser.LINE - 128)) | (1 << (VisualFoxpro9Parser.SCREEN - 128)) | (1 << (VisualFoxpro9Parser.NOMARGIN - 128)) | (1 << (VisualFoxpro9Parser.PAD - 128)) | (1 << (VisualFoxpro9Parser.OF - 128)) | (1 << (VisualFoxpro9Parser.COLOR - 128)) | (1 << (VisualFoxpro9Parser.SCHEME - 128)) | (1 << (VisualFoxpro9Parser.BEFORE - 128)) | (1 << (VisualFoxpro9Parser.AFTER - 128)) | (1 << (VisualFoxpro9Parser.NEGOTIATE - 128)) | (1 << (VisualFoxpro9Parser.FONT - 128)) | (1 << (VisualFoxpro9Parser.STYLE - 128)) | (1 << (VisualFoxpro9Parser.MARK - 128)) | (1 << (VisualFoxpro9Parser.MESSAGE - 128)) | (1 << (VisualFoxpro9Parser.ACTIVATE - 128)) | (1 << (VisualFoxpro9Parser.POPUP - 128)) | (1 << (VisualFoxpro9Parser.EXTENDED - 128)) | (1 << (VisualFoxpro9Parser.SHADOW - 128)) | (1 << (VisualFoxpro9Parser.MARGIN - 128)) | (1 << (VisualFoxpro9Parser.RELATIVE - 128)) | (1 << (VisualFoxpro9Parser.SELECTION - 128)) | (1 << (VisualFoxpro9Parser.DEACTIVATE - 128)) | (1 << (VisualFoxpro9Parser.SAME - 128)) | (1 << (VisualFoxpro9Parser.NOSHOW - 128)) | (1 << (VisualFoxpro9Parser.STEP - 128)) | (1 << (VisualFoxpro9Parser.THEN - 128)) | (1 << (VisualFoxpro9Parser.UNDEFINE - 128)) | (1 << (VisualFoxpro9Parser.IFDEF - 128)) | (1 << (VisualFoxpro9Parser.PUSH - 128)) | (1 << (VisualFoxpro9Parser.POP - 128)) | (1 << (VisualFoxpro9Parser.TIMEOUT - 128)) | (1 << (VisualFoxpro9Parser.ENDWITH - 128)) | (1 << (VisualFoxpro9Parser.TYPEAHEAD - 128)) | (1 << (VisualFoxpro9Parser.ALIAS - 128)) | (1 << (VisualFoxpro9Parser.ORDER - 128)) | (1 << (VisualFoxpro9Parser.SEEK - 128)))) != 0) or ((((_la - 192)) & ~0x3f) == 0 and ((1 << (_la - 192)) & ((1 << (VisualFoxpro9Parser.WHERE - 192)) | (1 << (VisualFoxpro9Parser.FILTER - 192)) | (1 << (VisualFoxpro9Parser.RENAME - 192)) | (1 << (VisualFoxpro9Parser.INCLUDE - 192)) | (1 << (VisualFoxpro9Parser.CLASSLIB - 192)) | (1 << (VisualFoxpro9Parser.BY - 192)) | (1 << (VisualFoxpro9Parser.UNIQUE - 192)) | (1 << (VisualFoxpro9Parser.INDEX - 192)) | (1 << (VisualFoxpro9Parser.TAG - 192)) | (1 << (VisualFoxpro9Parser.COMPACT - 192)) | (1 << (VisualFoxpro9Parser.ASCENDING - 192)) | (1 << (VisualFoxpro9Parser.DESCENDING - 192)) | (1 << (VisualFoxpro9Parser.CANDIDATE - 192)) | (1 << (VisualFoxpro9Parser.ADDITIVE - 192)) | (1 << (VisualFoxpro9Parser.DIMENSION - 192)) | (1 << (VisualFoxpro9Parser.NOT - 192)) | (1 << (VisualFoxpro9Parser.AND - 192)) | (1 << (VisualFoxpro9Parser.OTHERAND - 192)) | (1 << (VisualFoxpro9Parser.OR - 192)) | (1 << (VisualFoxpro9Parser.OTHEROR - 192)) | (1 << (VisualFoxpro9Parser.SCAN - 192)) | (1 << (VisualFoxpro9Parser.ENDSCAN - 192)) | (1 << (VisualFoxpro9Parser.NULL - 192)) | (1 << (VisualFoxpro9Parser.BOOLEANCHAR - 192)) | (1 << (VisualFoxpro9Parser.NODEFAULT - 192)) | (1 << (VisualFoxpro9Parser.DLLS - 192)) | (1 << (VisualFoxpro9Parser.MACROS - 192)) | (1 << (VisualFoxpro9Parser.NUMBER - 192)) | (1 << (VisualFoxpro9Parser.ZAP - 192)) | (1 << (VisualFoxpro9Parser.ROLLOVER - 192)) | (1 << (VisualFoxpro9Parser.DEFAULT - 192)) | (1 << (VisualFoxpro9Parser.SAVE - 192)) | (1 << (VisualFoxpro9Parser.NOSAVE - 192)) | (1 << (VisualFoxpro9Parser.DATABASE - 192)) | (1 << (VisualFoxpro9Parser.TABLES - 192)) | (1 << (VisualFoxpro9Parser.INDEXES - 192)) | (1 << (VisualFoxpro9Parser.PACK - 192)) | (1 << (VisualFoxpro9Parser.REINDEX - 192)) | (1 << (VisualFoxpro9Parser.MEMO - 192)) | (1 << (VisualFoxpro9Parser.PROGRAM - 192)) | (1 << (VisualFoxpro9Parser.SCOPE - 192)) | (1 << (VisualFoxpro9Parser.THROW - 192)) | (1 << (VisualFoxpro9Parser.EACH - 192)) | (1 << (VisualFoxpro9Parser.CAST - 192)) | (1 << (VisualFoxpro9Parser.RUN - 192)) | (1 << (VisualFoxpro9Parser.MULTILOCKS - 192)) | (1 << (VisualFoxpro9Parser.TRY - 192)) | (1 << (VisualFoxpro9Parser.CATCH - 192)) | (1 << (VisualFoxpro9Parser.FINALLY - 192)) | (1 << (VisualFoxpro9Parser.ENDTRY - 192)) | (1 << (VisualFoxpro9Parser.BROWSE - 192)) | (1 << (VisualFoxpro9Parser.INSERT - 192)) | (1 << (VisualFoxpro9Parser.VALUES - 192)) | (1 << (VisualFoxpro9Parser.MEMVAR - 192)) | (1 << (VisualFoxpro9Parser.TYPE - 192)) | (1 << (VisualFoxpro9Parser.CHDIR - 192)) | (1 << (VisualFoxpro9Parser.SCATTER - 192)) | (1 << (VisualFoxpro9Parser.GATHER - 192)) | (1 << (VisualFoxpro9Parser.EXCEPT - 192)) | (1 << (VisualFoxpro9Parser.LIKE - 192)) | (1 << (VisualFoxpro9Parser.FIELDS - 192)) | (1 << (VisualFoxpro9Parser.ALTER - 192)) | (1 << (VisualFoxpro9Parser.COLUMN - 192)) | (1 << (VisualFoxpro9Parser.DROP - 192)))) != 0) or ((((_la - 256)) & ~0x3f) == 0 and ((1 << (_la - 256)) & ((1 << (VisualFoxpro9Parser.DEBUG - 256)) | (1 << (VisualFoxpro9Parser.GETS - 256)) | (1 << (VisualFoxpro9Parser.DEBUGOUT - 256)) | (1 << (VisualFoxpro9Parser.MEMORY - 256)) | (1 << (VisualFoxpro9Parser.MENUS - 256)) | (1 << (VisualFoxpro9Parser.RESOURCES - 256)) | (1 << (VisualFoxpro9Parser.HELP - 256)) | (1 << (VisualFoxpro9Parser.SAY - 256)) | (1 << (VisualFoxpro9Parser.COLLECTION - 256)) | (1 << (VisualFoxpro9Parser.SYSTEM - 256)) | (1 << (VisualFoxpro9Parser.TALK - 256)) | (1 << (VisualFoxpro9Parser.PROGRAMCONTROL - 256)) | (1 << (VisualFoxpro9Parser.RELATION - 256)) | (1 << (VisualFoxpro9Parser.UPDATE - 256)) | (1 << (VisualFoxpro9Parser.FORCE - 256)) | (1 << (VisualFoxpro9Parser.JOIN - 256)) | (1 << (VisualFoxpro9Parser.TEXT - 256)) | (1 << (VisualFoxpro9Parser.ENDTEXT - 256)) | (1 << (VisualFoxpro9Parser.ID - 256)) | (1 << (VisualFoxpro9Parser.WS - 256)) | (1 << (VisualFoxpro9Parser.UNMATCHED - 256)))) != 0):
-                        self.state = 1773
+                        self.state = 1787
                         _la = self._input.LA(1)
                         if _la <= 0 or _la==VisualFoxpro9Parser.DOUBLEQUOTE or _la==VisualFoxpro9Parser.NL:
                             self._errHandler.recoverInline(self)
                         else:
                             self._errHandler.reportMatch(self)
                             self.consume()
-                        self.state = 1778
+                        self.state = 1792
                         self._errHandler.sync(self)
                         _la = self._input.LA(1)
 
-                    self.state = 1779
+                    self.state = 1793
                     self.match(VisualFoxpro9Parser.DOUBLEQUOTE)
                     pass
                 elif token in [VisualFoxpro9Parser.LEFTBRACKET]:
-                    self.state = 1780
+                    self.state = 1794
                     self.match(VisualFoxpro9Parser.LEFTBRACKET)
-                    self.state = 1784
+                    self.state = 1798
                     self._errHandler.sync(self)
                     _la = self._input.LA(1)
                     while (((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << VisualFoxpro9Parser.T__0) | (1 << VisualFoxpro9Parser.NUMBER_LITERAL) | (1 << VisualFoxpro9Parser.BLOB_LITERAL) | (1 << VisualFoxpro9Parser.SEMICOLON) | (1 << VisualFoxpro9Parser.AMPERSAND) | (1 << VisualFoxpro9Parser.COMMERCIALAT) | (1 << VisualFoxpro9Parser.ASTERISK) | (1 << VisualFoxpro9Parser.PLUS_SIGN) | (1 << VisualFoxpro9Parser.MINUS_SIGN) | (1 << VisualFoxpro9Parser.FORWARDSLASH) | (1 << VisualFoxpro9Parser.PERIOD) | (1 << VisualFoxpro9Parser.LEFTBRACKET) | (1 << VisualFoxpro9Parser.LEFTBRACE) | (1 << VisualFoxpro9Parser.RIGHTBRACE) | (1 << VisualFoxpro9Parser.LEFTPAREN) | (1 << VisualFoxpro9Parser.RIGHTPAREN) | (1 << VisualFoxpro9Parser.BACKSLASH) | (1 << VisualFoxpro9Parser.LESSTHAN) | (1 << VisualFoxpro9Parser.GREATERTHAN) | (1 << VisualFoxpro9Parser.EXCLAMATION) | (1 << VisualFoxpro9Parser.HASH) | (1 << VisualFoxpro9Parser.DOUBLEEQUALS) | (1 << VisualFoxpro9Parser.NOTEQUALS) | (1 << VisualFoxpro9Parser.GTEQ) | (1 << VisualFoxpro9Parser.LTEQ) | (1 << VisualFoxpro9Parser.MODULO) | (1 << VisualFoxpro9Parser.EQUALS) | (1 << VisualFoxpro9Parser.CARAT) | (1 << VisualFoxpro9Parser.COMMA) | (1 << VisualFoxpro9Parser.DOLLAR) | (1 << VisualFoxpro9Parser.COLON) | (1 << VisualFoxpro9Parser.QUESTION) | (1 << VisualFoxpro9Parser.DOUBLEQUOTE) | (1 << VisualFoxpro9Parser.SINGLEQUOTE) | (1 << VisualFoxpro9Parser.COMMENT) | (1 << VisualFoxpro9Parser.LINECONT) | (1 << VisualFoxpro9Parser.NOTE) | (1 << VisualFoxpro9Parser.ASSERT) | (1 << VisualFoxpro9Parser.ASSERTS) | (1 << VisualFoxpro9Parser.TO) | (1 << VisualFoxpro9Parser.DO) | (1 << VisualFoxpro9Parser.IN) | (1 << VisualFoxpro9Parser.AS) | (1 << VisualFoxpro9Parser.IF) | (1 << VisualFoxpro9Parser.ELIF) | (1 << VisualFoxpro9Parser.ELSE) | (1 << VisualFoxpro9Parser.ENDIF) | (1 << VisualFoxpro9Parser.ON) | (1 << VisualFoxpro9Parser.OFF) | (1 << VisualFoxpro9Parser.ERROR) | (1 << VisualFoxpro9Parser.WITH) | (1 << VisualFoxpro9Parser.STORE) | (1 << VisualFoxpro9Parser.EXTERNAL) | (1 << VisualFoxpro9Parser.ARRAY) | (1 << VisualFoxpro9Parser.DELETE) | (1 << VisualFoxpro9Parser.RECALL) | (1 << VisualFoxpro9Parser.FILE) | (1 << VisualFoxpro9Parser.SET) | (1 << VisualFoxpro9Parser.RELEASE) | (1 << VisualFoxpro9Parser.RECYCLE) | (1 << VisualFoxpro9Parser.CREATE) | (1 << VisualFoxpro9Parser.TABLE))) != 0) or ((((_la - 64)) & ~0x3f) == 0 and ((1 << (_la - 64)) & ((1 << (VisualFoxpro9Parser.TABLEPROMPT - 64)) | (1 << (VisualFoxpro9Parser.DBF - 64)) | (1 << (VisualFoxpro9Parser.NAME - 64)) | (1 << (VisualFoxpro9Parser.FREE - 64)) | (1 << (VisualFoxpro9Parser.SELECT - 64)) | (1 << (VisualFoxpro9Parser.USE - 64)) | (1 << (VisualFoxpro9Parser.READ - 64)) | (1 << (VisualFoxpro9Parser.EVENTS - 64)) | (1 << (VisualFoxpro9Parser.SHUTDOWN - 64)) | (1 << (VisualFoxpro9Parser.CLEAR - 64)) | (1 << (VisualFoxpro9Parser.PROCEDURE - 64)) | (1 << (VisualFoxpro9Parser.ENDPROC - 64)) | (1 << (VisualFoxpro9Parser.DEFINE - 64)) | (1 << (VisualFoxpro9Parser.CLASS - 64)) | (1 << (VisualFoxpro9Parser.ENDDEFINE - 64)) | (1 << (VisualFoxpro9Parser.LOCATE - 64)) | (1 << (VisualFoxpro9Parser.CONTINUE - 64)) | (1 << (VisualFoxpro9Parser.FOR - 64)) | (1 << (VisualFoxpro9Parser.ENDFOR - 64)) | (1 << (VisualFoxpro9Parser.WHILE - 64)) | (1 << (VisualFoxpro9Parser.NOOPTIMIZE - 64)) | (1 << (VisualFoxpro9Parser.SAFETY - 64)) | (1 << (VisualFoxpro9Parser.STATUS - 64)) | (1 << (VisualFoxpro9Parser.BAR - 64)) | (1 << (VisualFoxpro9Parser.MEMOWIDTH - 64)) | (1 << (VisualFoxpro9Parser.CURSOR - 64)) | (1 << (VisualFoxpro9Parser.REFRESH - 64)) | (1 << (VisualFoxpro9Parser.BELL - 64)) | (1 << (VisualFoxpro9Parser.CENTURY - 64)) | (1 << (VisualFoxpro9Parser.COMPATIBLE - 64)) | (1 << (VisualFoxpro9Parser.DATE - 64)) | (1 << (VisualFoxpro9Parser.ADD - 64)) | (1 << (VisualFoxpro9Parser.OBJECT - 64)) | (1 << (VisualFoxpro9Parser.REPLACE - 64)) | (1 << (VisualFoxpro9Parser.LIBRARY - 64)) | (1 << (VisualFoxpro9Parser.SHARED - 64)) | (1 << (VisualFoxpro9Parser.WAIT - 64)) | (1 << (VisualFoxpro9Parser.WINDOW - 64)) | (1 << (VisualFoxpro9Parser.NOWAIT - 64)) | (1 << (VisualFoxpro9Parser.NOCLEAR - 64)) | (1 << (VisualFoxpro9Parser.NOTIFY - 64)) | (1 << (VisualFoxpro9Parser.ENDDO - 64)) | (1 << (VisualFoxpro9Parser.DECLARE - 64)) | (1 << (VisualFoxpro9Parser.ERASE - 64)) | (1 << (VisualFoxpro9Parser.SYSMENU - 64)) | (1 << (VisualFoxpro9Parser.CLOCK - 64)) | (1 << (VisualFoxpro9Parser.RETURN - 64)) | (1 << (VisualFoxpro9Parser.PARAMETER - 64)) | (1 << (VisualFoxpro9Parser.ALTERNATE - 64)) | (1 << (VisualFoxpro9Parser.EXACT - 64)) | (1 << (VisualFoxpro9Parser.ALL - 64)) | (1 << (VisualFoxpro9Parser.COUNT - 64)) | (1 << (VisualFoxpro9Parser.GOTO - 64)) | (1 << (VisualFoxpro9Parser.TOP - 64)) | (1 << (VisualFoxpro9Parser.BOTTOM - 64)) | (1 << (VisualFoxpro9Parser.RECORD - 64)) | (1 << (VisualFoxpro9Parser.CLOSE - 64)) | (1 << (VisualFoxpro9Parser.APPEND - 64)) | (1 << (VisualFoxpro9Parser.BLANK - 64)) | (1 << (VisualFoxpro9Parser.NOMENU - 64)) | (1 << (VisualFoxpro9Parser.CASE - 64)) | (1 << (VisualFoxpro9Parser.ENDCASE - 64)) | (1 << (VisualFoxpro9Parser.OTHERWISE - 64)) | (1 << (VisualFoxpro9Parser.FROM - 64)))) != 0) or ((((_la - 128)) & ~0x3f) == 0 and ((1 << (_la - 128)) & ((1 << (VisualFoxpro9Parser.REPORT - 128)) | (1 << (VisualFoxpro9Parser.FORM - 128)) | (1 << (VisualFoxpro9Parser.NOEJECT - 128)) | (1 << (VisualFoxpro9Parser.PRINTER - 128)) | (1 << (VisualFoxpro9Parser.PROMPT - 128)) | (1 << (VisualFoxpro9Parser.NOPROMPT - 128)) | (1 << (VisualFoxpro9Parser.DB4 - 128)) | (1 << (VisualFoxpro9Parser.FOXPLUS - 128)) | (1 << (VisualFoxpro9Parser.NOCONSOLE - 128)) | (1 << (VisualFoxpro9Parser.COPY - 128)) | (1 << (VisualFoxpro9Parser.STRUCTURE - 128)) | (1 << (VisualFoxpro9Parser.DELETED - 128)) | (1 << (VisualFoxpro9Parser.SUM - 128)) | (1 << (VisualFoxpro9Parser.DISTINCT - 128)) | (1 << (VisualFoxpro9Parser.INTO - 128)) | (1 << (VisualFoxpro9Parser.NEXT - 128)) | (1 << (VisualFoxpro9Parser.REST - 128)) | (1 << (VisualFoxpro9Parser.SKIPKW - 128)) | (1 << (VisualFoxpro9Parser.EXCLUSIVE - 128)) | (1 << (VisualFoxpro9Parser.NEAR - 128)) | (1 << (VisualFoxpro9Parser.MKDIR - 128)) | (1 << (VisualFoxpro9Parser.RMDIR - 128)) | (1 << (VisualFoxpro9Parser.KEY - 128)) | (1 << (VisualFoxpro9Parser.KEYBOARD - 128)) | (1 << (VisualFoxpro9Parser.LABEL - 128)) | (1 << (VisualFoxpro9Parser.PLAIN - 128)) | (1 << (VisualFoxpro9Parser.MENU - 128)) | (1 << (VisualFoxpro9Parser.AT - 128)) | (1 << (VisualFoxpro9Parser.LINE - 128)) | (1 << (VisualFoxpro9Parser.SCREEN - 128)) | (1 << (VisualFoxpro9Parser.NOMARGIN - 128)) | (1 << (VisualFoxpro9Parser.PAD - 128)) | (1 << (VisualFoxpro9Parser.OF - 128)) | (1 << (VisualFoxpro9Parser.COLOR - 128)) | (1 << (VisualFoxpro9Parser.SCHEME - 128)) | (1 << (VisualFoxpro9Parser.BEFORE - 128)) | (1 << (VisualFoxpro9Parser.AFTER - 128)) | (1 << (VisualFoxpro9Parser.NEGOTIATE - 128)) | (1 << (VisualFoxpro9Parser.FONT - 128)) | (1 << (VisualFoxpro9Parser.STYLE - 128)) | (1 << (VisualFoxpro9Parser.MARK - 128)) | (1 << (VisualFoxpro9Parser.MESSAGE - 128)) | (1 << (VisualFoxpro9Parser.ACTIVATE - 128)) | (1 << (VisualFoxpro9Parser.POPUP - 128)) | (1 << (VisualFoxpro9Parser.EXTENDED - 128)) | (1 << (VisualFoxpro9Parser.SHADOW - 128)) | (1 << (VisualFoxpro9Parser.MARGIN - 128)) | (1 << (VisualFoxpro9Parser.RELATIVE - 128)) | (1 << (VisualFoxpro9Parser.SELECTION - 128)) | (1 << (VisualFoxpro9Parser.DEACTIVATE - 128)) | (1 << (VisualFoxpro9Parser.SAME - 128)) | (1 << (VisualFoxpro9Parser.NOSHOW - 128)) | (1 << (VisualFoxpro9Parser.STEP - 128)) | (1 << (VisualFoxpro9Parser.THEN - 128)) | (1 << (VisualFoxpro9Parser.UNDEFINE - 128)) | (1 << (VisualFoxpro9Parser.IFDEF - 128)) | (1 << (VisualFoxpro9Parser.PUSH - 128)) | (1 << (VisualFoxpro9Parser.POP - 128)) | (1 << (VisualFoxpro9Parser.TIMEOUT - 128)) | (1 << (VisualFoxpro9Parser.ENDWITH - 128)) | (1 << (VisualFoxpro9Parser.TYPEAHEAD - 128)) | (1 << (VisualFoxpro9Parser.ALIAS - 128)) | (1 << (VisualFoxpro9Parser.ORDER - 128)) | (1 << (VisualFoxpro9Parser.SEEK - 128)))) != 0) or ((((_la - 192)) & ~0x3f) == 0 and ((1 << (_la - 192)) & ((1 << (VisualFoxpro9Parser.WHERE - 192)) | (1 << (VisualFoxpro9Parser.FILTER - 192)) | (1 << (VisualFoxpro9Parser.RENAME - 192)) | (1 << (VisualFoxpro9Parser.INCLUDE - 192)) | (1 << (VisualFoxpro9Parser.CLASSLIB - 192)) | (1 << (VisualFoxpro9Parser.BY - 192)) | (1 << (VisualFoxpro9Parser.UNIQUE - 192)) | (1 << (VisualFoxpro9Parser.INDEX - 192)) | (1 << (VisualFoxpro9Parser.TAG - 192)) | (1 << (VisualFoxpro9Parser.COMPACT - 192)) | (1 << (VisualFoxpro9Parser.ASCENDING - 192)) | (1 << (VisualFoxpro9Parser.DESCENDING - 192)) | (1 << (VisualFoxpro9Parser.CANDIDATE - 192)) | (1 << (VisualFoxpro9Parser.ADDITIVE - 192)) | (1 << (VisualFoxpro9Parser.DIMENSION - 192)) | (1 << (VisualFoxpro9Parser.NOT - 192)) | (1 << (VisualFoxpro9Parser.AND - 192)) | (1 << (VisualFoxpro9Parser.OTHERAND - 192)) | (1 << (VisualFoxpro9Parser.OR - 192)) | (1 << (VisualFoxpro9Parser.OTHEROR - 192)) | (1 << (VisualFoxpro9Parser.SCAN - 192)) | (1 << (VisualFoxpro9Parser.ENDSCAN - 192)) | (1 << (VisualFoxpro9Parser.NULL - 192)) | (1 << (VisualFoxpro9Parser.BOOLEANCHAR - 192)) | (1 << (VisualFoxpro9Parser.NODEFAULT - 192)) | (1 << (VisualFoxpro9Parser.DLLS - 192)) | (1 << (VisualFoxpro9Parser.MACROS - 192)) | (1 << (VisualFoxpro9Parser.NUMBER - 192)) | (1 << (VisualFoxpro9Parser.ZAP - 192)) | (1 << (VisualFoxpro9Parser.ROLLOVER - 192)) | (1 << (VisualFoxpro9Parser.DEFAULT - 192)) | (1 << (VisualFoxpro9Parser.SAVE - 192)) | (1 << (VisualFoxpro9Parser.NOSAVE - 192)) | (1 << (VisualFoxpro9Parser.DATABASE - 192)) | (1 << (VisualFoxpro9Parser.TABLES - 192)) | (1 << (VisualFoxpro9Parser.INDEXES - 192)) | (1 << (VisualFoxpro9Parser.PACK - 192)) | (1 << (VisualFoxpro9Parser.REINDEX - 192)) | (1 << (VisualFoxpro9Parser.MEMO - 192)) | (1 << (VisualFoxpro9Parser.PROGRAM - 192)) | (1 << (VisualFoxpro9Parser.SCOPE - 192)) | (1 << (VisualFoxpro9Parser.THROW - 192)) | (1 << (VisualFoxpro9Parser.EACH - 192)) | (1 << (VisualFoxpro9Parser.CAST - 192)) | (1 << (VisualFoxpro9Parser.RUN - 192)) | (1 << (VisualFoxpro9Parser.MULTILOCKS - 192)) | (1 << (VisualFoxpro9Parser.TRY - 192)) | (1 << (VisualFoxpro9Parser.CATCH - 192)) | (1 << (VisualFoxpro9Parser.FINALLY - 192)) | (1 << (VisualFoxpro9Parser.ENDTRY - 192)) | (1 << (VisualFoxpro9Parser.BROWSE - 192)) | (1 << (VisualFoxpro9Parser.INSERT - 192)) | (1 << (VisualFoxpro9Parser.VALUES - 192)) | (1 << (VisualFoxpro9Parser.MEMVAR - 192)) | (1 << (VisualFoxpro9Parser.TYPE - 192)) | (1 << (VisualFoxpro9Parser.CHDIR - 192)) | (1 << (VisualFoxpro9Parser.SCATTER - 192)) | (1 << (VisualFoxpro9Parser.GATHER - 192)) | (1 << (VisualFoxpro9Parser.EXCEPT - 192)) | (1 << (VisualFoxpro9Parser.LIKE - 192)) | (1 << (VisualFoxpro9Parser.FIELDS - 192)) | (1 << (VisualFoxpro9Parser.ALTER - 192)) | (1 << (VisualFoxpro9Parser.COLUMN - 192)) | (1 << (VisualFoxpro9Parser.DROP - 192)))) != 0) or ((((_la - 256)) & ~0x3f) == 0 and ((1 << (_la - 256)) & ((1 << (VisualFoxpro9Parser.DEBUG - 256)) | (1 << (VisualFoxpro9Parser.GETS - 256)) | (1 << (VisualFoxpro9Parser.DEBUGOUT - 256)) | (1 << (VisualFoxpro9Parser.MEMORY - 256)) | (1 << (VisualFoxpro9Parser.MENUS - 256)) | (1 << (VisualFoxpro9Parser.RESOURCES - 256)) | (1 << (VisualFoxpro9Parser.HELP - 256)) | (1 << (VisualFoxpro9Parser.SAY - 256)) | (1 << (VisualFoxpro9Parser.COLLECTION - 256)) | (1 << (VisualFoxpro9Parser.SYSTEM - 256)) | (1 << (VisualFoxpro9Parser.TALK - 256)) | (1 << (VisualFoxpro9Parser.PROGRAMCONTROL - 256)) | (1 << (VisualFoxpro9Parser.RELATION - 256)) | (1 << (VisualFoxpro9Parser.UPDATE - 256)) | (1 << (VisualFoxpro9Parser.FORCE - 256)) | (1 << (VisualFoxpro9Parser.JOIN - 256)) | (1 << (VisualFoxpro9Parser.TEXT - 256)) | (1 << (VisualFoxpro9Parser.ENDTEXT - 256)) | (1 << (VisualFoxpro9Parser.ID - 256)) | (1 << (VisualFoxpro9Parser.WS - 256)) | (1 << (VisualFoxpro9Parser.UNMATCHED - 256)))) != 0):
-                        self.state = 1781
+                        self.state = 1795
                         _la = self._input.LA(1)
                         if _la <= 0 or _la==VisualFoxpro9Parser.RIGHTBRACKET or _la==VisualFoxpro9Parser.NL:
                             self._errHandler.recoverInline(self)
                         else:
                             self._errHandler.reportMatch(self)
                             self.consume()
-                        self.state = 1786
+                        self.state = 1800
                         self._errHandler.sync(self)
                         _la = self._input.LA(1)
 
-                    self.state = 1787
+                    self.state = 1801
                     self.match(VisualFoxpro9Parser.RIGHTBRACKET)
                     pass
                 else:
@@ -11825,7 +11872,7 @@ class VisualFoxpro9Parser ( Parser ):
             elif token in [VisualFoxpro9Parser.BLOB_LITERAL]:
                 localctx = VisualFoxpro9Parser.BlobContext(self, localctx)
                 self.enterOuterAlt(localctx, 5)
-                self.state = 1790
+                self.state = 1804
                 self.match(VisualFoxpro9Parser.BLOB_LITERAL)
                 pass
             else:
@@ -11872,25 +11919,25 @@ class VisualFoxpro9Parser ( Parser ):
         self._la = 0 # Token type
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 1794
+            self.state = 1808
             self._errHandler.sync(self)
             _la = self._input.LA(1)
             if _la==VisualFoxpro9Parser.PERIOD:
-                self.state = 1793
+                self.state = 1807
                 localctx.startPeriod = self.match(VisualFoxpro9Parser.PERIOD)
 
 
-            self.state = 1796
+            self.state = 1810
             self.identifier()
-            self.state = 1801
+            self.state = 1815
             self._errHandler.sync(self)
             _la = self._input.LA(1)
             while _la==VisualFoxpro9Parser.PERIOD:
-                self.state = 1797
+                self.state = 1811
                 self.match(VisualFoxpro9Parser.PERIOD)
-                self.state = 1798
+                self.state = 1812
                 self.identifier()
-                self.state = 1803
+                self.state = 1817
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
 
@@ -11938,21 +11985,21 @@ class VisualFoxpro9Parser ( Parser ):
         self._la = 0 # Token type
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 1805
+            self.state = 1819
             self._errHandler.sync(self)
             _la = self._input.LA(1)
             if _la==VisualFoxpro9Parser.PERIOD:
-                self.state = 1804
+                self.state = 1818
                 self.match(VisualFoxpro9Parser.PERIOD)
 
 
-            self.state = 1807
+            self.state = 1821
             self.identifier()
-            self.state = 1809
+            self.state = 1823
             self._errHandler.sync(self)
-            la_ = self._interp.adaptivePredict(self._input,285,self._ctx)
+            la_ = self._interp.adaptivePredict(self._input,286,self._ctx)
             if la_ == 1:
-                self.state = 1808
+                self.state = 1822
                 self.trailer()
 
 
@@ -11995,11 +12042,11 @@ class VisualFoxpro9Parser ( Parser ):
         self.enterRule(localctx, 108, self.RULE_twoExpr)
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 1811
+            self.state = 1825
             self.expr(0)
-            self.state = 1812
+            self.state = 1826
             self.match(VisualFoxpro9Parser.COMMA)
-            self.state = 1813
+            self.state = 1827
             self.expr(0)
         except RecognitionException as re:
             localctx.exception = re
@@ -12040,49 +12087,49 @@ class VisualFoxpro9Parser ( Parser ):
         localctx = VisualFoxpro9Parser.ArrayIndexContext(self, self._ctx, self.state)
         self.enterRule(localctx, 110, self.RULE_arrayIndex)
         try:
-            self.state = 1829
+            self.state = 1843
             self._errHandler.sync(self)
             token = self._input.LA(1)
             if token in [VisualFoxpro9Parser.LEFTPAREN]:
                 self.enterOuterAlt(localctx, 1)
-                self.state = 1815
+                self.state = 1829
                 self.match(VisualFoxpro9Parser.LEFTPAREN)
-                self.state = 1818
+                self.state = 1832
                 self._errHandler.sync(self)
-                la_ = self._interp.adaptivePredict(self._input,286,self._ctx)
+                la_ = self._interp.adaptivePredict(self._input,287,self._ctx)
                 if la_ == 1:
-                    self.state = 1816
+                    self.state = 1830
                     self.expr(0)
                     pass
 
                 elif la_ == 2:
-                    self.state = 1817
+                    self.state = 1831
                     self.twoExpr()
                     pass
 
 
-                self.state = 1820
+                self.state = 1834
                 self.match(VisualFoxpro9Parser.RIGHTPAREN)
                 pass
             elif token in [VisualFoxpro9Parser.LEFTBRACKET]:
                 self.enterOuterAlt(localctx, 2)
-                self.state = 1822
+                self.state = 1836
                 self.match(VisualFoxpro9Parser.LEFTBRACKET)
-                self.state = 1825
+                self.state = 1839
                 self._errHandler.sync(self)
-                la_ = self._interp.adaptivePredict(self._input,287,self._ctx)
+                la_ = self._interp.adaptivePredict(self._input,288,self._ctx)
                 if la_ == 1:
-                    self.state = 1823
+                    self.state = 1837
                     self.expr(0)
                     pass
 
                 elif la_ == 2:
-                    self.state = 1824
+                    self.state = 1838
                     self.twoExpr()
                     pass
 
 
-                self.state = 1827
+                self.state = 1841
                 self.match(VisualFoxpro9Parser.RIGHTBRACKET)
                 pass
             else:
@@ -12124,7 +12171,7 @@ class VisualFoxpro9Parser ( Parser ):
         self.enterRule(localctx, 112, self.RULE_datatype)
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 1831
+            self.state = 1845
             self.idAttr()
         except RecognitionException as re:
             localctx.exception = re
@@ -12173,31 +12220,31 @@ class VisualFoxpro9Parser ( Parser ):
         localctx = VisualFoxpro9Parser.ScopeClauseContext(self, self._ctx, self.state)
         self.enterRule(localctx, 114, self.RULE_scopeClause)
         try:
-            self.state = 1839
+            self.state = 1853
             self._errHandler.sync(self)
             token = self._input.LA(1)
             if token in [VisualFoxpro9Parser.ALL]:
                 self.enterOuterAlt(localctx, 1)
-                self.state = 1833
+                self.state = 1847
                 self.match(VisualFoxpro9Parser.ALL)
                 pass
             elif token in [VisualFoxpro9Parser.NEXT]:
                 self.enterOuterAlt(localctx, 2)
-                self.state = 1834
+                self.state = 1848
                 self.match(VisualFoxpro9Parser.NEXT)
-                self.state = 1835
+                self.state = 1849
                 self.expr(0)
                 pass
             elif token in [VisualFoxpro9Parser.RECORD]:
                 self.enterOuterAlt(localctx, 3)
-                self.state = 1836
+                self.state = 1850
                 self.match(VisualFoxpro9Parser.RECORD)
-                self.state = 1837
+                self.state = 1851
                 self.expr(0)
                 pass
             elif token in [VisualFoxpro9Parser.REST]:
                 self.enterOuterAlt(localctx, 4)
-                self.state = 1838
+                self.state = 1852
                 self.match(VisualFoxpro9Parser.REST)
                 pass
             else:
@@ -12902,7 +12949,7 @@ class VisualFoxpro9Parser ( Parser ):
         self._la = 0 # Token type
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 1841
+            self.state = 1855
             _la = self._input.LA(1)
             if not(((((_la - 39)) & ~0x3f) == 0 and ((1 << (_la - 39)) & ((1 << (VisualFoxpro9Parser.ASSERT - 39)) | (1 << (VisualFoxpro9Parser.TO - 39)) | (1 << (VisualFoxpro9Parser.DO - 39)) | (1 << (VisualFoxpro9Parser.IN - 39)) | (1 << (VisualFoxpro9Parser.AS - 39)) | (1 << (VisualFoxpro9Parser.IF - 39)) | (1 << (VisualFoxpro9Parser.ELIF - 39)) | (1 << (VisualFoxpro9Parser.ELSE - 39)) | (1 << (VisualFoxpro9Parser.ENDIF - 39)) | (1 << (VisualFoxpro9Parser.ON - 39)) | (1 << (VisualFoxpro9Parser.OFF - 39)) | (1 << (VisualFoxpro9Parser.ERROR - 39)) | (1 << (VisualFoxpro9Parser.WITH - 39)) | (1 << (VisualFoxpro9Parser.STORE - 39)) | (1 << (VisualFoxpro9Parser.EXTERNAL - 39)) | (1 << (VisualFoxpro9Parser.ARRAY - 39)) | (1 << (VisualFoxpro9Parser.DELETE - 39)) | (1 << (VisualFoxpro9Parser.RECALL - 39)) | (1 << (VisualFoxpro9Parser.FILE - 39)) | (1 << (VisualFoxpro9Parser.SET - 39)) | (1 << (VisualFoxpro9Parser.RELEASE - 39)) | (1 << (VisualFoxpro9Parser.RECYCLE - 39)) | (1 << (VisualFoxpro9Parser.CREATE - 39)) | (1 << (VisualFoxpro9Parser.TABLE - 39)) | (1 << (VisualFoxpro9Parser.DBF - 39)) | (1 << (VisualFoxpro9Parser.NAME - 39)) | (1 << (VisualFoxpro9Parser.FREE - 39)) | (1 << (VisualFoxpro9Parser.SELECT - 39)) | (1 << (VisualFoxpro9Parser.USE - 39)) | (1 << (VisualFoxpro9Parser.READ - 39)) | (1 << (VisualFoxpro9Parser.EVENTS - 39)) | (1 << (VisualFoxpro9Parser.SHUTDOWN - 39)) | (1 << (VisualFoxpro9Parser.CLEAR - 39)) | (1 << (VisualFoxpro9Parser.PROCEDURE - 39)) | (1 << (VisualFoxpro9Parser.ENDPROC - 39)) | (1 << (VisualFoxpro9Parser.DEFINE - 39)) | (1 << (VisualFoxpro9Parser.CLASS - 39)) | (1 << (VisualFoxpro9Parser.ENDDEFINE - 39)) | (1 << (VisualFoxpro9Parser.LOCATE - 39)) | (1 << (VisualFoxpro9Parser.CONTINUE - 39)) | (1 << (VisualFoxpro9Parser.FOR - 39)) | (1 << (VisualFoxpro9Parser.ENDFOR - 39)) | (1 << (VisualFoxpro9Parser.WHILE - 39)) | (1 << (VisualFoxpro9Parser.NOOPTIMIZE - 39)) | (1 << (VisualFoxpro9Parser.STATUS - 39)) | (1 << (VisualFoxpro9Parser.BAR - 39)) | (1 << (VisualFoxpro9Parser.MEMOWIDTH - 39)) | (1 << (VisualFoxpro9Parser.CURSOR - 39)) | (1 << (VisualFoxpro9Parser.REFRESH - 39)) | (1 << (VisualFoxpro9Parser.BELL - 39)) | (1 << (VisualFoxpro9Parser.CENTURY - 39)) | (1 << (VisualFoxpro9Parser.COMPATIBLE - 39)) | (1 << (VisualFoxpro9Parser.DATE - 39)) | (1 << (VisualFoxpro9Parser.ADD - 39)) | (1 << (VisualFoxpro9Parser.OBJECT - 39)) | (1 << (VisualFoxpro9Parser.REPLACE - 39)) | (1 << (VisualFoxpro9Parser.LIBRARY - 39)) | (1 << (VisualFoxpro9Parser.SHARED - 39)) | (1 << (VisualFoxpro9Parser.WAIT - 39)) | (1 << (VisualFoxpro9Parser.WINDOW - 39)) | (1 << (VisualFoxpro9Parser.NOWAIT - 39)))) != 0) or ((((_la - 103)) & ~0x3f) == 0 and ((1 << (_la - 103)) & ((1 << (VisualFoxpro9Parser.NOCLEAR - 103)) | (1 << (VisualFoxpro9Parser.NOTIFY - 103)) | (1 << (VisualFoxpro9Parser.ENDDO - 103)) | (1 << (VisualFoxpro9Parser.DECLARE - 103)) | (1 << (VisualFoxpro9Parser.ERASE - 103)) | (1 << (VisualFoxpro9Parser.SYSMENU - 103)) | (1 << (VisualFoxpro9Parser.CLOCK - 103)) | (1 << (VisualFoxpro9Parser.RETURN - 103)) | (1 << (VisualFoxpro9Parser.PARAMETER - 103)) | (1 << (VisualFoxpro9Parser.ALTERNATE - 103)) | (1 << (VisualFoxpro9Parser.EXACT - 103)) | (1 << (VisualFoxpro9Parser.ALL - 103)) | (1 << (VisualFoxpro9Parser.COUNT - 103)) | (1 << (VisualFoxpro9Parser.GOTO - 103)) | (1 << (VisualFoxpro9Parser.TOP - 103)) | (1 << (VisualFoxpro9Parser.BOTTOM - 103)) | (1 << (VisualFoxpro9Parser.RECORD - 103)) | (1 << (VisualFoxpro9Parser.CLOSE - 103)) | (1 << (VisualFoxpro9Parser.APPEND - 103)) | (1 << (VisualFoxpro9Parser.BLANK - 103)) | (1 << (VisualFoxpro9Parser.NOMENU - 103)) | (1 << (VisualFoxpro9Parser.CASE - 103)) | (1 << (VisualFoxpro9Parser.ENDCASE - 103)) | (1 << (VisualFoxpro9Parser.OTHERWISE - 103)) | (1 << (VisualFoxpro9Parser.FROM - 103)) | (1 << (VisualFoxpro9Parser.REPORT - 103)) | (1 << (VisualFoxpro9Parser.FORM - 103)) | (1 << (VisualFoxpro9Parser.NOEJECT - 103)) | (1 << (VisualFoxpro9Parser.PRINTER - 103)) | (1 << (VisualFoxpro9Parser.PROMPT - 103)) | (1 << (VisualFoxpro9Parser.NOPROMPT - 103)) | (1 << (VisualFoxpro9Parser.DB4 - 103)) | (1 << (VisualFoxpro9Parser.FOXPLUS - 103)) | (1 << (VisualFoxpro9Parser.NOCONSOLE - 103)) | (1 << (VisualFoxpro9Parser.COPY - 103)) | (1 << (VisualFoxpro9Parser.STRUCTURE - 103)) | (1 << (VisualFoxpro9Parser.DELETED - 103)) | (1 << (VisualFoxpro9Parser.SUM - 103)) | (1 << (VisualFoxpro9Parser.DISTINCT - 103)) | (1 << (VisualFoxpro9Parser.INTO - 103)) | (1 << (VisualFoxpro9Parser.NEXT - 103)) | (1 << (VisualFoxpro9Parser.REST - 103)) | (1 << (VisualFoxpro9Parser.SKIPKW - 103)) | (1 << (VisualFoxpro9Parser.EXCLUSIVE - 103)) | (1 << (VisualFoxpro9Parser.NEAR - 103)) | (1 << (VisualFoxpro9Parser.MKDIR - 103)) | (1 << (VisualFoxpro9Parser.RMDIR - 103)) | (1 << (VisualFoxpro9Parser.KEY - 103)) | (1 << (VisualFoxpro9Parser.KEYBOARD - 103)) | (1 << (VisualFoxpro9Parser.LABEL - 103)) | (1 << (VisualFoxpro9Parser.PLAIN - 103)) | (1 << (VisualFoxpro9Parser.MENU - 103)) | (1 << (VisualFoxpro9Parser.AT - 103)) | (1 << (VisualFoxpro9Parser.LINE - 103)) | (1 << (VisualFoxpro9Parser.SCREEN - 103)) | (1 << (VisualFoxpro9Parser.NOMARGIN - 103)) | (1 << (VisualFoxpro9Parser.PAD - 103)) | (1 << (VisualFoxpro9Parser.OF - 103)) | (1 << (VisualFoxpro9Parser.COLOR - 103)) | (1 << (VisualFoxpro9Parser.SCHEME - 103)) | (1 << (VisualFoxpro9Parser.BEFORE - 103)) | (1 << (VisualFoxpro9Parser.AFTER - 103)) | (1 << (VisualFoxpro9Parser.NEGOTIATE - 103)) | (1 << (VisualFoxpro9Parser.FONT - 103)))) != 0) or ((((_la - 167)) & ~0x3f) == 0 and ((1 << (_la - 167)) & ((1 << (VisualFoxpro9Parser.STYLE - 167)) | (1 << (VisualFoxpro9Parser.MARK - 167)) | (1 << (VisualFoxpro9Parser.MESSAGE - 167)) | (1 << (VisualFoxpro9Parser.ACTIVATE - 167)) | (1 << (VisualFoxpro9Parser.POPUP - 167)) | (1 << (VisualFoxpro9Parser.EXTENDED - 167)) | (1 << (VisualFoxpro9Parser.SHADOW - 167)) | (1 << (VisualFoxpro9Parser.MARGIN - 167)) | (1 << (VisualFoxpro9Parser.RELATIVE - 167)) | (1 << (VisualFoxpro9Parser.SELECTION - 167)) | (1 << (VisualFoxpro9Parser.DEACTIVATE - 167)) | (1 << (VisualFoxpro9Parser.SAME - 167)) | (1 << (VisualFoxpro9Parser.NOSHOW - 167)) | (1 << (VisualFoxpro9Parser.STEP - 167)) | (1 << (VisualFoxpro9Parser.THEN - 167)) | (1 << (VisualFoxpro9Parser.UNDEFINE - 167)) | (1 << (VisualFoxpro9Parser.IFDEF - 167)) | (1 << (VisualFoxpro9Parser.PUSH - 167)) | (1 << (VisualFoxpro9Parser.POP - 167)) | (1 << (VisualFoxpro9Parser.TIMEOUT - 167)) | (1 << (VisualFoxpro9Parser.ENDWITH - 167)) | (1 << (VisualFoxpro9Parser.TYPEAHEAD - 167)) | (1 << (VisualFoxpro9Parser.ALIAS - 167)) | (1 << (VisualFoxpro9Parser.ORDER - 167)) | (1 << (VisualFoxpro9Parser.SEEK - 167)) | (1 << (VisualFoxpro9Parser.WHERE - 167)) | (1 << (VisualFoxpro9Parser.FILTER - 167)) | (1 << (VisualFoxpro9Parser.RENAME - 167)) | (1 << (VisualFoxpro9Parser.INCLUDE - 167)) | (1 << (VisualFoxpro9Parser.CLASSLIB - 167)) | (1 << (VisualFoxpro9Parser.BY - 167)) | (1 << (VisualFoxpro9Parser.UNIQUE - 167)) | (1 << (VisualFoxpro9Parser.INDEX - 167)) | (1 << (VisualFoxpro9Parser.TAG - 167)) | (1 << (VisualFoxpro9Parser.COMPACT - 167)) | (1 << (VisualFoxpro9Parser.ASCENDING - 167)) | (1 << (VisualFoxpro9Parser.DESCENDING - 167)) | (1 << (VisualFoxpro9Parser.CANDIDATE - 167)) | (1 << (VisualFoxpro9Parser.ADDITIVE - 167)) | (1 << (VisualFoxpro9Parser.DIMENSION - 167)) | (1 << (VisualFoxpro9Parser.NOT - 167)) | (1 << (VisualFoxpro9Parser.AND - 167)) | (1 << (VisualFoxpro9Parser.OR - 167)) | (1 << (VisualFoxpro9Parser.SCAN - 167)) | (1 << (VisualFoxpro9Parser.ENDSCAN - 167)) | (1 << (VisualFoxpro9Parser.NULL - 167)) | (1 << (VisualFoxpro9Parser.BOOLEANCHAR - 167)) | (1 << (VisualFoxpro9Parser.NODEFAULT - 167)) | (1 << (VisualFoxpro9Parser.DLLS - 167)) | (1 << (VisualFoxpro9Parser.MACROS - 167)) | (1 << (VisualFoxpro9Parser.NUMBER - 167)) | (1 << (VisualFoxpro9Parser.ZAP - 167)) | (1 << (VisualFoxpro9Parser.ROLLOVER - 167)) | (1 << (VisualFoxpro9Parser.DEFAULT - 167)) | (1 << (VisualFoxpro9Parser.SAVE - 167)) | (1 << (VisualFoxpro9Parser.NOSAVE - 167)) | (1 << (VisualFoxpro9Parser.DATABASE - 167)) | (1 << (VisualFoxpro9Parser.TABLES - 167)) | (1 << (VisualFoxpro9Parser.INDEXES - 167)) | (1 << (VisualFoxpro9Parser.PACK - 167)) | (1 << (VisualFoxpro9Parser.REINDEX - 167)))) != 0) or ((((_la - 231)) & ~0x3f) == 0 and ((1 << (_la - 231)) & ((1 << (VisualFoxpro9Parser.PROGRAM - 231)) | (1 << (VisualFoxpro9Parser.SCOPE - 231)) | (1 << (VisualFoxpro9Parser.THROW - 231)) | (1 << (VisualFoxpro9Parser.EACH - 231)) | (1 << (VisualFoxpro9Parser.CAST - 231)) | (1 << (VisualFoxpro9Parser.RUN - 231)) | (1 << (VisualFoxpro9Parser.TRY - 231)) | (1 << (VisualFoxpro9Parser.CATCH - 231)) | (1 << (VisualFoxpro9Parser.FINALLY - 231)) | (1 << (VisualFoxpro9Parser.ENDTRY - 231)) | (1 << (VisualFoxpro9Parser.BROWSE - 231)) | (1 << (VisualFoxpro9Parser.INSERT - 231)) | (1 << (VisualFoxpro9Parser.VALUES - 231)) | (1 << (VisualFoxpro9Parser.MEMVAR - 231)) | (1 << (VisualFoxpro9Parser.TYPE - 231)) | (1 << (VisualFoxpro9Parser.SCATTER - 231)) | (1 << (VisualFoxpro9Parser.GATHER - 231)) | (1 << (VisualFoxpro9Parser.EXCEPT - 231)) | (1 << (VisualFoxpro9Parser.LIKE - 231)) | (1 << (VisualFoxpro9Parser.FIELDS - 231)) | (1 << (VisualFoxpro9Parser.ALTER - 231)) | (1 << (VisualFoxpro9Parser.COLUMN - 231)) | (1 << (VisualFoxpro9Parser.DROP - 231)) | (1 << (VisualFoxpro9Parser.HELP - 231)) | (1 << (VisualFoxpro9Parser.SAY - 231)) | (1 << (VisualFoxpro9Parser.COLLECTION - 231)) | (1 << (VisualFoxpro9Parser.SYSTEM - 231)) | (1 << (VisualFoxpro9Parser.TALK - 231)) | (1 << (VisualFoxpro9Parser.PROGRAMCONTROL - 231)) | (1 << (VisualFoxpro9Parser.RELATION - 231)) | (1 << (VisualFoxpro9Parser.UPDATE - 231)) | (1 << (VisualFoxpro9Parser.FORCE - 231)) | (1 << (VisualFoxpro9Parser.JOIN - 231)) | (1 << (VisualFoxpro9Parser.TEXT - 231)) | (1 << (VisualFoxpro9Parser.ENDTEXT - 231)) | (1 << (VisualFoxpro9Parser.ID - 231)))) != 0)):
                 self._errHandler.recoverInline(self)
