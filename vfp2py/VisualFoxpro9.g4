@@ -184,7 +184,7 @@ cmd
  | CREATE (TABLE|DBF|CURSOR) specialExpr FREE? '(' identifier identifier arrayIndex (',' identifier identifier arrayIndex)* ')' #createTable
  | ALTER TABLE specialExpr (ADD COLUMN identifier identifier arrayIndex | DROP COLUMN identifier) #alterTable
  | SELECT (tablename=specialExpr | (DISTINCT? (specialArgs | '*') (FROM fromExpr=specialExpr)? (WHERE whereExpr=expr)? (INTO (TABLE | CURSOR) intoExpr=specialExpr)? (ORDER BY orderbyid=identifier)?)) #select
- | USE (SHARED | EXCLUSIVE)? (IN workArea=specialExpr | name=specialExpr IN workArea=specialExpr | name=specialExpr)? (SHARED | EXCLUSIVE)? (ALIAS aliasExpr=specialExpr)? #use
+ | USE (IN workArea=specialExpr | ORDER TAG? orderExpr=expr | ALIAS aliasExpr=specialExpr | SHARED | EXCLUSIVE | NOUPDATE | name=specialExpr)* #use
  | LOCATE queryCondition* #locate
  | CONTINUE #continueLocate
  | REPLACE (queryCondition | specialExpr WITH expr)* #replace
@@ -444,6 +444,7 @@ identifier
  | SYSTEM
  | TALK
  | PROGRAMCONTROL
+ | NOUPDATE
  | RELATION
  | UPDATE
  | FORCE
@@ -726,6 +727,7 @@ COLLECTION: C O L L E C T I O N;
 SYSTEM: S Y S T E M;
 TALK: T A L K;
 PROGRAMCONTROL: (C A N C E L | S U S P E N D | R E S U M E | Q U I T | E X I T | L O O P);
+NOUPDATE: N O U P D A T E;
 RELATION: R E L A T I O N;
 UPDATE: U P D A T E;
 FORCE: F O R C E;
