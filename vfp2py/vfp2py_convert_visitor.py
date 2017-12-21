@@ -91,6 +91,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         self.class_list = []
         self.function_list = []
         self.used_scope = False
+        self.skip_extract = False
 
     def visit(self, ctx):
         if ctx:
@@ -1185,20 +1186,21 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         return self.operationExpr(ctx, '%')
 
     def extract_args_from_addbs(self, ctx):
-        if not isinstance(ctx, ctx.parser.AdditionContext):
-            return [self.visit(ctx)]
         leftctx, rightctx = ctx.expr()
         if isinstance(leftctx, ctx.parser.AtomExprContext) and self.visit(leftctx.atom()) == 'addbs' and isinstance(leftctx.trailer(), ctx.parser.FuncCallTrailerContext):
-            args = self.extract_args_from_addbs(leftctx.trailer().args().expr(0))
-        else:
-            args = [self.visit(leftctx)]
-        args.append(self.visit(rightctx))
-        return args
+            leftctx = leftctx.trailer().args().expr(0)
+            if isinstance(leftctx, ctx.parser.AdditionContext):
+                return self.extract_args_from_addbs(leftctx) + [rightctx]
+        return [leftctx, rightctx]
 
     def operationExpr(self, ctx, operation):
-        if operation == ctx.parser.PLUS_SIGN:
+        if not self.skip_extract and operation == ctx.parser.PLUS_SIGN:
             args = self.extract_args_from_addbs(ctx)
-            if len(args) > 2 or args[0] != self.visit(ctx.expr(0)):
+            self.skip_extract = True
+            args = [self.visit(arg) for arg in args]
+            check_expr = self.visit(ctx.expr(0))
+            self.skip_extract = False
+            if len(args) > 2 or args[0] != check_expr:
                 return make_func_code('os.path.join', *args)
         def add_parens(parent, child):
             expr = self.visit(child)
