@@ -68,7 +68,7 @@ parameters
  ;
 
 funcDefStart
- : SCOPE? PROCEDURE idAttr2 ('(' parameters? ')')? NL
+ : SCOPE? PROCEDURE idAttr2 ('(' parameters? ')')? asType? NL
  ;
 
 funcDef
@@ -117,7 +117,7 @@ whileStmt
  ;
 
 withStmt
- : WITH idAttr NL lines ENDWITH
+ : WITH idAttr asTypeOf? NL lines ENDWITH
  ;
 
 scanStmt
