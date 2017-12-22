@@ -1226,7 +1226,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
     def visitFuncDo(self, ctx):
         func = self.visit(ctx.specialExpr(0))
         namespace = self.visit(ctx.specialExpr(1)) if ctx.IN() else ''
-        args = self.visit(ctx.args()) if ctx.WITH() else []
+        args = self.visit(ctx.args(0)) or []
 
         if ctx.FORM():
             func = func.replace('.', '_')

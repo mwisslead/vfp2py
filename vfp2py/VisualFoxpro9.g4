@@ -144,7 +144,7 @@ cmd
  | (PROGRAMCONTROL) #programControl
  | '@' args (SAY sayExpr=expr | STYLE styleExpr=expr)* #atSay
  | (DO FORM specialExpr
-   | DO specialExpr (IN specialExpr)? (WITH args)?) #funcDo
+   | DO specialExpr (IN specialExpr | WITH args)*) #funcDo
  | (STORE expr TO idAttr (',' idAttr)*
    | idAttr '=' expr) #assign
  | (((SCOPE|EXTERNAL) (ARRAY | DIMENSION | DECLARE)? | DIMENSION | DECLARE | PARAMETER) declarationItem (',' declarationItem)*
