@@ -1418,7 +1418,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
 
     def visitThrowError(self, ctx):
         if ctx.expr():
-            return add_args_to_code('raise {}', [self.visit(ctx.expr())])
+            return self.visitRaiseError(ctx)
         return CodeStr('raise')
 
     def visitCreateTable(self, ctx):

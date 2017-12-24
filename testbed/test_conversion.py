@@ -768,6 +768,7 @@ Try
 catch to oerr
    throw
 endtry
+throw \'Error\' + \' Message\'
 '''.strip()
     output_str = '''
 try:
@@ -775,6 +776,7 @@ try:
 except Exception as oerr:
     oerr = vfpfunc.Exception.from_pyexception(oerr)
     raise
+raise Exception(\'Error Message\')
 '''.strip()
     test_output_str = vfp2py.vfp2py.prg2py(input_str, parser_start='lines', prepend_data='').strip()
     try:

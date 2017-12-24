@@ -650,6 +650,7 @@ Try
 catch to oerr
    throw
 endtry
+throw 'Error' + ' Message'
 @end=vfp@
 
 @begin=python@
@@ -658,6 +659,7 @@ try:
 except Exception as oerr:
     oerr = vfpfunc.Exception.from_pyexception(oerr)
     raise
+raise Exception('Error Message')
 @end=python@
 
 @begin=vfp@&&lines
