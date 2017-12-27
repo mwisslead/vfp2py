@@ -213,11 +213,8 @@ def preprocess_code(data):
     return visitor
 
 def preprocess_file(filename):
-    import codecs
-    fid = codecs.open(filename, 'r', 'ISO-8859-1')
-    data = fid.read()
-    fid.close()
-
+    with open(filename, 'rb') as fid:
+        data = fid.read().decode('cp1252')
     return preprocess_code(data)
 
 def find_file_ignore_case(filename, directories):
@@ -550,7 +547,7 @@ def convert_file(infile, outfile):
     with tempfile.NamedTemporaryFile(suffix='.prg') as fid:
         pass
     with open(fid.name, 'wb') as fid:
-        fid.write(data.encode('utf-8'))
+        fid.write(data.encode('cp1252'))
     output = prg2py_after_preproc(data, 'prg', os.path.splitext(os.path.basename(infile))[0])
     print(tic.toc())
     with open(outfile, 'wb') as fid:
