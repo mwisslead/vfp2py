@@ -551,4 +551,4 @@ def convert_file(infile, outfile):
     output = prg2py_after_preproc(data, 'prg', os.path.splitext(os.path.basename(infile))[0])
     print(tic.toc())
     with open(outfile, 'wb') as fid:
-        fid.write(output.encode('utf-8'))
+        fid.write(('# coding=utf-8\n' + output).encode('utf-8'))
