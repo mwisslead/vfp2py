@@ -525,13 +525,13 @@ class VisualFoxpro9Visitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by VisualFoxpro9Parser#dllArgs.
-    def visitDllArgs(self, ctx):
+    # Visit a parse tree produced by VisualFoxpro9Parser#textChunk.
+    def visitTextChunk(self, ctx):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by VisualFoxpro9Parser#textChunk.
-    def visitTextChunk(self, ctx):
+    # Visit a parse tree produced by VisualFoxpro9Parser#dllArgs.
+    def visitDllArgs(self, ctx):
         return self.visitChildren(ctx)
 
 

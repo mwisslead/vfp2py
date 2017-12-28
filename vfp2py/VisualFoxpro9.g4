@@ -228,12 +228,12 @@ queryCondition
  | NOOPTIMIZE
  ;
 
-dllArgs
- : dllArg (',' dllArg)*
- ;
-
 textChunk
  : (~ENDTEXT)*
+ ;
+
+dllArgs
+ : dllArg (',' dllArg)*
  ;
 
 dllArg
