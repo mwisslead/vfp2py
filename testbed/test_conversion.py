@@ -86,6 +86,7 @@ ENDTEXT
 QUIT
 CANCEL
 RESUME
+COMPILE test.prg
 '''.strip()
     output_str = '''
 # comment
@@ -164,6 +165,7 @@ vfpvar[\'somestring\'] = vfpfunc.text([u\'       1234567890\',
 vfpfunc.quit()
 # FIX ME: CANCEL
 # FIX ME: RESUME
+# FIX ME: COMPILE test.prg
 '''.strip()
     test_output_str = vfp2py.vfp2py.prg2py(input_str, parser_start='lines', prepend_data='').strip()
     try:

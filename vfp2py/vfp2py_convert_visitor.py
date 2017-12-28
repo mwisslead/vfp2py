@@ -1835,6 +1835,9 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         else:
             return add_args_to_code('assert {}', (self.visit(ctx.expr(0)),))
 
+    def visitCompileCmd(self, ctx):
+        pass
+
     def visitTextBlock(self, ctx):
         kwargs = {}
         if ctx.NOSHOW():

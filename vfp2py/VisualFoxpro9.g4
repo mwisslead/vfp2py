@@ -216,6 +216,7 @@ cmd
  | (RUN | EXCLAMATION) ('/' identifier)? (~NL)* #shellRun
  | ASSERT expr (MESSAGE expr)? #assert
  | TEXT (TO idAttr | NOSHOW)* NL textChunk ENDTEXT #textBlock
+ | COMPILE (DATABASE | FORM | CLASSLIB | LABEL | REPORT)? (ALL | ENCRYPT | NODEBUG | AS specialExpr | specialExpr)* #compileCmd
  | '=' expr #exprCmd
  | complexId #complexIdCmd
  ;
@@ -446,6 +447,7 @@ identifier
  | PROGRAMCONTROL
  | NOUPDATE
  | RELATION
+ | COMPILE
  | UPDATE
  | FORCE
  | JOIN
@@ -717,6 +719,7 @@ COLUMN: C O L U M N;
 DROP: D R O P;
 DEBUG: D E B U G;
 GETS: G E T S;
+NODEBUG: N O DEBUG;
 DEBUGOUT: DEBUG O U T;
 MEMORY: M E M O R Y;
 MENUS: M E N U S;
@@ -729,11 +732,13 @@ TALK: T A L K;
 PROGRAMCONTROL: (C A N C E L | S U S P E N D | R E S U M E | Q U I T | E X I T | L O O P);
 NOUPDATE: N O U P D A T E;
 RELATION: R E L A T I O N;
+COMPILE: C O M P I L E;
 UPDATE: U P D A T E;
 FORCE: F O R C E;
 JOIN: J O I N;
 TEXT: T E X T;
 ENDTEXT: E N D TEXT;
+ENCRYPT: E N C R Y P T;
 
 ID : [A-Za-z_] [a-zA-Z0-9_]*;
 

@@ -79,6 +79,7 @@ ENDTEXT
 QUIT
 CANCEL
 RESUME
+COMPILE test.prg
 @end=vfp@
 
 @begin=python@
@@ -158,6 +159,7 @@ vfpvar['somestring'] = vfpfunc.text([u'       1234567890',
 vfpfunc.quit()
 # FIX ME: CANCEL
 # FIX ME: RESUME
+# FIX ME: COMPILE test.prg
 @end=python@
 
 Preprocessor Directives
