@@ -1429,30 +1429,23 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         elif ctx.CURSOR():
             func = 'vfpfunc.db.create_cursor'
         tablename = self.visit(ctx.specialExpr())
-        tablesetup = zip(ctx.identifier()[::2], ctx.identifier()[1::2], ctx.arrayIndex())
-        tablesetup = ((self.visit(id1), self.visit(id2), self.visit(size)) for id1, id2, size in tablesetup)
-        setupstring = []
-        for id1, id2, size in tablesetup:
-            if id2.upper() == 'L' and len(size) == 1 and size[0] == 1:
-                setupstring.append('{} {}'.format(id1, id2))
-            else:
-                setupstring.append('{} {}({})'.format(id1, id2, ', '.join(str(int(i)) for i in size)))
-        setupstring = '; '.join(setupstring)
+        setupstring = '; '.join(self.visit(f) for f in ctx.tableField())
         free = 'free' if ctx.FREE() else ''
         return make_func_code(func, tablename, setupstring, free)
+
+    def visitTableField(self, ctx):
+        fieldname = self.visit(ctx.identifier(0))
+        fieldtype = self.visit(ctx.identifier(1))
+        fieldsize = self.visit(ctx.arrayIndex()) or (1,)
+        if fieldtype.upper() == 'L' and len(fieldsize) == 1 and fieldsize[0] == 1:
+            return '{} {}'.format(fieldname, fieldtype)
+        else:
+            return '{} {}({})'.format(fieldname, fieldtype, ', '.join(str(int(i)) for i in fieldsize))
 
     def visitAlterTable(self, ctx):
         tablename = self.visit(ctx.specialExpr())
         if ctx.ADD():
-            tablesetup = zip(ctx.identifier()[::2], ctx.identifier()[1::2], [ctx.arrayIndex()])
-            tablesetup = ((self.visit(id1), self.visit(id2), self.visit(size)) for id1, id2, size in tablesetup)
-            setupstring = []
-            for id1, id2, size in tablesetup:
-                if id2.upper() == 'L' and len(size) == 1 and size[0] == 1:
-                    setupstring.append('{} {}'.format(id1, id2))
-                else:
-                    setupstring.append('{} {}({})'.format(id1, id2, ', '.join(str(int(i)) for i in size)))
-            setupstring = '; '.join(setupstring)
+            setupstring = '; '.join(self.visit(f) for f in ctx.tableField())
         else:
             setupstring = str(self.visit(ctx.identifier(0)))
         return make_func_code('vfpfunc.db.alter_table', tablename, 'add' if ctx.ADD() else 'drop', setupstring)

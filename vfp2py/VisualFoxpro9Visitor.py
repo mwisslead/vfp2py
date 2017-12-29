@@ -540,6 +540,11 @@ class VisualFoxpro9Visitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by VisualFoxpro9Parser#tableField.
+    def visitTableField(self, ctx):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by VisualFoxpro9Parser#onError.
     def visitOnError(self, ctx):
         return self.visitChildren(ctx)

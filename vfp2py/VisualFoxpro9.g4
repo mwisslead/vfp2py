@@ -181,8 +181,8 @@ cmd
  | ERROR expr? #raiseError
  | THROW expr? #throwError
 
- | CREATE (TABLE|DBF|CURSOR) specialExpr FREE? '(' identifier identifier arrayIndex (',' identifier identifier arrayIndex)* ')' #createTable
- | ALTER TABLE specialExpr (ADD COLUMN identifier identifier arrayIndex | DROP COLUMN identifier) #alterTable
+ | CREATE (TABLE|DBF|CURSOR) specialExpr (FREE? '(' tableField (',' tableField)* ')' | FROM ARRAY expr) #createTable
+ | ALTER TABLE specialExpr (ADD COLUMN tableField | DROP COLUMN identifier | ALTER COLUMN identifier (NOT NULL)?)* #alterTable
  | SELECT (tablename=specialExpr | (DISTINCT? (specialArgs | '*') (FROM fromExpr=specialExpr)? (WHERE whereExpr=expr)? (INTO (TABLE | CURSOR) intoExpr=specialExpr)? (ORDER BY orderbyid=identifier)?)) #select
  | USE (IN workArea=specialExpr | ORDER TAG? orderExpr=expr | ALIAS aliasExpr=specialExpr | SHARED | EXCLUSIVE | NOUPDATE | name=specialExpr)* #use
  | LOCATE queryCondition* #locate
@@ -238,6 +238,10 @@ dllArgs
 
 dllArg
  : datatype '@'? identifier?
+ ;
+
+tableField
+ : identifier identifier arrayIndex?
  ;
 
 onError
