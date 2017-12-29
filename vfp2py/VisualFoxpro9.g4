@@ -139,8 +139,7 @@ controlStmt
  ;
 
 cmd
- : ON KEY (LABEL identifier ('+' identifier)?)? cmd #onKey
- | ADD OBJECT identifier asType (WITH idAttr '=' expr (',' idAttr '=' expr)*)? #addObject
+ : ADD OBJECT identifier asType (WITH idAttr '=' expr (',' idAttr '=' expr)*)? #addObject
  | (PROGRAMCONTROL) #programControl
  | '@' args (SAY sayExpr=expr | STYLE styleExpr=expr)* #atSay
  | (DO FORM specialExpr
@@ -155,8 +154,12 @@ cmd
  | (RENAME | COPY FILE) specialExpr TO specialExpr #copyMoveFile
  | (CHDIR | MKDIR | RMDIR) specialExpr #chMkRmDir
  | RETURN expr? #returnStmt
- | onError #onErrorCmd
- | onShutdown #onShutdownCmd
+ | ON ERROR cmd? #onError
+ | ON SHUTDOWN cmd? #onShutdown
+ | ON KEY (LABEL identifier ('+' identifier)?)? cmd #onKey
+ | ON PAD identifier OF identifier (ACTIVATE (POPUP | MENU) identifier)? #onPad
+ | ON BAR NUMBER_LITERAL OF identifier (ACTIVATE (POPUP | MENU) identifier)? #onBar
+ | ON SELECTION BAR NUMBER_LITERAL OF identifier cmd #onSelectionBar
  | RELEASE (ALL | vartype=(PROCEDURE|CLASSLIB)? args | POPUP args EXTENDED?) #release
  | SET setCmd #setStmt
  | PUSH KEY CLEAR? #pushKey
@@ -171,9 +174,6 @@ cmd
          (SKIPKW (FOR expr)?)? (COLOR SCHEME NUMBER_LITERAL)? #definePad
  | DEFINE POPUP identifier SHADOW? MARGIN? RELATIVE? (COLOR SCHEME NUMBER_LITERAL)? #definePopup
  | DEFINE BAR NUMBER_LITERAL OF identifier PROMPT expr (MESSAGE expr)? #defineBar
- | ON PAD identifier OF identifier (ACTIVATE (POPUP | MENU) identifier)? #onPad
- | ON BAR NUMBER_LITERAL OF identifier (ACTIVATE (POPUP | MENU) identifier)? #onBar
- | ON SELECTION BAR NUMBER_LITERAL OF identifier cmd #onSelectionBar
  | ACTIVATE WINDOW (parameters | ALL) (IN (WINDOW? identifier | SCREEN))? (BOTTOM | TOP | SAME)? NOSHOW? #activateWindow
  | ACTIVATE MENU identifier NOWAIT? (PAD identifier)? #activateMenu
  | DEACTIVATE (MENU|POPUP) (ALL | parameters) #deactivate
@@ -242,14 +242,6 @@ dllArg
 
 tableField
  : identifier identifier arrayIndex?
- ;
-
-onError
- : ON ERROR cmd?
- ;
-
-onShutdown
- : ON SHUTDOWN cmd?
  ;
 
 setCmd

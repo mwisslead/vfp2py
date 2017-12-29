@@ -175,11 +175,6 @@ class VisualFoxpro9Visitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by VisualFoxpro9Parser#onKey.
-    def visitOnKey(self, ctx):
-        return self.visitChildren(ctx)
-
-
     # Visit a parse tree produced by VisualFoxpro9Parser#addObject.
     def visitAddObject(self, ctx):
         return self.visitChildren(ctx)
@@ -240,13 +235,33 @@ class VisualFoxpro9Visitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by VisualFoxpro9Parser#onErrorCmd.
-    def visitOnErrorCmd(self, ctx):
+    # Visit a parse tree produced by VisualFoxpro9Parser#onError.
+    def visitOnError(self, ctx):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by VisualFoxpro9Parser#onShutdownCmd.
-    def visitOnShutdownCmd(self, ctx):
+    # Visit a parse tree produced by VisualFoxpro9Parser#onShutdown.
+    def visitOnShutdown(self, ctx):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by VisualFoxpro9Parser#onKey.
+    def visitOnKey(self, ctx):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by VisualFoxpro9Parser#onPad.
+    def visitOnPad(self, ctx):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by VisualFoxpro9Parser#onBar.
+    def visitOnBar(self, ctx):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by VisualFoxpro9Parser#onSelectionBar.
+    def visitOnSelectionBar(self, ctx):
         return self.visitChildren(ctx)
 
 
@@ -292,21 +307,6 @@ class VisualFoxpro9Visitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by VisualFoxpro9Parser#defineBar.
     def visitDefineBar(self, ctx):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by VisualFoxpro9Parser#onPad.
-    def visitOnPad(self, ctx):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by VisualFoxpro9Parser#onBar.
-    def visitOnBar(self, ctx):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by VisualFoxpro9Parser#onSelectionBar.
-    def visitOnSelectionBar(self, ctx):
         return self.visitChildren(ctx)
 
 
@@ -542,16 +542,6 @@ class VisualFoxpro9Visitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by VisualFoxpro9Parser#tableField.
     def visitTableField(self, ctx):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by VisualFoxpro9Parser#onError.
-    def visitOnError(self, ctx):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by VisualFoxpro9Parser#onShutdown.
-    def visitOnShutdown(self, ctx):
         return self.visitChildren(ctx)
 
 
