@@ -228,12 +228,6 @@ def read_expr(fid, names, *args):
 def read_setcode(fid, length):
     return ['SET ' + SETCODES[fid.read(1)[0]]]
 
-def read_oncode(fid, length):
-    return [ONCODES[fid.read(1)[0]]]
-
-def read_modifycode(fid, length):
-    return [MODIFYCODES[fid.read(1)[0]]]
-
 def read_text(fid, length):
     length = read_ushort(fid)
     return [''.join(chr(x) for x in fid.read(length))]
@@ -464,7 +458,7 @@ COMMANDS = {
     0x2E: 'LOOP',
     0x2F: 'MODIFY',
     0x30: lambda fid, length: ['NOTE'] + [fid.read(length).decode('ISO-8859-1')],#'NOTE',
-    0x31: read_oncode,#'ON',
+    0x31: 'ON',
     0x32: 'OTHERWISE',
     0x33: 'PACK',
     0x34: 'PARAMETERS',
@@ -525,7 +519,7 @@ COMMANDS = {
     0x77: 'ENDPRINTJOB',
     0x79: '???',
     0x7A: 'MOVE',
-    0x7B: lambda fid, length: ['CLEAR'] + read_oncode(fid, length),
+    0x7B: 'ON', #CLEAR ON event
     0x7C: 'DECLARE',
     0x7D: 'CALCULATE',
     0x7E: 'SCAN',
@@ -692,19 +686,6 @@ SETCODES = {
     0xFE: '\n',
 }
 
-ONCODES = {
-    0x06: 'ON BAR',
-    0x10: 'ON ERROR',
-    0x17: 'ON KEY',
-    0xBC: 'ON PAD',
-    0xBD: 'ON ESCAPE',
-    0xBE: 'ON PAGE',
-    0xC8: 'ON READERROR',
-    0xCA: 'ON EXIT',
-    0xCD: 'ON SHUTDOWN',
-    0xD0: 'ON SELECTION',
-}
-
 CLAUSES = {
     0x01: 'ADDITIVE',
     0x02: 'ALIAS',
@@ -718,7 +699,6 @@ CLAUSES = {
     0x0D: 'COLOR',
     0x0E: 'DEFAULT',
     0x0F: 'DOUBLE',
-    0x10: '=',
     0x11: 'FIELDS',
     0x12: 'FILE',
     0x13: 'FOR',
@@ -776,39 +756,44 @@ CLAUSES = {
     0x5B: 'RTLJUSTIFY',
     0x5C: 'LTRJUSTIFY',
     0x5F: 'PICTRES',
-    0xBB: '(XL5 or WITH BUFFERING=)',
-    0xBC: '(INTO or ACTIVATE or COMMAND or PAD)',
-    0xBD: '(CENTER or CURSOR or TRANSACTION or APP or MINIMIZE)',
-    0xBE: '(PROCEDURE or DELIMITED or EXE or DISTINCT or DOS)',
-    0xBF: '(UNKNOWN or MIN or FLOAT)',
-    0xC0: '(HAVING or FREE or LOCAL or FOOTER)',
-    0xC1: '(LINE or TRIGGER or GLOBAL or GET)',
-    0xC2: '(SHARED or DATABASE or DROP or GETS or NOINIT)',
-    0xC3: '(ORDER BY or OF or REPLACE or NOCLOSE)',
-    0xC4: '(SAY or VIEWS)',
-    0xC5: '(VALUES or DBLCLICK)',
-    0xC6: '(POPUP or WHERE or DLL or DRAG or EXCLUDE)',
-    0xC7: '(* or STEP or XLS or MARK)',
-    0xC8: '(READ or MARGIN or RPD)',
-    0xCA: '(TAG or SET or FORCE)',
-    0xCB: '(STATUS or RECOMPILE or PRIMARY or WRK)',
-    0xCC: '(STRUCTURE or RELATIVE or FOREIGN or PROTECTED)',
-    0xCD: '(SHUTDOWN or NOFILTER)',
-    0xCE: '(TIMEOUT or UPDATE)',
-    0xCF: 'SHADOW',
-    0xD0: 'NOCLEAR',
-    0xD1: '(WITH or INTEGER or CONNECTION)',
-    0xD2: 'NOMARGIN',
-    0xD3: '(UNIQUE or SIZE)',
-    0xD4: '(TYPE or LONG or SYSTEM)',
-    0xD5: '(EVENTS or CSV or COLUMN)',
-    0xD6: '(STRING or SHEET or NORM)',
-    0xD7: 'READWRITE',
+
     0xE5: read_name, #user defined function alias
     0xF6: read_name, #user defined function
     0xFC: read_expr,
     END_EXPR: 'END EXPR', #0xFD
     0xFE: '\n'
+}
+
+MULTICLAUSES = {
+    0x10: ('=', 'ERROR'),
+    0xBB: ('XL5', 'WITH BUFFERING='),
+    0xBC: ('INTO', 'ACTIVATE', 'COMMAND', 'PAD'),
+    0xBD: ('CENTER', 'CURSOR', 'TRANSACTION', 'APP', 'MINIMIZE', 'ESCAPE'),
+    0xBE: ('PROCEDURE', 'DELIMITED', 'EXE', 'DISTINCT', 'DOS', 'PAGE'),
+    0xBF: ('UNKNOWN', 'MIN', 'FLOAT'),
+    0xC0: ('HAVING', 'FREE', 'LOCAL', 'FOOTER'),
+    0xC1: ('LINE', 'TRIGGER', 'GLOBAL', 'GET'),
+    0xC2: ('SHARED', 'DATABASE', 'DROP', 'GETS', 'NOINIT'),
+    0xC3: ('ORDER BY', 'OF', 'REPLACE', 'NOCLOSE'),
+    0xC4: ('SAY', 'VIEWS'),
+    0xC5: ('VALUES', 'DBLCLICK'),
+    0xC6: ('POPUP', 'WHERE', 'DLL', 'DRAG', 'EXCLUDE'),
+    0xC7: ('*', 'STEP', 'XLS', 'MARK'),
+    0xC8: ('READ', 'MARGIN', 'RPD', 'READERROR'),
+    0xCA: ('TAG', 'SET', 'FORCE', 'NOMINIMIZE', 'EXIT'),
+    0xCB: ('STATUS', 'RECOMPILE', 'PRIMARY', 'WRK'),
+    0xCC: ('STRUCTURE', 'RELATIVE', 'FOREIGN', 'PROTECTED'),
+    0xCD: ('SHUTDOWN', 'NOFILTER'),
+    0xCE: ('TIMEOUT', 'UPDATE'),
+    0xCF: ('SHADOW',),
+    0xD0: ('NOCLEAR', 'SELECTION'),
+    0xD1: ('WITH', 'INTEGER', 'CONNECTION'),
+    0xD2: ('NOMARGIN',),
+    0xD3: ('UNIQUE', 'SIZE'),
+    0xD4: ('TYPE', 'LONG', 'SYSTEM'),
+    0xD5: ('EVENTS', 'CSV', 'COLUMN'),
+    0xD6: ('STRING', 'SHEET', 'NORM'),
+    0xD7: ('READWRITE',),
 }
 
 VALUES = {
@@ -1328,7 +1313,10 @@ def read_uint(fid):
 def parse_subline(fid, length, final, names, line):
     while fid.tell() < final:
         clauseval = fid.read(1)[0]
-        clause = CLAUSES[clauseval]
+        if clauseval in CLAUSES:
+            clause = CLAUSES[clauseval]
+        if clauseval in MULTICLAUSES:
+            clause = ' or '.join(MULTICLAUSES[clauseval])
         if clauseval == 0xF6 or clauseval == 0xF7:
             clause = clause(fid, names)
             while line and type(line[-1]) is FXPAlias:
