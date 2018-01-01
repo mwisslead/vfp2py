@@ -72,7 +72,7 @@ DO CASE
    * line comment2
    CASE X == 1
    CASE X == 2
-   CASE X == 2
+   CASE (X == 2)
    OTHERWISE
       ?Test
 ENDCASE

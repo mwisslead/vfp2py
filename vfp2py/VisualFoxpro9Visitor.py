@@ -70,6 +70,11 @@ class VisualFoxpro9Visitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by VisualFoxpro9Parser#nongreedyLines.
+    def visitNongreedyLines(self, ctx):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by VisualFoxpro9Parser#classDefStart.
     def visitClassDefStart(self, ctx):
         return self.visitChildren(ctx)

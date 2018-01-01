@@ -45,6 +45,10 @@ lines
  : line*
  ;
 
+nongreedyLines
+ : line*?
+ ;
+
 classDefStart
  : DEFINE CLASS identifier asTypeOf? NL
  ;
@@ -97,7 +101,7 @@ forStmt
  ;
 
 singleCase
- : CASE expr NL lines
+ : CASE expr NL nongreedyLines
  ;
 
 otherwise

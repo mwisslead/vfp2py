@@ -193,6 +193,9 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             retval.append(CodeStr('pass'))
         return retval
 
+    def visitNongreedyLines(self, ctx):
+        return self.visitLines(ctx)
+
     def visitClassDef(self, ctx):
         assignments = []
         self.used_scope = False
@@ -440,7 +443,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         return retval
 
     def visitSingleCase(self, ctx):
-        return self.visit(ctx.expr()), self.visit(ctx.lines())
+        return self.visit(ctx.expr()), self.visit(ctx.nongreedyLines())
 
     def visitOtherwise(self, ctx):
         return self.visit(ctx.lines())
