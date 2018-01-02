@@ -320,9 +320,6 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         objtype = create_string(self.visit_with_disabled_scope(ctx.asType())).title()
         return name, {'parent_type': objtype, 'args': kwargs}
 
-    def visitNodefault(self, ctx):
-        return []
-
     def visitFuncDefStart(self, ctx):
         params = self.visit_with_disabled_scope(ctx.parameters()) or []
         return self.visit(ctx.idAttr2()), params
@@ -514,11 +511,12 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
 
     def visitProgramControl(self, ctx):
         action = ctx.PROGRAMCONTROL().symbol.text.lower()
-        return CodeStr({
+        action = {
             'loop': 'continue',
             'exit': 'break',
             'quit': 'vfpfunc.quit()',
-        }[action])
+        }.get(action, None)
+        return CodeStr(action) if action else None
 
     def visitDeclaration(self, ctx):
         if ctx.EXTERNAL():

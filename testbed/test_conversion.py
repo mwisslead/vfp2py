@@ -276,6 +276,7 @@ DEFINE CLASS TESTCLASS AS COMMANDBUTTON
    ADD OBJECT TEST2 as subobj WITH X = 4
    ADD OBJECT TEST3 as unknownobj WITH X = \'4\'
    FUNCTION INIT(X)
+      NODEFAULT
    ENDFUNC
 ENDDEFINE
 
@@ -344,6 +345,7 @@ class Testclass(vfpfunc.Commandbutton):
         self.test3 = vfpfunc.create_object(\'Unknownobj\', x=\'4\', name=\'test3\', parent=self)
 
     def init(self, x=False):
+        # FIX ME: NODEFAULT
         pass
 
 
