@@ -80,6 +80,10 @@ QUIT
 CANCEL
 RESUME
 COMPILE test.prg
+READ
+READ EVENTS
+DOEVENTS
+DOEVENTS FORCE
 @end=vfp@
 
 @begin=python@
@@ -160,6 +164,10 @@ vfpfunc.quit()
 # FIX ME: CANCEL
 # FIX ME: RESUME
 # FIX ME: COMPILE test.prg
+# FIX ME: READ
+# FIX ME: READ EVENTS
+# FIX ME: DOEVENTS
+# FIX ME: DOEVENTS FORCE
 @end=python@
 
 Preprocessor Directives

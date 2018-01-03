@@ -212,7 +212,7 @@ cmd
  | GATHER (FIELDS (LIKE | EXCEPT)? expr)? MEMO? FROM (MEMVAR | NAME expr | expr) #gatherExpr
 
  | CLOSE ((DATABASE | INDEXES | TABLES) ALL? | ALL) #closeStmt
- | READ EVENTS #readEvent
+ | (READ EVENTS? | DOEVENTS FORCE?) #readEvent
  | CLEAR (ALL | CLASS expr | CLASSLIB specialExpr | DEBUG | DLLS specialArgs | EVENTS | ERROR | FIELDS | GETS | MACROS | MEMORY | MENUS | POPUP | PROGRAM | PROMPT | READ ALL? | RESOURCES expr | TYPEAHEAD | WINDOW)? #clearStmt
  | REPORT FORM ('?' | specialExpr) (NOEJECT | TO PRINTER PROMPT? | NOCONSOLE)* #report
  | DECLARE returnType=datatype? identifier IN specialExpr (AS alias=identifier)? dllArgs? #dllDeclare
@@ -448,6 +448,7 @@ identifier
  | RELATION
  | COMPILE
  | UPDATE
+ | DOEVENTS
  | FORCE
  | JOIN
  | TEXT
@@ -732,6 +733,7 @@ NOUPDATE: N O U P D A T E;
 RELATION: R E L A T I O N;
 COMPILE: C O M P I L E;
 UPDATE: U P D A T E;
+DOEVENTS: D O E V E N T S;
 FORCE: F O R C E;
 JOIN: J O I N;
 TEXT: T E X T;

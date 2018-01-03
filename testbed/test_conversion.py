@@ -87,6 +87,10 @@ QUIT
 CANCEL
 RESUME
 COMPILE test.prg
+READ
+READ EVENTS
+DOEVENTS
+DOEVENTS FORCE
 '''.strip()
     output_str = '''
 # comment
@@ -166,6 +170,10 @@ vfpfunc.quit()
 # FIX ME: CANCEL
 # FIX ME: RESUME
 # FIX ME: COMPILE test.prg
+# FIX ME: READ
+# FIX ME: READ EVENTS
+# FIX ME: DOEVENTS
+# FIX ME: DOEVENTS FORCE
 '''.strip()
     test_output_str = vfp2py.vfp2py.prg2py(input_str, parser_start='lines', prepend_data='').strip()
     try:
