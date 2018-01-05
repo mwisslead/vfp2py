@@ -158,12 +158,7 @@ cmd
  | (RENAME | COPY FILE) specialExpr TO specialExpr #copyMoveFile
  | (CHDIR | MKDIR | RMDIR) specialExpr #chMkRmDir
  | RETURN expr? #returnStmt
- | ON ERROR cmd? #onError
- | ON SHUTDOWN cmd? #onShutdown
- | ON KEY (LABEL identifier ('+' identifier)?)? cmd #onKey
- | ON PAD identifier OF identifier (ACTIVATE (POPUP | MENU) identifier)? #onPad
- | ON BAR NUMBER_LITERAL OF identifier (ACTIVATE (POPUP | MENU) identifier)? #onBar
- | ON SELECTION BAR NUMBER_LITERAL OF identifier cmd #onSelectionBar
+ | ON ((KEY (LABEL identifier ('+' identifier)?)? | (SELECTION BAR NUMBER_LITERAL OF)? identifier) cmd? | (PAD identifier | BAR NUMBER_LITERAL) OF identifier (ACTIVATE (POPUP | MENU) identifier)?) #onStmt
  | RELEASE (ALL | vartype=(PROCEDURE|CLASSLIB)? args | POPUP args EXTENDED?) #release
  | SET setCmd #setStmt
  | PUSH KEY CLEAR? #pushKey

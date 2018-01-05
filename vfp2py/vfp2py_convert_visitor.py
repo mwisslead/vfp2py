@@ -1311,11 +1311,16 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             func = add_args_to_code('lambda: {}', (func,))
         return [add_args_to_code('{} = {}', (CodeStr(func_prefix), func),)]
 
-    def visitOnError(self, ctx):
-        return self.on_event(ctx, 'vfpfunc.error_func')
+    def visitOnStmt(self, ctx):
+        if ctx.KEY():
+            keys = [repr(str(self.visit(i))) for i in ctx.identifier()]
+            return self.on_event(ctx, 'vfpfunc.on_key[{}]'.format(', '.join(keys)))
 
-    def visitOnShutdown(self, ctx):
-        return self.on_event(ctx, 'vfpfunc.shutdown_func')
+        event = self.visit(ctx.identifier(0))
+        if event == 'error':
+            return self.on_event(ctx, 'vfpfunc.error_func')
+        elif event == 'shutdown':
+            return self.on_event(ctx, 'vfpfunc.shutdown_func')
 
     def visitRaiseError(self, ctx):
         expr = [self.visit(ctx.expr())] or []
@@ -1404,10 +1409,6 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         noclear = ctx.NOCLEAR() != None
         timeout = self.visit(ctx.timeout) if ctx.TIMEOUT() else -1
         return make_func_code('vfpfunc.wait', message, to=to_expr, window=window, nowait=nowait, noclear=noclear, timeout=timeout)
-
-    def visitOnKey(self, ctx):
-        keys = [repr(str(self.visit(i))) for i in ctx.identifier()]
-        return self.on_event(ctx, 'vfpfunc.on_key[{}]'.format(', '.join(keys)))
 
     def visitDeactivate(self, ctx):
         if ctx.MENU():
