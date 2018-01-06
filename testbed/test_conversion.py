@@ -410,6 +410,9 @@ DO TEST IN A+\'.PRG\'
 DO TEST IN A+(B)
 DO TEST.PRG
 DO TEST IN TEST.PRG
+DO FORM SPLASH.SCX
+DO FORM SPLASH.SCX NAME splashy
+DO FORM SPLASH.SCX NAME splashy LINKED
 CD ..
 '''.strip()
     output_str = '''
@@ -424,6 +427,9 @@ vfpfunc.module(a + \'.PRG\').test()
 vfpfunc.module(a + (vfpvar[\'b\'])).test()
 test._program_main()
 test.test()
+vfpfunc.do_form(\'splash.scx\')
+vfpfunc.do_form(\'splash.scx\', name=\'splashy\')
+vfpfunc.do_form(\'splash.scx\', name=\'splashy\', linked=True)
 os.chdir(\'..\')
 '''.strip()
     test_output_str = vfp2py.vfp2py.prg2py(input_str, parser_start='lines', prepend_data='').strip()

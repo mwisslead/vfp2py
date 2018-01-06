@@ -1228,10 +1228,22 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         func = self.visit(ctx.specialExpr(0))
         namespace = self.visit(ctx.specialExpr(1)) if ctx.IN() else ''
         args = self.visit(ctx.args(0)) or []
+        kwargs = {}
 
         if ctx.FORM():
-            func = func.replace('.', '_')
-            return make_func_code('{}._program_main'.format(func))
+            if ctx.NAME():
+                kwargs['name'] = str(self.visit(ctx.nameId))
+                if ctx.LINKED():
+                    kwargs['linked'] = True
+            if args:
+                kwargs['with'] = args
+            if ctx.NOSHOW():
+                kwargs['noshow'] = True
+            form_call = make_func_code('vfpfunc.do_form', func, **kwargs)
+            if ctx.TO():
+                return add_args_to_code('{} = {}', (self.visit(ctx.toId), form_call))
+            else:
+                return form_call
 
         if os.path.splitext(namespace)[0] == self.filename:
             namespace = ''

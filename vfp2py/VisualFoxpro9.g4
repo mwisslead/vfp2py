@@ -146,8 +146,8 @@ cmd
  : ADD OBJECT identifier asType (WITH idAttr '=' expr (',' idAttr '=' expr)*)? #addObject
  | (PROGRAMCONTROL) #programControl
  | '@' args (SAY sayExpr=expr | STYLE styleExpr=expr)* #atSay
- | (DO FORM specialExpr
-   | DO specialExpr (IN specialExpr | WITH args)*) #funcDo
+ | DO (FORM ('?' | specialExpr) (NAME nameId=identifier LINKED? | WITH args | TO toId=identifier | NOSHOW)*
+   | specialExpr (IN specialExpr | WITH args)*) #funcDo
  | (STORE expr TO idAttr (',' idAttr)*
    | idAttr '=' expr) #assign
  | (((SCOPE|EXTERNAL) (ARRAY | DIMENSION | DECLARE)? | DIMENSION | DECLARE | PARAMETER) declarationItem (',' declarationItem)*
@@ -448,6 +448,7 @@ identifier
  | JOIN
  | TEXT
  | ENDTEXT
+ | LINKED
  ;
 
 NUMBER_LITERAL : (DIGIT* '.')? DIGIT+ (E [+-]? DIGIT*)?
@@ -733,6 +734,7 @@ FORCE: F O R C E;
 JOIN: J O I N;
 TEXT: T E X T;
 ENDTEXT: E N D TEXT;
+LINKED: L I N K E D;
 ENCRYPT: E N C R Y P T;
 
 ID : [A-Za-z_] [a-zA-Z0-9_]*;
