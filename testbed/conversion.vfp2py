@@ -236,7 +236,7 @@ def _program_main():
     print(vfpfunc.num_to_str(3))
     print(vfpfunc.num_to_str(3), end='')
     print(vfpfunc.num_to_str(3), file=sys.stderr)
-    print(3)
+    print(3)  # @ 10, 10 SAY 3
     return vfpvar.popscope(vfpvar['x'])
 @end=python@
 
@@ -728,6 +728,22 @@ vfpfunc.shutdown_func = None
 vfpfunc.shutdown_func = lambda: shutdown.shutdown()
 vfpfunc.shutdown_func = lambda: vfpfunc.quit()
 vfpfunc.on_key['f12'] = lambda: print('KEY PRESSED')
+@end=python@
+
+@begin=vfp@&&lines
+@x, y 
+@x, y CLEAR
+@x, y CLEAR TO a, b
+@x, y say 'hello ' + username
+@x, y say 'hello ' + username STYLE thestyle
+@end=vfp@
+
+@begin=python@
+print()  # @x, y
+print()  # @x, y CLEAR
+print()  # @x, y CLEAR TO a, b
+print('hello ' + vfpvar['username'])  # @x, y say 'hello ' + username
+print('hello ' + vfpvar['username'])  # @x, y say 'hello ' + username STYLE thestyle
 @end=python@
 
 SET TYPEAHEAD TO 0

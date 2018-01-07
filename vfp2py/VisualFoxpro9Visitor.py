@@ -190,8 +190,8 @@ class VisualFoxpro9Visitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by VisualFoxpro9Parser#atSay.
-    def visitAtSay(self, ctx):
+    # Visit a parse tree produced by VisualFoxpro9Parser#atPos.
+    def visitAtPos(self, ctx):
         return self.visitChildren(ctx)
 
 

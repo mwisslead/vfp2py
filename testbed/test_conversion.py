@@ -249,7 +249,7 @@ def _program_main():
     print(vfpfunc.num_to_str(3))
     print(vfpfunc.num_to_str(3), end=\'\')
     print(vfpfunc.num_to_str(3), file=sys.stderr)
-    print(3)
+    print(3)  # @ 10, 10 SAY 3
     return vfpvar.popscope(vfpvar[\'x\'])
 '''.strip()
     test_output_str = vfp2py.vfp2py.prg2py(input_str).strip()
@@ -869,6 +869,30 @@ vfpfunc.shutdown_func = None
 vfpfunc.shutdown_func = lambda: shutdown.shutdown()
 vfpfunc.shutdown_func = lambda: vfpfunc.quit()
 vfpfunc.on_key[\'f12\'] = lambda: print(\'KEY PRESSED\')
+'''.strip()
+    test_output_str = vfp2py.vfp2py.prg2py(input_str, parser_start='lines', prepend_data='').strip()
+    try:
+        assert test_output_str == output_str
+    except AssertionError:
+        diff = difflib.unified_diff((test_output_str + '\n').splitlines(1), (output_str + '\n').splitlines(1))
+        print(''.join(diff))
+        raise
+
+
+def Test18():
+    input_str = '''
+@x, y 
+@x, y CLEAR
+@x, y CLEAR TO a, b
+@x, y say \'hello \' + username
+@x, y say \'hello \' + username STYLE thestyle
+'''.strip()
+    output_str = '''
+print()  # @x, y
+print()  # @x, y CLEAR
+print()  # @x, y CLEAR TO a, b
+print(\'hello \' + vfpvar[\'username\'])  # @x, y say \'hello \' + username
+print(\'hello \' + vfpvar[\'username\'])  # @x, y say \'hello \' + username STYLE thestyle
 '''.strip()
     test_output_str = vfp2py.vfp2py.prg2py(input_str, parser_start='lines', prepend_data='').strip()
     try:

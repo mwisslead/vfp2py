@@ -145,7 +145,7 @@ controlStmt
 cmd
  : ADD OBJECT identifier asType (WITH idAttr '=' expr (',' idAttr '=' expr)*)? #addObject
  | (PROGRAMCONTROL) #programControl
- | '@' args (SAY sayExpr=expr | STYLE styleExpr=expr)* #atSay
+ | '@' args (CLEAR (TO toArgs=args)? | (SAY sayExpr=expr | STYLE styleExpr=expr)+)? #atPos
  | DO (FORM ('?' | specialExpr) (NAME nameId=identifier LINKED? | WITH args | TO toId=identifier | NOSHOW)*
    | specialExpr (IN specialExpr | WITH args)*) #funcDo
  | (STORE expr TO idAttr (',' idAttr)*
