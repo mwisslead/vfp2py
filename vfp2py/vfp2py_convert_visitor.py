@@ -610,8 +610,15 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         symbol = symbol_dict[ctx.op.type]
         return CodeStr('{} {} {}'.format(repr(left), symbol, repr(right)))
 
-    def visitBooleanOperation(self, ctx):
-        return self.visitComparison(ctx)
+    def visitBooleanOr(self, ctx):
+        left = self.visit(ctx.expr(0))
+        right = self.visit(ctx.expr(1))
+        return CodeStr('{} {} {}'.format(repr(left), 'or', repr(right)))
+
+    def visitBooleanAnd(self, ctx):
+        left = self.visit(ctx.expr(0))
+        right = self.visit(ctx.expr(1))
+        return CodeStr('{} {} {}'.format(repr(left), 'and', repr(right)))
 
     def visitUnaryNegation(self, ctx):
         return add_args_to_code('{}' if ctx.op.type == ctx.parser.PLUS_SIGN else '-{}', (self.visit(ctx.expr()),))

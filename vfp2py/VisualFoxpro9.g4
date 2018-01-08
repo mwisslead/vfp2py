@@ -314,10 +314,21 @@ expr
  | expr '%' expr #modulo
  | expr op=('+'|'-') expr #addition
  | expr op=('=='|NOTEQUALS|'='|'#'|'>'|GTEQ|'<'|LTEQ|'$') expr #comparison
- | expr op=(OR|OTHEROR|AND|OTHERAND) expr #booleanOperation
+ | expr orOp expr #booleanOr
+ | expr andOp expr #booleanAnd
  | constant #constantExpr
  | CAST '(' expr asType ')' #castExpr
  | (PERIOD | idAttr ':' ':')? atom trailer? #atomExpr
+ ;
+
+andOp
+ : OTHERAND
+ | AND
+ ;
+
+orOp
+ : OTHEROR
+ | OR
  ;
 
 complexId

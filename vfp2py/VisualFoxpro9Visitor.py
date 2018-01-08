@@ -570,13 +570,28 @@ class VisualFoxpro9Visitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by VisualFoxpro9Parser#atomExpr.
+    def visitAtomExpr(self, ctx):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by VisualFoxpro9Parser#subExpr.
+    def visitSubExpr(self, ctx):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by VisualFoxpro9Parser#booleanNegation.
+    def visitBooleanNegation(self, ctx):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by VisualFoxpro9Parser#unaryNegation.
     def visitUnaryNegation(self, ctx):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by VisualFoxpro9Parser#atomExpr.
-    def visitAtomExpr(self, ctx):
+    # Visit a parse tree produced by VisualFoxpro9Parser#booleanOr.
+    def visitBooleanOr(self, ctx):
         return self.visitChildren(ctx)
 
 
@@ -590,23 +605,8 @@ class VisualFoxpro9Visitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by VisualFoxpro9Parser#booleanOperation.
-    def visitBooleanOperation(self, ctx):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by VisualFoxpro9Parser#subExpr.
-    def visitSubExpr(self, ctx):
-        return self.visitChildren(ctx)
-
-
     # Visit a parse tree produced by VisualFoxpro9Parser#modulo.
     def visitModulo(self, ctx):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by VisualFoxpro9Parser#booleanNegation.
-    def visitBooleanNegation(self, ctx):
         return self.visitChildren(ctx)
 
 
@@ -617,6 +617,21 @@ class VisualFoxpro9Visitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by VisualFoxpro9Parser#addition.
     def visitAddition(self, ctx):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by VisualFoxpro9Parser#booleanAnd.
+    def visitBooleanAnd(self, ctx):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by VisualFoxpro9Parser#andOp.
+    def visitAndOp(self, ctx):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by VisualFoxpro9Parser#orOp.
+    def visitOrOp(self, ctx):
         return self.visitChildren(ctx)
 
 
