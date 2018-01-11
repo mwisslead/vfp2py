@@ -584,7 +584,8 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         return [CodeStr(' = '.join(args + [repr(value)]))]
 
     def visitArgs(self, ctx):
-        return [self.visit(c) for c in ctx.expr()]
+        exprs = [ctx.expr()] + [arg.expr() for arg in ctx.argsItem()]
+        return [self.visit(expr) if expr else False for expr in exprs]
 
     def visitSpecialArgs(self, ctx):
         return [self.visit(c) for c in ctx.specialExpr()]
@@ -1199,7 +1200,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
     def extract_args_from_addbs(self, ctx):
         leftctx, rightctx = ctx.expr()
         if isinstance(leftctx, ctx.parser.AtomExprContext) and self.visit(leftctx.atom()) == 'addbs' and isinstance(leftctx.trailer(), ctx.parser.FuncCallTrailerContext):
-            leftctx = leftctx.trailer().args().expr(0)
+            leftctx = leftctx.trailer().args().expr()
             if isinstance(leftctx, ctx.parser.AdditionContext):
                 return self.extract_args_from_addbs(leftctx) + [rightctx]
         return [leftctx, rightctx]

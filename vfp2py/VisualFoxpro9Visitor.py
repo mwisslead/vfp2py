@@ -540,6 +540,11 @@ class VisualFoxpro9Visitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by VisualFoxpro9Parser#argsItem.
+    def visitArgsItem(self, ctx):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by VisualFoxpro9Parser#args.
     def visitArgs(self, ctx):
         return self.visitChildren(ctx)

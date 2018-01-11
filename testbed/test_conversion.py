@@ -91,6 +91,7 @@ READ
 READ EVENTS
 DOEVENTS
 DOEVENTS FORCE
+SOMEFUNC(,A,)
 '''.strip()
     output_str = '''
 # comment
@@ -174,6 +175,7 @@ vfpfunc.quit()
 # FIX ME: READ EVENTS
 # FIX ME: DOEVENTS
 # FIX ME: DOEVENTS FORCE
+vfpfunc.function[\'somefunc\'](False, vfpvar[\'a\'], False)
 '''.strip()
     test_output_str = vfp2py.vfp2py.prg2py(input_str, parser_start='lines', prepend_data='').strip()
     try:

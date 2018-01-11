@@ -84,6 +84,7 @@ READ
 READ EVENTS
 DOEVENTS
 DOEVENTS FORCE
+SOMEFUNC(,A,)
 @end=vfp@
 
 @begin=python@
@@ -168,6 +169,7 @@ vfpfunc.quit()
 # FIX ME: READ EVENTS
 # FIX ME: DOEVENTS
 # FIX ME: DOEVENTS FORCE
+vfpfunc.function['somefunc'](False, vfpvar['a'], False)
 @end=python@
 
 Preprocessor Directives

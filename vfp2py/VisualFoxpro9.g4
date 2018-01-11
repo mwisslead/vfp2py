@@ -289,8 +289,13 @@ asTypeOf
  : asType (OF specialExpr)?
  ;
 
+argsItem
+ : ',' expr?
+ ;
+
 args
- : expr (',' expr)* ','?
+ : expr argsItem*
+ | argsItem+
  ;
 
 specialArgs
