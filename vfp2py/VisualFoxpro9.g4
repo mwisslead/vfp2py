@@ -208,6 +208,7 @@ cmd
 
  | CLOSE ((DATABASE | INDEXES | TABLES) ALL? | ALL) #closeStmt
  | (READ EVENTS? | DOEVENTS FORCE?) #readEvent
+ | UNLOCK ALL #unlockCmd
  | CLEAR (ALL | CLASS expr | CLASSLIB specialExpr | DEBUG | DLLS specialArgs | EVENTS | ERROR | FIELDS | GETS | MACROS | MEMORY | MENUS | POPUP | PROGRAM | PROMPT | READ ALL? | RESOURCES expr | TYPEAHEAD | WINDOW)? #clearStmt
  | REPORT FORM ('?' | specialExpr) (NOEJECT | TO PRINTER PROMPT? | NOCONSOLE)* #report
  | DECLARE returnType=datatype? identifier IN specialExpr (AS alias=identifier)? dllArgs? #dllDeclare
@@ -457,6 +458,7 @@ identifier
  | PROGRAMCONTROL
  | NOUPDATE
  | RELATION
+ | UNLOCK
  | COMPILE
  | UPDATE
  | DOEVENTS
@@ -743,6 +745,7 @@ TALK: T A L K;
 PROGRAMCONTROL: (C A N C E L | S U S P E N D | R E S U M E | Q U I T | E X I T | L O O P | N O D E F A U L T);
 NOUPDATE: N O U P D A T E;
 RELATION: R E L A T I O N;
+UNLOCK: U N L O C K;
 COMPILE: C O M P I L E;
 UPDATE: U P D A T E;
 DOEVENTS: D O E V E N T S;

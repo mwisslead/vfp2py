@@ -1853,6 +1853,9 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         else:
             return add_args_to_code('assert {}', (self.visit(ctx.expr(0)),))
 
+    def visitUnlockCmd(self, ctx):
+        pass
+
     def visitCompileCmd(self, ctx):
         pass
 

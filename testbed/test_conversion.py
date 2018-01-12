@@ -91,6 +91,7 @@ READ
 READ EVENTS
 DOEVENTS
 DOEVENTS FORCE
+UNLOCK ALL
 SOMEFUNC(,A,)
 '''.strip()
     output_str = '''
@@ -175,6 +176,7 @@ vfpfunc.quit()
 # FIX ME: READ EVENTS
 # FIX ME: DOEVENTS
 # FIX ME: DOEVENTS FORCE
+# FIX ME: UNLOCK ALL
 vfpfunc.function[\'somefunc\'](False, vfpvar[\'a\'], False)
 '''.strip()
     test_output_str = vfp2py.vfp2py.prg2py(input_str, parser_start='lines', prepend_data='').strip()

@@ -450,6 +450,11 @@ class VisualFoxpro9Visitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by VisualFoxpro9Parser#unlockCmd.
+    def visitUnlockCmd(self, ctx):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by VisualFoxpro9Parser#clearStmt.
     def visitClearStmt(self, ctx):
         return self.visitChildren(ctx)

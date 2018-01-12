@@ -84,6 +84,7 @@ READ
 READ EVENTS
 DOEVENTS
 DOEVENTS FORCE
+UNLOCK ALL
 SOMEFUNC(,A,)
 @end=vfp@
 
@@ -169,6 +170,7 @@ vfpfunc.quit()
 # FIX ME: READ EVENTS
 # FIX ME: DOEVENTS
 # FIX ME: DOEVENTS FORCE
+# FIX ME: UNLOCK ALL
 vfpfunc.function['somefunc'](False, vfpvar['a'], False)
 @end=python@
 
