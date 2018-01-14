@@ -214,8 +214,8 @@ cmd
  | DECLARE returnType=datatype? identifier IN specialExpr (AS alias=identifier)? dllArgs? #dllDeclare
  | (RUN | EXCLAMATION) ('/' identifier)? (~NL)* #shellRun
  | ASSERT expr (MESSAGE expr)? #assert
- | TEXT (TO idAttr | NOSHOW)* NL textChunk ENDTEXT #textBlock
  | COMPILE (DATABASE | FORM | CLASSLIB | LABEL | REPORT)? (ALL | ENCRYPT | NODEBUG | AS specialExpr | specialExpr)* #compileCmd
+ | TEXT (TO idAttr | ADDITIVE | TEXTMERGE | NOSHOW | FLAGS flagExpr=expr | PRETEXT pretext=expr)* NL textChunk ENDTEXT #textBlock
  | '=' expr #exprCmd
  | complexId #complexIdCmd
  ;
@@ -467,6 +467,9 @@ identifier
  | TEXT
  | ENDTEXT
  | LINKED
+ | TEXTMERGE
+ | FLAGS
+ | PRETEXT
  ;
 
 NUMBER_LITERAL : (DIGIT* '.')? DIGIT+ (E [+-]? DIGIT*)?
@@ -754,6 +757,9 @@ JOIN: J O I N;
 TEXT: T E X T;
 ENDTEXT: E N D TEXT;
 LINKED: L I N K E D;
+TEXTMERGE: TEXT M E R G E;
+FLAGS: F L A G S;
+PRETEXT: P R E TEXT;
 ENCRYPT: E N C R Y P T;
 
 ID : [A-Za-z_] [a-zA-Z0-9_]*;

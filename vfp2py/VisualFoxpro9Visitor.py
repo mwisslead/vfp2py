@@ -480,13 +480,13 @@ class VisualFoxpro9Visitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by VisualFoxpro9Parser#textBlock.
-    def visitTextBlock(self, ctx):
+    # Visit a parse tree produced by VisualFoxpro9Parser#compileCmd.
+    def visitCompileCmd(self, ctx):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by VisualFoxpro9Parser#compileCmd.
-    def visitCompileCmd(self, ctx):
+    # Visit a parse tree produced by VisualFoxpro9Parser#textBlock.
+    def visitTextBlock(self, ctx):
         return self.visitChildren(ctx)
 
 
