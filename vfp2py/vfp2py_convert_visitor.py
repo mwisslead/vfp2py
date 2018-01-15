@@ -1247,7 +1247,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
                 if ctx.LINKED():
                     kwargs['linked'] = True
             if args:
-                kwargs['with'] = args
+                kwargs['args'] = args
             if ctx.NOSHOW():
                 kwargs['noshow'] = True
             form_call = make_func_code('vfpfunc.do_form', func, **kwargs)
@@ -1689,7 +1689,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         if ctx.joinArgs:
             kwargs['join'] = self.visit(ctx.joinArgs)
         if ctx.fromArgs:
-            kwargs['from'] = self.visit(ctx.fromArgs)
+            kwargs['from_args'] = self.visit(ctx.fromArgs)
         return make_func_code('vfpfunc.db.update', table, set_fields, **kwargs)
 
     def visitSeekRecord(self, ctx):
@@ -1777,7 +1777,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         elif setword == 'classlib':
             args = (self.visit(ctx.specialExpr(0)),)
             if ctx.IN():
-                kwargs['in'] = self.visit(ctx.specialExpr(1))
+                kwargs['class_file'] = self.visit(ctx.specialExpr(1))
             if ctx.ALIAS():
                 kwargs['alias'] = self.visit(ctx.specialExpr(2 if ctx.IN() else 1))
             if ctx.ADDITIVE():
