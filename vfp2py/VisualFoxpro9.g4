@@ -215,6 +215,7 @@ cmd
  | (RUN | EXCLAMATION) ('/' identifier)? (~NL)* #shellRun
  | ASSERT expr (MESSAGE expr)? #assert
  | COMPILE (DATABASE | FORM | CLASSLIB | LABEL | REPORT)? (ALL | ENCRYPT | NODEBUG | AS specialExpr | specialExpr)* #compileCmd
+ | LIST scopeClause #listStmt
  | TEXT (TO idAttr | ADDITIVE | TEXTMERGE | NOSHOW | FLAGS flagExpr=expr | PRETEXT pretext=expr)* NL textChunk ENDTEXT #textBlock
  | '=' expr #exprCmd
  | complexId #complexIdCmd
@@ -450,6 +451,7 @@ identifier
  | COLUMN
  | DROP
  | ID
+ | LIST
  | HELP
  | SAY
  | COLLECTION
@@ -740,6 +742,7 @@ DEBUGOUT: DEBUG O U T;
 MEMORY: M E M O R Y;
 MENUS: M E N U S;
 RESOURCES: R E S O U R C E S;
+LIST: L I S T;
 HELP: H E L P;
 SAY: S A Y;
 COLLECTION: C O L L E C T I O N;

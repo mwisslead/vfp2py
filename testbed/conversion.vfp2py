@@ -85,6 +85,7 @@ READ EVENTS
 DOEVENTS
 DOEVENTS FORCE
 UNLOCK ALL
+LIST NEXT 5
 SOMEFUNC(,A,)
 @end=vfp@
 
@@ -171,6 +172,7 @@ vfpfunc.quit()
 # FIX ME: DOEVENTS
 # FIX ME: DOEVENTS FORCE
 # FIX ME: UNLOCK ALL
+# FIX ME: LIST NEXT 5
 vfpfunc.function['somefunc'](False, vfpvar['a'], False)
 @end=python@
 
