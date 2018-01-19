@@ -93,6 +93,7 @@ DOEVENTS
 DOEVENTS FORCE
 UNLOCK ALL
 LIST NEXT 5
+RESTORE FROM test ADDITIVE
 SOMEFUNC(,A,)
 '''.strip()
     output_str = '''
@@ -179,6 +180,7 @@ vfpfunc.quit()
 # FIX ME: DOEVENTS FORCE
 # FIX ME: UNLOCK ALL
 # FIX ME: LIST NEXT 5
+# FIX ME: RESTORE FROM test ADDITIVE
 vfpfunc.function[\'somefunc\'](False, vfpvar[\'a\'], False)
 '''.strip()
     test_output_str = vfp2py.vfp2py.prg2py(input_str, parser_start='lines', prepend_data='').strip()

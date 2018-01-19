@@ -1862,6 +1862,9 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
     def visitCompileCmd(self, ctx):
         pass
 
+    def visitRestoreCmd(self, ctx):
+        pass
+
     def visitTextBlock(self, ctx):
         kwargs = {}
         if ctx.NOSHOW():

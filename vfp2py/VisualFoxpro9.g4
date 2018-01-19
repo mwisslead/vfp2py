@@ -216,6 +216,7 @@ cmd
  | ASSERT expr (MESSAGE expr)? #assert
  | COMPILE (DATABASE | FORM | CLASSLIB | LABEL | REPORT)? (ALL | ENCRYPT | NODEBUG | AS specialExpr | specialExpr)* #compileCmd
  | LIST scopeClause #listStmt
+ | RESTORE FROM specialExpr ADDITIVE? #restoreCmd
  | TEXT (TO idAttr | ADDITIVE | TEXTMERGE | NOSHOW | FLAGS flagExpr=expr | PRETEXT pretext=expr)* NL textChunk ENDTEXT #textBlock
  | '=' expr #exprCmd
  | complexId #complexIdCmd
@@ -463,6 +464,7 @@ identifier
  | UNLOCK
  | COMPILE
  | UPDATE
+ | RESTORE
  | DOEVENTS
  | FORCE
  | JOIN
@@ -754,6 +756,7 @@ RELATION: R E L A T I O N;
 UNLOCK: U N L O C K;
 COMPILE: C O M P I L E;
 UPDATE: U P D A T E;
+RESTORE: R E S T O R E;
 DOEVENTS: D O E V E N T S;
 FORCE: F O R C E;
 JOIN: J O I N;
