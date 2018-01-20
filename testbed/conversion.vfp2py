@@ -87,6 +87,7 @@ DOEVENTS FORCE
 UNLOCK ALL
 LIST NEXT 5
 RESTORE FROM test ADDITIVE
+SHOW GETS
 SOMEFUNC(,A,)
 @end=vfp@
 
@@ -175,6 +176,7 @@ vfpfunc.quit()
 # FIX ME: UNLOCK ALL
 # FIX ME: LIST NEXT 5
 # FIX ME: RESTORE FROM test ADDITIVE
+# FIX ME: SHOW GETS
 vfpfunc.function['somefunc'](False, vfpvar['a'], False)
 @end=python@
 

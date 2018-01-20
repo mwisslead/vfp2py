@@ -218,6 +218,7 @@ cmd
  | LIST scopeClause #listStmt
  | RESTORE FROM specialExpr ADDITIVE? #restoreCmd
  | TEXT (TO idAttr | ADDITIVE | TEXTMERGE | NOSHOW | FLAGS flagExpr=expr | PRETEXT pretext=expr)* NL textChunk ENDTEXT #textBlock
+ | SHOW GETS #showCmd
  | '=' expr #exprCmd
  | complexId #complexIdCmd
  ;
@@ -470,6 +471,7 @@ identifier
  | JOIN
  | TEXT
  | ENDTEXT
+ | SHOW
  | LINKED
  | TEXTMERGE
  | FLAGS
@@ -661,6 +663,7 @@ RELATIVE : R E L A T I V E;
 SELECTION : S E L E C T I O N;
 DEACTIVATE : D E A C T I V A T E;
 SAME : S A M E;
+SHOW: S H O W;
 NOSHOW : N O S H O W;
 STEP : S T E P;
 THEN : T H E N;

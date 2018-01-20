@@ -1884,3 +1884,6 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         toks = ctx.parser._input.tokens[start:stop+1]
         text = ''.join(t.text for t in ltoks + toks + rtoks)
         return CodeStr('[' + ',\n'.join(repr(l) for l in text.splitlines()) + ']')
+
+    def visitShowCmd(self, ctx):
+        pass
