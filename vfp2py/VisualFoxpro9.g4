@@ -190,6 +190,7 @@ cmd
  | INDEX ON specialExpr (TAG | TO) specialExpr COMPACT? (ASCENDING | DESCENDING)? (UNIQUE | CANDIDATE)? ADDITIVE? #indexOn
  | COUNT (TO toExpr=expr | queryCondition)* #count
  | SUM (TO toExpr=expr | queryCondition | sumExpr=expr)* #sum
+ | SORT TO expr ON expr ('/' identifier)* (',' expr ('/' identifier)*)* (ASCENDING | DESCENDING | FIELDS (LIKE | EXCEPT)? args | queryCondition)* #sortCmd
  | (RECALL | DELETE) (queryCondition | IN inExpr=specialExpr)* #deleteRecord
  | APPEND FROM (ARRAY expr | specialExpr FOR expr | specialExpr ) (TYPE typeExpr=specialExpr)? #appendFrom
  | APPEND BLANK? (IN specialExpr NOMENU | IN specialExpr)? #append
@@ -464,6 +465,7 @@ identifier
  | RELATION
  | UNLOCK
  | COMPILE
+ | SORT
  | UPDATE
  | RESTORE
  | DOEVENTS
@@ -758,6 +760,7 @@ NOUPDATE: N O U P D A T E;
 RELATION: R E L A T I O N;
 UNLOCK: U N L O C K;
 COMPILE: C O M P I L E;
+SORT: S O R T;
 UPDATE: U P D A T E;
 RESTORE: R E S T O R E;
 DOEVENTS: D O E V E N T S;

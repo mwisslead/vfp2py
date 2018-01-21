@@ -365,6 +365,11 @@ class VisualFoxpro9Visitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by VisualFoxpro9Parser#sortCmd.
+    def visitSortCmd(self, ctx):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by VisualFoxpro9Parser#deleteRecord.
     def visitDeleteRecord(self, ctx):
         return self.visitChildren(ctx)
