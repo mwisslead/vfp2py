@@ -1865,6 +1865,9 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
     def visitSortCmd(self, ctx):
         pass
 
+    def visitCopyToArray(self, ctx):
+        pass
+
     def visitRestoreCmd(self, ctx):
         pass
 

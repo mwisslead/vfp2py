@@ -420,6 +420,11 @@ class VisualFoxpro9Visitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by VisualFoxpro9Parser#copyToArray.
+    def visitCopyToArray(self, ctx):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by VisualFoxpro9Parser#copyTo.
     def visitCopyTo(self, ctx):
         return self.visitChildren(ctx)

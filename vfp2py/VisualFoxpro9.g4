@@ -201,6 +201,7 @@ cmd
  | SEEK seekExpr=expr ((ORDER orderExpr=expr | TAG tagName=specialExpr (OF cdxFileExpr=specialExpr)? | idxFileExpr=specialExpr) (ASCENDING | DESCENDING)?)? (IN tablenameExpr=specialExpr)? #seekRecord
  | UPDATE tableExpr=specialExpr SET identifier '=' expr (',' identifier '=' expr)* (FROM FORCE? fromArgs=specialArgs | JOIN joinArgs=specialArgs | WHERE whereExpr=expr)* #updateCmd
  | GOTO (TOP | BOTTOM | RECORD? expr) (IN specialExpr)? #goRecord
+ | COPY (TO ARRAY specialExpr | FIELDS (LIKE | EXCEPT) ? args | queryCondition)* #copyToArray
  | COPY STRUCTURE? TO specialExpr #copyTo
  | ZAP (IN specialExpr)? #zapTable
  | BROWSE (~NL)* #browse

@@ -96,6 +96,7 @@ LIST NEXT 5
 RESTORE FROM test ADDITIVE
 SHOW GETS
 SORT TO sortedTable ON (sortField)
+COPY TO ARRAY FOR X = 3
 SOMEFUNC(,A,)
 '''.strip()
     output_str = '''
@@ -185,6 +186,7 @@ vfpfunc.quit()
 # FIX ME: RESTORE FROM test ADDITIVE
 # FIX ME: SHOW GETS
 # FIX ME: SORT TO sortedTable ON (sortField)
+# FIX ME: COPY TO ARRAY FOR X = 3
 vfpfunc.function[\'somefunc\'](False, vfpvar[\'a\'], False)
 '''.strip()
     test_output_str = vfp2py.vfp2py.prg2py(input_str, parser_start='lines', prepend_data='').strip()
