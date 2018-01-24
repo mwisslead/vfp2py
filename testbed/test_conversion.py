@@ -555,6 +555,8 @@ PUSH KEY CLEAR
 PUSH KEY
 POP KEY ALL
 POP KEY
+POP MENU TO MASTER test
+POP POPUP test
 CLEAR DLLS "TEST1", "TEST2"
 CLEAR MACROS
 CLEAR EVENTS
@@ -568,6 +570,8 @@ CLEAR
 # FIX ME: PUSH KEY
 # FIX ME: POP KEY ALL
 # FIX ME: POP KEY
+# FIX ME: POP MENU TO MASTER test
+# FIX ME: POP POPUP test
 vfpfunc.clear(\'dlls\', \'test1\', \'test2\')
 vfpfunc.clear(\'macros\')
 vfpfunc.clear(\'events\')

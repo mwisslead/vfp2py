@@ -162,7 +162,7 @@ cmd
  | RELEASE (ALL | vartype=(PROCEDURE|CLASSLIB)? args | POPUP args EXTENDED?) #release
  | SET setCmd #setStmt
  | PUSH KEY CLEAR? #pushKey
- | POP KEY ALL? #popKey
+ | POP (KEY ALL? | MENU (identifier | TO MASTER)* | POPUP identifier) #pop
  | KEYBOARD expr PLAIN? CLEAR? #keyboard
 
  | DEFINE MENU identifier (BAR (AT LINE NUMBER_LITERAL)?) (IN (WINDOW? identifier | SCREEN))? NOMARGIN? #defineMenu
@@ -479,6 +479,7 @@ identifier
  | TEXTMERGE
  | FLAGS
  | PRETEXT
+ | MASTER
  ;
 
 NUMBER_LITERAL : (DIGIT* '.')? DIGIT+ (E [+-]? DIGIT*)?
@@ -774,6 +775,7 @@ TEXTMERGE: TEXT M E R G E;
 FLAGS: F L A G S;
 PRETEXT: P R E TEXT;
 ENCRYPT: E N C R Y P T;
+MASTER: M A S T E R;
 
 ID : [A-Za-z_] [a-zA-Z0-9_]*;
 
