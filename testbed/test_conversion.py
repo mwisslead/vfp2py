@@ -553,6 +553,8 @@ def Test7():
     input_str = '''
 PUSH KEY CLEAR
 PUSH KEY
+PUSH MENU test
+PUSH POPUP test
 POP KEY ALL
 POP KEY
 POP MENU TO MASTER test
@@ -568,6 +570,8 @@ CLEAR
     output_str = '''
  # FIX ME: PUSH KEY CLEAR
 # FIX ME: PUSH KEY
+# FIX ME: PUSH MENU test
+# FIX ME: PUSH POPUP test
 # FIX ME: POP KEY ALL
 # FIX ME: POP KEY
 # FIX ME: POP MENU TO MASTER test

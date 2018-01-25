@@ -1828,6 +1828,9 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             return
         return make_func_code('vfpfunc.set', setword, *args, **kwargs)
 
+    def visitPush(self, ctx):
+        pass
+
     def visitPop(self, ctx):
         pass
 

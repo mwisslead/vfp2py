@@ -161,7 +161,7 @@ cmd
  | ON ((KEY (LABEL identifier ('+' identifier)?)? | (SELECTION BAR NUMBER_LITERAL OF)? identifier) cmd? | (PAD identifier | BAR NUMBER_LITERAL) OF identifier (ACTIVATE (POPUP | MENU) identifier)?) #onStmt
  | RELEASE (ALL | vartype=(PROCEDURE|CLASSLIB)? args | POPUP args EXTENDED?) #release
  | SET setCmd #setStmt
- | PUSH KEY CLEAR? #pushKey
+ | PUSH (KEY CLEAR? | (MENU | POPUP) identifier) #push
  | POP (KEY ALL? | MENU (identifier | TO MASTER)* | POPUP identifier) #pop
  | KEYBOARD expr PLAIN? CLEAR? #keyboard
 
