@@ -95,6 +95,7 @@ UNLOCK ALL
 LIST NEXT 5
 RESTORE FROM test ADDITIVE
 SHOW GETS
+HIDE WINDOW test
 SORT TO sortedTable ON (sortField)
 COPY TO ARRAY FOR X = 3
 SOMEFUNC(,A,)
@@ -185,6 +186,7 @@ vfpfunc.quit()
 # FIX ME: LIST NEXT 5
 # FIX ME: RESTORE FROM test ADDITIVE
 # FIX ME: SHOW GETS
+# FIX ME: HIDE WINDOW test
 # FIX ME: SORT TO sortedTable ON (sortField)
 # FIX ME: COPY TO ARRAY FOR X = 3
 vfpfunc.function[\'somefunc\'](False, vfpvar[\'a\'], False)

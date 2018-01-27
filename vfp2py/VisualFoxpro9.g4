@@ -221,6 +221,7 @@ cmd
  | RESTORE FROM specialExpr ADDITIVE? #restoreCmd
  | TEXT (TO idAttr | ADDITIVE | TEXTMERGE | NOSHOW | FLAGS flagExpr=expr | PRETEXT pretext=expr)* NL textChunk ENDTEXT #textBlock
  | SHOW GETS #showCmd
+ | HIDE WINDOW (ALL | SCREEN | args) #hideCmd
  | '=' expr #exprCmd
  | complexId #complexIdCmd
  ;
@@ -475,6 +476,7 @@ identifier
  | TEXT
  | ENDTEXT
  | SHOW
+ | HIDE
  | LINKED
  | TEXTMERGE
  | FLAGS
@@ -668,6 +670,7 @@ SELECTION : S E L E C T I O N;
 DEACTIVATE : D E A C T I V A T E;
 SAME : S A M E;
 SHOW: S H O W;
+HIDE: H I D E;
 NOSHOW : N O S H O W;
 STEP : S T E P;
 THEN : T H E N;

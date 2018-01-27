@@ -515,6 +515,11 @@ class VisualFoxpro9Visitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by VisualFoxpro9Parser#hideCmd.
+    def visitHideCmd(self, ctx):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by VisualFoxpro9Parser#exprCmd.
     def visitExprCmd(self, ctx):
         return self.visitChildren(ctx)

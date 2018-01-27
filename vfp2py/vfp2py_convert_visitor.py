@@ -1899,3 +1899,6 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
 
     def visitShowCmd(self, ctx):
         pass
+
+    def visitHideCmd(self, ctx):
+        pass
