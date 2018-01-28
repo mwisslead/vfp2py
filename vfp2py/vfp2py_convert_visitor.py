@@ -1862,6 +1862,9 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
     def visitListStmt(self, ctx):
         pass
 
+    def visitSaveToCmd(self, ctx):
+        pass
+
     def visitUnlockCmd(self, ctx):
         pass
 

@@ -218,6 +218,7 @@ cmd
  | ASSERT expr (MESSAGE expr)? #assert
  | COMPILE (DATABASE | FORM | CLASSLIB | LABEL | REPORT)? (ALL | ENCRYPT | NODEBUG | AS specialExpr | specialExpr)* #compileCmd
  | LIST scopeClause #listStmt
+ | SAVE TO (MEMO specialExpr | specialExpr) (ALL (LIKE | EXCEPT) specialExpr)? #saveToCmd
  | RESTORE FROM specialExpr ADDITIVE? #restoreCmd
  | TEXT (TO idAttr | ADDITIVE | TEXTMERGE | NOSHOW | FLAGS flagExpr=expr | PRETEXT pretext=expr)* NL textChunk ENDTEXT #textBlock
  | SHOW GETS #showCmd
