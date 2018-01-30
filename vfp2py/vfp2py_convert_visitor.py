@@ -1880,6 +1880,9 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
     def visitRestoreCmd(self, ctx):
         pass
 
+    def visitZoomCmd(self, ctx):
+        pass
+
     def visitTextBlock(self, ctx):
         kwargs = {}
         if ctx.NOSHOW():

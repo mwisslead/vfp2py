@@ -220,6 +220,7 @@ cmd
  | LIST scopeClause #listStmt
  | SAVE TO (MEMO specialExpr | specialExpr) (ALL (LIKE | EXCEPT) specialExpr)? #saveToCmd
  | RESTORE FROM specialExpr ADDITIVE? #restoreCmd
+ | ZOOM WINDOW specialExpr (MIN | MAX | NORM) (AT expr ',' expr | FROM AT expr ',' expr (SIZE AT expr ',' expr | TO expr ',' expr)?)? #zoomCmd
  | TEXT (TO idAttr | ADDITIVE | TEXTMERGE | NOSHOW | FLAGS flagExpr=expr | PRETEXT pretext=expr)* NL textChunk ENDTEXT #textBlock
  | SHOW GETS #showCmd
  | HIDE WINDOW (ALL | SCREEN | args) #hideCmd
@@ -483,6 +484,11 @@ identifier
  | FLAGS
  | PRETEXT
  | MASTER
+ | ZOOM
+ | MIN
+ | MAX
+ | NORM
+ | SIZE
  ;
 
 NUMBER_LITERAL : (DIGIT* '.')? DIGIT+ (E [+-]? DIGIT*)?
@@ -769,6 +775,11 @@ COMPILE: C O M P I L E;
 SORT: S O R T;
 UPDATE: U P D A T E;
 RESTORE: R E S T O R E;
+ZOOM: Z O O M;
+MIN: M I N;
+MAX: M A X;
+NORM: N O R M;
+SIZE: S I Z E;
 DOEVENTS: D O E V E N T S;
 FORCE: F O R C E;
 JOIN: J O I N;

@@ -99,6 +99,7 @@ HIDE WINDOW test
 SORT TO sortedTable ON (sortField)
 COPY TO ARRAY FOR X = 3
 SAVE TO test ALL LIKE something
+ZOOM WINDOW SCREEN MAX
 SOMEFUNC(,A,)
 '''.strip()
     output_str = '''
@@ -191,6 +192,7 @@ vfpfunc.quit()
 # FIX ME: SORT TO sortedTable ON (sortField)
 # FIX ME: COPY TO ARRAY FOR X = 3
 # FIX ME: SAVE TO test ALL LIKE something
+# FIX ME: ZOOM WINDOW SCREEN MAX
 vfpfunc.function[\'somefunc\'](False, vfpvar[\'a\'], False)
 '''.strip()
     test_output_str = vfp2py.vfp2py.prg2py(input_str, parser_start='lines', prepend_data='').strip()
