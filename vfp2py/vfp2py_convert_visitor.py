@@ -161,7 +161,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             if retval is None:
                 raise Exception('just to jump to except block')
         except Exception as err:
-            logging.getLogger(__name__).exception(err.message)
+            logging.getLogger(__name__).exception(str(err))
             lines = self.getCtxText(ctx)
             print(lines)
             retval = [CodeStr('#FIX ME: {}'.format(line)) for line in lines.split('\n') if line]
