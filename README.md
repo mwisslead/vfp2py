@@ -15,30 +15,34 @@ whole projects pjx files.
 - Somewhat functioning gui using PySide
 
 ## Future work
+- Add more commands to parser
 - Improve gui
 - Rework scoping to facilitate operation of some commands.
 - Add missing code conversion for some commands currently supported by parser
 - Add more runtime functions
 - Put package on pypi for easier install
+- Speed up parsing
 
 ## Installation
 `python setup.py install`
 
 ## Usage
 ```
-    $ python -m vfp2py --help
-    usage: __main__.py [-h] [--logging] infile outfile [search [search ...]]
+    $ vfp2py --help
+    usage: vfp2py [-h] [--logging] infile outpath [search [search ...]]
     
     Tool for rewriting Foxpro code in Python
     
     positional arguments:
-      infile      file to convert
-      outfile     file to output to
-      search      directories to search for included files
+      infile      file to convert - supported file types are prg, mpr, spr, scx,
+                  vcx, or pjx,
+      outpath     path to output converted code, will be a filename for all but
+                  pjx which will be a directory
+      search      directory to search for included files
     
     optional arguments:
       -h, --help  show this help message and exit
-      --logging   file to convert`
+      --logging   file to convert
 ```
 
-To convert a file simply run `python -m vfp2py --logging input_file.prg output_file.py`
+To convert a file simply run `vfp2py --logging input_file.prg output_file.py` or `vfp2py --logging input_project.pjx output_directory`
