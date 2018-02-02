@@ -16,7 +16,7 @@ def main(argv=None):
     if args.logging:
         logging.basicConfig(level=logging.DEBUG)
     vfp2py.SEARCH_PATH += args.search
-    vfp2py.convert_file(args.infile, args.outfile)
+    vfp2py.convert_file(args.infile, args.outpath)
 
 if __name__ == '__main__':
     try:
