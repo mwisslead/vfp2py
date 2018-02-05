@@ -1103,12 +1103,13 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         return self.visitAtomExpr(ctx)
 
     def visitDeleteFile(self, ctx):
-        if ctx.specialExpr():
-            filename = self.visit(ctx.specialExpr())
-        else:
-            filename = None
+        filename = self.visit(ctx.specialExpr())
+        if not filename:
+            self.imports.append('from vfp2py import vfpfunc')
+            filename = make_func_code('vfpfunc.getfile', '', 'Select file to', 'Delete', 0, 'Delete')
         if ctx.RECYCLE():
-            return make_func_code('vfpfunc.delete_file', filename, True)
+            self.imports.append('from send2trash import send2trash')
+            return make_func_code('send2trash', filename)
         else:
             self.imports.append('import os')
             return make_func_code('os.remove', filename)

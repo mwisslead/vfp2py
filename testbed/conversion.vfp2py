@@ -404,6 +404,10 @@ DO FORM SPLASH.SCX
 DO FORM SPLASH.SCX NAME splashy
 DO FORM SPLASH.SCX NAME splashy LINKED
 CD ..
+delete file test.txt
+erase test.txt
+delete file ?
+delete file test.txt recycle
 @end=vfp@
 
 @begin=python@
@@ -422,6 +426,10 @@ vfpfunc.do_form('splash.scx')
 vfpfunc.do_form('splash.scx', name='splashy')
 vfpfunc.do_form('splash.scx', name='splashy', linked=True)
 os.chdir('..')
+os.remove('test.txt')
+os.remove('test.txt')
+os.remove(vfpfunc.getfile('', 'Select file to', 'Delete', 0, 'Delete'))
+send2trash('test.txt')
 @end=python@
 
 @begin=vfp@&&lines

@@ -434,6 +434,10 @@ DO FORM SPLASH.SCX
 DO FORM SPLASH.SCX NAME splashy
 DO FORM SPLASH.SCX NAME splashy LINKED
 CD ..
+delete file test.txt
+erase test.txt
+delete file ?
+delete file test.txt recycle
 '''.strip()
     output_str = '''
 a = False  # LOCAL Declaration
@@ -451,6 +455,10 @@ vfpfunc.do_form(\'splash.scx\')
 vfpfunc.do_form(\'splash.scx\', name=\'splashy\')
 vfpfunc.do_form(\'splash.scx\', name=\'splashy\', linked=True)
 os.chdir(\'..\')
+os.remove(\'test.txt\')
+os.remove(\'test.txt\')
+os.remove(vfpfunc.getfile(\'\', \'Select file to\', \'Delete\', 0, \'Delete\'))
+send2trash(\'test.txt\')
 '''.strip()
     test_output_str = vfp2py.vfp2py.prg2py(input_str, parser_start='lines', prepend_data='').strip()
     try:
