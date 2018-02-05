@@ -1124,7 +1124,17 @@ def getfile(file_ext='', text='', button_caption='', button_type=0, title=''):
         'txt': 'File (*.txt)',
         'dbf': 'Table/DBF (*.dbf)',
     }.get(file_ext, '*.' + file_ext)
-    return QtGui.QFileDialog.getOpenFileName(parent=variable['_vfp'], caption='Open', dir='.', filter='All Files (*.*);;' + filter, selectedFilter=filter)[0]
+    t = QtGui.QFileDialog()
+    t.setFilter('All Files (*.*);;' + filter)
+    t.selectFilter(filter or 'All Files (*.*);;')
+    if text:
+        (next(x for x in t.findChildren(QtGui.QLabel) if x.text() == 'File &name:')).setText(text)
+    if button_caption:
+        t.setLabelText(QtGui.QFileDialog.Accept, button_caption)
+    if title:
+        t.setWindowTitle(title)
+    t.exec_()
+    return t.selectedFiles()[0]
 
 def _getwords(string, delim=None):
     return [w for w in string.split(delim) if w]
