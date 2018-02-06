@@ -1405,14 +1405,19 @@ def strtofile(string, filename, flag=0):
 
     mode = 'ab' if flag == 1 else 'wb'
 
-    with open(filename, mode) as fid:
-        if flag == 2:
-            fid.write(string.encode('utf-16'))
-        elif flag == 4:
-            fid.write(b'\xef\xbb\xbf')
-            fid.write(string.encode('utf-8'))
-        else:
-            fid.write(string)
+    if flag == 2:
+        output = string.encode('utf-16')
+    elif flag == 4:
+        output = b'\xef\xbb\xbf' + string.encode('utf-8')
+    else:
+        output = string
+
+    try:
+        with open(filename, mode) as fid:
+            fid.write(output)
+        return len(output)
+    except:
+        return 0
 
 def strtran(string, old, new='', start=0, maxreplace=None, flags=0):
     retstr = ''
