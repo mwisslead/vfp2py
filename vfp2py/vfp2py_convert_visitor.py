@@ -1713,7 +1713,30 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         return make_func_code('vfpfunc.db.browse')
 
     def visitScatterExpr(self, ctx):
-        pass
+        self.imports.append('from vfp2py import vfpfunc')
+        kwargs = {}
+        if ctx.FIELDS():
+            fields = self.visit(ctx.expr()[0])
+            if ctx.LIKE():
+                kwargs['like'] = fields
+            elif ctx.EXCEPT():
+                kwargs['except'] = fields
+            else:
+                kwargs['fields'] = fields
+        if ctx.MEMO():
+            kwargs['memo'] = True
+        if ctx.BLANK():
+            kwargs['blank'] = True
+        if ctx.NAME():
+            if ctx.ADDITIVE():
+                kwargs['additive'] = True
+            name = self.visit(ctx.expr()[-1])
+            return add_args_to_code('{} = {}', (name, make_func_code('vfpfunc.scatter', 'name', **kwargs)))
+        elif ctx.TO():
+            name = self.visit(ctx.expr()[-1])
+            return add_args_to_code('{} = {}', (name, make_func_code('vfpfunc.scatter', 'array', **kwargs)))
+        else:
+            return make_func_code('vfpfunc.scatter', 'memvar', **kwargs)
 
     def visitGatherExpr(self, ctx):
         pass

@@ -938,3 +938,23 @@ print(\'hello \' + vfpvar[\'username\'])  # @x, y say \'hello \' + username STYL
         print(''.join(diff))
         raise
 
+
+def Test19():
+    input_str = '''
+scatter name test
+scatter blank memvar
+scatter to somearray
+'''.strip()
+    output_str = '''
+vfpvar[\'test\'] = vfpfunc.scatter(\'name\')
+vfpfunc.scatter(\'memvar\', blank=True)
+vfpvar[\'somearray\'] = vfpfunc.scatter(\'array\')
+'''.strip()
+    test_output_str = vfp2py.vfp2py.prg2py(input_str, parser_start='lines', prepend_data='').strip()
+    try:
+        assert test_output_str == output_str
+    except AssertionError:
+        diff = difflib.unified_diff((test_output_str + '\n').splitlines(1), (output_str + '\n').splitlines(1))
+        print(''.join(diff))
+        raise
+

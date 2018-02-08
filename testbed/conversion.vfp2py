@@ -782,6 +782,18 @@ print('hello ' + vfpvar['username'])  # @x, y say 'hello ' + username
 print('hello ' + vfpvar['username'])  # @x, y say 'hello ' + username STYLE thestyle
 @end=python@
 
+@begin=vfp@&&lines
+scatter name test
+scatter blank memvar
+scatter to somearray
+@end=vfp@
+
+@begin=python@
+vfpvar['test'] = vfpfunc.scatter('name')
+vfpfunc.scatter('memvar', blank=True)
+vfpvar['somearray'] = vfpfunc.scatter('array')
+@end=python@
+
 SET TYPEAHEAD TO 0
 ?LEFT('Hello, World', 5)
 WAIT WINDOW space(3) + 'please wait' + CHR(32) NOWAIT TIMEOUT 1.3
