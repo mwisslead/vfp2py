@@ -1093,9 +1093,6 @@ def ddesetservice(a, b, c=False):
 def ddesettopic(a, b, c):
     pass
 
-def delete_file(string, recycle=False):
-    pass
-
 def dow_fix(weekday, firstday=0):
     return (weekday + 2 - (firstday or 1)) % 7 + 1
 
