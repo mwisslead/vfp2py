@@ -1078,8 +1078,15 @@ def chrtran(expr, fchrs, rchrs):
 def ctod(string):
     return dt.datetime.strptime(string, '%m/%d/%Y').date()
 
-def ddeinitiate(a, b):
-    pass
+def ddeinitiate(service, topic):
+    import dde
+    global dde_server
+    try:
+        dde_server = dde.CreateServer()
+        dde_server.Create('Test')
+        return dde.CreateConversation(service, topic)
+    except dde.error:
+        return -1
 
 def ddesetoption(a, b):
     pass
