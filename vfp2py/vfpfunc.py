@@ -1080,11 +1080,12 @@ def ctod(string):
 
 def ddeinitiate(service, topic):
     import dde
-    global dde_server
+    import win32ui
     try:
-        dde_server = dde.CreateServer()
-        dde_server.Create('Test')
-        return dde.CreateConversation(service, topic)
+        server = win32ui.GetApp().ddeServer
+        conn = dde.CreateConversation(server)
+        conn.ConnectTo(service, topic)
+        return conn
     except dde.error:
         return -1
 
