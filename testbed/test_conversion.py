@@ -101,6 +101,7 @@ COPY TO ARRAY FOR X = 3
 SAVE TO test ALL LIKE something
 ZOOM WINDOW SCREEN MAX
 SOMEFUNC(,A,)
+MODIFY WINDOW SCREEN FONT "FONT", 12 STYLE "B" TITLE "TITLE" NOFLOAT NOCLOSE NOZOOM
 '''.strip()
     output_str = '''
 # comment
@@ -194,6 +195,7 @@ vfpfunc.quit()
 # FIX ME: SAVE TO test ALL LIKE something
 # FIX ME: ZOOM WINDOW SCREEN MAX
 vfpfunc.function[\'somefunc\'](False, vfpvar[\'a\'], False)
+# FIX ME: MODIFY WINDOW SCREEN FONT "FONT", 12 STYLE "B" TITLE "TITLE" NOFLOAT NOCLOSE NOZOOM
 '''.strip()
     test_output_str = vfp2py.vfp2py.prg2py(input_str, parser_start='lines', prepend_data='').strip()
     try:

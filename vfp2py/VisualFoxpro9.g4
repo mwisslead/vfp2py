@@ -177,6 +177,7 @@ cmd
  | ACTIVATE MENU identifier NOWAIT? (PAD identifier)? #activateMenu
  | DEACTIVATE (MENU|POPUP) (ALL | parameters) #deactivate
 
+ | MODIFY WINDOW (SCREEN | identifier) (FROM args TO args | AT args SIZE args | FONT args | STYLE expr | TITLE expr | identifier | ICON FILE specialExpr | FILL FILE specialExpr | COLOR SCHEME expr | COLOR args)* #modifyWindow
  | ERROR expr? #raiseError
  | THROW expr? #throwError
 
@@ -467,6 +468,7 @@ identifier
  | PROGRAMCONTROL
  | NOUPDATE
  | RELATION
+ | MODIFY
  | UNLOCK
  | COMPILE
  | SORT
@@ -489,6 +491,9 @@ identifier
  | MAX
  | NORM
  | SIZE
+ | TITLE
+ | ICON
+ | FILL
  ;
 
 NUMBER_LITERAL : (DIGIT* '.')? DIGIT+ (E [+-]? DIGIT*)?
@@ -770,6 +775,7 @@ TALK: T A L K;
 PROGRAMCONTROL: (C A N C E L | S U S P E N D | R E S U M E | Q U I T | E X I T | L O O P | N O D E F A U L T);
 NOUPDATE: N O U P D A T E;
 RELATION: R E L A T I O N;
+MODIFY: M O D I F Y;
 UNLOCK: U N L O C K;
 COMPILE: C O M P I L E;
 SORT: S O R T;
@@ -791,6 +797,9 @@ FLAGS: F L A G S;
 PRETEXT: P R E TEXT;
 ENCRYPT: E N C R Y P T;
 MASTER: M A S T E R;
+TITLE: T I T L E;
+ICON: I C O N;
+FILL: F I L L;
 
 ID : [A-Za-z_] [a-zA-Z0-9_]*;
 

@@ -305,6 +305,11 @@ class VisualFoxpro9Visitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by VisualFoxpro9Parser#modifyWindow.
+    def visitModifyWindow(self, ctx):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by VisualFoxpro9Parser#raiseError.
     def visitRaiseError(self, ctx):
         return self.visitChildren(ctx)

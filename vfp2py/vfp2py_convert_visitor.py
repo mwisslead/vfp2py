@@ -1932,3 +1932,6 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
 
     def visitHideCmd(self, ctx):
         pass
+
+    def visitModifyWindow(self, ctx):
+        pass
