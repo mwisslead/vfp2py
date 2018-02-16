@@ -102,6 +102,10 @@ SAVE TO test ALL LIKE something
 ZOOM WINDOW SCREEN MAX
 SOMEFUNC(,A,)
 MODIFY WINDOW SCREEN FONT "FONT", 12 STYLE "B" TITLE "TITLE" NOFLOAT NOCLOSE NOZOOM
+DEFINE MENU test BAR AT LINE 2 IN SCREEN
+DEFINE PAD test OF thing PROMPT \'text\'
+DEFINE POPUP test
+DEFINE BAR 1 OF test PROMPT \'text\'
 '''.strip()
     output_str = '''
 # comment
@@ -196,6 +200,10 @@ vfpfunc.quit()
 # FIX ME: ZOOM WINDOW SCREEN MAX
 vfpfunc.function[\'somefunc\'](False, vfpvar[\'a\'], False)
 # FIX ME: MODIFY WINDOW SCREEN FONT "FONT", 12 STYLE "B" TITLE "TITLE" NOFLOAT NOCLOSE NOZOOM
+# FIX ME: DEFINE MENU test BAR AT LINE 2 IN SCREEN
+# FIX ME: DEFINE PAD test OF thing PROMPT \'text\'
+# FIX ME: DEFINE POPUP test
+# FIX ME: DEFINE BAR 1 OF test PROMPT \'text\'
 '''.strip()
     test_output_str = vfp2py.vfp2py.prg2py(input_str, parser_start='lines', prepend_data='').strip()
     try:

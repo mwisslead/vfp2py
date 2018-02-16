@@ -1927,6 +1927,18 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         text = ''.join(t.text for t in ltoks + toks + rtoks)
         return CodeStr('[' + ',\n'.join(repr(l) for l in text.splitlines()) + ']')
 
+    def visitDefineMenu(self, ctx):
+        pass
+
+    def visitDefinePad(self, ctx):
+        pass
+
+    def visitDefinePopup(self, ctx):
+        pass
+
+    def visitDefineBar(self, ctx):
+        pass
+
     def visitShowCmd(self, ctx):
         pass
 
