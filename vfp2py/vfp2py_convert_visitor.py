@@ -1947,3 +1947,6 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
 
     def visitModifyWindow(self, ctx):
         pass
+
+    def visitModifyFile(self, ctx):
+        pass

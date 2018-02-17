@@ -178,6 +178,8 @@ cmd
  | DEACTIVATE (MENU|POPUP) (ALL | parameters) #deactivate
 
  | MODIFY WINDOW (SCREEN | identifier) (FROM args TO args | AT args SIZE args | FONT args | STYLE expr | TITLE expr | identifier | ICON FILE specialExpr | FILL FILE specialExpr | COLOR SCHEME expr | COLOR args)* #modifyWindow
+ | MODIFY (FILE | COMMAND) ('?' | specialExpr) (IN (WINDOW identifier | SCREEN) | AS expr | identifier)* #modifyFile
+
  | ERROR expr? #raiseError
  | THROW expr? #throwError
 
@@ -655,6 +657,7 @@ identifier
  | NOUPDATE
  | RELATION
  | MODIFY
+ | COMMAND
  | UNLOCK
  | COMPILE
  | SORT
@@ -964,6 +967,7 @@ PROGRAMCONTROL: (C A N C E L | S U S P E N D | R E S U M E | Q U I T | E X I T |
 NOUPDATE: N O U P D A T E;
 RELATION: R E L A T I O N;
 MODIFY: M O D I F Y;
+COMMAND: C O M M A N D;
 UNLOCK: U N L O C K;
 COMPILE: C O M P I L E;
 SORT: S O R T;
