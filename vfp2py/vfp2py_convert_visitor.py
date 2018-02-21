@@ -45,9 +45,6 @@ def isinstance(obj, istype):
     istype = tuple(x.func if real_isinstance(x, RedirectedBuiltin) else x for x in istype)
     return real_isinstance(obj, istype)
 
-def random_variable(length=10):
-    return '_' + ''.join(random.choice(string.ascii_lowercase + string.digits) for _ in range(length))
-
 class CodeStr(unicode):
     def __repr__(self):
         return unicode(self)
@@ -181,9 +178,6 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             return ('#' * len(start) + middle + '#' * len(end)).strip()
         comments = [comment.strip() for comment in self.getCtxText(ctx).splitlines()]
         return [CodeStr(fixer.sub(repl, comment)) for comment in comments]
-
-    def visitCmdStmt(self, ctx):
-        return self.visit(ctx.cmd() or ctx.setup())
 
     def visitLines(self, ctx):
         retval = sum((self.visit(line) for line in ctx.line()), [])
