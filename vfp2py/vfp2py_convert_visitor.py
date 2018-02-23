@@ -11,9 +11,6 @@ import tokenize
 import keyword
 from collections import OrderedDict
 
-import random
-import string
-
 import isort
 
 import antlr4
