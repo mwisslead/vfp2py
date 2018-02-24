@@ -501,7 +501,7 @@ def prg2py_after_preproc(data, parser_start, input_filename):
     if not isinstance(output_tree, list):
         return output_tree
     output = add_indents(output_tree, 0)
-    options = autopep8.parse_args(['--max-line-length', '100', '-'])
+    options = autopep8.parse_args(['--max-line-length', '100000', '-'])
     return autopep8.fix_code(output, options)
 
 def prg2py(data, parser_start='prg', prepend_data='procedure _program_main\n', input_filename=''):

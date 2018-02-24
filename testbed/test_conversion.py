@@ -531,12 +531,10 @@ search_for = countval = sumval = False  # LOCAL Declaration
 search_for = \'PAUL\'
 vfpfunc.db.seek(None, search_for.strip())
 countval = vfpfunc.db.count(None, (\'all\',), for_cond=lambda: vfpvar[\'test\'] == 3)
-sumval = vfpfunc.db.sum(None, (\'all\',), lambda: vfpvar[
-                        \'t\'] * vfpvar[\'t\'], for_cond=lambda: vfpvar[\'t\'] > 0)
+sumval = vfpfunc.db.sum(None, (\'all\',), lambda: vfpvar[\'t\'] * vfpvar[\'t\'], for_cond=lambda: vfpvar[\'t\'] > 0)
 vfpfunc.db.locate(nooptimize=True, while_cond=lambda: vfpvar[\'x\'] > 5)
 del search_for, countval, sumval
-vfpfunc.db.update(\'test\', [(\'a\', vfpvar[\'b\']), (\'c\', vfpvar[\'d\']),
-                           (\'e\', vfpvar[\'f\'])], where=lambda: vfpvar[\'x\'] == 3)
+vfpfunc.db.update(\'test\', [(\'a\', vfpvar[\'b\']), (\'c\', vfpvar[\'d\']), (\'e\', vfpvar[\'f\'])], where=lambda: vfpvar[\'x\'] == 3)
 '''.strip()
     test_output_str = vfp2py.vfp2py.prg2py(input_str, parser_start='lines', prepend_data='').strip()
     try:
