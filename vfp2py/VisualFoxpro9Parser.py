@@ -74,7 +74,7 @@ def serializedATN():
         buf.write(u" \3 \3 \5 \u02a5\n \3 \3 \3 \5 \u02aa\n \3 \3 \3 \3 ")
         buf.write(u"\7 \u02b0\n \f \16 \u02b3\13 \3 \3 \5 \u02b7\n \3 \3")
         buf.write(u" \3 \5 \u02bc\n \3 \5 \u02bf\n \3 \3 \3 \3 \3 \3 \3 ")
-        buf.write(u"\5 \u02c8\n \3 \3 \5 \u02cc\n \3 \3 \5 \u02d0\n \5 \u02d2")
+        buf.write(u"\5 \u02c8\n \3 \3 \3 \5 \u02cd\n \3 \5 \u02d0\n \5 \u02d2")
         buf.write(u"\n \3 \5 \u02d5\n \3 \3 \3 \3 \3 \3 \3 \3 \3 \3 \3 \5")
         buf.write(u" \u02e2\n \3 \3 \3 \3 \5 \u02e8\n \3 \3 \3 \3 \5 \u02ee")
         buf.write(u"\n \5 \u02f0\n \3 \3 \3 \3 \3 \3 \3 \3 \5 \u02fa\n \5")
@@ -489,9 +489,9 @@ def serializedATN():
         buf.write(u"\7Y\2\2\u02c4\u02c5\7\u009d\2\2\u02c5\u02c6\7\u009e\2")
         buf.write(u"\2\u02c6\u02c8\7\4\2\2\u02c7\u02c4\3\2\2\2\u02c7\u02c8")
         buf.write(u"\3\2\2\2\u02c8\u02d1\3\2\2\2\u02c9\u02cf\7-\2\2\u02ca")
-        buf.write(u"\u02cc\7g\2\2\u02cb\u02ca\3\2\2\2\u02cb\u02cc\3\2\2\2")
-        buf.write(u"\u02cc\u02cd\3\2\2\2\u02cd\u02d0\5|?\2\u02ce\u02d0\7")
-        buf.write(u"\u009f\2\2\u02cf\u02cb\3\2\2\2\u02cf\u02ce\3\2\2\2\u02d0")
+        buf.write(u"\u02d0\7\u009f\2\2\u02cb\u02cd\7g\2\2\u02cc\u02cb\3\2")
+        buf.write(u"\2\2\u02cc\u02cd\3\2\2\2\u02cd\u02ce\3\2\2\2\u02ce\u02d0")
+        buf.write(u"\5|?\2\u02cf\u02ca\3\2\2\2\u02cf\u02cc\3\2\2\2\u02d0")
         buf.write(u"\u02d2\3\2\2\2\u02d1\u02c9\3\2\2\2\u02d1\u02d2\3\2\2")
         buf.write(u"\2\u02d2\u02d4\3\2\2\2\u02d3\u02d5\7\u00a0\2\2\u02d4")
         buf.write(u"\u02d3\3\2\2\2\u02d4\u02d5\3\2\2\2\u02d5\u0609\3\2\2")
@@ -1209,7 +1209,7 @@ def serializedATN():
         buf.write(u"\u0233\u0236\u0241\u0249\u024b\u0251\u0255\u0258\u025d")
         buf.write(u"\u0267\u026f\u0271\u0277\u027a\u027d\u0283\u028a\u028c")
         buf.write(u"\u0291\u0297\u0299\u02a0\u02a4\u02a9\u02af\u02b1\u02b6")
-        buf.write(u"\u02bb\u02be\u02c7\u02cb\u02cf\u02d1\u02d4\u02e1\u02e7")
+        buf.write(u"\u02bb\u02be\u02c7\u02cc\u02cf\u02d1\u02d4\u02e1\u02e7")
         buf.write(u"\u02ed\u02ef\u02f9\u02fb\u02fd\u02ff\u0303\u0307\u030d")
         buf.write(u"\u0311\u0313\u0317\u031c\u031e\u0323\u0329\u032c\u032f")
         buf.write(u"\u0334\u033f\u0345\u0349\u034d\u034f\u0352\u0355\u035b")
@@ -7706,21 +7706,21 @@ class VisualFoxpro9Parser ( Parser ):
                     self._errHandler.sync(self)
                     la_ = self._interp.adaptivePredict(self._input,96,self._ctx)
                     if la_ == 1:
-                        self.state = 713
-                        self._errHandler.sync(self)
-                        la_ = self._interp.adaptivePredict(self._input,95,self._ctx)
-                        if la_ == 1:
-                            self.state = 712
-                            self.match(VisualFoxpro9Parser.WINDOW)
-
-
-                        self.state = 715
-                        self.identifier()
+                        self.state = 712
+                        self.match(VisualFoxpro9Parser.SCREEN)
                         pass
 
                     elif la_ == 2:
+                        self.state = 714
+                        self._errHandler.sync(self)
+                        la_ = self._interp.adaptivePredict(self._input,95,self._ctx)
+                        if la_ == 1:
+                            self.state = 713
+                            self.match(VisualFoxpro9Parser.WINDOW)
+
+
                         self.state = 716
-                        self.match(VisualFoxpro9Parser.SCREEN)
+                        self.identifier()
                         pass
 
 

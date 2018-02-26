@@ -196,7 +196,7 @@ vfpfunc.quit()
 vfpfunc.function['somefunc'](False, vfpvar['a'], False)
 # FIX ME: MODIFY WINDOW SCREEN FONT "FONT", 12 STYLE "B" TITLE "TITLE" NOFLOAT NOCLOSE NOZOOM
 # FIX ME: MODIFY COMMAND c:\test.prg
-# FIX ME: DEFINE MENU test BAR AT LINE 2 IN SCREEN
+vfpfunc.define_menu('test', window=vfpfunc.SCREEN, bar=True, line=2)
 # FIX ME: DEFINE PAD test OF thing PROMPT 'text'
 # FIX ME: DEFINE POPUP test
 # FIX ME: DEFINE BAR 1 OF test PROMPT 'text'

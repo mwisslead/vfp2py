@@ -165,7 +165,7 @@ cmd
  | POP (KEY ALL? | MENU (identifier | TO MASTER)* | POPUP identifier) #pop
  | KEYBOARD expr PLAIN? CLEAR? #keyboard
 
- | DEFINE MENU identifier (BAR (AT LINE NUMBER_LITERAL)?) (IN (WINDOW? identifier | SCREEN))? NOMARGIN? #defineMenu
+ | DEFINE MENU identifier (BAR (AT LINE NUMBER_LITERAL)?) (IN (SCREEN | WINDOW? identifier))? NOMARGIN? #defineMenu
  | DEFINE PAD identifier OF expr PROMPT expr (AT NUMBER_LITERAL ',' NUMBER_LITERAL)?
          (BEFORE identifier | AFTER identifier)? (NEGOTIATE identifier (',' identifier)?)?
          (FONT identifier (',' NUMBER_LITERAL (',' expr (',' identifier)?)?)?)? (STYLE identifier)?

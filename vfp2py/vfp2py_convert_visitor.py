@@ -1917,7 +1917,19 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         return CodeStr('[' + ',\n'.join(repr(l) for l in text.splitlines()) + ']')
 
     def visitDefineMenu(self, ctx):
-        pass
+        menu_name = str(self.visit(ctx.identifier()[0]))
+        kwargs = {}
+        if len(ctx.identifier()) > 1:
+            kwargs['window'] = str(self.visit(ctx.identifier()[1]))
+        elif ctx.SCREEN():
+            kwargs['window'] = CodeStr('vfpfunc.SCREEN')
+        if ctx.BAR():
+            kwargs['bar'] = True
+            if ctx.NUMBER_LITERAL():
+                kwargs['line'] = self.convert_number(ctx.NUMBER_LITERAL())
+        if ctx.NOMARGIN():
+            kwargs['nomargin'] = True
+        return make_func_code('vfpfunc.define_menu', menu_name, **kwargs)
 
     def visitDefinePad(self, ctx):
         pass
