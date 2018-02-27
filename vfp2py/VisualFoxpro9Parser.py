@@ -485,13 +485,13 @@ def serializedATN():
         buf.write(u"\2\2\u02bb\u02ba\3\2\2\2\u02bb\u02bc\3\2\2\2\u02bc\u02be")
         buf.write(u"\3\2\2\2\u02bd\u02bf\7K\2\2\u02be\u02bd\3\2\2\2\u02be")
         buf.write(u"\u02bf\3\2\2\2\u02bf\u0609\3\2\2\2\u02c0\u02c1\7N\2\2")
-        buf.write(u"\u02c1\u02c2\7\u009c\2\2\u02c2\u02c3\5|?\2\u02c3\u02c7")
+        buf.write(u"\u02c1\u02c2\7\u009c\2\2\u02c2\u02c3\5l\67\2\u02c3\u02c7")
         buf.write(u"\7Y\2\2\u02c4\u02c5\7\u009d\2\2\u02c5\u02c6\7\u009e\2")
         buf.write(u"\2\u02c6\u02c8\7\4\2\2\u02c7\u02c4\3\2\2\2\u02c7\u02c8")
         buf.write(u"\3\2\2\2\u02c8\u02d1\3\2\2\2\u02c9\u02cf\7-\2\2\u02ca")
         buf.write(u"\u02d0\7\u009f\2\2\u02cb\u02cd\7g\2\2\u02cc\u02cb\3\2")
         buf.write(u"\2\2\u02cc\u02cd\3\2\2\2\u02cd\u02ce\3\2\2\2\u02ce\u02d0")
-        buf.write(u"\5|?\2\u02cf\u02ca\3\2\2\2\u02cf\u02cc\3\2\2\2\u02d0")
+        buf.write(u"\5l\67\2\u02cf\u02ca\3\2\2\2\u02cf\u02cc\3\2\2\2\u02d0")
         buf.write(u"\u02d2\3\2\2\2\u02d1\u02c9\3\2\2\2\u02d1\u02d2\3\2\2")
         buf.write(u"\2\u02d2\u02d4\3\2\2\2\u02d3\u02d5\7\u00a0\2\2\u02d4")
         buf.write(u"\u02d3\3\2\2\2\u02d4\u02d5\3\2\2\2\u02d5\u0609\3\2\2")
@@ -4265,11 +4265,11 @@ class VisualFoxpro9Parser ( Parser ):
             return self.getToken(VisualFoxpro9Parser.DEFINE, 0)
         def MENU(self):
             return self.getToken(VisualFoxpro9Parser.MENU, 0)
-        def identifier(self, i=None):
+        def specialExpr(self, i=None):
             if i is None:
-                return self.getTypedRuleContexts(VisualFoxpro9Parser.IdentifierContext)
+                return self.getTypedRuleContexts(VisualFoxpro9Parser.SpecialExprContext)
             else:
-                return self.getTypedRuleContext(VisualFoxpro9Parser.IdentifierContext,i)
+                return self.getTypedRuleContext(VisualFoxpro9Parser.SpecialExprContext,i)
 
         def BAR(self):
             return self.getToken(VisualFoxpro9Parser.BAR, 0)
@@ -7680,7 +7680,7 @@ class VisualFoxpro9Parser ( Parser ):
                 self.state = 703
                 self.match(VisualFoxpro9Parser.MENU)
                 self.state = 704
-                self.identifier()
+                self.specialExpr()
 
                 self.state = 705
                 self.match(VisualFoxpro9Parser.BAR)
@@ -7720,7 +7720,7 @@ class VisualFoxpro9Parser ( Parser ):
 
 
                         self.state = 716
-                        self.identifier()
+                        self.specialExpr()
                         pass
 
 

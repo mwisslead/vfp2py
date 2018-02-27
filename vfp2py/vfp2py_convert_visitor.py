@@ -1917,10 +1917,10 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         return CodeStr('[' + ',\n'.join(repr(l) for l in text.splitlines()) + ']')
 
     def visitDefineMenu(self, ctx):
-        menu_name = str(self.visit(ctx.identifier()[0]))
+        menu_name = self.visit(ctx.specialExpr()[0])
         kwargs = {}
-        if len(ctx.identifier()) > 1:
-            kwargs['window'] = str(self.visit(ctx.identifier()[1]))
+        if len(ctx.specialExpr()) > 1:
+            kwargs['window'] = self.visit(ctx.specialExpr()[1])
         elif ctx.SCREEN():
             kwargs['window'] = CodeStr('vfpfunc.SCREEN')
         if ctx.BAR():
