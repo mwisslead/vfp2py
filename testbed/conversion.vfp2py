@@ -97,7 +97,7 @@ SOMEFUNC(,A,)
 MODIFY WINDOW SCREEN FONT "FONT", 12 STYLE "B" TITLE "TITLE" NOFLOAT NOCLOSE NOZOOM
 MODIFY COMMAND c:\test.prg
 DEFINE MENU test BAR AT LINE 2 IN SCREEN
-DEFINE PAD test OF thing PROMPT 'text'
+DEFINE PAD test OF thing PROMPT "text" MESSAGE "menu" KEY ALT+F, "ALT+F" COLOR SCHEME 3
 DEFINE POPUP test
 DEFINE BAR 1 OF test PROMPT 'text'
 @end=vfp@
@@ -197,7 +197,7 @@ vfpfunc.function['somefunc'](False, vfpvar['a'], False)
 # FIX ME: MODIFY WINDOW SCREEN FONT "FONT", 12 STYLE "B" TITLE "TITLE" NOFLOAT NOCLOSE NOZOOM
 # FIX ME: MODIFY COMMAND c:\test.prg
 vfpfunc.define_menu('test', window=vfpfunc.SCREEN, bar=True, line=2)
-# FIX ME: DEFINE PAD test OF thing PROMPT 'text'
+vfpfunc.define_pad('test', 'thing', 'text', color_scheme=3, message='menu', key=(u'alt+f', 'ALT+F'))
 # FIX ME: DEFINE POPUP test
 # FIX ME: DEFINE BAR 1 OF test PROMPT 'text'
 @end=python@

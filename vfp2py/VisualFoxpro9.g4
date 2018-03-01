@@ -166,7 +166,7 @@ cmd
  | KEYBOARD expr PLAIN? CLEAR? #keyboard
 
  | DEFINE MENU specialExpr (BAR (AT LINE NUMBER_LITERAL)?) (IN (SCREEN | WINDOW? specialExpr))? NOMARGIN? #defineMenu
- | DEFINE PAD identifier OF expr PROMPT expr (AT NUMBER_LITERAL ',' NUMBER_LITERAL)?
+ | DEFINE PAD specialExpr OF specialExpr PROMPT expr (AT NUMBER_LITERAL ',' NUMBER_LITERAL)?
          (BEFORE identifier | AFTER identifier)? (NEGOTIATE identifier (',' identifier)?)?
          (FONT identifier (',' NUMBER_LITERAL (',' expr (',' identifier)?)?)?)? (STYLE identifier)?
          (MESSAGE expr)? (KEY identifier ('+' identifier)? (',' expr)?)? (MARK identifier)?

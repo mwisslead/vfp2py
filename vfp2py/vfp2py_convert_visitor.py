@@ -1932,7 +1932,16 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         return make_func_code('vfpfunc.define_menu', menu_name, **kwargs)
 
     def visitDefinePad(self, ctx):
-        pass
+        if ctx.AT() or ctx.BEFORE() or ctx.AFTER() or ctx.NEGOTIATE() or ctx.FONT() or not ctx.MESSAGE() or not ctx.KEY() or ctx.MARK() or ctx.SKIPKW() or not ctx.COLOR():
+            pass
+        pad_name = str(self.visit(ctx.specialExpr(0)))
+        menu_name = str(self.visit(ctx.specialExpr(1)))
+        prompt = str(self.visit(ctx.expr(0)))
+        kwargs = {}
+        kwargs['message'] = self.visit(ctx.expr(1))
+        kwargs['key'] = tuple(['+'.join(self.visit(identifier) for identifier in ctx.identifier())] + [self.visit(ctx.expr(2))] if len(ctx.expr()) > 2 else [])
+        kwargs['color_scheme'] = self.convert_number(ctx.NUMBER_LITERAL(0))
+        return make_func_code('vfpfunc.define_pad', pad_name, menu_name, prompt, **kwargs)
 
     def visitDefinePopup(self, ctx):
         pass
