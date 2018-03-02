@@ -204,7 +204,7 @@ vfpfunc.function[\'somefunc\'](False, vfpvar[\'a\'], False)
 # FIX ME: MODIFY COMMAND c:\\test.prg
 vfpfunc.define_menu(\'test\', window=vfpfunc.SCREEN, bar=True, line=2)
 vfpfunc.define_pad(\'test\', \'thing\', \'text\', color_scheme=3, message=\'menu\', key=(u\'alt+f\', \'ALT+F\'))
-# FIX ME: DEFINE POPUP test
+vfpfunc.define_popup(\'test\')
 # FIX ME: DEFINE BAR 1 OF test PROMPT \'text\'
 '''.strip()
     test_output_str = vfp2py.vfp2py.prg2py(input_str, parser_start='lines', prepend_data='').strip()

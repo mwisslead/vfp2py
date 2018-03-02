@@ -1944,7 +1944,17 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         return make_func_code('vfpfunc.define_pad', pad_name, menu_name, prompt, **kwargs)
 
     def visitDefinePopup(self, ctx):
-        pass
+        popup_name = str(self.visit(ctx.identifier()))
+        kwargs = {}
+        if ctx.SHADOW():
+            kwargs['shadow'] = True
+        if ctx.MARGIN():
+            kwargs['margin'] = True
+        if ctx.RELATIVE():
+            kwargs['relative'] = True
+        if ctx.NUMBER_LITERAL():
+            kwargs['color_scheme'] = self.convert_number(ctx.NUMBER_LITERAL())
+        return make_func_code('vfpfunc.define_popup', popup_name, **kwargs)
 
     def visitDefineBar(self, ctx):
         pass
