@@ -205,7 +205,7 @@ vfpfunc.function[\'somefunc\'](False, vfpvar[\'a\'], False)
 vfpfunc.define_menu(\'test\', window=vfpfunc.SCREEN, bar=True, line=2)
 vfpfunc.define_pad(\'test\', \'thing\', \'text\', color_scheme=3, message=\'menu\', key=(u\'alt+f\', \'ALT+F\'))
 vfpfunc.define_popup(\'test\')
-# FIX ME: DEFINE BAR 1 OF test PROMPT \'text\'
+vfpfunc.define_bar(1, \'test\', \'text\')
 '''.strip()
     test_output_str = vfp2py.vfp2py.prg2py(input_str, parser_start='lines', prepend_data='').strip()
     try:

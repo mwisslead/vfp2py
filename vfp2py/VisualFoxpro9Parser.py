@@ -541,7 +541,7 @@ def serializedATN():
         buf.write(u"\u0333\7\u00a4\2\2\u0333\u0335\7\4\2\2\u0334\u0331\3")
         buf.write(u"\2\2\2\u0334\u0335\3\2\2\2\u0335\u0609\3\2\2\2\u0336")
         buf.write(u"\u0337\7N\2\2\u0337\u0338\7Y\2\2\u0338\u0339\7\4\2\2")
-        buf.write(u"\u0339\u033a\7\u00a2\2\2\u033a\u033b\5|?\2\u033b\u033c")
+        buf.write(u"\u0339\u033a\7\u00a2\2\2\u033a\u033b\5l\67\2\u033b\u033c")
         buf.write(u"\7\u0086\2\2\u033c\u033f\5\\/\2\u033d\u033e\7\u00ab\2")
         buf.write(u"\2\u033e\u0340\5\\/\2\u033f\u033d\3\2\2\2\u033f\u0340")
         buf.write(u"\3\2\2\2\u0340\u0609\3\2\2\2\u0341\u0342\7\u00ac\2\2")
@@ -6411,8 +6411,8 @@ class VisualFoxpro9Parser ( Parser ):
             return self.getToken(VisualFoxpro9Parser.NUMBER_LITERAL, 0)
         def OF(self):
             return self.getToken(VisualFoxpro9Parser.OF, 0)
-        def identifier(self):
-            return self.getTypedRuleContext(VisualFoxpro9Parser.IdentifierContext,0)
+        def specialExpr(self):
+            return self.getTypedRuleContext(VisualFoxpro9Parser.SpecialExprContext,0)
 
         def PROMPT(self):
             return self.getToken(VisualFoxpro9Parser.PROMPT, 0)
@@ -8003,7 +8003,7 @@ class VisualFoxpro9Parser ( Parser ):
                 self.state = 823
                 self.match(VisualFoxpro9Parser.OF)
                 self.state = 824
-                self.identifier()
+                self.specialExpr()
                 self.state = 825
                 self.match(VisualFoxpro9Parser.PROMPT)
                 self.state = 826

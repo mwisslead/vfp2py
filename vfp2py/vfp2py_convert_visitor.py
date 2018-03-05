@@ -1957,7 +1957,13 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         return make_func_code('vfpfunc.define_popup', popup_name, **kwargs)
 
     def visitDefineBar(self, ctx):
-        pass
+        bar_number = self.convert_number(ctx.NUMBER_LITERAL())
+        menu_name = self.visit(ctx.specialExpr())
+        prompt = self.visit(ctx.expr(0))
+        kwargs = {}
+        if ctx.MESSAGE():
+            kwargs['message'] = self.visit(ctx.expr(1))
+        return make_func_code('vfpfunc.define_bar', bar_number, menu_name, prompt, **kwargs)
 
     def visitShowCmd(self, ctx):
         pass
