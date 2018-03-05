@@ -532,7 +532,7 @@ def serializedATN():
         buf.write(u"\u0323\3\2\2\2\u0320\u0321\7\u00a3\2\2\u0321\u0322\7")
         buf.write(u"\u00a4\2\2\u0322\u0324\7\4\2\2\u0323\u0320\3\2\2\2\u0323")
         buf.write(u"\u0324\3\2\2\2\u0324\u0609\3\2\2\2\u0325\u0326\7N\2\2")
-        buf.write(u"\u0326\u0327\7\u00ad\2\2\u0327\u0329\5|?\2\u0328\u032a")
+        buf.write(u"\u0326\u0327\7\u00ad\2\2\u0327\u0329\5l\67\2\u0328\u032a")
         buf.write(u"\7\u00af\2\2\u0329\u0328\3\2\2\2\u0329\u032a\3\2\2\2")
         buf.write(u"\u032a\u032c\3\2\2\2\u032b\u032d\7\u00b0\2\2\u032c\u032b")
         buf.write(u"\3\2\2\2\u032c\u032d\3\2\2\2\u032d\u032f\3\2\2\2\u032e")
@@ -5986,8 +5986,8 @@ class VisualFoxpro9Parser ( Parser ):
             return self.getToken(VisualFoxpro9Parser.DEFINE, 0)
         def POPUP(self):
             return self.getToken(VisualFoxpro9Parser.POPUP, 0)
-        def identifier(self):
-            return self.getTypedRuleContext(VisualFoxpro9Parser.IdentifierContext,0)
+        def specialExpr(self):
+            return self.getTypedRuleContext(VisualFoxpro9Parser.SpecialExprContext,0)
 
         def SHADOW(self):
             return self.getToken(VisualFoxpro9Parser.SHADOW, 0)
@@ -7952,7 +7952,7 @@ class VisualFoxpro9Parser ( Parser ):
                 self.state = 804
                 self.match(VisualFoxpro9Parser.POPUP)
                 self.state = 805
-                self.identifier()
+                self.specialExpr()
                 self.state = 807
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)

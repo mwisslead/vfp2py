@@ -171,7 +171,7 @@ cmd
          (FONT identifier (',' NUMBER_LITERAL (',' expr (',' identifier)?)?)?)? (STYLE identifier)?
          (MESSAGE expr)? (KEY identifier ('+' identifier)? (',' expr)?)? (MARK identifier)?
          (SKIPKW (FOR expr)?)? (COLOR SCHEME NUMBER_LITERAL)? #definePad
- | DEFINE POPUP identifier SHADOW? MARGIN? RELATIVE? (COLOR SCHEME NUMBER_LITERAL)? #definePopup
+ | DEFINE POPUP specialExpr SHADOW? MARGIN? RELATIVE? (COLOR SCHEME NUMBER_LITERAL)? #definePopup
  | DEFINE BAR NUMBER_LITERAL OF identifier PROMPT expr (MESSAGE expr)? #defineBar
  | ACTIVATE WINDOW (parameters | ALL) (IN (WINDOW? identifier | SCREEN))? (BOTTOM | TOP | SAME)? NOSHOW? #activateWindow
  | ACTIVATE MENU identifier NOWAIT? (PAD identifier)? #activateMenu

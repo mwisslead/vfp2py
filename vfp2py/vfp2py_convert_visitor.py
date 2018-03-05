@@ -1944,7 +1944,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         return make_func_code('vfpfunc.define_pad', pad_name, menu_name, prompt, **kwargs)
 
     def visitDefinePopup(self, ctx):
-        popup_name = str(self.visit(ctx.identifier()))
+        popup_name = self.visit(ctx.specialExpr())
         kwargs = {}
         if ctx.SHADOW():
             kwargs['shadow'] = True
