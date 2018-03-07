@@ -107,6 +107,7 @@ DEFINE MENU test BAR AT LINE 2 IN SCREEN
 DEFINE PAD test OF thing PROMPT "text" MESSAGE "menu" KEY ALT+F, "ALT+F" COLOR SCHEME 3
 DEFINE POPUP test
 DEFINE BAR 1 OF test PROMPT \'text\'
+ON PAD test OF thing ACTIVATE POPUP test
 '''.strip()
     output_str = '''
 # comment
@@ -206,6 +207,7 @@ vfpfunc.define_menu(\'test\', window=vfpfunc.SCREEN, bar=True, line=2)
 vfpfunc.define_pad(\'test\', \'thing\', \'text\', color_scheme=3, message=\'menu\', key=(u\'alt+f\', \'ALT+F\'))
 vfpfunc.define_popup(\'test\')
 vfpfunc.define_bar(1, \'test\', \'text\')
+vfpfunc.on_pad_bar(\'pad\', \'test\', \'thing\', (\'popup\', \'test\'))
 '''.strip()
     test_output_str = vfp2py.vfp2py.prg2py(input_str, parser_start='lines', prepend_data='').strip()
     try:
