@@ -1334,7 +1334,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             if ctx.PAD():
                 args = ['pad', self.visit(ctx.specialExpr(0)), self.visit(ctx.specialExpr(1))]
             else:
-                args = ['bar', self.convert_number(ctx.NUMBER_LITERAL(0)), self.visit(ctx.specialExpr(0))]
+                args = ['bar', self.convert_number(ctx.NUMBER_LITERAL()), self.visit(ctx.specialExpr(0))]
             if ctx.ACTIVATE():
                 args.append(('popup' if ctx.POPUP() else 'menu', self.visit(ctx.specialExpr()[-1])))
             return make_func_code('vfpfunc.on_pad_bar', *args)
