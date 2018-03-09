@@ -174,7 +174,7 @@ cmd
  | DEFINE POPUP specialExpr SHADOW? MARGIN? RELATIVE? (COLOR SCHEME NUMBER_LITERAL)? #definePopup
  | DEFINE BAR NUMBER_LITERAL OF specialExpr PROMPT expr (MESSAGE expr)? #defineBar
  | ACTIVATE WINDOW (parameters | ALL) (IN (WINDOW? identifier | SCREEN))? (BOTTOM | TOP | SAME)? NOSHOW? #activateWindow
- | ACTIVATE MENU identifier NOWAIT? (PAD identifier)? #activateMenu
+ | ACTIVATE MENU specialExpr NOWAIT? (PAD specialExpr)? #activateMenu
  | DEACTIVATE (MENU|POPUP) (ALL | parameters) #deactivate
 
  | MODIFY WINDOW (SCREEN | identifier) (FROM args TO args | AT args SIZE args | FONT args | STYLE expr | TITLE expr | identifier | ICON FILE specialExpr | FILL FILE specialExpr | COLOR SCHEME expr | COLOR args)* #modifyWindow
