@@ -184,7 +184,7 @@ vfpfunc.quit()
 # FIX ME: RESUME
 # FIX ME: COMPILE test.prg
 # FIX ME: READ
-# FIX ME: READ EVENTS
+vfpfunc.read_events()
 # FIX ME: DOEVENTS
 # FIX ME: DOEVENTS FORCE
 # FIX ME: UNLOCK ALL

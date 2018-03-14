@@ -1314,7 +1314,8 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         return make_func_code('vfpfunc.function.dll_declare', dll_name, funcname, alias)
 
     def visitReadEvent(self, ctx):
-        return
+        if ctx.EVENTS():
+            return make_func_code('vfpfunc.read_events')
 
     def on_event(self, ctx, func_prefix):
         func = self.visit(ctx.cmd())
