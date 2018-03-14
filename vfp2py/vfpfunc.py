@@ -947,6 +947,9 @@ class _Variable(object):
         except:
             return False
 
+    def __getattr__(self, key):
+        return self[key]
+
     def __getitem__(self, key):
         scope = self._get_scope(key)
         if scope is not None:
