@@ -564,6 +564,9 @@ import datetime as dt
 import math
 import os
 
+from vfp2py import vfpfunc
+from vfp2py.vfpfunc import variable as vfpvar
+
 
 def _program_main():
     os.mkdir(\'test\')

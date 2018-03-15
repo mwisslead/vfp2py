@@ -135,6 +135,8 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             self.function_list = [self.visit(funcdef.funcDefStart())[0] for funcdef in ctx.funcDef()]
 
         self.imports = ['from __future__ import division, print_function']
+        self.imports.append('from vfp2py import vfpfunc')
+        self.imports.append('from vfp2py.vfpfunc import variable as vfpvar')
         defs = []
 
         for child in ctx.children:
@@ -254,7 +256,6 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
                 subclass = subclasses[name]
                 supername = CodeStr(subclass['parent_type'])
                 if hasattr(vfpfunc, supername):
-                    self.imports.append('from vfp2py import vfpfunc')
                     supername = add_args_to_code('{}.{}', (CodeStr('vfpfunc'), supername))
                 elif supername not in self.class_list:
                     supername = add_args_to_code('vfpfunc.classes[{}]', (str(supername),))
@@ -283,7 +284,6 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         if hasattr(vfpfunc, classname):
             raise Exception(str(classname) + ' is a reserved classname')
         if hasattr(vfpfunc, supername):
-            self.imports.append('from vfp2py import vfpfunc')
             supername = add_args_to_code('{}.{}', (CodeStr('vfpfunc'), supername))
         elif supername not in self.class_list:
             supername = add_args_to_code('vfpfunc.classes[{}]', (str(supername),))
@@ -342,7 +342,6 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
                 else:
                     newbody.append(line)
             return newbody
-        self.imports.append('from vfp2py.vfpfunc import variable as vfpvar')
         body = [CodeStr('vfpvar.pushscope()')] + fix_returns(body)
         if isinstance(body[-1], CodeStr) and body[-1].startswith('return '):
             return body
@@ -728,7 +727,6 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             }.get(funcname, funcname)
             retval = add_args_to_code('{}.{}', [args[0], CodeStr(funcname)])
             if funcname == 'weekday()':
-                self.imports.append('from vfp2py import vfpfunc')
                 return make_func_code('vfpfunc.dow_fix', retval, *args[1:])
             return retval
         if funcname in ('dtoc', 'dtos'):
@@ -868,11 +866,9 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
                 if objtype in self.class_list:
                     return make_func_code(objtype, *args, **kwargs)
                 elif hasattr(vfpfunc, objtype):
-                    self.imports.append('from vfp2py import vfpfunc')
                     objtype = 'vfpfunc.{}'.format(objtype)
                     return make_func_code(objtype, *args, **kwargs)
                 else:
-                    self.imports.append('from vfp2py import vfpfunc')
                     return make_func_code('vfpfunc.create_object', *([objtype] + args), **kwargs)
             else:
                 return make_func_code('vfpfunc.create_object', *args, **kwargs)
@@ -931,10 +927,8 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         if funcname == 'select_function' and not args:
             args = (add_args_to_code('{} if {} else {}', (0, CodeStr('vfpfunc.set(\'compatible\') == \'OFF\''), None)),)
         if funcname in dir(vfpfunc):
-            self.imports.append('from vfp2py import vfpfunc')
             funcname = 'vfpfunc.' + funcname
         elif funcname in dir(vfpfunc.db):
-            self.imports.append('from vfp2py import vfpfunc')
             funcname = 'vfpfunc.db.' + funcname
         else:
             funcname = self.scopeId(funcname, 'func')
@@ -947,10 +941,8 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             return CodeStr('self')
         if identifier == 'thisform':
             return CodeStr('self.parentform')
-        self.imports.append('from vfp2py import vfpfunc')
         self.used_scope = True
         if vartype == 'val':
-            self.imports.append('from vfp2py.vfpfunc import variable as vfpvar')
             return add_args_to_code('vfpvar[{}]', [str(identifier)])
         elif vartype == 'func':
             return add_args_to_code('vfpfunc.function[{}]', [str(identifier)])
@@ -1097,7 +1089,6 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
     def visitDeleteFile(self, ctx):
         filename = self.visit(ctx.specialExpr())
         if not filename:
-            self.imports.append('from vfp2py import vfpfunc')
             filename = make_func_code('vfpfunc.getfile', '', 'Select file to', 'Delete', 0, 'Delete')
         if ctx.RECYCLE():
             self.imports.append('from send2trash import send2trash')
@@ -1262,7 +1253,6 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
                     namespace += os.path.splitext(func)[1].replace('.', '_')
                 func = '_program_main'
             else:
-                self.imports.append('from vfp2py import vfpfunc')
                 namespace = 'vfpfunc'
                 func = create_string(add_args_to_code('function[{}]', [func]))
 
@@ -1410,7 +1400,6 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
                     if arg == 'thisform':
                         retval.append(make_func_code('self.parentform.release()'))
                 if args:
-                    self.imports.append('from vfp2py.vfpfunc import variable as vfpvar')
                     args = [add_args_to_code('vfpvar[{}]', [arg]) for arg in args]
                     retval.append(CodeStr('del {}'.format(', '.join(args))))
         return retval
@@ -1519,7 +1508,6 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         return make_func_code('vfpfunc.db.use', name, workarea, opentype, **kwargs)
 
     def visitLocate(self, ctx):
-        self.imports.append('from vfp2py import vfpfunc')
         kwargs = OrderedDict()
         scope, for_cond, while_cond, nooptimize = self.getQueryConditions(ctx.queryCondition())
         if for_cond:
@@ -1534,11 +1522,9 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         return make_func_code('vfpfunc.db.locate', **kwargs)
 
     def visitContinueLocate(self, ctx):
-        self.imports.append('from vfp2py import vfpfunc')
         return make_func_code('vfpfunc.db.continue_locate')
 
     def visitAppendFrom(self, ctx):
-        self.imports.append('from vfp2py import vfpfunc')
         if ctx.ARRAY():
             return make_func_code('vfpfunc.db.insert', None, self.visit(ctx.expr()))
         sourcename = self.visit(ctx.specialExpr(0))
@@ -1550,13 +1536,11 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         return make_func_code('vfpfunc.db.append_from', None, sourcename, **kwargs)
 
     def visitAppend(self, ctx):
-        self.imports.append('from vfp2py import vfpfunc')
         menupopup = not ctx.BLANK()
         tablename = self.visit(ctx.specialExpr())
         return make_func_code('vfpfunc.db.append', tablename, menupopup)
 
     def visitInsert(self, ctx):
-        self.imports.append('from vfp2py import vfpfunc')
         table = self.visit(ctx.specialExpr())
         if ctx.ARRAY() or ctx.NAME() or ctx.MEMVAR():
             values = self.visit(ctx.expr())
@@ -1709,11 +1693,9 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         return make_func_code('vfpfunc.db.zap', self.visit(ctx.specialExpr()))
 
     def visitBrowse(self, ctx):
-        self.imports.append('from vfp2py import vfpfunc')
         return make_func_code('vfpfunc.db.browse')
 
     def visitScatterExpr(self, ctx):
-        self.imports.append('from vfp2py import vfpfunc')
         kwargs = {}
         if ctx.FIELDS():
             fields = self.visit(ctx.expr()[0])
