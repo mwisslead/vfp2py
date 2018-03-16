@@ -536,8 +536,11 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
 
         if scope in ('public', 'private'):
             func = 'S.add_'  + scope
-            kwargs = {'{}_init_val'.format(name): array for name, array in arrays}
-            names = [str(name) for name in names]
+            kwargs = {str(name): array for name, array in arrays}
+            names = [str(name) for name, ind in zip(names, inds) if not ind]
+            if any(keyword.iskeyword(name) for name in kwargs):
+                names.append(add_args_to_code('**{}', [kwargs]))
+                kwargs = {}
             return make_func_code(func, *names, **kwargs)
         else:
             names = [name for name, ind in zip(names, inds) if not ind]

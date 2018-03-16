@@ -296,3 +296,14 @@ def database_tests():
     vfpfunc.sqlcommit(S['sqlconn'])
     vfpfunc.sqldisconnect(S['sqlconn'])
     S.popscope()
+
+
+def scope_tests():
+    S.pushscope()
+    S.add_public(somearray=Array(2, 5))
+    S.add_public(**{'def': Array(10)})
+    assert F['def'](1) == False
+    S['somearray'][1, 4] = 3
+    assert F['somearray'](1, 4) == 3
+    S.add_private('test', somearray=Array(2, 5))
+    S.popscope()

@@ -983,13 +983,17 @@ class _Variable(object):
     def __delattr__(self, key):
         del self[key]
 
-    def add_private(self, *keys):
-        for key in keys:
-            self.public_scopes[-1][key] = False
+    def _add_to_scopes(self, scope, *args, **kwargs):
+        for arg in args:
+            scope[arg] = False
+        for key in kwargs:
+            scope[key] = kwargs[key]
 
-    def add_public(self, *keys, **kwargs):
-        for key in keys:
-            self.public_scopes[0][key] = kwargs.get('{}_init_val'.format(key), False)
+    def add_private(self, *args, **kwargs):
+        self._add_to_scopes(self.public_scopes[-1], *args, **kwargs)
+
+    def add_public(self, *args, **kwargs):
+        self._add_to_scopes(self.public_scopes[0], *args, **kwargs)
 
     def pushscope(self):
         self.public_scopes.append({})

@@ -271,3 +271,12 @@ procedure database_tests
    sqlcommit(sqlconn)
    sqldisconnect(sqlconn)
 endproc
+
+procedure scope_tests
+   PUBLIC ARRAY somearray[2, 5]
+   public array def[10]
+   assert def[1] == .F.
+   SOMEARRAY(1, 4) = 3
+   assert somearray[1, 4] == 3
+   PRIVATE TEST, somearray[2, 5]
+ENDPROC

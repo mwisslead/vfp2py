@@ -813,15 +813,17 @@ print(pydict[\'one\'])
 def Test13():
     input_str = '''
 PUBLIC ARRAY somearray[2, 5]
+public array def[10]
 SOMEARRAY(1, 4) = 3
 PRIVATE TEST, somearray[2, 5]
 EXTERNAL ARRAY someotherarray[3]
 EXTERNAL PROCEDURE test
 '''.strip()
     output_str = '''
-S.add_public(\'somearray\', somearray_init_val=Array(2, 5))
+S.add_public(somearray=Array(2, 5))
+S.add_public(**{\'def\': Array(10)})
 S[\'somearray\'][1, 4] = 3
-S.add_private(\'test\', \'somearray\', somearray_init_val=Array(2, 5))
+S.add_private(\'test\', somearray=Array(2, 5))
 # FIX ME: EXTERNAL ARRAY someotherarray[3]
 # FIX ME: EXTERNAL PROCEDURE test
 '''.strip()
