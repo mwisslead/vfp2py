@@ -928,10 +928,9 @@ class Array(object):
 
 class _Variable(object):
     def __init__(self, db):
-        self.public_scopes = []
-        self.local_scopes = []
-
-        self.db = db
+        self.__dict__['public_scopes'] = []
+        self.__dict__['local_scopes'] = []
+        self.__dict__['db'] = db
 
     def _get_scope(self, key):
         if len(self.local_scopes) > 0 and key in self.local_scopes[-1]:
@@ -971,9 +970,18 @@ class _Variable(object):
             scope = self.local_scopes[-1]
         scope[key] = val
 
+    def __setattr__(self, key, val):
+        if key in self.__dict__:
+            super(_Variable, self).__setattr__(key, val)
+        else:
+            self[key] = val
+
     def __delitem__(self, key):
         scope = self._get_scope(key)
         del scope[key]
+
+    def __delattr__(self, key):
+        del self[key]
 
     def add_private(self, *keys):
         for key in keys:
@@ -1018,7 +1026,10 @@ class _Variable(object):
 
 class _Function(object):
     def __init__(self):
-        self.functions = {}
+        self.__dict__['functions'] = {}
+
+    def __getattr__(self, key):
+        return self[key]
 
     def __getitem__(self, key):
         if key in self.functions:
@@ -1030,6 +1041,12 @@ class _Function(object):
 
     def __setitem__(self, key, val):
         self.functions[key] = {'func': val, 'source': None}
+
+    def __setattr__(self, key, val):
+        if key in self.__dict__:
+            super(_Function, self).__setattr__(key, val)
+        else:
+            self[key] = val
 
     def __repr__(self):
         return repr(self.functions)
