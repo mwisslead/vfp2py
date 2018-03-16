@@ -18,6 +18,7 @@ import antlr4
 from .VisualFoxpro9Visitor import VisualFoxpro9Visitor
 
 from . import vfpfunc
+from .vfpfunc import DB
 
 if sys.version_info >= (3,):
     unicode=str
@@ -136,7 +137,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
 
         self.imports = ['from __future__ import division, print_function']
         self.imports.append('from vfp2py import vfpfunc')
-        self.imports.append('from vfp2py.vfpfunc import variable as vfpvar')
+        self.imports.append('from vfp2py.vfpfunc import DB, Array, F, M, S')
         defs = []
 
         for child in ctx.children:
@@ -299,7 +300,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         for arg1, arg2 in zip(args1, args2):
             ident = arg1[:arg1.find(' = ')]
             value = arg2[arg2.find(' = '):]
-            if 'vfpvar' in value or 'vfpfunc.function' in value:
+            if 'S' in value or 'F' in value:
                 used_scope = True
             args.append((ident, value))
         self.used_scope = used_scope
@@ -338,14 +339,14 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
                     newbody.append(fix_returns(line))
                 elif isinstance(line, CodeStr) and line.startswith('return '):
                     return_value = CodeStr(line[7:])
-                    newbody.append(CodeStr('return vfpvar.popscope({})'.format(return_value)))
+                    newbody.append(CodeStr('return S.popscope({})'.format(return_value)))
                 else:
                     newbody.append(line)
             return newbody
-        body = [CodeStr('vfpvar.pushscope()')] + fix_returns(body)
+        body = [CodeStr('S.pushscope()')] + fix_returns(body)
         if isinstance(body[-1], CodeStr) and body[-1].startswith('return '):
             return body
-        body.append(CodeStr('vfpvar.popscope()'))
+        body.append(CodeStr('S.popscope()'))
         return body
 
     def visitFuncDef(self, ctx):
@@ -474,7 +475,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         if ctx.FOR():
             kwargs['condition'] = add_args_to_code('lambda: {}', [self.visit(ctx.expr())])
         kwargs['scope'] = self.visit(ctx.scopeClause()) or ('rest',)
-        func = make_func_code('vfpfunc.db.scanner', **kwargs)
+        func = make_func_code('DB.scanner', **kwargs)
         return [add_args_to_code('for _ in {}:', [func]), lines]
 
     def visitTryStmt(self, ctx):
@@ -531,10 +532,10 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         else:
             self.used_scope = True
 
-        arrays = [(name, make_func_code('vfpfunc.Array', *ind)) for name, ind in zip(names, inds) if ind]
+        arrays = [(name, make_func_code('Array', *ind)) for name, ind in zip(names, inds) if ind]
 
         if scope in ('public', 'private'):
-            func = 'vfpvar.add_'  + scope
+            func = 'S.add_'  + scope
             kwargs = {'{}_init_val'.format(name): array for name, array in arrays}
             names = [str(name) for name in names]
             return make_func_code(func, *names, **kwargs)
@@ -675,12 +676,13 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             arrname = args.pop(0)
             if not args:
                 args.append(None)
-            if arrname.startswith('vfpvar['):
-                arrname = CodeStr(arrname[7:-1]) #FIXME
+            replace_string = 'S['
+            if arrname.startswith(replace_string):
+                arrname = CodeStr(arrname[len(replace_string):-1]) #FIXME
             else:
                 arrname = str(arrname)
             args.append(arrname)
-            args.append((localscode, CodeStr('vfpvar')))
+            args.append((localscode, CodeStr('S')))
         if funcname == 'empty':
             return add_args_to_code('(not {} if {} is not None else False)', args + args)
         if funcname == 'occurs':
@@ -928,8 +930,8 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             args = (add_args_to_code('{} if {} else {}', (0, CodeStr('vfpfunc.set(\'compatible\') == \'OFF\''), None)),)
         if funcname in dir(vfpfunc):
             funcname = 'vfpfunc.' + funcname
-        elif funcname in dir(vfpfunc.db):
-            funcname = 'vfpfunc.db.' + funcname
+        elif funcname in dir(DB):
+            funcname = 'DB.' + funcname
         else:
             funcname = self.scopeId(funcname, 'func')
         return make_func_code(funcname, *args)
@@ -943,9 +945,9 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             return CodeStr('self.parentform')
         self.used_scope = True
         if vartype == 'val':
-            return add_args_to_code('vfpvar[{}]', [str(identifier)])
+            return add_args_to_code('S[{}]', [str(identifier)])
         elif vartype == 'func':
-            return add_args_to_code('vfpfunc.function[{}]', [str(identifier)])
+            return add_args_to_code('F[{}]', [str(identifier)])
 
     def createIdAttr(self, identifier, trailer):
         if trailer and len(trailer) == 1 and isinstance(trailer[0], list):
@@ -1253,8 +1255,8 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
                     namespace += os.path.splitext(func)[1].replace('.', '_')
                 func = '_program_main'
             else:
-                namespace = 'vfpfunc'
-                func = create_string(add_args_to_code('function[{}]', [func]))
+                func = create_string(add_args_to_code('F[{}]', [func]))
+                return make_func_code(func, *args)
 
         if namespace.endswith('.prg'):
             namespace = namespace[:-4]
@@ -1301,7 +1303,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         dll_name = self.visit_with_disabled_scope(ctx.specialExpr())
         funcname = str(self.visit_with_disabled_scope(ctx.identifier()[0]))
         alias = str(self.visit_with_disabled_scope(ctx.alias)) if ctx.alias else None
-        return make_func_code('vfpfunc.function.dll_declare', dll_name, funcname, alias)
+        return make_func_code('F.dll_declare', dll_name, funcname, alias)
 
     def visitReadEvent(self, ctx):
         if ctx.EVENTS():
@@ -1383,14 +1385,14 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             retval.append(CodeStr('del {}'.format(', '.join(scoped_args))))
         if args is not None:
             if ctx.PROCEDURE():
-                retval.append(make_func_code('vfpfunc.function.release_procedure', *args))
+                retval.append(make_func_code('F.release_procedure', *args))
             elif ctx.POPUP():
                 kwargs = {}
                 if ctx.EXTENDED():
                     kwargs['extended'] = True
-                retval.append(make_func_code('vfpfunc.function.release_popups', *args, **kwargs))
+                retval.append(make_func_code('F.release_popups', *args, **kwargs))
             elif ctx.ALL():
-                retval.append(make_func_code('vfpvar.release'))
+                retval.append(make_func_code('S.release'))
             else:
                 thisargs = [arg for arg in args if arg in ('this', 'thisform')]
                 args = [arg for arg in args if arg not in ('this', 'thisform')]
@@ -1400,19 +1402,19 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
                     if arg == 'thisform':
                         retval.append(make_func_code('self.parentform.release()'))
                 if args:
-                    args = [add_args_to_code('vfpvar[{}]', [arg]) for arg in args]
+                    args = [add_args_to_code('S[{}]', [arg]) for arg in args]
                     retval.append(CodeStr('del {}'.format(', '.join(args))))
         return retval
 
     def visitCloseStmt(self, ctx):
         allflag = not not ctx.ALL()
         if ctx.TABLES():
-            return make_func_code('vfpfunc.db.close_tables', allflag)
+            return make_func_code('DB.close_tables', allflag)
         if ctx.INDEXES():
-            return make_func_code('vfpfunc.db.close_indexes', allflag)
+            return make_func_code('DB.close_indexes', allflag)
         if ctx.DATABASE():
-            return make_func_code('vfpfunc.db.close_databases', allflag)
-        return make_func_code('vfpfunc.db.close_all')
+            return make_func_code('DB.close_databases', allflag)
+        return make_func_code('DB.close_all')
 
     def visitWaitCmd(self, ctx):
         message = self.visit(ctx.message) or ''
@@ -1438,11 +1440,11 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
 
     def visitCreateTable(self, ctx):
         if ctx.TABLE():
-            func = 'vfpfunc.db.create_table'
+            func = 'DB.create_table'
         elif ctx.DBF():
-            func = 'vfpfunc.db.create_dbf'
+            func = 'DB.create_dbf'
         elif ctx.CURSOR():
-            func = 'vfpfunc.db.create_cursor'
+            func = 'DB.create_cursor'
         tablename = self.visit(ctx.specialExpr())
         setupstring = '; '.join(self.visit(f) for f in ctx.tableField())
         free = 'free' if ctx.FREE() else ''
@@ -1463,11 +1465,11 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             setupstring = '; '.join(self.visit(f) for f in ctx.tableField())
         else:
             setupstring = str(self.visit(ctx.identifier(0)))
-        return make_func_code('vfpfunc.db.alter_table', tablename, 'add' if ctx.ADD() else 'drop', setupstring)
+        return make_func_code('DB.alter_table', tablename, 'add' if ctx.ADD() else 'drop', setupstring)
 
     def visitSelect(self, ctx):
         if ctx.tablename:
-            return make_func_code('vfpfunc.db.select', self.visit(ctx.tablename))
+            return make_func_code('DB.select', self.visit(ctx.tablename))
         else:
             args = [arg for arg in self.visit(ctx.specialArgs())] if ctx.specialArgs() else ('*',)
             from_table = self.visit(ctx.fromExpr)
@@ -1475,7 +1477,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             where_expr = self.visit(ctx.whereExpr)
             order_by = self.visit(ctx.orderbyid)
             distinct = 'distinct' if ctx.DISTINCT() else None
-            return make_func_code('vfpfunc.db.sqlselect', args, from_table, into_table, where_expr, order_by, distinct)
+            return make_func_code('DB.sqlselect', args, from_table, into_table, where_expr, order_by, distinct)
 
     def visitGoRecord(self, ctx):
         if ctx.TOP():
@@ -1485,7 +1487,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         else:
             record = self.visit(ctx.expr())
         name = self.visit(ctx.specialExpr())
-        return make_func_code('vfpfunc.db.goto', name, record)
+        return make_func_code('DB.goto', name, record)
 
     def visitUse(self, ctx):
         kwargs = OrderedDict()
@@ -1505,7 +1507,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         workarea = self.visit(ctx.workArea)
         if isinstance(workarea, float):
             workarea = int(workarea)
-        return make_func_code('vfpfunc.db.use', name, workarea, opentype, **kwargs)
+        return make_func_code('DB.use', name, workarea, opentype, **kwargs)
 
     def visitLocate(self, ctx):
         kwargs = OrderedDict()
@@ -1519,26 +1521,26 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             scope = scope or ('all',)
         if nooptimize:
             kwargs['nooptimize'] = True
-        return make_func_code('vfpfunc.db.locate', **kwargs)
+        return make_func_code('DB.locate', **kwargs)
 
     def visitContinueLocate(self, ctx):
-        return make_func_code('vfpfunc.db.continue_locate')
+        return make_func_code('DB.continue_locate')
 
     def visitAppendFrom(self, ctx):
         if ctx.ARRAY():
-            return make_func_code('vfpfunc.db.insert', None, self.visit(ctx.expr()))
+            return make_func_code('DB.insert', None, self.visit(ctx.expr()))
         sourcename = self.visit(ctx.specialExpr(0))
         kwargs = {}
         if ctx.FOR():
             kwargs['for_cond'] = add_args_to_code('lambda: {}', [self.visit(ctx.expr())])
         if ctx.typeExpr:
             kwargs['filetype'] = self.visit(ctx.typeExpr)
-        return make_func_code('vfpfunc.db.append_from', None, sourcename, **kwargs)
+        return make_func_code('DB.append_from', None, sourcename, **kwargs)
 
     def visitAppend(self, ctx):
         menupopup = not ctx.BLANK()
         tablename = self.visit(ctx.specialExpr())
-        return make_func_code('vfpfunc.db.append', tablename, menupopup)
+        return make_func_code('DB.append', tablename, menupopup)
 
     def visitInsert(self, ctx):
         table = self.visit(ctx.specialExpr())
@@ -1553,7 +1555,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
                 values = {field: value for field, value in zip(fields, values)}
             else:
                 values = tuple(values)
-        return make_func_code('vfpfunc.db.insert', table, values)
+        return make_func_code('DB.insert', table, values)
 
     def visitReplace(self, ctx):
         value = self.visit(ctx.expr(0))
@@ -1566,17 +1568,17 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             field = field[-1]
         else:
             tablename = None
-        return make_func_code('vfpfunc.db.replace', tablename, scope, field, value)
+        return make_func_code('DB.replace', tablename, scope, field, value)
 
     def visitSkipRecord(self, ctx):
         table = self.visit(ctx.specialExpr())
         skipnum = self.visit(ctx.expr()) or 1
-        return make_func_code('vfpfunc.db.skip', table, skipnum)
+        return make_func_code('DB.skip', table, skipnum)
 
     def visitCopyTo(self, ctx):
         copyTo = self.visit(ctx.specialExpr())
         if ctx.STRUCTURE():
-            return make_func_code('vfpfunc.db.copy_structure', copyTo)
+            return make_func_code('DB.copy_structure', copyTo)
 
     def visitDeleteRecord(self, ctx):
         kwargs = OrderedDict()
@@ -1589,11 +1591,11 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             kwargs['while_cond'] = while_cond
         if ctx.RECALL():
             kwargs['recall'] = True
-        return make_func_code('vfpfunc.db.delete_record', name, scope, **kwargs)
+        return make_func_code('DB.delete_record', name, scope, **kwargs)
 
     def visitPack(self, ctx):
         if ctx.DATABASE():
-            return make_func_code('vfpfunc.db.pack_database')
+            return make_func_code('DB.pack_database')
         elif ctx.DBF():
             pack = 'dbf'
         elif ctx.MEMO():
@@ -1602,7 +1604,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             pack = 'both'
         tablename = self.visit(ctx.tableName)
         workarea = self.visit(ctx.workArea)
-        return make_func_code('vfpfunc.db.pack', pack, tablename, workarea)
+        return make_func_code('DB.pack', pack, tablename, workarea)
 
     def visitIndexOn(self, ctx):
         field = self.visit(ctx.specialExpr()[0])
@@ -1613,7 +1615,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             raise Exception('Invalid statement: {}'.format(self.getCtxText(ctx)))
         order = 'descending' if ctx.DESCENDING() else 'ascending'
         unique_flag = not not ctx.UNIQUE()
-        return make_func_code('vfpfunc.db.index_on', field, indexname, order, tag_flag, compact_flag, unique_flag)
+        return make_func_code('DB.index_on', field, indexname, order, tag_flag, compact_flag, unique_flag)
 
     def visitCount(self, ctx):
         kwargs = OrderedDict()
@@ -1627,7 +1629,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             scope = scope or ('all',)
         if nooptimize:
             kwargs['nooptimize'] = True
-        return add_args_to_code('{} = {}', (self.visit(ctx.toExpr), make_func_code('vfpfunc.db.count', None, scope, **kwargs)))
+        return add_args_to_code('{} = {}', (self.visit(ctx.toExpr), make_func_code('DB.count', None, scope, **kwargs)))
 
     def visitSum(self, ctx):
         kwargs = OrderedDict()
@@ -1642,7 +1644,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         if nooptimize:
             kwargs['nooptimize'] = True
         sumexpr = add_args_to_code('lambda: {}', [self.visit(ctx.sumExpr)])
-        return add_args_to_code('{} = {}', (self.visit(ctx.toExpr), make_func_code('vfpfunc.db.sum', None, scope, sumexpr, **kwargs)))
+        return add_args_to_code('{} = {}', (self.visit(ctx.toExpr), make_func_code('DB.sum', None, scope, sumexpr, **kwargs)))
 
     def getQueryConditions(self, conditions):
         scope, for_cond, while_cond, nooptimize = None, None, None, None
@@ -1663,7 +1665,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
 
 
     def visitReindex(self, ctx):
-        return make_func_code('vfpfunc.db.reindex', not not ctx.COMPACT())
+        return make_func_code('DB.reindex', not not ctx.COMPACT())
 
     def visitUpdateCmd(self, ctx):
         table = self.visit(ctx.tableExpr)
@@ -1675,7 +1677,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             kwargs['join'] = self.visit(ctx.joinArgs)
         if ctx.fromArgs:
             kwargs['from_args'] = self.visit(ctx.fromArgs)
-        return make_func_code('vfpfunc.db.update', table, set_fields, **kwargs)
+        return make_func_code('DB.update', table, set_fields, **kwargs)
 
     def visitSeekRecord(self, ctx):
         tablename = self.visit(ctx.tablenameExpr)
@@ -1687,13 +1689,13 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             kwargs['key_index_file'] = self.visit(ctx.cdxFileExpr or ctx.idxFileExpr)
         if ctx.DESCENDING():
             kwargs['descending'] = True
-        return make_func_code('vfpfunc.db.seek', tablename, seek_expr, **kwargs)
+        return make_func_code('DB.seek', tablename, seek_expr, **kwargs)
 
     def visitZapTable(self, ctx):
-        return make_func_code('vfpfunc.db.zap', self.visit(ctx.specialExpr()))
+        return make_func_code('DB.zap', self.visit(ctx.specialExpr()))
 
     def visitBrowse(self, ctx):
-        return make_func_code('vfpfunc.db.browse')
+        return make_func_code('DB.browse')
 
     def visitScatterExpr(self, ctx):
         kwargs = {}

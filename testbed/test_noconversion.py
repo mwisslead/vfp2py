@@ -1,5 +1,5 @@
-from vfp2py.vfpfunc import variable as vfpvar
+from vfp2py.vfpfunc import S
 
 def scope_test():
-    vfpvar['test'] = 3
-    assert vfpvar.test == 3
+    S['test'] = 3
+    assert S.test == 3

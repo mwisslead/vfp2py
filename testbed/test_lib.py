@@ -1,3 +1,4 @@
+# coding=utf-8
 from __future__ import division, print_function
 
 import datetime as dt
@@ -8,7 +9,7 @@ import random
 import faker
 
 from vfp2py import vfpfunc
-from vfp2py.vfpfunc import variable as vfpvar
+from vfp2py.vfpfunc import DB, Array, F, M, S
 
 
 def _program_main():
@@ -16,11 +17,11 @@ def _program_main():
 
 
 def select_tests():
-    assert vfpfunc.db.select_function(0 if vfpfunc.set('compatible') == 'OFF' else None) == 1
-    assert vfpfunc.db.select_function(0) == 1
-    assert vfpfunc.db.select_function(1) == 32767
-    assert vfpfunc.db.select_function(2) == 0
-    assert vfpfunc.db.select_function('test') == 0
+    assert DB.select_function(0 if vfpfunc.set('compatible') == 'OFF' else None) == 1
+    assert DB.select_function(0) == 1
+    assert DB.select_function(1) == 32767
+    assert DB.select_function(2) == 0
+    assert DB.select_function('test') == 0
 
 
 def chr_tests():
@@ -33,10 +34,11 @@ def set_tests():
 
 
 def used_tests():
-    assert vfpfunc.db.used('test') == False
+    assert DB.used('test') == False
 
 
 def date_tests():
+    S.pushscope()
     somedate = False  # LOCAL Declaration
     somedate = dt.date(2017, 6, 30)
     assert somedate == dt.date(2017, 6, 30)
@@ -51,9 +53,11 @@ def date_tests():
     assert vfpfunc.gomonth(somedate, -4) == dt.date(2017, 2, 28)
     assert vfpfunc.vartype(somedate) == 'D'
     assert vfpfunc.vartype(dt.datetime.combine(somedate, dt.datetime.min.time())) == 'T'
+    S.popscope()
 
 
 def math_tests():
+    S.pushscope()
     num_value = False  # LOCAL Declaration
     num_value = math.pi
     assert round(math.pi, 2) == 3.14
@@ -67,18 +71,19 @@ def math_tests():
     stringval = '1e5'
     assert float(stringval) == 100000
     assert vfpfunc.vartype(num_value) == 'N'
+    S.popscope()
 
 
 def string_tests():
-    vfpvar.pushscope()
-    vfpvar['cstring'] = 'AAA  aaa, BBB bbb, CCC ccc.'
-    assert vfpfunc.vartype(vfpvar['cstring']) == 'C'
-    assert len([w for w in vfpvar['cstring'].split() if w]) == 6
-    assert len([w for w in vfpvar['cstring'].split(',') if w]) == 3
-    assert len([w for w in vfpvar['cstring'].split('.') if w]) == 1
-    assert vfpfunc.getwordnum(vfpvar['cstring'], 2) == 'aaa,'
-    assert vfpfunc.getwordnum(vfpvar['cstring'], 2, ',') == ' BBB bbb'
-    assert vfpfunc.getwordnum(vfpvar['cstring'], 2, '.') == ''
+    S.pushscope()
+    S['cstring'] = 'AAA  aaa, BBB bbb, CCC ccc.'
+    assert vfpfunc.vartype(S['cstring']) == 'C'
+    assert len([w for w in S['cstring'].split() if w]) == 6
+    assert len([w for w in S['cstring'].split(',') if w]) == 3
+    assert len([w for w in S['cstring'].split('.') if w]) == 1
+    assert vfpfunc.getwordnum(S['cstring'], 2) == 'aaa,'
+    assert vfpfunc.getwordnum(S['cstring'], 2, ',') == ' BBB bbb'
+    assert vfpfunc.getwordnum(S['cstring'], 2, '.') == ''
     assert vfpfunc.like('Ab*t.???', 'About.txt')
     assert not vfpfunc.like('Ab*t.???', 'about.txt')
     assert not ''[:1].isalpha()
@@ -96,35 +101,35 @@ def string_tests():
     assert vfpfunc.isblank('')
     assert not vfpfunc.isblank('test')
     assert vfpfunc.isblank(None)
-    vfpvar['cstring'] = ' AAA   '
-    assert vfpvar['cstring'].strip() == 'AAA'
-    assert vfpvar['cstring'].rstrip() == ' AAA'
-    assert vfpvar['cstring'].lstrip() == 'AAA   '
-    assert vfpvar['cstring'].lstrip() == vfpvar['cstring'].lstrip()
+    S['cstring'] = ' AAA   '
+    assert S['cstring'].strip() == 'AAA'
+    assert S['cstring'].rstrip() == ' AAA'
+    assert S['cstring'].lstrip() == 'AAA   '
+    assert S['cstring'].lstrip() == S['cstring'].lstrip()
     assert vfpfunc.strextract('This {{is}} a {{template}}', '{{', '}}') == 'is'
     assert vfpfunc.strextract('This {{is}} a {{template}}', '{{', '}}', 2) == 'template'
     assert vfpfunc.strextract('This {{is}} a {{template}}', '{{is}}') == ' a {{template}}'
     assert vfpfunc.strextract('This {{is}} a {{template}}', '{{IS}}', '', 1, 1) == ' a {{template}}'
     assert '123AAbbB'.lower().find('aab'.lower()) + 1 == 4
-    vfpvar['cstring'] = vfpfunc.text([u'      123AAbbbB',
-                                      u'      TESTTEST',
-                                      u'      TEXTLINES',
-                                      u'   '], show=False)
-    assert vfpvar['cstring'] == '123AAbbbBTESTTESTTEXTLINES'
-    vfpvar.popscope()
+    S['cstring'] = vfpfunc.text([u'      123AAbbbB',
+                                 u'      TESTTEST',
+                                 u'      TEXTLINES',
+                                 u'   '], show=False)
+    assert S['cstring'] == '123AAbbbBTESTTESTTEXTLINES'
+    S.popscope()
 
 
 def path_tests():
-    vfpvar.pushscope()
+    S.pushscope()
     assert vfpfunc.home() == os.getcwd()
-    vfpvar['handle'] = open('test_lib_file', 'w')
-    vfpvar['handle'].close()
+    S['handle'] = open('test_lib_file', 'w')
+    S['handle'].close()
     assert not vfpfunc.isblank(vfpfunc.locfile('test_lib_file'))
     os.chdir('..')
     assert vfpfunc.home() != os.getcwd()
     assert not vfpfunc.isblank(vfpfunc.locfile('test_lib_file'))
     os.remove(os.path.join(vfpfunc.home(), 'test_lib_file'))
-    vfpvar.popscope()
+    S.popscope()
 
 
 def misc_tests():
@@ -134,6 +139,7 @@ def misc_tests():
 
 
 def _add_db_record(seed=False):
+    S.pushscope()
     fake = fake_name = fake_st = fake_quantity = fake_received = False  # LOCAL Declaration
     fake = faker.Faker()
     fake.seed(seed)
@@ -141,11 +147,12 @@ def _add_db_record(seed=False):
     fake_st = fake.state_abbr()
     fake_quantity = fake.random_int(0, 100)
     fake_received = fake.boolean()
-    vfpfunc.db.insert('report', (fake_name, fake_st, fake_quantity, fake_received))
+    DB.insert('report', (fake_name, fake_st, fake_quantity, fake_received))
+    S.popscope()
 
 
 def _sqlexec_add_record(sqlconn=False, seed=False):
-    vfpvar.pushscope()
+    S.pushscope()
     fake = fake_name = fake_st = fake_quantity = fake_received = False  # LOCAL Declaration
     fake = faker.Faker()
     fake.seed(seed)
@@ -153,23 +160,21 @@ def _sqlexec_add_record(sqlconn=False, seed=False):
     fake_st = fake.state_abbr()
     fake_quantity = fake.random_int(0, 100)
     fake_received = fake.boolean()
-    vfpvar['sqlcmd'] = "insert into REPORT values ('" + fake_name + "','" + fake_st + "'," + vfpfunc.num_to_str(
-        fake_quantity).strip() + ',' + vfpfunc.num_to_str(int(fake_received)).strip() + ')'
-    print(vfpvar['sqlcmd'])
-    return vfpvar.popscope(vfpfunc.sqlexec(sqlconn, vfpvar['sqlcmd']))
+    S['sqlcmd'] = "insert into REPORT values ('" + fake_name + "','" + fake_st + "'," + vfpfunc.num_to_str(fake_quantity).strip() + ',' + vfpfunc.num_to_str(int(fake_received)).strip() + ')'
+    print(S['sqlcmd'])
+    return S.popscope(vfpfunc.sqlexec(sqlconn, S['sqlcmd']))
 
 
 def database_tests():
-    vfpvar.pushscope()
+    S.pushscope()
     # FIX ME: SET SAFETY OFF
     # FIX ME: SET ASSERTS ON
     try:
-        vfpfunc.db.create_table(
-            'report', 'name c(50); st c(2); quantity n(5, 0); received l', 'free')
+        DB.create_table('report', 'name c(50); st c(2); quantity n(5, 0); received l', 'free')
         assert os.path.isfile('report.dbf')
-        assert vfpfunc.db.used('report')
+        assert DB.used('report')
         try:
-            vfpfunc.db.use('report', 0, 'shared')
+            DB.use('report', 0, 'shared')
             assert False
         except Exception as oerr:
             oerr = vfpfunc.Exception.from_pyexception(oerr)
@@ -179,123 +184,115 @@ def database_tests():
         _add_db_record(1)
         _add_db_record(2)
         _add_db_record(3)
-        assert vfpfunc.db.fcount() == 4
-        vfpfunc.db.alter_table('report', 'add', 'age n(3, 0)')
-        assert vfpfunc.db.fcount() == 5
-        assert vfpfunc.db.field(2) == 'st'
-        assert not vfpfunc.db.found()
-        vfpfunc.db.goto(None, 0)
+        assert DB.fcount() == 4
+        DB.alter_table('report', 'add', 'age n(3, 0)')
+        assert DB.fcount() == 5
+        assert DB.field(2) == 'st'
+        assert not DB.found()
+        DB.goto(None, 0)
         loopcount = False  # LOCAL Declaration
         loopcount = 0
-        for _ in vfpfunc.db.scanner(scope=('rest',)):
-            assert len(vfpvar['name'].strip()) > 0
+        for _ in DB.scanner(scope=('rest',)):
+            assert len(S['name'].strip()) > 0
             loopcount += 1
         assert loopcount == 4
-        vfpfunc.db.goto(None, 3)
+        DB.goto(None, 3)
         loopcount = 0
-        for _ in vfpfunc.db.scanner(scope=('all',), condition=lambda: vfpvar['st'].strip() == 'ID'):
-            assert len(vfpvar['name'].strip()) > 0
+        for _ in DB.scanner(scope=('all',), condition=lambda: S['st'].strip() == 'ID'):
+            assert len(S['name'].strip()) > 0
             loopcount += 1
         assert loopcount == 2
         loopcount = 0
-        for _ in vfpfunc.db.scanner(scope=('rest',), condition=lambda: vfpvar['st'].strip() == 'ID'):
-            assert len(vfpvar['name'].strip()) > 0
+        for _ in DB.scanner(scope=('rest',), condition=lambda: S['st'].strip() == 'ID'):
+            assert len(S['name'].strip()) > 0
             loopcount += 1
         assert loopcount == 0
-        vfpfunc.db.goto(None, 0)
+        DB.goto(None, 0)
         loopcount = 0
-        for _ in vfpfunc.db.scanner(scope=('rest',), condition=lambda: vfpvar['st'].strip() == 'ID'):
-            assert len(vfpvar['name'].strip()) > 0
+        for _ in DB.scanner(scope=('rest',), condition=lambda: S['st'].strip() == 'ID'):
+            assert len(S['name'].strip()) > 0
             loopcount += 1
         assert loopcount == 2
         del loopcount
-        assert vfpvar['name'].strip() == 'Norma Fisher', vfpvar[
-            'name'].strip() + ' should be Norma Fisher'
-        assert vfpfunc.db.recno() == 1
-        vfpfunc.db.goto(None, -1)
-        assert vfpvar['name'].strip() == 'Joshua Wood', vfpvar[
-            'name'].strip() + ' should be Joshua Wood'
-        assert vfpfunc.db.recno() == 4
-        vfpfunc.db.goto(None, 1)
-        vfpfunc.db.locate(for_cond=lambda: vfpvar['st'] == 'ID')
-        assert vfpvar['name'].strip() == 'Norma Fisher', vfpvar[
-            'name'].strip() + ' should be Norma Fisher'
-        assert vfpfunc.db.found()
-        vfpfunc.db.continue_locate()
-        assert vfpvar['name'].strip() == 'Ryan Gallagher', vfpvar[
-            'name'].strip() + ' should be Ryan Gallagher'
-        vfpfunc.db.continue_locate()
-        assert vfpfunc.db.eof()
-        assert vfpfunc.db.recno() == vfpfunc.db.reccount() + 1
-        assert not vfpfunc.db.found()
-        vfpvar['countval'] = vfpfunc.db.count(
-            None, ('all',), for_cond=lambda: vfpvar['quantity'] > 60)
-        assert vfpvar['countval'] == 2
-        assert vfpfunc.db.eof()
-        vfpvar['sumval'] = vfpfunc.db.sum(None, ('rest',), lambda: math.sqrt(
-            vfpvar['quantity'] + 205), for_cond=lambda: vfpvar['quantity'] > 50, while_cond=lambda: vfpvar['quantity'] != 63)
-        assert vfpvar['sumval'] == 0
-        vfpfunc.db.goto(None, 0)
-        vfpvar['sumval'] = vfpfunc.db.sum(None, ('rest',), lambda: math.sqrt(
-            vfpvar['quantity'] + 205), for_cond=lambda: vfpvar['quantity'] > 50, while_cond=lambda: vfpvar['quantity'] != 63)
-        assert vfpvar['sumval'] == 17 + 16
-        vfpfunc.db.index_on('st', 'st', 'ascending', True, False, False)
-        vfpfunc.db.seek(None, 'CA')
-        assert vfpvar['st'].strip() == 'CA'
-        vfpfunc.db.goto(None, 0)
-        vfpfunc.db.delete_record(None, ('rest',), for_cond=lambda: vfpvar['quantity'] > 60)
-        vfpfunc.db.pack('both', None, None)
-        vfpfunc.db.goto(None, 0)
-        assert vfpfunc.db.reccount() == 2
-        vfpfunc.db.replace('report', ('next', 1), 'name', 'N/A')
-        assert vfpvar['name'].strip() == 'N/A'
-        vfpfunc.db.replace(None, ('all',), 'name', 'Not Available')
-        assert vfpfunc.db.recno() == vfpfunc.db.reccount() + 1
-        vfpfunc.db.goto(None, -1)
-        assert vfpvar['name'].strip() == 'Not Available'
-        vfpfunc.db.zap(None)
-        assert vfpfunc.db.reccount() == 0
-        vfpfunc.db.copy_structure('report2')
-        vfpfunc.db.use('report2', 0, 'shared', alias='somethingelse')
-        assert vfpfunc.db.alias() == 'report'
-        vfpfunc.db.select('report2')
-        assert vfpfunc.db.alias() == 'somethingelse'
-        assert vfpfunc.db.fcount() == 5
-        vfpfunc.db.alter_table('report2', 'drop', 'st')
-        assert vfpfunc.db.fcount() == 4
-        vfpfunc.db.use(None, None, None)
+        assert S['name'].strip() == 'Norma Fisher', S['name'].strip() + ' should be Norma Fisher'
+        assert DB.recno() == 1
+        DB.goto(None, -1)
+        assert S['name'].strip() == 'Joshua Wood', S['name'].strip() + ' should be Joshua Wood'
+        assert DB.recno() == 4
+        DB.goto(None, 1)
+        DB.locate(for_cond=lambda: S['st'] == 'ID')
+        assert S['name'].strip() == 'Norma Fisher', S['name'].strip() + ' should be Norma Fisher'
+        assert DB.found()
+        DB.continue_locate()
+        assert S['name'].strip() == 'Ryan Gallagher', S['name'].strip() + ' should be Ryan Gallagher'
+        DB.continue_locate()
+        assert DB.eof()
+        assert DB.recno() == DB.reccount() + 1
+        assert not DB.found()
+        S['countval'] = DB.count(None, ('all',), for_cond=lambda: S['quantity'] > 60)
+        assert S['countval'] == 2
+        assert DB.eof()
+        S['sumval'] = DB.sum(None, ('rest',), lambda: math.sqrt(S['quantity'] + 205), for_cond=lambda: S['quantity'] > 50, while_cond=lambda: S['quantity'] != 63)
+        assert S['sumval'] == 0
+        DB.goto(None, 0)
+        S['sumval'] = DB.sum(None, ('rest',), lambda: math.sqrt(S['quantity'] + 205), for_cond=lambda: S['quantity'] > 50, while_cond=lambda: S['quantity'] != 63)
+        assert S['sumval'] == 17 + 16
+        DB.index_on('st', 'st', 'ascending', True, False, False)
+        DB.seek(None, 'CA')
+        assert S['st'].strip() == 'CA'
+        DB.goto(None, 0)
+        DB.delete_record(None, ('rest',), for_cond=lambda: S['quantity'] > 60)
+        DB.pack('both', None, None)
+        DB.goto(None, 0)
+        assert DB.reccount() == 2
+        DB.replace('report', ('next', 1), 'name', 'N/A')
+        assert S['name'].strip() == 'N/A'
+        DB.replace(None, ('all',), 'name', 'Not Available')
+        assert DB.recno() == DB.reccount() + 1
+        DB.goto(None, -1)
+        assert S['name'].strip() == 'Not Available'
+        DB.zap(None)
+        assert DB.reccount() == 0
+        DB.copy_structure('report2')
+        DB.use('report2', 0, 'shared', alias='somethingelse')
+        assert DB.alias() == 'report'
+        DB.select('report2')
+        assert DB.alias() == 'somethingelse'
+        assert DB.fcount() == 5
+        DB.alter_table('report2', 'drop', 'st')
+        assert DB.fcount() == 4
+        DB.use(None, None, None)
         os.remove('report2.dbf')
     except Exception as err:
         err = vfpfunc.Exception.from_pyexception(err)
         print(err.message)
-        vfpfunc.db.browse()
+        DB.browse()
         raise
     finally:
         os.remove('report.dbf')
-    vfpvar['sqlconn'] = vfpfunc.sqlconnect('testodbc')
-    assert vfpvar['sqlconn'] > 0
-    assert vfpfunc.sqlexec(vfpvar[
-                           'sqlconn'], 'CREATE TABLE REPORT (NAME varchar(50), ST char(2), QUANTITY int(5), RECEIVED bit)') > 0
-    assert _sqlexec_add_record(vfpvar['sqlconn'], 0) > 0
-    assert _sqlexec_add_record(vfpvar['sqlconn'], 1) > 0
-    assert _sqlexec_add_record(vfpvar['sqlconn'], 2) > 0
-    assert _sqlexec_add_record(vfpvar['sqlconn'], 3) > 0
-    assert vfpfunc.sqlexec(vfpvar['sqlconn'], 'SELECT * FROM REPORT')
-    vfpfunc.db.select('sqlresult')
-    assert vfpvar['name'].strip() == 'Norma Fisher'
-    vfpfunc.sqlcommit(vfpvar['sqlconn'])
-    vfpfunc.sqldisconnect(vfpvar['sqlconn'])
-    vfpvar['sqlconn'] = vfpfunc.sqlstringconnect('dsn=testodbc')
-    assert vfpvar['sqlconn'] > 0
-    assert vfpfunc.sqltables(vfpvar['sqlconn']) > 0
-    vfpfunc.db.select('sqlresult')
-    assert vfpvar['table_name'].strip().lower() == 'report'
-    assert vfpfunc.sqlexec(vfpvar['sqlconn'], 'DELETE FROM REPORT;')
-    assert vfpfunc.sqlrollback(vfpvar['sqlconn'])
-    assert vfpfunc.sqlexec(vfpvar['sqlconn'], 'SELECT * FROM REPORT')
-    vfpfunc.db.select('sqlresult')
-    assert vfpvar['name'].strip() == 'Norma Fisher'
-    assert vfpfunc.sqlexec(vfpvar['sqlconn'], 'DROP TABLE REPORT') > 0
-    vfpfunc.sqlcommit(vfpvar['sqlconn'])
-    vfpfunc.sqldisconnect(vfpvar['sqlconn'])
-    vfpvar.popscope()
+    S['sqlconn'] = vfpfunc.sqlconnect('testodbc')
+    assert S['sqlconn'] > 0
+    assert vfpfunc.sqlexec(S['sqlconn'], 'CREATE TABLE REPORT (NAME varchar(50), ST char(2), QUANTITY int(5), RECEIVED bit)') > 0
+    assert _sqlexec_add_record(S['sqlconn'], 0) > 0
+    assert _sqlexec_add_record(S['sqlconn'], 1) > 0
+    assert _sqlexec_add_record(S['sqlconn'], 2) > 0
+    assert _sqlexec_add_record(S['sqlconn'], 3) > 0
+    assert vfpfunc.sqlexec(S['sqlconn'], 'SELECT * FROM REPORT')
+    DB.select('sqlresult')
+    assert S['name'].strip() == 'Norma Fisher'
+    vfpfunc.sqlcommit(S['sqlconn'])
+    vfpfunc.sqldisconnect(S['sqlconn'])
+    S['sqlconn'] = vfpfunc.sqlstringconnect('dsn=testodbc')
+    assert S['sqlconn'] > 0
+    assert vfpfunc.sqltables(S['sqlconn']) > 0
+    DB.select('sqlresult')
+    assert S['table_name'].strip().lower() == 'report'
+    assert vfpfunc.sqlexec(S['sqlconn'], 'DELETE FROM REPORT;')
+    assert vfpfunc.sqlrollback(S['sqlconn'])
+    assert vfpfunc.sqlexec(S['sqlconn'], 'SELECT * FROM REPORT')
+    DB.select('sqlresult')
+    assert S['name'].strip() == 'Norma Fisher'
+    assert vfpfunc.sqlexec(S['sqlconn'], 'DROP TABLE REPORT') > 0
+    vfpfunc.sqlcommit(S['sqlconn'])
+    vfpfunc.sqldisconnect(S['sqlconn'])
+    S.popscope()

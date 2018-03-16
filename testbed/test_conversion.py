@@ -154,13 +154,13 @@ print(10 >= 5)
 print(10 <= 5)
 print(10 <= 5)
 print(True or False and False or False)
-print(vfpvar[\'x\'] or y and w or z)
+print(S[\'x\'] or y and w or z)
 print(bytearray(string_val))
 print(float(float_val))
 obj_val = vfpfunc.create_object(\'Test\')
 obj_val = vfpfunc.Form()
 del string_val, int_val, bool_val, null_val
-items = vfpfunc.Array(3, 5)
+items = Array(3, 5)
 item = False  # LOCAL Declaration
 for item in items:
     if not item:
@@ -172,19 +172,19 @@ for item in items:
 del items, item
 # line comment1
 # line comment2
-if vfpvar[\'x\'] == 1:
+if S[\'x\'] == 1:
     pass
-elif vfpvar[\'x\'] == 2:
+elif S[\'x\'] == 2:
     pass
-elif vfpvar[\'x\'] == 2:
+elif S[\'x\'] == 2:
     pass
 else:
-    print(vfpvar[\'test\'])
-vfpvar[\'somestring\'] = vfpfunc.text([u\'       1234567890\',
-                                     u\'       0123456789\',
-                                     u\'       ABCDEFGHIJ\',
-                                     u\'       KLMNOPQRST\',
-                                     u\'       UVWXYZ\'], show=False)
+    print(S[\'test\'])
+S[\'somestring\'] = vfpfunc.text([u\'       1234567890\',
+                                u\'       0123456789\',
+                                u\'       ABCDEFGHIJ\',
+                                u\'       KLMNOPQRST\',
+                                u\'       UVWXYZ\'], show=False)
 vfpfunc.quit()
 # FIX ME: CANCEL
 # FIX ME: RESUME
@@ -202,7 +202,7 @@ vfpfunc.read_events()
 # FIX ME: COPY TO ARRAY FOR X = 3
 # FIX ME: SAVE TO test ALL LIKE something
 # FIX ME: ZOOM WINDOW SCREEN MAX
-vfpfunc.function[\'somefunc\'](False, vfpvar[\'a\'], False)
+F[\'somefunc\'](False, S[\'a\'], False)
 # FIX ME: MODIFY WINDOW SCREEN FONT "FONT", 12 STYLE "B" TITLE "TITLE" NOFLOAT NOCLOSE NOZOOM
 # FIX ME: MODIFY COMMAND c:\\test.prg
 vfpfunc.define_menu(\'test\', window=vfpfunc.SCREEN, bar=True, line=2)
@@ -266,29 +266,29 @@ import sys
 import test
 
 from vfp2py import vfpfunc
-from vfp2py.vfpfunc import variable as vfpvar
+from vfp2py.vfpfunc import DB, Array, F, M, S
 
 
 def _program_main():
-    vfpvar.pushscope()
+    S.pushscope()
     # comment with spaces
     ###############
     ### comment ###
     ###############
-    vfpvar[\'x\'] = \'\\n\'
-    vfpvar[\'x\'] = \'\\n\'
-    vfpvar[\'x\'] = \'\\n\'
+    S[\'x\'] = \'\\n\'
+    S[\'x\'] = \'\\n\'
+    S[\'x\'] = \'\\n\'
     # set x to 5
-    vfpvar[\'x\'] = 5
-    vfpvar[\'x\'] = \'test\\r\\n\'
-    vfpvar[\'x\'] = \'\\x05\'
-    vfpvar[\'x\'] = \'\\r\\n\'
+    S[\'x\'] = 5
+    S[\'x\'] = \'test\\r\\n\'
+    S[\'x\'] = \'\\x05\'
+    S[\'x\'] = \'\\r\\n\'
     test._program_main()
     print(vfpfunc.num_to_str(3))
     print(vfpfunc.num_to_str(3), end=\'\')
     print(vfpfunc.num_to_str(3), file=sys.stderr)
     print(3)  # @ 10, 10 SAY 3
-    return vfpvar.popscope(vfpvar[\'x\'])
+    return S.popscope(S[\'x\'])
 '''.strip()
     test_output_str = vfp2py.vfp2py.prg2py(input_str).strip()
     try:
@@ -354,7 +354,7 @@ ENDFUNC
 from __future__ import division, print_function
 
 from vfp2py import vfpfunc
-from vfp2py.vfpfunc import variable as vfpvar
+from vfp2py.vfpfunc import DB, Array, F, M, S
 
 
 def _program_main():
@@ -419,12 +419,12 @@ class Testclass2(vfpfunc.classes[\'Unknownclass\']):
 
 
 def another_random_function(x=False, y=False):
-    vfpvar.pushscope()
-    (vfpvar[\'x\'], vfpvar[\'y\']) = (x, y)
+    S.pushscope()
+    (S[\'x\'], S[\'y\']) = (x, y)
 
     # something
-    print(vfpvar[\'x\'])
-    vfpvar.popscope()
+    print(S[\'x\'])
+    S.popscope()
 '''.strip()
     test_output_str = vfp2py.vfp2py.prg2py(input_str).strip()
     try:
@@ -459,14 +459,14 @@ delete file test.txt recycle
 '''.strip()
     output_str = '''
 a = False  # LOCAL Declaration
-vfpfunc.function[\'a\']()
-vfpfunc.function[\'a+b\']()
-vfpfunc.function[a + vfpvar[\'b\']]()
-vfpfunc.function[a.strip()]()
+F[\'a\']()
+F[\'a+b\']()
+F[a + S[\'b\']]()
+F[a.strip()]()
 a.test()
 vfpfunc.module(a).test()
 vfpfunc.module(a + \'.PRG\').test()
-vfpfunc.module(a + (vfpvar[\'b\'])).test()
+vfpfunc.module(a + (S[\'b\'])).test()
 test._program_main()
 test.test()
 vfpfunc.do_form(\'splash.scx\')
@@ -531,16 +531,16 @@ RELEASE SEARCH_FOR, COUNTVAL, SUMVAL
 update test set a=b, c=d, e=f where x=3
 '''.strip()
     output_str = '''
-vfpfunc.db.create_cursor(\'test_cursor\', \'somefield n(3)\', \'\')
-vfpfunc.db.continue_locate()
+DB.create_cursor(\'test_cursor\', \'somefield n(3)\', \'\')
+DB.continue_locate()
 search_for = countval = sumval = False  # LOCAL Declaration
 search_for = \'PAUL\'
-vfpfunc.db.seek(None, search_for.strip())
-countval = vfpfunc.db.count(None, (\'all\',), for_cond=lambda: vfpvar[\'test\'] == 3)
-sumval = vfpfunc.db.sum(None, (\'all\',), lambda: vfpvar[\'t\'] * vfpvar[\'t\'], for_cond=lambda: vfpvar[\'t\'] > 0)
-vfpfunc.db.locate(nooptimize=True, while_cond=lambda: vfpvar[\'x\'] > 5)
+DB.seek(None, search_for.strip())
+countval = DB.count(None, (\'all\',), for_cond=lambda: S[\'test\'] == 3)
+sumval = DB.sum(None, (\'all\',), lambda: S[\'t\'] * S[\'t\'], for_cond=lambda: S[\'t\'] > 0)
+DB.locate(nooptimize=True, while_cond=lambda: S[\'x\'] > 5)
 del search_for, countval, sumval
-vfpfunc.db.update(\'test\', [(\'a\', vfpvar[\'b\']), (\'c\', vfpvar[\'d\']), (\'e\', vfpvar[\'f\'])], where=lambda: vfpvar[\'x\'] == 3)
+DB.update(\'test\', [(\'a\', S[\'b\']), (\'c\', S[\'d\']), (\'e\', S[\'f\'])], where=lambda: S[\'x\'] == 3)
 '''.strip()
     test_output_str = vfp2py.vfp2py.prg2py(input_str, parser_start='lines', prepend_data='').strip()
     try:
@@ -565,7 +565,7 @@ import math
 import os
 
 from vfp2py import vfpfunc
-from vfp2py.vfpfunc import variable as vfpvar
+from vfp2py.vfpfunc import DB, Array, F, M, S
 
 
 def _program_main():
@@ -708,10 +708,10 @@ APPEND FROM \'table\' + \'_\' + \'name\' TYPE \'Delimited\'
 APPEND FROM ARRAY TEST
 '''.strip()
     output_str = '''
-vfpfunc.db.append_from(None, \'table_name\')
-vfpfunc.db.append_from(None, \'table_name\', filetype=\'delimited\')
-vfpfunc.db.append_from(None, \'table_name\', filetype=\'delimited\')
-vfpfunc.db.insert(None, vfpvar[\'test\'])
+DB.append_from(None, \'table_name\')
+DB.append_from(None, \'table_name\', filetype=\'delimited\')
+DB.append_from(None, \'table_name\', filetype=\'delimited\')
+DB.insert(None, S[\'test\'])
 '''.strip()
     test_output_str = vfp2py.vfp2py.prg2py(input_str, parser_start='lines', prepend_data='').strip()
     try:
@@ -792,7 +792,7 @@ pydict.setitem(\'one\', 1)
 ?pydict.getitem(\'one\')
 '''.strip()
     output_str = '''
-somearray = vfpfunc.Array(2, 5)
+somearray = Array(2, 5)
 pytuple = pylist = pydict = False  # LOCAL Declaration
 pytuple = (\'a\', 3, True)
 pylist = somearray.data[:]
@@ -819,9 +819,9 @@ EXTERNAL ARRAY someotherarray[3]
 EXTERNAL PROCEDURE test
 '''.strip()
     output_str = '''
-vfpvar.add_public(\'somearray\', somearray_init_val=vfpfunc.Array(2, 5))
-vfpvar[\'somearray\'][1, 4] = 3
-vfpvar.add_private(\'test\', \'somearray\', somearray_init_val=vfpfunc.Array(2, 5))
+S.add_public(\'somearray\', somearray_init_val=Array(2, 5))
+S[\'somearray\'][1, 4] = 3
+S.add_private(\'test\', \'somearray\', somearray_init_val=Array(2, 5))
 # FIX ME: EXTERNAL ARRAY someotherarray[3]
 # FIX ME: EXTERNAL PROCEDURE test
 '''.strip()
@@ -871,11 +871,11 @@ T = aINS(main_array, 3, 2)
 '''.strip()
     output_str = '''
 cnt_fields = False  # LOCAL Declaration
-main_array = vfpfunc.Array(1)
-cnt_fields = vfpfunc.db.afields(None, \'main_array\', (locals(), vfpvar)) + 32
-cnt_fields = vfpfunc.db.afields(\'report\', \'main_array2\', (locals(), vfpvar)) + 47
-vfpvar[\'t\'] = main_array.insert(None, 3)
-vfpvar[\'t\'] = main_array.insert(None, 3, 2)
+main_array = Array(1)
+cnt_fields = DB.afields(None, \'main_array\', (locals(), S)) + 32
+cnt_fields = DB.afields(\'report\', \'main_array2\', (locals(), S)) + 47
+S[\'t\'] = main_array.insert(None, 3)
+S[\'t\'] = main_array.insert(None, 3, 2)
 '''.strip()
     test_output_str = vfp2py.vfp2py.prg2py(input_str, parser_start='lines', prepend_data='').strip()
     try:
@@ -894,10 +894,10 @@ SKIP IN TEST
 SKIP someval IN TEST
 '''.strip()
     output_str = '''
-vfpfunc.db.skip(None, 1)
-vfpfunc.db.skip(None, 10)
-vfpfunc.db.skip(\'test\', 1)
-vfpfunc.db.skip(\'test\', vfpvar[\'someval\'])
+DB.skip(None, 1)
+DB.skip(None, 10)
+DB.skip(\'test\', 1)
+DB.skip(\'test\', S[\'someval\'])
 '''.strip()
     test_output_str = vfp2py.vfp2py.prg2py(input_str, parser_start='lines', prepend_data='').strip()
     try:
@@ -919,7 +919,7 @@ ON KEY LABEL F12 ?\'KEY PRESSED\'
 '''.strip()
     output_str = '''
 vfpfunc.error_func = None
-vfpfunc.error_func = lambda: vfpfunc.function[\'test\']()
+vfpfunc.error_func = lambda: F[\'test\']()
 vfpfunc.shutdown_func = None
 vfpfunc.shutdown_func = lambda: shutdown.shutdown()
 vfpfunc.shutdown_func = lambda: vfpfunc.quit()
@@ -946,8 +946,8 @@ def Test18():
 print()  # @x, y
 print()  # @x, y CLEAR
 print()  # @x, y CLEAR TO a, b
-print(\'hello \' + vfpvar[\'username\'])  # @x, y say \'hello \' + username
-print(\'hello \' + vfpvar[\'username\'])  # @x, y say \'hello \' + username STYLE thestyle
+print(\'hello \' + S[\'username\'])  # @x, y say \'hello \' + username
+print(\'hello \' + S[\'username\'])  # @x, y say \'hello \' + username STYLE thestyle
 '''.strip()
     test_output_str = vfp2py.vfp2py.prg2py(input_str, parser_start='lines', prepend_data='').strip()
     try:
@@ -965,9 +965,9 @@ scatter blank memvar
 scatter to somearray
 '''.strip()
     output_str = '''
-vfpvar[\'test\'] = vfpfunc.scatter(\'name\')
+S[\'test\'] = vfpfunc.scatter(\'name\')
 vfpfunc.scatter(\'memvar\', blank=True)
-vfpvar[\'somearray\'] = vfpfunc.scatter(\'array\')
+S[\'somearray\'] = vfpfunc.scatter(\'array\')
 '''.strip()
     test_output_str = vfp2py.vfp2py.prg2py(input_str, parser_start='lines', prepend_data='').strip()
     try:

@@ -588,7 +588,7 @@ try:
         @rowsource.setter
         def rowsource(self, source):
             self._source = source
-            table = db._get_table_info(source).table
+            table = DB._get_table_info(source).table
             for record in table:
                 self.addItem(QtGui.QListWidgetItem(str(record[0])))
 
@@ -611,7 +611,7 @@ try:
             self.cellDoubleClicked.connect(self.dblclick)
 
         def _update_recno(self):
-            table = db._get_table_info(self._source).table.goto(self.currentRow())
+            table = DB._get_table_info(self._source).table.goto(self.currentRow())
             self.refresh()
 
         def click(self):
@@ -621,7 +621,7 @@ try:
             pass
 
         def refresh(self):
-            table = db._get_table_info(self._source).table
+            table = DB._get_table_info(self._source).table
             labels = table.field_names
             self.setColumnCount(len(labels))
             self.setRowCount(len(table))
@@ -753,7 +753,7 @@ try:
     qt_app = QtGui.QApplication(())
 
     def _exec():
-        variable['_vfp'].show()
+        S['_screen'].show()
         return qt_app.exec_()
 
 except ImportError:
@@ -1023,7 +1023,7 @@ class _Function(object):
     def __getitem__(self, key):
         if key in self.functions:
             return self.functions[key]['func']
-        for scope in variable.public_scopes:
+        for scope in S.public_scopes:
             if key in scope and isinstance(scope[key], Array):
                 return scope[key]
         raise _EXCEPTION('{} is not a procedure'.format(key))
@@ -1124,7 +1124,7 @@ def filetostr(filename):
         return fid.read().decode('ISO-8859-1')
 
 def getdir(dir='.', text='', caption='Select Text', flags=0, root_only=False):
-    return QtGui.QFileDialog.getExistingDirectory(parent=variable['_vfp'], caption=caption, dir=dir)
+    return QtGui.QFileDialog.getExistingDirectory(parent=S['_screen'], caption=caption, dir=dir)
 
 def getfile(file_ext='', text='', button_caption='', button_type=0, title=''):
     filter = {
@@ -1489,11 +1489,11 @@ def _odbc_cursor_to_db(results, cursor_name):
             else:
                 field_lens = '({})'.format(column[4])
             columns.append('{} {}{}'.format(field_name, field_type, field_lens))
-        db.use(None, db.select_function(cursor_name), None)
-        db.create_table(cursor_name + '.dbf', columns, 'free')
+        DB.use(None, DB.select_function(cursor_name), None)
+        DB.create_table(cursor_name + '.dbf', columns, 'free')
         for value in values:
-            db.insert(cursor_name, tuple(value))
-        db.goto(cursor_name, 0)
+            DB.insert(cursor_name, tuple(value))
+        DB.goto(cursor_name, 0)
     except:
         pass
 
@@ -1606,15 +1606,16 @@ def create_object(objtype, *args, **kwargs):
 def clearall():
     pass
 
-db = DatabaseContext()
-variable = _Variable(db)
-function = _Function()
+DB = DatabaseContext()
+S = _Variable(DB)
+F = _Function()
+M = None # Placeholder for later use.
 
 def module(module_name):
     return __import__(module_name.lower())
 
 error_func = None
-variable.pushscope()
-variable.add_public('_vfp')
-variable['_vfp'] = MainWindow()
-variable['_vfp'].caption = 'VFP To Python'
+S.pushscope()
+S.add_public('_screen')
+S['_screen'] = MainWindow()
+S['_screen'].caption = 'VFP To Python'
