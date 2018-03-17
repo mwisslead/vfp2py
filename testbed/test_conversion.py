@@ -67,6 +67,10 @@ FOR EACH ITEM IN ITEMS
     EXIT
 ENDFOR
 RELEASE ITEMS, item
+FOR X = 4 TO 7
+ENDFOR
+FOR X = 1 TO 7 STEP 2
+ENDFOR
 DO CASE
    *line comment1
    * line comment2
@@ -170,8 +174,12 @@ for S[\'item\'] in S[\'items\']:
         # ENDIF
     break
 del S[\'items\'], S[\'item\']
-# line comment1
-# line comment2
+for S[\'x\'] in range(4, 8):
+    pass
+for S[\'x\'] in range(1, 8, 2):
+    pass
+    # line comment1
+    # line comment2
 if S[\'x\'] == 1:
     pass
 elif S[\'x\'] == 2:

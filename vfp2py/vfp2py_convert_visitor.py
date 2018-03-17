@@ -447,14 +447,12 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         loopvar = self.visit(ctx.idAttr())
         if ctx.EACH():
             iterator = self.visit(ctx.expr(0))
-            return add_args_to_code('for {} in {}:', (loopvar, iterator))
-        loop_start = int(self.visit(ctx.loopStart))
-        loop_stop = int(self.visit(ctx.loopStop)) + 1
-        if ctx.loopStep:
-            loop_step = int(self.visit(ctx.loopStep))
-            return CodeStr('for {} in range({}, {}, {}):'.format(loopvar, loop_start, loop_stop, loop_step))
         else:
-            return CodeStr('for {} in range({}, {}):'.format(loopvar, loop_start, loop_stop))
+            args = [int(self.visit(ctx.loopStart)), int(self.visit(ctx.loopStop)) + 1]
+            if ctx.loopStep:
+                args.append(int(self.visit(ctx.loopStep)))
+            iterator = make_func_code('range', *args)
+        return add_args_to_code('for {} in {}:', (loopvar, iterator))
 
     def visitForStmt(self, ctx):
         return [self.visit(ctx.forStart()), self.visit(ctx.lines())]
