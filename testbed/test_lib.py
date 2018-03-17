@@ -39,27 +39,27 @@ def used_tests():
 
 def date_tests():
     S.pushscope()
-    somedate = False  # LOCAL Declaration
-    somedate = dt.date(2017, 6, 30)
-    assert somedate == dt.date(2017, 6, 30)
-    assert vfpfunc.dow_fix(somedate.weekday()) == 6
-    assert somedate.strftime('%A') == 'Friday'
-    assert somedate.month == 6
-    assert somedate.strftime('%B') == 'June'
-    assert somedate.strftime('%d %B %Y') == '30 June 2017'
+    S.add_local('somedate')
+    S['somedate'] = dt.date(2017, 6, 30)
+    assert S['somedate'] == dt.date(2017, 6, 30)
+    assert vfpfunc.dow_fix(S['somedate'].weekday()) == 6
+    assert S['somedate'].strftime('%A') == 'Friday'
+    assert S['somedate'].month == 6
+    assert S['somedate'].strftime('%B') == 'June'
+    assert S['somedate'].strftime('%d %B %Y') == '30 June 2017'
     assert len(dt.datetime.now().time().strftime('%H:%M:%S')) == 8
     assert len(dt.datetime.now().time().strftime('%H:%M:%S.%f')[:11]) == 11
-    assert dt.datetime.combine(somedate, dt.datetime.min.time()) == dt.datetime(2017, 6, 30, 0)
-    assert vfpfunc.gomonth(somedate, -4) == dt.date(2017, 2, 28)
-    assert vfpfunc.vartype(somedate) == 'D'
-    assert vfpfunc.vartype(dt.datetime.combine(somedate, dt.datetime.min.time())) == 'T'
+    assert dt.datetime.combine(S['somedate'], dt.datetime.min.time()) == dt.datetime(2017, 6, 30, 0)
+    assert vfpfunc.gomonth(S['somedate'], -4) == dt.date(2017, 2, 28)
+    assert vfpfunc.vartype(S['somedate']) == 'D'
+    assert vfpfunc.vartype(dt.datetime.combine(S['somedate'], dt.datetime.min.time())) == 'T'
     S.popscope()
 
 
 def math_tests():
     S.pushscope()
-    num_value = False  # LOCAL Declaration
-    num_value = math.pi
+    S.add_local('num_value')
+    S['num_value'] = math.pi
     assert round(math.pi, 2) == 3.14
     assert abs(math.tan(math.radians(45)) - 1) < 0.001
     assert abs(math.sin(math.radians(90)) - 1) < 0.001
@@ -67,10 +67,10 @@ def math_tests():
     assert abs(math.cos(math.radians(45)) - math.sqrt(2) / 2) < 0.001
     assert 0 < random.random() and random.random() < 1
 
-    stringval = False  # LOCAL Declaration
-    stringval = '1e5'
-    assert float(stringval) == 100000
-    assert vfpfunc.vartype(num_value) == 'N'
+    S.add_local('stringval')
+    S['stringval'] = '1e5'
+    assert float(S['stringval']) == 100000
+    assert vfpfunc.vartype(S['num_value']) == 'N'
     S.popscope()
 
 
@@ -140,27 +140,27 @@ def misc_tests():
 
 def _add_db_record(seed=False):
     S.pushscope()
-    fake = fake_name = fake_st = fake_quantity = fake_received = False  # LOCAL Declaration
-    fake = faker.Faker()
-    fake.seed(seed)
-    fake_name = fake.name()
-    fake_st = fake.state_abbr()
-    fake_quantity = fake.random_int(0, 100)
-    fake_received = fake.boolean()
-    DB.insert('report', (fake_name, fake_st, fake_quantity, fake_received))
+    S.add_local('fake', 'fake_name', 'fake_st', 'fake_quantity', 'fake_received')
+    S['fake'] = faker.Faker()
+    S['fake'].seed(seed)
+    S['fake_name'] = S['fake'].name()
+    S['fake_st'] = S['fake'].state_abbr()
+    S['fake_quantity'] = S['fake'].random_int(0, 100)
+    S['fake_received'] = S['fake'].boolean()
+    DB.insert('report', (S['fake_name'], S['fake_st'], S['fake_quantity'], S['fake_received']))
     S.popscope()
 
 
 def _sqlexec_add_record(sqlconn=False, seed=False):
     S.pushscope()
-    fake = fake_name = fake_st = fake_quantity = fake_received = False  # LOCAL Declaration
-    fake = faker.Faker()
-    fake.seed(seed)
-    fake_name = fake.name()
-    fake_st = fake.state_abbr()
-    fake_quantity = fake.random_int(0, 100)
-    fake_received = fake.boolean()
-    S['sqlcmd'] = "insert into REPORT values ('" + fake_name + "','" + fake_st + "'," + vfpfunc.num_to_str(fake_quantity).strip() + ',' + vfpfunc.num_to_str(int(fake_received)).strip() + ')'
+    S.add_local('fake', 'fake_name', 'fake_st', 'fake_quantity', 'fake_received')
+    S['fake'] = faker.Faker()
+    S['fake'].seed(seed)
+    S['fake_name'] = S['fake'].name()
+    S['fake_st'] = S['fake'].state_abbr()
+    S['fake_quantity'] = S['fake'].random_int(0, 100)
+    S['fake_received'] = S['fake'].boolean()
+    S['sqlcmd'] = "insert into REPORT values ('" + S['fake_name'] + "','" + S['fake_st'] + "'," + vfpfunc.num_to_str(S['fake_quantity']).strip() + ',' + vfpfunc.num_to_str(int(S['fake_received'])).strip() + ')'
     print(S['sqlcmd'])
     return S.popscope(vfpfunc.sqlexec(sqlconn, S['sqlcmd']))
 
@@ -190,30 +190,30 @@ def database_tests():
         assert DB.field(2) == 'st'
         assert not DB.found()
         DB.goto(None, 0)
-        loopcount = False  # LOCAL Declaration
-        loopcount = 0
+        S.add_local('loopcount')
+        S['loopcount'] = 0
         for _ in DB.scanner(scope=('rest',)):
             assert len(S['name'].strip()) > 0
-            loopcount += 1
-        assert loopcount == 4
+            S['loopcount'] += 1
+        assert S['loopcount'] == 4
         DB.goto(None, 3)
-        loopcount = 0
+        S['loopcount'] = 0
         for _ in DB.scanner(scope=('all',), condition=lambda: S['st'].strip() == 'ID'):
             assert len(S['name'].strip()) > 0
-            loopcount += 1
-        assert loopcount == 2
-        loopcount = 0
+            S['loopcount'] += 1
+        assert S['loopcount'] == 2
+        S['loopcount'] = 0
         for _ in DB.scanner(scope=('rest',), condition=lambda: S['st'].strip() == 'ID'):
             assert len(S['name'].strip()) > 0
-            loopcount += 1
-        assert loopcount == 0
+            S['loopcount'] += 1
+        assert S['loopcount'] == 0
         DB.goto(None, 0)
-        loopcount = 0
+        S['loopcount'] = 0
         for _ in DB.scanner(scope=('rest',), condition=lambda: S['st'].strip() == 'ID'):
             assert len(S['name'].strip()) > 0
-            loopcount += 1
-        assert loopcount == 2
-        del loopcount
+            S['loopcount'] += 1
+        assert S['loopcount'] == 2
+        del S['loopcount']
         assert S['name'].strip() == 'Norma Fisher', S['name'].strip() + ' should be Norma Fisher'
         assert DB.recno() == 1
         DB.goto(None, -1)

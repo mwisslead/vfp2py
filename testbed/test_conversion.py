@@ -115,36 +115,36 @@ ACTIVATE MENU test NOWAIT
 # comment
 # continued on another line
 # and another
-string_val = float_val = money_val = int_val = blob_val = bool_val = null_val = nulldate_val = date_val = datetime_val = obj_val = False  # LOCAL Declaration
-y = z = w = False  # LOCAL Declaration
-string_val = \'str\'
-float_val = 3.0
-float_val = .5e-5
-float_val = 8e+18
-float_val = 1.3e12
-float_val = .1e0
-money_val = 3.5123
-int_val = 3
-int_val = 0x3
-int_val = 0x3f
-int_val = 0x0
-blob_val = bytearray(b\'\\x124Vx\\x9a\\xbc\\xde\')
-blob_val = bytearray(b\'\\x00\\x124Vx\\x9a\\xbc\\xde\')
-blob_val = bytearray(b\'\')
-bool_val = False
-null_val = None
-nulldate_val = None
-nulldate_val = None
-date_val = dt.date(2017, 5, 6)
-datetime_val = dt.datetime(2017, 5, 6, 17)
-print((float_val + int_val + int_val + float_val + int_val - float_val) / 3 / 4 * -5 - int_val * 3)
+S.add_local(\'string_val\', \'float_val\', \'money_val\', \'int_val\', \'blob_val\', \'bool_val\', \'null_val\', \'nulldate_val\', \'date_val\', \'datetime_val\', \'obj_val\')
+S.add_local(\'y\', \'z\', \'w\')
+S[\'string_val\'] = \'str\'
+S[\'float_val\'] = 3.0
+S[\'float_val\'] = .5e-5
+S[\'float_val\'] = 8e+18
+S[\'float_val\'] = 1.3e12
+S[\'float_val\'] = .1e0
+S[\'money_val\'] = 3.5123
+S[\'int_val\'] = 3
+S[\'int_val\'] = 0x3
+S[\'int_val\'] = 0x3f
+S[\'int_val\'] = 0x0
+S[\'blob_val\'] = bytearray(b\'\\x124Vx\\x9a\\xbc\\xde\')
+S[\'blob_val\'] = bytearray(b\'\\x00\\x124Vx\\x9a\\xbc\\xde\')
+S[\'blob_val\'] = bytearray(b\'\')
+S[\'bool_val\'] = False
+S[\'null_val\'] = None
+S[\'nulldate_val\'] = None
+S[\'nulldate_val\'] = None
+S[\'date_val\'] = dt.date(2017, 5, 6)
+S[\'datetime_val\'] = dt.datetime(2017, 5, 6, 17)
+print((S[\'float_val\'] + S[\'int_val\'] + S[\'int_val\'] + S[\'float_val\'] + S[\'int_val\'] - S[\'float_val\']) / 3 / 4 * -5 - S[\'int_val\'] * 3)
 print(\'\\x03\')
-print(chr(int(int_val)))
+print(chr(int(S[\'int_val\'])))
 print(\'   \')
 print(20 * \' \')
-print(int(int_val) * \' \')
-print(date_val.day)
-print(vfpfunc.dow_fix(date_val.weekday()))
+print(int(S[\'int_val\']) * \' \')
+print(S[\'date_val\'].day)
+print(vfpfunc.dow_fix(S[\'date_val\'].weekday()))
 print(\'chr(65) = A, just letting you know.\\r\\n\')
 print((2 ** 3) ** 4)
 print(2 ** 3 ** 4)
@@ -154,22 +154,22 @@ print(10 >= 5)
 print(10 <= 5)
 print(10 <= 5)
 print(True or False and False or False)
-print(S[\'x\'] or y and w or z)
-print(bytearray(string_val))
-print(float(float_val))
-obj_val = vfpfunc.create_object(\'Test\')
-obj_val = vfpfunc.Form()
-del string_val, int_val, bool_val, null_val
-items = Array(3, 5)
-item = False  # LOCAL Declaration
-for item in items:
-    if not item:
+print(S[\'x\'] or S[\'y\'] and S[\'w\'] or S[\'z\'])
+print(bytearray(S[\'string_val\']))
+print(float(S[\'float_val\']))
+S[\'obj_val\'] = vfpfunc.create_object(\'Test\')
+S[\'obj_val\'] = vfpfunc.Form()
+del S[\'string_val\'], S[\'int_val\'], S[\'bool_val\'], S[\'null_val\']
+S.add_local(items=Array(3, 5))
+S.add_local(\'item\')
+for S[\'item\'] in S[\'items\']:
+    if not S[\'item\']:
         continue
         # IF
         # TEST()
         # ENDIF
     break
-del items, item
+del S[\'items\'], S[\'item\']
 # line comment1
 # line comment2
 if S[\'x\'] == 1:
@@ -318,6 +318,7 @@ DEFINE CLASS SUBOBJ2 AS SUBOBJ
 ENDDEFINE
 
 DEFINE CLASS TESTCLASS AS COMMANDBUTTON
+   PROTECTED SOMEVAR
    ADD OBJECT TEST1 as custom
    ADD OBJECT TEST2 as subobj WITH X = 4
    ADD OBJECT TEST3 as unknownobj WITH X = \'4\'
@@ -369,8 +370,11 @@ class Subobj(vfpfunc.Custom):
 
         # comment
     def init(self, x=False):
+        S.pushscope()
+        S.add_local(x=x)
         super(type(self), self).init()
-        self.x = x
+        self.x = S[\'x\']
+        S.popscope()
 
 # comment about subobj2
 
@@ -385,14 +389,18 @@ class Subobj2(Subobj):
 class Testclass(vfpfunc.Commandbutton):
 
     def _assign(self, *args, **kwargs):
+        S.pushscope()
         vfpfunc.Commandbutton._assign(self)
         self.test1 = vfpfunc.Custom(name=\'test1\', parent=self)
         self.test2 = Subobj(x=4, name=\'test2\', parent=self)
         self.test3 = vfpfunc.create_object(\'Unknownobj\', x=\'4\', name=\'test3\', parent=self)
+        S.popscope()
 
     def init(self, x=False):
+        S.pushscope()
+        S.add_local(x=x)
         # FIX ME: NODEFAULT
-        pass
+        S.popscope()
 
 
 class Abutton(Testclass):
@@ -405,9 +413,12 @@ class Abutton(Testclass):
 
 
 def random_function(x=False):
+    S.pushscope()
+    S.add_local(x=x)
 
     # something
-    print(x)
+    print(S[\'x\'])
+    S.popscope()
 
 # comment about testclass2
 
@@ -420,7 +431,7 @@ class Testclass2(vfpfunc.classes[\'Unknownclass\']):
 
 def another_random_function(x=False, y=False):
     S.pushscope()
-    (S[\'x\'], S[\'y\']) = (x, y)
+    S.add_private(y=y, x=x)
 
     # something
     print(S[\'x\'])
@@ -458,15 +469,15 @@ delete file ?
 delete file test.txt recycle
 '''.strip()
     output_str = '''
-a = False  # LOCAL Declaration
+S.add_local(\'a\')
 F[\'a\']()
 F[\'a+b\']()
-F[a + S[\'b\']]()
-F[a.strip()]()
+F[S[\'a\'] + S[\'b\']]()
+F[S[\'a\'].strip()]()
 a.test()
-vfpfunc.module(a).test()
-vfpfunc.module(a + \'.PRG\').test()
-vfpfunc.module(a + (S[\'b\'])).test()
+vfpfunc.module(S[\'a\']).test()
+vfpfunc.module(S[\'a\'] + \'.PRG\').test()
+vfpfunc.module(S[\'a\'] + (S[\'b\'])).test()
 test._program_main()
 test.test()
 vfpfunc.do_form(\'splash.scx\')
@@ -499,13 +510,13 @@ rd alltrim(test)
 !ls -al &pathname
 '''.strip()
     output_str = '''
-test = False  # LOCAL Declaration
-shutil.copyfile(test, \'tset\')
-shutil.move(test, \'tset\')
-os.mkdir(test - test)
+S.add_local(\'test\')
+shutil.copyfile(S[\'test\'], \'tset\')
+shutil.move(S[\'test\'], \'tset\')
+os.mkdir(S[\'test\'] - S[\'test\'])
 os.mkdir(\'test+test\')
-os.rmdir(test + test)
-os.rmdir(test.strip())
+os.rmdir(S[\'test\'] + S[\'test\'])
+os.rmdir(S[\'test\'].strip())
 subprocess.call([\'ls\', \'-al\', pathname])
 '''.strip()
     test_output_str = vfp2py.vfp2py.prg2py(input_str, parser_start='lines', prepend_data='').strip()
@@ -533,13 +544,13 @@ update test set a=b, c=d, e=f where x=3
     output_str = '''
 DB.create_cursor(\'test_cursor\', \'somefield n(3)\', \'\')
 DB.continue_locate()
-search_for = countval = sumval = False  # LOCAL Declaration
-search_for = \'PAUL\'
-DB.seek(None, search_for.strip())
-countval = DB.count(None, (\'all\',), for_cond=lambda: S[\'test\'] == 3)
-sumval = DB.sum(None, (\'all\',), lambda: S[\'t\'] * S[\'t\'], for_cond=lambda: S[\'t\'] > 0)
+S.add_local(\'search_for\', \'countval\', \'sumval\')
+S[\'search_for\'] = \'PAUL\'
+DB.seek(None, S[\'search_for\'].strip())
+S[\'countval\'] = DB.count(None, (\'all\',), for_cond=lambda: S[\'test\'] == 3)
+S[\'sumval\'] = DB.sum(None, (\'all\',), lambda: S[\'t\'] * S[\'t\'], for_cond=lambda: S[\'t\'] > 0)
 DB.locate(nooptimize=True, while_cond=lambda: S[\'x\'] > 5)
-del search_for, countval, sumval
+del S[\'search_for\'], S[\'countval\'], S[\'sumval\']
 DB.update(\'test\', [(\'a\', S[\'b\']), (\'c\', S[\'d\']), (\'e\', S[\'f\'])], where=lambda: S[\'x\'] == 3)
 '''.strip()
     test_output_str = vfp2py.vfp2py.prg2py(input_str, parser_start='lines', prepend_data='').strip()
@@ -635,11 +646,11 @@ ASSERT NOT X
 ASSERT X = .T. MESSAGE Y + \' ASSERT\'
 '''.strip()
     output_str = '''
-x = y = False  # LOCAL Declaration
-x = False
-y = \'failed\'
-assert not x
-assert x == True, y + \' ASSERT\'
+S.add_local(\'x\', \'y\')
+S[\'x\'] = False
+S[\'y\'] = \'failed\'
+assert not S[\'x\']
+assert S[\'x\'] == True, S[\'y\'] + \' ASSERT\'
 '''.strip()
     test_output_str = vfp2py.vfp2py.prg2py(input_str, parser_start='lines', prepend_data='').strip()
     try:
@@ -748,28 +759,28 @@ MYDIR = \'c:\\test\\test\\dir\'
 RELEASE MYFILE, MYDIR
 '''.strip()
     output_str = '''
-myfile = mydir = False  # LOCAL Declaration
-myfile = \'c:\\\\test\\\\test.prg\'
-mydir = \'c:\\\\test\\\\test\\\\dir\'
-print(os.path.isfile(myfile))
-print(os.path.splitdrive(myfile)[0])
-print(os.path.dirname(myfile))
-print(os.path.basename(myfile))
-print(os.path.splitext(os.path.basename(myfile))[0])
-print(os.path.splitext(myfile)[1][1:])
-print(os.path.splitext(myfile)[0] + \'.\' + \'py\')
-print(os.path.isdir(mydir))
-print(os.path.splitdrive(mydir)[0])
-print(os.path.dirname(mydir))
-print(os.path.basename(mydir))
-print(os.path.splitext(os.path.basename(mydir))[0])
-print(os.path.splitext(mydir)[1][1:])
-print(os.path.splitext(mydir)[0] + \'.\' + \'py\')
-print(os.path.join(mydir, \'dir1\'))
-print(os.path.join(mydir, \'dir1\', \'dir2\'))
-print(os.path.join(mydir, \'dir1\', \'dir2\', \'dir3\'))
+S.add_local(\'myfile\', \'mydir\')
+S[\'myfile\'] = \'c:\\\\test\\\\test.prg\'
+S[\'mydir\'] = \'c:\\\\test\\\\test\\\\dir\'
+print(os.path.isfile(S[\'myfile\']))
+print(os.path.splitdrive(S[\'myfile\'])[0])
+print(os.path.dirname(S[\'myfile\']))
+print(os.path.basename(S[\'myfile\']))
+print(os.path.splitext(os.path.basename(S[\'myfile\']))[0])
+print(os.path.splitext(S[\'myfile\'])[1][1:])
+print(os.path.splitext(S[\'myfile\'])[0] + \'.\' + \'py\')
+print(os.path.isdir(S[\'mydir\']))
+print(os.path.splitdrive(S[\'mydir\'])[0])
+print(os.path.dirname(S[\'mydir\']))
+print(os.path.basename(S[\'mydir\']))
+print(os.path.splitext(os.path.basename(S[\'mydir\']))[0])
+print(os.path.splitext(S[\'mydir\'])[1][1:])
+print(os.path.splitext(S[\'mydir\'])[0] + \'.\' + \'py\')
+print(os.path.join(S[\'mydir\'], \'dir1\'))
+print(os.path.join(S[\'mydir\'], \'dir1\', \'dir2\'))
+print(os.path.join(S[\'mydir\'], \'dir1\', \'dir2\', \'dir3\'))
 print(os.getcwd())
-del myfile, mydir
+del S[\'myfile\'], S[\'mydir\']
 '''.strip()
     test_output_str = vfp2py.vfp2py.prg2py(input_str, parser_start='lines', prepend_data='').strip()
     try:
@@ -792,14 +803,14 @@ pydict.setitem(\'one\', 1)
 ?pydict.getitem(\'one\')
 '''.strip()
     output_str = '''
-somearray = Array(2, 5)
-pytuple = pylist = pydict = False  # LOCAL Declaration
-pytuple = (\'a\', 3, True)
-pylist = somearray.data[:]
-pylist.append(\'appended value\')
-pydict = {}
-pydict[\'one\'] = 1
-print(pydict[\'one\'])
+S.add_local(somearray=Array(2, 5))
+S.add_local(\'pytuple\', \'pylist\', \'pydict\')
+S[\'pytuple\'] = (\'a\', 3, True)
+S[\'pylist\'] = S[\'somearray\'].data[:]
+S[\'pylist\'].append(\'appended value\')
+S[\'pydict\'] = {}
+S[\'pydict\'][\'one\'] = 1
+print(S[\'pydict\'][\'one\'])
 '''.strip()
     test_output_str = vfp2py.vfp2py.prg2py(input_str, parser_start='lines', prepend_data='').strip()
     try:
@@ -848,8 +859,8 @@ throw \'Error\' + \' Message\'
     output_str = '''
 try:
     assert False
-except Exception as oerr:
-    oerr = vfpfunc.Exception.from_pyexception(oerr)
+except Exception as S[\'oerr\']:
+    S[\'oerr\'] = vfpfunc.Exception.from_pyexception(S[\'oerr\'])
     raise
 raise Exception(\'Error Message\')
 '''.strip()
@@ -872,12 +883,12 @@ T = aINS(main_array, 3)
 T = aINS(main_array, 3, 2)
 '''.strip()
     output_str = '''
-cnt_fields = False  # LOCAL Declaration
-main_array = Array(1)
-cnt_fields = DB.afields(None, \'main_array\', (locals(), S)) + 32
-cnt_fields = DB.afields(\'report\', \'main_array2\', (locals(), S)) + 47
-S[\'t\'] = main_array.insert(None, 3)
-S[\'t\'] = main_array.insert(None, 3, 2)
+S.add_local(\'cnt_fields\')
+S.add_local(main_array=Array(1))
+S[\'cnt_fields\'] = DB.afields(None, \'main_array\', (locals(), S)) + 32
+S[\'cnt_fields\'] = DB.afields(\'report\', \'main_array2\', (locals(), S)) + 47
+S[\'t\'] = S[\'main_array\'].insert(None, 3)
+S[\'t\'] = S[\'main_array\'].insert(None, 3, 2)
 '''.strip()
     test_output_str = vfp2py.vfp2py.prg2py(input_str, parser_start='lines', prepend_data='').strip()
     try:

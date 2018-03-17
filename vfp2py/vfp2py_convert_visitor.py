@@ -354,12 +354,13 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         body = []
         if parameters:
             self.new_scope()
-            self.scope.update({key: False for key in parameters})
+            self.used_scope = True
+            kwargs = {p: p for p in parameters}
+            body.append(make_func_code('S.add_local', **kwargs))
         else:
             try:
                 parameter_line = next(line for line in ctx.lines().line() if not line.lineComment())
                 parameter_cmd = parameter_line.cmd()
-                keyword = parameter_cmd.PARAMETER().symbol.text.lower()
                 parameters = [self.visit_with_disabled_scope(p)[0] for p in parameter_cmd.declarationItem()]
                 lines = ctx.lines()
                 children = [c for c in lines.children if c is not parameter_line]
@@ -368,12 +369,14 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
                 for child in children:
                     lines.addChild(child)
                 self.new_scope()
+                self.used_scope = True
+                keyword = parameter_cmd.PARAMETER().symbol.text.lower()
                 if keyword.startswith('l'):
-                    self.scope.update({key: False for key in parameters})
+                    func = 'S.add_local'
                 else:
-                    self.used_scope = True
-                    decls = tuple(self.visit(p)[0] for p in parameter_cmd.declarationItem())
-                    body.append(add_args_to_code('{} = {}', (decls, tuple(parameters))))
+                    func = 'S.add_private'
+                kwargs = {p: p for p in parameters}
+                body.append(make_func_code(func, **kwargs))
             except (StopIteration, AttributeError):
                 parameters = []
                 self.new_scope()
@@ -441,8 +444,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         return self.visit(ctx.lines())
 
     def visitForStart(self, ctx):
-        loopvar = self.visit_with_disabled_scope(ctx.idAttr())
-        self.scope[loopvar] = False
+        loopvar = self.visit(ctx.idAttr())
         if ctx.EACH():
             iterator = self.visit(ctx.expr(0))
             return add_args_to_code('for {} in {}:', (loopvar, iterator))
@@ -484,9 +486,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         if not ctx.CATCH():
             return try_lines + finally_lines
 
-        identifier = self.visit(ctx.identifier())
-        if identifier:
-            self.scope[identifier] = False
+        identifier = add_args_to_code('S[\'{}\']', (self.visit(ctx.identifier()),))
 
         try_lines = [CodeStr('try:'), try_lines]
 
@@ -498,9 +498,6 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         catch_lines.append(self.visit(ctx.catchLines))
 
         finally_lines = [CodeStr('finally:'), finally_lines] if finally_lines else []
-
-        if ctx.identifier():
-            del self.scope[identifier]
 
         return try_lines + catch_lines + finally_lines
 
@@ -525,16 +522,11 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             inds = [ind or (1,) for ind in inds]
 
         if scope in ('hidden', 'protected'):
-            names = [add_args_to_code('self.{}', [name]) for name in names]
-        elif scope == 'local':
-            for name in names:
-                self.scope[name] = False
-        else:
-            self.used_scope = True
+            names = [add_args_to_code('self.{}', [name]) if not keyword.iskeyword(name) else CodeStr('getattr(self, {}'.format(name)) for name in names]
 
         arrays = [(name, make_func_code('Array', *ind)) for name, ind in zip(names, inds) if ind]
 
-        if scope in ('public', 'private'):
+        if scope in ('public', 'private', 'local'):
             func = 'S.add_'  + scope
             kwargs = {str(name): array for name, array in arrays}
             names = [str(name) for name, ind in zip(names, inds) if not ind]
@@ -544,7 +536,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             return make_func_code(func, *names, **kwargs)
         else:
             names = [name for name, ind in zip(names, inds) if not ind]
-            return [CodeStr(' = '.join(repr(arg) for arg in (names + [False])) + ' #LOCAL Declaration')] if names else [] + \
+            return [CodeStr(' = '.join(repr(arg) for arg in (names + [False])))] if names else [] + \
                    [add_args_to_code('{} = {}', (name, array)) for name, array in arrays]
 
     def visitDeclarationItem(self, ctx):

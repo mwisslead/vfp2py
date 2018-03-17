@@ -989,6 +989,9 @@ class _Variable(object):
         for key in kwargs:
             scope[key] = kwargs[key]
 
+    def add_local(self, *args, **kwargs):
+        self._add_to_scopes(self.local_scopes[-1], *args, **kwargs)
+
     def add_private(self, *args, **kwargs):
         self._add_to_scopes(self.public_scopes[-1], *args, **kwargs)
 
@@ -1013,12 +1016,7 @@ class _Variable(object):
         elif mode == 'Except':
             pass
         else:
-            var_names = []
-            for var in self.local_scopes[-1]:
-                var_names.append(var)
-            for var in self.public_scopes[-1]:
-                var_names.append(var)
-            for var in var_names:
+            for var in list(self.local_scopes[-1]) + list(self.public_scopes[-1]):
                 del self[var]
 
     def current_scope(self):
