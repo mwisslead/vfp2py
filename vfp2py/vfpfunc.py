@@ -965,10 +965,7 @@ class _Variable(object):
             raise NameError('name {} is not defined'.format(key))
 
     def __setitem__(self, key, val):
-        scope = self._get_scope(key)
-        if scope is None:
-            scope = self.local_scopes[-1]
-        scope[key] = val
+        (self._get_scope(key) or self.public_scopes[-1])[key] = val
 
     def __setattr__(self, key, val):
         if key in self.__dict__:
