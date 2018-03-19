@@ -279,4 +279,5 @@ procedure scope_tests
    SOMEARRAY(1, 4) = 3
    assert somearray[1, 4] == 3
    PRIVATE TEST, somearray[2, 5]
+   RELEASE nonexistantvariable
 ENDPROC

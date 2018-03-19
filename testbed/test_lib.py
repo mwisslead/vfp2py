@@ -308,4 +308,5 @@ def scope_tests():
     S['somearray'][1, 4] = 3
     assert F['somearray'](1, 4) == 3
     S.add_private('test', somearray=Array(2, 5))
+    del S['nonexistantvariable']
     S.popscope()

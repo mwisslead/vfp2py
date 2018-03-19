@@ -978,7 +978,8 @@ class _Variable(object):
 
     def __delitem__(self, key):
         scope = self._get_scope(key)
-        del scope[key]
+        if scope:
+            del scope[key]
 
     def __delattr__(self, key):
         del self[key]
