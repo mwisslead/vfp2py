@@ -140,9 +140,10 @@ def misc_tests():
 
 def _add_db_record(seed=False):
     S.pushscope()
+    S.add_local(seed=seed)
     S.add_local('fake', 'fake_name', 'fake_st', 'fake_quantity', 'fake_received')
     S['fake'] = faker.Faker()
-    S['fake'].seed(seed)
+    S['fake'].seed(S['seed'])
     S['fake_name'] = S['fake'].name()
     S['fake_st'] = S['fake'].state_abbr()
     S['fake_quantity'] = S['fake'].random_int(0, 100)
@@ -153,16 +154,17 @@ def _add_db_record(seed=False):
 
 def _sqlexec_add_record(sqlconn=False, seed=False):
     S.pushscope()
+    S.add_local(sqlconn=sqlconn, seed=seed)
     S.add_local('fake', 'fake_name', 'fake_st', 'fake_quantity', 'fake_received')
     S['fake'] = faker.Faker()
-    S['fake'].seed(seed)
+    S['fake'].seed(S['seed'])
     S['fake_name'] = S['fake'].name()
     S['fake_st'] = S['fake'].state_abbr()
     S['fake_quantity'] = S['fake'].random_int(0, 100)
     S['fake_received'] = S['fake'].boolean()
     S['sqlcmd'] = "insert into REPORT values ('" + S['fake_name'] + "','" + S['fake_st'] + "'," + vfpfunc.num_to_str(S['fake_quantity']).strip() + ',' + vfpfunc.num_to_str(int(S['fake_received'])).strip() + ')'
     print(S['sqlcmd'])
-    return S.popscope(vfpfunc.sqlexec(sqlconn, S['sqlcmd']))
+    return S.popscope(vfpfunc.sqlexec(S['sqlconn'], S['sqlcmd']))
 
 
 def database_tests():
@@ -176,10 +178,10 @@ def database_tests():
         try:
             DB.use('report', 0, 'shared')
             assert False
-        except Exception as oerr:
-            oerr = vfpfunc.Exception.from_pyexception(oerr)
-            print(oerr.message)
-            assert oerr.message == 'File is in use.'
+        except Exception as S['oerr']:
+            S['oerr'] = vfpfunc.Exception.from_pyexception(S['oerr'])
+            print(S['oerr'].message)
+            assert S['oerr'].message == 'File is in use.'
         _add_db_record(0)
         _add_db_record(1)
         _add_db_record(2)
@@ -263,9 +265,9 @@ def database_tests():
         assert DB.fcount() == 4
         DB.use(None, None, None)
         os.remove('report2.dbf')
-    except Exception as err:
-        err = vfpfunc.Exception.from_pyexception(err)
-        print(err.message)
+    except Exception as S['err']:
+        S['err'] = vfpfunc.Exception.from_pyexception(S['err'])
+        print(S['err'].message)
         DB.browse()
         raise
     finally:

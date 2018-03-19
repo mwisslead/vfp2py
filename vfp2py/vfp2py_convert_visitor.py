@@ -361,6 +361,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             try:
                 parameter_line = next(line for line in ctx.lines().line() if not line.lineComment())
                 parameter_cmd = parameter_line.cmd()
+                keyword = parameter_cmd.PARAMETER().symbol.text.lower()
                 parameters = [self.visit_with_disabled_scope(p)[0] for p in parameter_cmd.declarationItem()]
                 lines = ctx.lines()
                 children = [c for c in lines.children if c is not parameter_line]
@@ -370,7 +371,6 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
                     lines.addChild(child)
                 self.new_scope()
                 self.used_scope = True
-                keyword = parameter_cmd.PARAMETER().symbol.text.lower()
                 if keyword.startswith('l'):
                     func = 'S.add_local'
                 else:
