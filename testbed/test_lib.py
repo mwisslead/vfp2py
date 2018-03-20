@@ -13,28 +13,37 @@ from vfp2py.vfpfunc import DB, Array, F, M, S
 
 
 def _program_main():
-    pass
+    S.pushscope()
+    S.popscope()
 
 
 def select_tests():
+    S.pushscope()
     assert DB.select_function(0 if vfpfunc.set('compatible') == 'OFF' else None) == 1
     assert DB.select_function(0) == 1
     assert DB.select_function(1) == 32767
     assert DB.select_function(2) == 0
     assert DB.select_function('test') == 0
+    S.popscope()
 
 
 def chr_tests():
+    S.pushscope()
     assert ord('\x00'[0]) == 0
+    S.popscope()
 
 
 def set_tests():
+    S.pushscope()
     assert vfpfunc.set('compatible') == 'OFF'
     assert vfpfunc.set('compatible', 1) == 'PROMPT'
+    S.popscope()
 
 
 def used_tests():
+    S.pushscope()
     assert DB.used('test') == False
+    S.popscope()
 
 
 def date_tests():
@@ -133,9 +142,11 @@ def path_tests():
 
 
 def misc_tests():
+    S.pushscope()
     assert vfpfunc.version() == 'Not FoxPro 9'
     assert vfpfunc.version(4) == vfpfunc.version()
     assert vfpfunc.version(5) == 900
+    S.popscope()
 
 
 def _add_db_record(seed=False):

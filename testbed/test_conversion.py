@@ -367,16 +367,20 @@ from vfp2py.vfpfunc import DB, Array, F, M, S
 
 
 def _program_main():
-    pass
+    S.pushscope()
+    S.popscope()
 
 
 class Subobj(vfpfunc.Custom):
 
     def _assign(self, *args, **kwargs):
+        S.pushscope()
         vfpfunc.Custom._assign(self)
         self.x = 3
 
         # comment
+        S.popscope()
+
     def init(self, x=False):
         S.pushscope()
         S.add_local(x=x)
@@ -390,8 +394,10 @@ class Subobj(vfpfunc.Custom):
 class Subobj2(Subobj):
 
     def _assign(self, *args, **kwargs):
+        S.pushscope()
         Subobj._assign(self)
         self.x = 4
+        S.popscope()
 
 
 class Testclass(vfpfunc.Commandbutton):
@@ -414,10 +420,14 @@ class Testclass(vfpfunc.Commandbutton):
 class Abutton(Testclass):
 
     def _assign(self, *args, **kwargs):
+        S.pushscope()
         Testclass._assign(self)
+        S.popscope()
 
     def click(self):
+        S.pushscope()
         Testclass.click()
+        S.popscope()
 
 
 def random_function(x=False):
@@ -434,7 +444,9 @@ def random_function(x=False):
 class Testclass2(vfpfunc.classes[\'Unknownclass\']):
 
     def _assign(self, *args, **kwargs):
+        S.pushscope()
         vfpfunc.classes[\'Unknownclass\']._assign(self)
+        S.popscope()
 
 
 def another_random_function(x=False, y=False):
@@ -588,9 +600,11 @@ from vfp2py.vfpfunc import DB, Array, F, M, S
 
 
 def _program_main():
+    S.pushscope()
     os.mkdir(\'test\')
     print(dt.datetime.now().date())
     print(math.pi)
+    S.popscope()
 '''.strip()
     test_output_str = vfp2py.vfp2py.prg2py(input_str).strip()
     try:

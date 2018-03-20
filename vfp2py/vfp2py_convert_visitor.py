@@ -80,46 +80,20 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         self.filename = filename
         self.filesystem_caseless = True
         self.imports = []
-        self.scope = {}
-        self._saved_scope = None
-        self._scope_count = 0
+        self.scope = True
         self.withid = ''
         self.class_list = []
         self.function_list = []
-        self.used_scope = False
         self.skip_extract = False
 
     def visit(self, ctx):
         if ctx:
             return super(type(self), self).visit(ctx)
 
-    def enable_scope(self, enabled):
-        self._scope_count = max(self._scope_count + 1 - 2*int(enabled), 0)
-        if enabled and self._scope_count == 0:
-            if self._saved_scope:
-                self.scope = self._saved_scope
-            else:
-                self.new_scope()
-        else:
-            if self.scope:
-                self._saved_scope = self.scope
-            self.scope = None
-
-    def new_scope(self):
-        self._scope_count = 0
-        self.scope = {}
-
-    def delete_scope(self):
-        self._scope_count = 0
-        self.scope = None
-
-    def has_scope(self):
-        return self.scope is not None
-
     def visit_with_disabled_scope(self, ctx):
-        self.enable_scope(False)
+        self.scope = False
         retval = self.visit(ctx)
-        self.enable_scope(True)
+        self.scope = True
         return retval
 
     def getCtxText(self, ctx):
@@ -128,8 +102,6 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         return ''.join(token.text for token in tokens)
 
     def visitPrg(self, ctx):
-        self.scope = None
-
         if ctx.classDef():
             self.class_list = [self.visit(classDef.classDefStart())[0] for classDef in ctx.classDef()]
         if ctx.funcDef():
@@ -142,7 +114,6 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
 
         for child in ctx.children:
             if isinstance(child, ctx.parser.FuncDefContext):
-                self.used_scope = False
                 funcname, parameters, funcbody = self.visit(child)
                 defs += [CodeStr('def {}({}):'.format(funcname, ', '.join([str(repr(p)) + '=False' for p in parameters]))), funcbody]
                 if child.lineComment():
@@ -193,7 +164,6 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
 
     def visitClassDef(self, ctx):
         assignments = []
-        self.used_scope = False
         subclasses = {}
 
         funcdefs = [x.funcDef() for x in ctx.classProperty() if x.funcDef()]
@@ -214,7 +184,6 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
                                 obj['args'][ident] = CodeStr(value.replace(' = ', '', 1))
                 obj['functions'] = {}
                 for funcdef in funcdefs:
-                    self.used_scope = False
                     funcname, parameters, funcbody = self.visit(funcdef)
                     if '.' in funcname:
                         func_parent, funcname = funcname.rsplit('.', 1)
@@ -230,15 +199,12 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
                     self.class_list.append(obj['parent_type'])
                 assignments.append(add_args_to_code('self.{} = {}', [CodeStr(name), self.func_call('createobject', obj['parent_type'], **obj['args'])]))
 
-        assign_scope = self.used_scope
 
         funcs = OrderedDict()
         funcs['_assign'] = None
         for funcdef in funcdefs:
-            self.used_scope = False
             funcname, parameters, funcbody = self.visit(funcdef)
-            if funcname == 'init' and assign_scope and not self.used_scope:
-                self.used_scope = True
+            if funcname == 'init':
                 funcname, parameters, funcbody = self.visit(funcdef)
             parameters = [add_args_to_code('{}=False', (p,)) for p in parameters]
             if '.' not in funcname:
@@ -247,7 +213,6 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
 
         classname, supername = self.visit(ctx.classDefStart())
 
-        self.used_scope = assign_scope
         funcbody = self.modify_func_body([CodeStr('{}._assign(self)'.format(supername))] + assignments)
         funcs['_assign'] = [[CodeStr('self'), CodeStr('*args'), CodeStr('**kwargs')], funcbody, float('inf')]
 
@@ -294,16 +259,12 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
     def visitClassAssign(self, assign):
         #FIXME - come up with a less hacky way to make this work
         args1 = self.visit_with_disabled_scope(assign)
-        used_scope = self.used_scope
         args2 = self.visit(assign)
         args = []
         for arg1, arg2 in zip(args1, args2):
             ident = arg1[:arg1.find(' = ')]
             value = arg2[arg2.find(' = '):]
-            if 'S' in value or 'F' in value:
-                used_scope = True
             args.append((ident, value))
-        self.used_scope = used_scope
         return args
 
     def visitAddObject(self, ctx):
@@ -328,8 +289,6 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             body.pop()
         if len(body) == 0:
             body.append(CodeStr('pass'))
-        if not self.used_scope:
-            return body
         while CodeStr('pass') in body:
             body.pop(body.index(CodeStr('pass')))
         def fix_returns(lines):
@@ -353,8 +312,6 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         name, parameters = self.visit(ctx.funcDefStart())
         body = []
         if parameters:
-            self.new_scope()
-            self.used_scope = True
             kwargs = {p: p for p in parameters}
             body.append(make_func_code('S.add_local', **kwargs))
         else:
@@ -369,8 +326,6 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
                     lines.removeLastChild()
                 for child in children:
                     lines.addChild(child)
-                self.new_scope()
-                self.used_scope = True
                 if keyword.startswith('l'):
                     func = 'S.add_local'
                 else:
@@ -379,11 +334,9 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
                 body.append(make_func_code(func, **kwargs))
             except (StopIteration, AttributeError):
                 parameters = []
-                self.new_scope()
         global FUNCNAME
         FUNCNAME = name
         body += self.visit(ctx.lines())
-        self.delete_scope()
         body = self.modify_func_body(body)
         return name, parameters, body
 
@@ -930,13 +883,12 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         return make_func_code(funcname, *args)
 
     def scopeId(self, identifier, vartype):
-        if not self.has_scope() or identifier in self.scope:
+        if not self.scope:
             return identifier
         if identifier == 'this':
             return CodeStr('self')
         if identifier == 'thisform':
             return CodeStr('self.parentform')
-        self.used_scope = True
         if vartype == 'val':
             return add_args_to_code('S[{}]', [str(identifier)])
         elif vartype == 'func':
@@ -1359,23 +1311,12 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         return ctx.getText()
 
     def visitRelease(self, ctx):
-        scoped_args = []
         if ctx.ALL():
             args = []
         else:
             args = self.visit_with_disabled_scope(ctx.args())
-            final_args = []
-            for arg in args:
-                if arg in self.scope:
-                    scoped_args.append(arg)
-                else:
-                    final_args.append(str(arg))
-            args = final_args or None
+            args = [str(arg) for arg in args] or None
         retval = []
-        if scoped_args:
-            for arg in scoped_args:
-                self.scope.pop(arg)
-            retval.append(CodeStr('del {}'.format(', '.join(scoped_args))))
         if args is not None:
             if ctx.PROCEDURE():
                 retval.append(make_func_code('F.release_procedure', *args))
