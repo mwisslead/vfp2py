@@ -926,11 +926,10 @@ class Array(object):
         dims = (self.dim1,) if self.dim1 == len(self) else (self.dim1, len(self) // self.dim1)
         return '{}({})'.format(type(self).__name__, ', '.join(str(dim) for dim in dims))
 
-class _Variable(object):
-    def __init__(self, db):
+class _Memvar(object):
+    def __init__(self):
         self.__dict__['public_scopes'] = []
         self.__dict__['local_scopes'] = []
-        self.__dict__['db'] = db
 
     def _get_scope(self, key):
         if len(self.local_scopes) > 0 and key in self.local_scopes[-1]:
@@ -953,16 +952,7 @@ class _Variable(object):
         scope = self._get_scope(key)
         if scope is not None:
             return scope[key]
-        try:
-            table_info = self.db._get_table_info(key)
-            return table_info.table.current_record
-        except:
-            pass
-        table_info = self.db._get_table_info()
-        if table_info is not None and key in table_info.table.field_names:
-            return table_info.table.current_record[key]
-        else:
-            raise NameError('name {} is not defined'.format(key))
+        raise NameError('name {} is not defined'.format(key))
 
     def __setitem__(self, key, val):
         (self._get_scope(key) or self.public_scopes[-1])[key] = val
@@ -1024,6 +1014,39 @@ class _Variable(object):
         scope.update(self.local_scopes[-1])
         return scope
 
+class _Variable(object):
+    def __init__(self, memvar, db):
+        self.__dict__['memvar'] = memvar
+        self.__dict__['db'] = db
+
+    def __getattr__(self, key):
+        return self[key]
+
+    def __getitem__(self, key):
+        try:
+            return self.db._get_table_info(key).table.current_record
+        except:
+            pass
+        table_info = self.db._get_table_info()
+        if table_info is not None and key in table_info.table.field_names:
+            return table_info.table.current_record[key]
+        return self.memvar[key]
+
+    def __setitem__(self, key, val):
+        self.memvar[key] = val
+
+    def __setattr__(self, key, val):
+        if key in self.__dict__:
+            super(_Variable, self).__setattr__(key, val)
+        else:
+            self.memvar[key] = val
+
+    def __delitem__(self, key):
+        del self.memvar[key]
+
+    def __delattr__(self, key):
+        del self.memvar[key]
+
 class _Function(object):
     def __init__(self):
         self.__dict__['functions'] = {}
@@ -1034,7 +1057,7 @@ class _Function(object):
     def __getitem__(self, key):
         if key in self.functions:
             return self.functions[key]['func']
-        for scope in S.public_scopes:
+        for scope in M.public_scopes:
             if key in scope and isinstance(scope[key], Array):
                 return scope[key]
         raise _EXCEPTION('{} is not a procedure'.format(key))
@@ -1624,15 +1647,15 @@ def clearall():
     pass
 
 DB = DatabaseContext()
-S = _Variable(DB)
+M = _Memvar()
+S = _Variable(M, DB)
 F = _Function()
-M = None # Placeholder for later use.
 
 def module(module_name):
     return __import__(module_name.lower())
 
 error_func = None
-S.pushscope()
-S.add_public('_screen')
-S['_screen'] = MainWindow()
-S['_screen'].caption = 'VFP To Python'
+M.pushscope()
+M.add_public('_screen')
+S._screen = MainWindow()
+S._screen.caption = 'VFP To Python'

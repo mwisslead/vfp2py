@@ -13,42 +13,42 @@ from vfp2py.vfpfunc import DB, Array, F, M, S
 
 
 def _program_main():
-    S.pushscope()
-    S.popscope()
+    M.pushscope()
+    M.popscope()
 
 
 def select_tests():
-    S.pushscope()
+    M.pushscope()
     assert DB.select_function(0 if vfpfunc.set('compatible') == 'OFF' else None) == 1
     assert DB.select_function(0) == 1
     assert DB.select_function(1) == 32767
     assert DB.select_function(2) == 0
     assert DB.select_function('test') == 0
-    S.popscope()
+    M.popscope()
 
 
 def chr_tests():
-    S.pushscope()
+    M.pushscope()
     assert ord('\x00'[0]) == 0
-    S.popscope()
+    M.popscope()
 
 
 def set_tests():
-    S.pushscope()
+    M.pushscope()
     assert vfpfunc.set('compatible') == 'OFF'
     assert vfpfunc.set('compatible', 1) == 'PROMPT'
-    S.popscope()
+    M.popscope()
 
 
 def used_tests():
-    S.pushscope()
+    M.pushscope()
     assert DB.used('test') == False
-    S.popscope()
+    M.popscope()
 
 
 def date_tests():
-    S.pushscope()
-    S.add_local('somedate')
+    M.pushscope()
+    M.add_local('somedate')
     S['somedate'] = dt.date(2017, 6, 30)
     assert S['somedate'] == dt.date(2017, 6, 30)
     assert vfpfunc.dow_fix(S['somedate'].weekday()) == 6
@@ -62,12 +62,12 @@ def date_tests():
     assert vfpfunc.gomonth(S['somedate'], -4) == dt.date(2017, 2, 28)
     assert vfpfunc.vartype(S['somedate']) == 'D'
     assert vfpfunc.vartype(dt.datetime.combine(S['somedate'], dt.datetime.min.time())) == 'T'
-    S.popscope()
+    M.popscope()
 
 
 def math_tests():
-    S.pushscope()
-    S.add_local('num_value')
+    M.pushscope()
+    M.add_local('num_value')
     S['num_value'] = math.pi
     assert round(math.pi, 2) == 3.14
     assert abs(math.tan(math.radians(45)) - 1) < 0.001
@@ -76,15 +76,15 @@ def math_tests():
     assert abs(math.cos(math.radians(45)) - math.sqrt(2) / 2) < 0.001
     assert 0 < random.random() and random.random() < 1
 
-    S.add_local('stringval')
+    M.add_local('stringval')
     S['stringval'] = '1e5'
     assert float(S['stringval']) == 100000
     assert vfpfunc.vartype(S['num_value']) == 'N'
-    S.popscope()
+    M.popscope()
 
 
 def string_tests():
-    S.pushscope()
+    M.pushscope()
     S['cstring'] = 'AAA  aaa, BBB bbb, CCC ccc.'
     assert vfpfunc.vartype(S['cstring']) == 'C'
     assert len([w for w in S['cstring'].split() if w]) == 6
@@ -125,11 +125,11 @@ def string_tests():
                                  u'      TEXTLINES',
                                  u'   '], show=False)
     assert S['cstring'] == '123AAbbbBTESTTESTTEXTLINES'
-    S.popscope()
+    M.popscope()
 
 
 def path_tests():
-    S.pushscope()
+    M.pushscope()
     assert vfpfunc.home() == os.getcwd()
     S['handle'] = open('test_lib_file', 'w')
     S['handle'].close()
@@ -138,21 +138,21 @@ def path_tests():
     assert vfpfunc.home() != os.getcwd()
     assert not vfpfunc.isblank(vfpfunc.locfile('test_lib_file'))
     os.remove(os.path.join(vfpfunc.home(), 'test_lib_file'))
-    S.popscope()
+    M.popscope()
 
 
 def misc_tests():
-    S.pushscope()
+    M.pushscope()
     assert vfpfunc.version() == 'Not FoxPro 9'
     assert vfpfunc.version(4) == vfpfunc.version()
     assert vfpfunc.version(5) == 900
-    S.popscope()
+    M.popscope()
 
 
 def _add_db_record(seed=False):
-    S.pushscope()
-    S.add_local(seed=seed)
-    S.add_local('fake', 'fake_name', 'fake_st', 'fake_quantity', 'fake_received')
+    M.pushscope()
+    M.add_local(seed=seed)
+    M.add_local('fake', 'fake_name', 'fake_st', 'fake_quantity', 'fake_received')
     S['fake'] = faker.Faker()
     S['fake'].seed(S['seed'])
     S['fake_name'] = S['fake'].name()
@@ -160,13 +160,13 @@ def _add_db_record(seed=False):
     S['fake_quantity'] = S['fake'].random_int(0, 100)
     S['fake_received'] = S['fake'].boolean()
     DB.insert('report', (S['fake_name'], S['fake_st'], S['fake_quantity'], S['fake_received']))
-    S.popscope()
+    M.popscope()
 
 
 def _sqlexec_add_record(sqlconn=False, seed=False):
-    S.pushscope()
-    S.add_local(sqlconn=sqlconn, seed=seed)
-    S.add_local('fake', 'fake_name', 'fake_st', 'fake_quantity', 'fake_received')
+    M.pushscope()
+    M.add_local(sqlconn=sqlconn, seed=seed)
+    M.add_local('fake', 'fake_name', 'fake_st', 'fake_quantity', 'fake_received')
     S['fake'] = faker.Faker()
     S['fake'].seed(S['seed'])
     S['fake_name'] = S['fake'].name()
@@ -175,11 +175,11 @@ def _sqlexec_add_record(sqlconn=False, seed=False):
     S['fake_received'] = S['fake'].boolean()
     S['sqlcmd'] = "insert into REPORT values ('" + S['fake_name'] + "','" + S['fake_st'] + "'," + vfpfunc.num_to_str(S['fake_quantity']).strip() + ',' + vfpfunc.num_to_str(int(S['fake_received'])).strip() + ')'
     print(S['sqlcmd'])
-    return S.popscope(vfpfunc.sqlexec(S['sqlconn'], S['sqlcmd']))
+    return M.popscope(vfpfunc.sqlexec(S['sqlconn'], S['sqlcmd']))
 
 
 def database_tests():
-    S.pushscope()
+    M.pushscope()
     # FIX ME: SET SAFETY OFF
     # FIX ME: SET ASSERTS ON
     try:
@@ -203,7 +203,7 @@ def database_tests():
         assert DB.field(2) == 'st'
         assert not DB.found()
         DB.goto(None, 0)
-        S.add_local('loopcount')
+        M.add_local('loopcount')
         S['loopcount'] = 0
         for _ in DB.scanner(scope=('rest',)):
             assert len(S['name'].strip()) > 0
@@ -226,7 +226,7 @@ def database_tests():
             assert len(S['name'].strip()) > 0
             S['loopcount'] += 1
         assert S['loopcount'] == 2
-        del S['loopcount']
+        del M['loopcount']
         assert S['name'].strip() == 'Norma Fisher', S['name'].strip() + ' should be Norma Fisher'
         assert DB.recno() == 1
         DB.goto(None, -1)
@@ -308,16 +308,16 @@ def database_tests():
     assert vfpfunc.sqlexec(S['sqlconn'], 'DROP TABLE REPORT') > 0
     vfpfunc.sqlcommit(S['sqlconn'])
     vfpfunc.sqldisconnect(S['sqlconn'])
-    S.popscope()
+    M.popscope()
 
 
 def scope_tests():
-    S.pushscope()
-    S.add_public(somearray=Array(2, 5))
-    S.add_public(**{'def': Array(10)})
+    M.pushscope()
+    M.add_public(somearray=Array(2, 5))
+    M.add_public(**{'def': Array(10)})
     assert F['def'](1) == False
     S['somearray'][1, 4] = 3
     assert F['somearray'](1, 4) == 3
-    S.add_private('test', somearray=Array(2, 5))
-    del S['nonexistantvariable']
-    S.popscope()
+    M.add_private('test', somearray=Array(2, 5))
+    del M['nonexistantvariable']
+    M.popscope()

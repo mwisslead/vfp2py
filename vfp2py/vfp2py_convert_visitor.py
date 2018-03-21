@@ -298,14 +298,14 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
                     newbody.append(fix_returns(line))
                 elif isinstance(line, CodeStr) and line.startswith('return '):
                     return_value = CodeStr(line[7:])
-                    newbody.append(CodeStr('return S.popscope({})'.format(return_value)))
+                    newbody.append(CodeStr('return M.popscope({})'.format(return_value)))
                 else:
                     newbody.append(line)
             return newbody
-        body = [CodeStr('S.pushscope()')] + fix_returns(body)
+        body = [CodeStr('M.pushscope()')] + fix_returns(body)
         if isinstance(body[-1], CodeStr) and body[-1].startswith('return '):
             return body
-        body.append(CodeStr('S.popscope()'))
+        body.append(CodeStr('M.popscope()'))
         return body
 
     def visitFuncDef(self, ctx):
@@ -313,7 +313,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         body = []
         if parameters:
             kwargs = {p: p for p in parameters}
-            body.append(make_func_code('S.add_local', **kwargs))
+            body.append(make_func_code('M.add_local', **kwargs))
         else:
             try:
                 parameter_line = next(line for line in ctx.lines().line() if not line.lineComment())
@@ -327,9 +327,9 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
                 for child in children:
                     lines.addChild(child)
                 if keyword.startswith('l'):
-                    func = 'S.add_local'
+                    func = 'M.add_local'
                 else:
-                    func = 'S.add_private'
+                    func = 'M.add_private'
                 kwargs = {p: p for p in parameters}
                 body.append(make_func_code(func, **kwargs))
             except (StopIteration, AttributeError):
@@ -478,7 +478,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         arrays = [(name, make_func_code('Array', *ind)) for name, ind in zip(names, inds) if ind]
 
         if scope in ('public', 'private', 'local'):
-            func = 'S.add_'  + scope
+            func = 'M.add_'  + scope
             kwargs = {str(name): array for name, array in arrays}
             names = [str(name) for name, ind in zip(names, inds) if not ind]
             if any(keyword.iskeyword(name) for name in kwargs):
@@ -1326,7 +1326,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
                     kwargs['extended'] = True
                 retval.append(make_func_code('F.release_popups', *args, **kwargs))
             elif ctx.ALL():
-                retval.append(make_func_code('S.release'))
+                retval.append(make_func_code('M.release'))
             else:
                 thisargs = [arg for arg in args if arg in ('this', 'thisform')]
                 args = [arg for arg in args if arg not in ('this', 'thisform')]
@@ -1336,7 +1336,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
                     if arg == 'thisform':
                         retval.append(make_func_code('self.parentform.release()'))
                 if args:
-                    args = [add_args_to_code('S[{}]', [arg]) for arg in args]
+                    args = [add_args_to_code('M[{}]', [arg]) for arg in args]
                     retval.append(CodeStr('del {}'.format(', '.join(args))))
         return retval
 

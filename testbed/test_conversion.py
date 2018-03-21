@@ -119,8 +119,8 @@ ACTIVATE MENU test NOWAIT
 # comment
 # continued on another line
 # and another
-S.add_local(\'string_val\', \'float_val\', \'money_val\', \'int_val\', \'blob_val\', \'bool_val\', \'null_val\', \'nulldate_val\', \'date_val\', \'datetime_val\', \'obj_val\')
-S.add_local(\'y\', \'z\', \'w\')
+M.add_local(\'string_val\', \'float_val\', \'money_val\', \'int_val\', \'blob_val\', \'bool_val\', \'null_val\', \'nulldate_val\', \'date_val\', \'datetime_val\', \'obj_val\')
+M.add_local(\'y\', \'z\', \'w\')
 S[\'string_val\'] = \'str\'
 S[\'float_val\'] = 3.0
 S[\'float_val\'] = .5e-5
@@ -163,9 +163,9 @@ print(bytearray(S[\'string_val\']))
 print(float(S[\'float_val\']))
 S[\'obj_val\'] = vfpfunc.create_object(\'Test\')
 S[\'obj_val\'] = vfpfunc.Form()
-del S[\'string_val\'], S[\'int_val\'], S[\'bool_val\'], S[\'null_val\']
-S.add_local(items=Array(3, 5))
-S.add_local(\'item\')
+del M[\'string_val\'], M[\'int_val\'], M[\'bool_val\'], M[\'null_val\']
+M.add_local(items=Array(3, 5))
+M.add_local(\'item\')
 for S[\'item\'] in S[\'items\']:
     if not S[\'item\']:
         continue
@@ -173,7 +173,7 @@ for S[\'item\'] in S[\'items\']:
         # TEST()
         # ENDIF
     break
-del S[\'items\'], S[\'item\']
+del M[\'items\'], M[\'item\']
 for S[\'x\'] in range(4, 8):
     pass
 for S[\'x\'] in range(1, 8, 2):
@@ -278,7 +278,7 @@ from vfp2py.vfpfunc import DB, Array, F, M, S
 
 
 def _program_main():
-    S.pushscope()
+    M.pushscope()
     # comment with spaces
     ###############
     ### comment ###
@@ -296,7 +296,7 @@ def _program_main():
     print(vfpfunc.num_to_str(3), end=\'\')
     print(vfpfunc.num_to_str(3), file=sys.stderr)
     print(3)  # @ 10, 10 SAY 3
-    return S.popscope(S[\'x\'])
+    return M.popscope(S[\'x\'])
 '''.strip()
     test_output_str = vfp2py.vfp2py.prg2py(input_str).strip()
     try:
@@ -367,26 +367,26 @@ from vfp2py.vfpfunc import DB, Array, F, M, S
 
 
 def _program_main():
-    S.pushscope()
-    S.popscope()
+    M.pushscope()
+    M.popscope()
 
 
 class Subobj(vfpfunc.Custom):
 
     def _assign(self, *args, **kwargs):
-        S.pushscope()
+        M.pushscope()
         vfpfunc.Custom._assign(self)
         self.x = 3
 
         # comment
-        S.popscope()
+        M.popscope()
 
     def init(self, x=False):
-        S.pushscope()
-        S.add_local(x=x)
+        M.pushscope()
+        M.add_local(x=x)
         super(type(self), self).init()
         self.x = S[\'x\']
-        S.popscope()
+        M.popscope()
 
 # comment about subobj2
 
@@ -394,49 +394,49 @@ class Subobj(vfpfunc.Custom):
 class Subobj2(Subobj):
 
     def _assign(self, *args, **kwargs):
-        S.pushscope()
+        M.pushscope()
         Subobj._assign(self)
         self.x = 4
-        S.popscope()
+        M.popscope()
 
 
 class Testclass(vfpfunc.Commandbutton):
 
     def _assign(self, *args, **kwargs):
-        S.pushscope()
+        M.pushscope()
         vfpfunc.Commandbutton._assign(self)
         self.test1 = vfpfunc.Custom(name=\'test1\', parent=self)
         self.test2 = Subobj(x=4, name=\'test2\', parent=self)
         self.test3 = vfpfunc.create_object(\'Unknownobj\', x=\'4\', name=\'test3\', parent=self)
-        S.popscope()
+        M.popscope()
 
     def init(self, x=False):
-        S.pushscope()
-        S.add_local(x=x)
+        M.pushscope()
+        M.add_local(x=x)
         # FIX ME: NODEFAULT
-        S.popscope()
+        M.popscope()
 
 
 class Abutton(Testclass):
 
     def _assign(self, *args, **kwargs):
-        S.pushscope()
+        M.pushscope()
         Testclass._assign(self)
-        S.popscope()
+        M.popscope()
 
     def click(self):
-        S.pushscope()
+        M.pushscope()
         Testclass.click()
-        S.popscope()
+        M.popscope()
 
 
 def random_function(x=False):
-    S.pushscope()
-    S.add_local(x=x)
+    M.pushscope()
+    M.add_local(x=x)
 
     # something
     print(S[\'x\'])
-    S.popscope()
+    M.popscope()
 
 # comment about testclass2
 
@@ -444,18 +444,18 @@ def random_function(x=False):
 class Testclass2(vfpfunc.classes[\'Unknownclass\']):
 
     def _assign(self, *args, **kwargs):
-        S.pushscope()
+        M.pushscope()
         vfpfunc.classes[\'Unknownclass\']._assign(self)
-        S.popscope()
+        M.popscope()
 
 
 def another_random_function(x=False, y=False):
-    S.pushscope()
-    S.add_private(y=y, x=x)
+    M.pushscope()
+    M.add_private(y=y, x=x)
 
     # something
     print(S[\'x\'])
-    S.popscope()
+    M.popscope()
 '''.strip()
     test_output_str = vfp2py.vfp2py.prg2py(input_str).strip()
     try:
@@ -489,7 +489,7 @@ delete file ?
 delete file test.txt recycle
 '''.strip()
     output_str = '''
-S.add_local(\'a\')
+M.add_local(\'a\')
 F[\'a\']()
 F[\'a+b\']()
 F[S[\'a\'] + S[\'b\']]()
@@ -530,7 +530,7 @@ rd alltrim(test)
 !ls -al &pathname
 '''.strip()
     output_str = '''
-S.add_local(\'test\')
+M.add_local(\'test\')
 shutil.copyfile(S[\'test\'], \'tset\')
 shutil.move(S[\'test\'], \'tset\')
 os.mkdir(S[\'test\'] - S[\'test\'])
@@ -564,13 +564,13 @@ update test set a=b, c=d, e=f where x=3
     output_str = '''
 DB.create_cursor(\'test_cursor\', \'somefield n(3)\', \'\')
 DB.continue_locate()
-S.add_local(\'search_for\', \'countval\', \'sumval\')
+M.add_local(\'search_for\', \'countval\', \'sumval\')
 S[\'search_for\'] = \'PAUL\'
 DB.seek(None, S[\'search_for\'].strip())
 S[\'countval\'] = DB.count(None, (\'all\',), for_cond=lambda: S[\'test\'] == 3)
 S[\'sumval\'] = DB.sum(None, (\'all\',), lambda: S[\'t\'] * S[\'t\'], for_cond=lambda: S[\'t\'] > 0)
 DB.locate(nooptimize=True, while_cond=lambda: S[\'x\'] > 5)
-del S[\'search_for\'], S[\'countval\'], S[\'sumval\']
+del M[\'search_for\'], M[\'countval\'], M[\'sumval\']
 DB.update(\'test\', [(\'a\', S[\'b\']), (\'c\', S[\'d\']), (\'e\', S[\'f\'])], where=lambda: S[\'x\'] == 3)
 '''.strip()
     test_output_str = vfp2py.vfp2py.prg2py(input_str, parser_start='lines', prepend_data='').strip()
@@ -600,11 +600,11 @@ from vfp2py.vfpfunc import DB, Array, F, M, S
 
 
 def _program_main():
-    S.pushscope()
+    M.pushscope()
     os.mkdir(\'test\')
     print(dt.datetime.now().date())
     print(math.pi)
-    S.popscope()
+    M.popscope()
 '''.strip()
     test_output_str = vfp2py.vfp2py.prg2py(input_str).strip()
     try:
@@ -668,7 +668,7 @@ ASSERT NOT X
 ASSERT X = .T. MESSAGE Y + \' ASSERT\'
 '''.strip()
     output_str = '''
-S.add_local(\'x\', \'y\')
+M.add_local(\'x\', \'y\')
 S[\'x\'] = False
 S[\'y\'] = \'failed\'
 assert not S[\'x\']
@@ -781,7 +781,7 @@ MYDIR = \'c:\\test\\test\\dir\'
 RELEASE MYFILE, MYDIR
 '''.strip()
     output_str = '''
-S.add_local(\'myfile\', \'mydir\')
+M.add_local(\'myfile\', \'mydir\')
 S[\'myfile\'] = \'c:\\\\test\\\\test.prg\'
 S[\'mydir\'] = \'c:\\\\test\\\\test\\\\dir\'
 print(os.path.isfile(S[\'myfile\']))
@@ -802,7 +802,7 @@ print(os.path.join(S[\'mydir\'], \'dir1\'))
 print(os.path.join(S[\'mydir\'], \'dir1\', \'dir2\'))
 print(os.path.join(S[\'mydir\'], \'dir1\', \'dir2\', \'dir3\'))
 print(os.getcwd())
-del S[\'myfile\'], S[\'mydir\']
+del M[\'myfile\'], M[\'mydir\']
 '''.strip()
     test_output_str = vfp2py.vfp2py.prg2py(input_str, parser_start='lines', prepend_data='').strip()
     try:
@@ -825,8 +825,8 @@ pydict.setitem(\'one\', 1)
 ?pydict.getitem(\'one\')
 '''.strip()
     output_str = '''
-S.add_local(somearray=Array(2, 5))
-S.add_local(\'pytuple\', \'pylist\', \'pydict\')
+M.add_local(somearray=Array(2, 5))
+M.add_local(\'pytuple\', \'pylist\', \'pydict\')
 S[\'pytuple\'] = (\'a\', 3, True)
 S[\'pylist\'] = S[\'somearray\'].data[:]
 S[\'pylist\'].append(\'appended value\')
@@ -853,10 +853,10 @@ EXTERNAL ARRAY someotherarray[3]
 EXTERNAL PROCEDURE test
 '''.strip()
     output_str = '''
-S.add_public(somearray=Array(2, 5))
-S.add_public(**{\'def\': Array(10)})
+M.add_public(somearray=Array(2, 5))
+M.add_public(**{\'def\': Array(10)})
 S[\'somearray\'][1, 4] = 3
-S.add_private(\'test\', somearray=Array(2, 5))
+M.add_private(\'test\', somearray=Array(2, 5))
 # FIX ME: EXTERNAL ARRAY someotherarray[3]
 # FIX ME: EXTERNAL PROCEDURE test
 '''.strip()
@@ -905,8 +905,8 @@ T = aINS(main_array, 3)
 T = aINS(main_array, 3, 2)
 '''.strip()
     output_str = '''
-S.add_local(\'cnt_fields\')
-S.add_local(main_array=Array(1))
+M.add_local(\'cnt_fields\')
+M.add_local(main_array=Array(1))
 S[\'cnt_fields\'] = DB.afields(None, \'main_array\', (locals(), S)) + 32
 S[\'cnt_fields\'] = DB.afields(\'report\', \'main_array2\', (locals(), S)) + 47
 S[\'t\'] = S[\'main_array\'].insert(None, 3)
