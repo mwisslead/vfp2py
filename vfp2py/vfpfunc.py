@@ -1041,12 +1041,6 @@ class _Variable(object):
         else:
             self.memvar[key] = val
 
-    def __delitem__(self, key):
-        del self.memvar[key]
-
-    def __delattr__(self, key):
-        del self.memvar[key]
-
 class _Function(object):
     def __init__(self):
         self.__dict__['functions'] = {}
