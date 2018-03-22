@@ -125,6 +125,9 @@ def string_tests():
                                  u'      TEXTLINES',
                                  u'   '], show=False)
     assert S['cstring'] == '123AAbbbBTESTTESTTEXTLINES'
+    S['cstring'] = '123AAbbbB\r\nTESTTEST\r\nTEXTLINES'
+    assert vfpfunc.atline('T', S['cstring']) == 2
+    assert vfpfunc.ratline('T', S['cstring']) == 3
     M.popscope()
 
 

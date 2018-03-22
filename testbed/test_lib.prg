@@ -94,6 +94,9 @@ procedure string_tests
       TEXTLINES
    ENDTEXT
    assert cstring == '123AAbbbBTESTTESTTEXTLINES'
+   cstring = '123AAbbbB' + CHR(13) + CHR(10) + 'TESTTEST' + CHR(13) + CHR(10) + 'TEXTLINES'
+   assert atline('T', cstring) == 2
+   assert ratline('T', cstring) == 3
 ENDPROC
 
 procedure path_tests

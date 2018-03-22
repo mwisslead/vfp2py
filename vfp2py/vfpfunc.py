@@ -1098,10 +1098,7 @@ class _Function(object):
         self.functions[alias] = {'func': func, 'source': dllname}
 
 def atline(search, string):
-    found = string.find(search)
-    if found == -1:
-        return 0
-    return string[:found].count('\r') + 1
+    return string[:string.find(search)+1].count('\r') + 1
 
 def capslock(on=None):
     pass
@@ -1406,10 +1403,7 @@ def quit(message=None, flags=None, title=None):
     sys.exit()
 
 def ratline(search, string):
-    found = string.rfind(search)
-    if found == -1:
-        return 0
-    return string[:found].count('\r') + 1
+    return string[:string.rfind(search)+1].count('\r') + 1
 
 def rgb(red, green, blue):
     return QtGui.QColor(red, green, blue)
