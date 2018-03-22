@@ -74,6 +74,9 @@ def create_string(val):
 def add_args_to_code(codestr, args):
     return CodeStr(codestr.format(*[repr(arg) for arg in args]))
 
+def valid_identifier(name):
+    return re.match(tokenize.Name + '$', name) and not keyword.iskeyword(name)
+
 class PythonConvertVisitor(VisualFoxpro9Visitor):
     def __init__(self, filename):
         super(PythonConvertVisitor, self).__init__()
@@ -473,7 +476,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             inds = [ind or (1,) for ind in inds]
 
         if scope in ('hidden', 'protected'):
-            names = [add_args_to_code('self.{}', [name]) if not keyword.iskeyword(name) else CodeStr('getattr(self, {}'.format(name)) for name in names]
+            names = [add_args_to_code('self.{}', [name]) if valid_identifier(name) else CodeStr('getattr(self, {}'.format(name)) for name in names]
 
         arrays = [(name, make_func_code('Array', *ind)) for name, ind in zip(names, inds) if ind]
 
@@ -481,7 +484,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             func = 'M.add_'  + scope
             kwargs = {str(name): array for name, array in arrays}
             names = [str(name) for name, ind in zip(names, inds) if not ind]
-            if any(keyword.iskeyword(name) for name in kwargs):
+            if not all(valid_identifier(name) for name in kwargs):
                 names.append(add_args_to_code('**{}', [kwargs]))
                 kwargs = {}
             return make_func_code(func, *names, **kwargs)
@@ -1206,7 +1209,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         if namespace.endswith('.prg'):
             namespace = namespace[:-4]
 
-        if string_type(namespace) and re.match(tokenize.Name + '$', namespace) and not keyword.iskeyword(namespace):
+        if string_type(namespace) and valid_identifier(namespace):
             namespace = ntpath.normpath(ntpath.splitext(namespace)[0]).replace(ntpath.sep, '.')
             if namespace != 'vfpfunc':
                 self.imports.append('import ' + namespace)
