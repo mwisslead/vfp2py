@@ -886,16 +886,18 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         return make_func_code(funcname, *args)
 
     def scopeId(self, identifier, vartype):
-        if not self.scope:
-            return identifier
-        if identifier == 'this':
-            return CodeStr('self')
-        if identifier == 'thisform':
-            return CodeStr('self.parentform')
-        if vartype == 'val':
-            return add_args_to_code('S[{}]', [str(identifier)])
-        elif vartype == 'func':
-            return add_args_to_code('F[{}]', [str(identifier)])
+        scope = CodeStr({
+            'val': 'S',
+            'func': 'F',
+        }[vartype])
+        if scope != 'F':
+            if not self.scope:
+                return identifier
+            elif identifier == 'this':
+                return CodeStr('self')
+            elif identifier == 'thisform':
+                return CodeStr('self.parentform')
+        return add_args_to_code('{}[{}]', [scope, str(identifier)])
 
     def createIdAttr(self, identifier, trailer):
         if trailer and len(trailer) == 1 and isinstance(trailer[0], list):
