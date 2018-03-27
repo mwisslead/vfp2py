@@ -440,7 +440,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         if not ctx.CATCH():
             return try_lines + finally_lines
 
-        identifier = add_args_to_code('S[\'{}\']', (self.visit(ctx.identifier()),))
+        identifier = add_args_to_code('S.{}', (self.visit(ctx.identifier()),))
 
         try_lines = [CodeStr('try:'), try_lines]
 
@@ -625,9 +625,9 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             arrname = args.pop(0)
             if not args:
                 args.append(None)
-            replace_string = 'S['
+            replace_string = 'S.'
             if arrname.startswith(replace_string):
-                arrname = CodeStr(arrname[len(replace_string):-1]) #FIXME
+                arrname = str(arrname[len(replace_string):]) #FIXME
             else:
                 arrname = str(arrname)
             args.append(arrname)
@@ -897,7 +897,9 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
                 return CodeStr('self')
             elif identifier == 'thisform':
                 return CodeStr('self.parentform')
-        return add_args_to_code('{}[{}]', [scope, str(identifier)])
+            return add_args_to_code('{}.{}', [scope, identifier])
+        else:
+            return add_args_to_code('{}[{}]', [scope, str(identifier)])
 
     def createIdAttr(self, identifier, trailer):
         if trailer and len(trailer) == 1 and isinstance(trailer[0], list):
@@ -1341,7 +1343,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
                     if arg == 'thisform':
                         retval.append(make_func_code('self.parentform.release()'))
                 if args:
-                    args = [add_args_to_code('M[{}]', [arg]) for arg in args]
+                    args = [add_args_to_code('M.{}', [CodeStr(arg)]) for arg in args]
                     retval.append(CodeStr('del {}'.format(', '.join(args))))
         return retval
 

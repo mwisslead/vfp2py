@@ -115,34 +115,34 @@ ACTIVATE MENU test NOWAIT
 # and another
 M.add_local('string_val', 'float_val', 'money_val', 'int_val', 'blob_val', 'bool_val', 'null_val', 'nulldate_val', 'date_val', 'datetime_val', 'obj_val')
 M.add_local('y', 'z', 'w')
-S['string_val'] = 'str'
-S['float_val'] = 3.0
-S['float_val'] = .5e-5
-S['float_val'] = 8e+18
-S['float_val'] = 1.3e12
-S['float_val'] = .1e0
-S['money_val'] = 3.5123
-S['int_val'] = 3
-S['int_val'] = 0x3
-S['int_val'] = 0x3f
-S['int_val'] = 0x0
-S['blob_val'] = bytearray(b'\x124Vx\x9a\xbc\xde')
-S['blob_val'] = bytearray(b'\x00\x124Vx\x9a\xbc\xde')
-S['blob_val'] = bytearray(b'')
-S['bool_val'] = False
-S['null_val'] = None
-S['nulldate_val'] = None
-S['nulldate_val'] = None
-S['date_val'] = dt.date(2017, 5, 6)
-S['datetime_val'] = dt.datetime(2017, 5, 6, 17)
-print((S['float_val'] + S['int_val'] + S['int_val'] + S['float_val'] + S['int_val'] - S['float_val']) / 3 / 4 * -5 - S['int_val'] * 3)
+S.string_val = 'str'
+S.float_val = 3.0
+S.float_val = .5e-5
+S.float_val = 8e+18
+S.float_val = 1.3e12
+S.float_val = .1e0
+S.money_val = 3.5123
+S.int_val = 3
+S.int_val = 0x3
+S.int_val = 0x3f
+S.int_val = 0x0
+S.blob_val = bytearray(b'\x124Vx\x9a\xbc\xde')
+S.blob_val = bytearray(b'\x00\x124Vx\x9a\xbc\xde')
+S.blob_val = bytearray(b'')
+S.bool_val = False
+S.null_val = None
+S.nulldate_val = None
+S.nulldate_val = None
+S.date_val = dt.date(2017, 5, 6)
+S.datetime_val = dt.datetime(2017, 5, 6, 17)
+print((S.float_val + S.int_val + S.int_val + S.float_val + S.int_val - S.float_val) / 3 / 4 * -5 - S.int_val * 3)
 print('\x03')
-print(chr(int(S['int_val'])))
+print(chr(int(S.int_val)))
 print('   ')
 print(20 * ' ')
-print(int(S['int_val']) * ' ')
-print(S['date_val'].day)
-print(vfpfunc.dow_fix(S['date_val'].weekday()))
+print(int(S.int_val) * ' ')
+print(S.date_val.day)
+print(vfpfunc.dow_fix(S.date_val.weekday()))
 print('chr(65) = A, just letting you know.\r\n')
 print((2 ** 3) ** 4)
 print(2 ** 3 ** 4)
@@ -152,41 +152,41 @@ print(10 >= 5)
 print(10 <= 5)
 print(10 <= 5)
 print(True or False and False or False)
-print(S['x'] or S['y'] and S['w'] or S['z'])
-print(bytearray(S['string_val']))
-print(float(S['float_val']))
-S['obj_val'] = vfpfunc.create_object('Test')
-S['obj_val'] = vfpfunc.Form()
-del M['string_val'], M['int_val'], M['bool_val'], M['null_val']
+print(S.x or S.y and S.w or S.z)
+print(bytearray(S.string_val))
+print(float(S.float_val))
+S.obj_val = vfpfunc.create_object('Test')
+S.obj_val = vfpfunc.Form()
+del M.string_val, M.int_val, M.bool_val, M.null_val
 M.add_local(items=Array(3, 5))
 M.add_local('item')
-for S['item'] in S['items']:
-    if not S['item']:
+for S.item in S.items:
+    if not S.item:
         continue
         # IF
         # TEST()
         # ENDIF
     break
-del M['items'], M['item']
-for S['x'] in range(4, 8):
+del M.items, M.item
+for S.x in range(4, 8):
     pass
-for S['x'] in range(1, 8, 2):
+for S.x in range(1, 8, 2):
     pass
     # line comment1
     # line comment2
-if S['x'] == 1:
+if S.x == 1:
     pass
-elif S['x'] == 2:
+elif S.x == 2:
     pass
-elif S['x'] == 2:
+elif S.x == 2:
     pass
 else:
-    print(S['test'])
-S['somestring'] = vfpfunc.text([u'       1234567890',
-                                u'       0123456789',
-                                u'       ABCDEFGHIJ',
-                                u'       KLMNOPQRST',
-                                u'       UVWXYZ'], show=False)
+    print(S.test)
+S.somestring = vfpfunc.text([u'       1234567890',
+                             u'       0123456789',
+                             u'       ABCDEFGHIJ',
+                             u'       KLMNOPQRST',
+                             u'       UVWXYZ'], show=False)
 vfpfunc.quit()
 # FIX ME: CANCEL
 # FIX ME: RESUME
@@ -204,7 +204,7 @@ vfpfunc.read_events()
 # FIX ME: COPY TO ARRAY FOR X = 3
 # FIX ME: SAVE TO test ALL LIKE something
 # FIX ME: ZOOM WINDOW SCREEN MAX
-F['somefunc'](False, S['a'], False)
+F['somefunc'](False, S.a, False)
 # FIX ME: MODIFY WINDOW SCREEN FONT "FONT", 12 STYLE "B" TITLE "TITLE" NOFLOAT NOCLOSE NOZOOM
 # FIX ME: MODIFY COMMAND c:\test.prg
 vfpfunc.define_menu('test', window=vfpfunc.SCREEN, bar=True, line=2)
@@ -270,20 +270,20 @@ def _program_main():
     ###############
     ### comment ###
     ###############
-    S['x'] = '\n'
-    S['x'] = '\n'
-    S['x'] = '\n'
+    S.x = '\n'
+    S.x = '\n'
+    S.x = '\n'
     # set x to 5
-    S['x'] = 5
-    S['x'] = 'test\r\n'
-    S['x'] = '\x05'
-    S['x'] = '\r\n'
+    S.x = 5
+    S.x = 'test\r\n'
+    S.x = '\x05'
+    S.x = '\r\n'
     test._program_main()
     print(vfpfunc.num_to_str(3))
     print(vfpfunc.num_to_str(3), end='')
     print(vfpfunc.num_to_str(3), file=sys.stderr)
     print(3)  # @ 10, 10 SAY 3
-    return M.popscope(S['x'])
+    return M.popscope(S.x)
 @end=python@
 
 @begin=vfp@
@@ -364,7 +364,7 @@ class Subobj(vfpfunc.Custom):
         M.pushscope()
         M.add_local(x=x)
         super(type(self), self).init()
-        self.x = S['x']
+        self.x = S.x
         M.popscope()
 
 # comment about subobj2
@@ -414,7 +414,7 @@ def random_function(x=False):
     M.add_local(x=x)
 
     # something
-    print(S['x'])
+    print(S.x)
     M.popscope()
 
 # comment about testclass2
@@ -433,7 +433,7 @@ def another_random_function(x=False, y=False):
     M.add_private(y=y, x=x)
 
     # something
-    print(S['x'])
+    print(S.x)
     M.popscope()
 @end=python@
 
@@ -463,12 +463,12 @@ delete file test.txt recycle
 M.add_local('a')
 F['a']()
 F['a+b']()
-F[S['a'] + S['b']]()
-F[S['a'].strip()]()
+F[S.a + S.b]()
+F[S.a.strip()]()
 a.test()
-vfpfunc.module(S['a']).test()
-vfpfunc.module(S['a'] + '.PRG').test()
-vfpfunc.module(S['a'] + (S['b'])).test()
+vfpfunc.module(S.a).test()
+vfpfunc.module(S.a + '.PRG').test()
+vfpfunc.module(S.a + (S.b)).test()
 test._program_main()
 test.test()
 vfpfunc.do_form('splash.scx')
@@ -494,12 +494,12 @@ rd alltrim(test)
 
 @begin=python@
 M.add_local('test')
-shutil.copyfile(S['test'], 'tset')
-shutil.move(S['test'], 'tset')
-os.mkdir(S['test'] - S['test'])
+shutil.copyfile(S.test, 'tset')
+shutil.move(S.test, 'tset')
+os.mkdir(S.test - S.test)
 os.mkdir('test+test')
-os.rmdir(S['test'] + S['test'])
-os.rmdir(S['test'].strip())
+os.rmdir(S.test + S.test)
+os.rmdir(S.test.strip())
 subprocess.call(['ls', '-al', pathname])
 @end=python@
 
@@ -520,13 +520,13 @@ update test set a=b, c=d, e=f where x=3
 DB.create_cursor('test_cursor', 'somefield n(3)', '')
 DB.continue_locate()
 M.add_local('search_for', 'countval', 'sumval')
-S['search_for'] = 'PAUL'
-DB.seek(None, S['search_for'].strip())
-S['countval'] = DB.count(None, ('all',), for_cond=lambda: S['test'] == 3)
-S['sumval'] = DB.sum(None, ('all',), lambda: S['t'] * S['t'], for_cond=lambda: S['t'] > 0)
-DB.locate(nooptimize=True, while_cond=lambda: S['x'] > 5)
-del M['search_for'], M['countval'], M['sumval']
-DB.update('test', [('a', S['b']), ('c', S['d']), ('e', S['f'])], where=lambda: S['x'] == 3)
+S.search_for = 'PAUL'
+DB.seek(None, S.search_for.strip())
+S.countval = DB.count(None, ('all',), for_cond=lambda: S.test == 3)
+S.sumval = DB.sum(None, ('all',), lambda: S.t * S.t, for_cond=lambda: S.t > 0)
+DB.locate(nooptimize=True, while_cond=lambda: S.x > 5)
+del M.search_for, M.countval, M.sumval
+DB.update('test', [('a', S.b), ('c', S.d), ('e', S.f)], where=lambda: S.x == 3)
 @end=python@
 
 @begin=vfp@
@@ -600,10 +600,10 @@ ASSERT X = .T. MESSAGE Y + ' ASSERT'
 
 @begin=python@
 M.add_local('x', 'y')
-S['x'] = False
-S['y'] = 'failed'
-assert not S['x']
-assert S['x'] == True, S['y'] + ' ASSERT'
+S.x = False
+S.y = 'failed'
+assert not S.x
+assert S.x == True, S.y + ' ASSERT'
 @end=python@
 
 @begin=vfp@&&lines
@@ -659,7 +659,7 @@ APPEND FROM ARRAY TEST
 DB.append_from(None, 'table_name')
 DB.append_from(None, 'table_name', filetype='delimited')
 DB.append_from(None, 'table_name', filetype='delimited')
-DB.insert(None, S['test'])
+DB.insert(None, S.test)
 @end=python@
 
 @begin=vfp@&&lines
@@ -689,27 +689,27 @@ RELEASE MYFILE, MYDIR
 
 @begin=python@
 M.add_local('myfile', 'mydir')
-S['myfile'] = 'c:\\test\\test.prg'
-S['mydir'] = 'c:\\test\\test\\dir'
-print(os.path.isfile(S['myfile']))
-print(os.path.splitdrive(S['myfile'])[0])
-print(os.path.dirname(S['myfile']))
-print(os.path.basename(S['myfile']))
-print(os.path.splitext(os.path.basename(S['myfile']))[0])
-print(os.path.splitext(S['myfile'])[1][1:])
-print(os.path.splitext(S['myfile'])[0] + '.' + 'py')
-print(os.path.isdir(S['mydir']))
-print(os.path.splitdrive(S['mydir'])[0])
-print(os.path.dirname(S['mydir']))
-print(os.path.basename(S['mydir']))
-print(os.path.splitext(os.path.basename(S['mydir']))[0])
-print(os.path.splitext(S['mydir'])[1][1:])
-print(os.path.splitext(S['mydir'])[0] + '.' + 'py')
-print(os.path.join(S['mydir'], 'dir1'))
-print(os.path.join(S['mydir'], 'dir1', 'dir2'))
-print(os.path.join(S['mydir'], 'dir1', 'dir2', 'dir3'))
+S.myfile = 'c:\\test\\test.prg'
+S.mydir = 'c:\\test\\test\\dir'
+print(os.path.isfile(S.myfile))
+print(os.path.splitdrive(S.myfile)[0])
+print(os.path.dirname(S.myfile))
+print(os.path.basename(S.myfile))
+print(os.path.splitext(os.path.basename(S.myfile))[0])
+print(os.path.splitext(S.myfile)[1][1:])
+print(os.path.splitext(S.myfile)[0] + '.' + 'py')
+print(os.path.isdir(S.mydir))
+print(os.path.splitdrive(S.mydir)[0])
+print(os.path.dirname(S.mydir))
+print(os.path.basename(S.mydir))
+print(os.path.splitext(os.path.basename(S.mydir))[0])
+print(os.path.splitext(S.mydir)[1][1:])
+print(os.path.splitext(S.mydir)[0] + '.' + 'py')
+print(os.path.join(S.mydir, 'dir1'))
+print(os.path.join(S.mydir, 'dir1', 'dir2'))
+print(os.path.join(S.mydir, 'dir1', 'dir2', 'dir3'))
 print(os.getcwd())
-del M['myfile'], M['mydir']
+del M.myfile, M.mydir
 @end=python@
 
 @begin=vfp@&&lines
@@ -726,12 +726,12 @@ pydict.setitem('one', 1)
 @begin=python@
 M.add_local(somearray=Array(2, 5))
 M.add_local('pytuple', 'pylist', 'pydict')
-S['pytuple'] = ('a', 3, True)
-S['pylist'] = S['somearray'].data[:]
-S['pylist'].append('appended value')
-S['pydict'] = {}
-S['pydict']['one'] = 1
-print(S['pydict']['one'])
+S.pytuple = ('a', 3, True)
+S.pylist = S.somearray.data[:]
+S.pylist.append('appended value')
+S.pydict = {}
+S.pydict['one'] = 1
+print(S.pydict['one'])
 @end=python@
 
 @begin=vfp@&&lines
@@ -746,7 +746,7 @@ EXTERNAL PROCEDURE test
 @begin=python@
 M.add_public(somearray=Array(2, 5))
 M.add_public(**{'def': Array(10)})
-S['somearray'][1, 4] = 3
+S.somearray[1, 4] = 3
 M.add_private('test', somearray=Array(2, 5))
 # FIX ME: EXTERNAL ARRAY someotherarray[3]
 # FIX ME: EXTERNAL PROCEDURE test
@@ -764,8 +764,8 @@ throw 'Error' + ' Message'
 @begin=python@
 try:
     assert False
-except Exception as S['oerr']:
-    S['oerr'] = vfpfunc.Exception.from_pyexception(S['oerr'])
+except Exception as S.oerr:
+    S.oerr = vfpfunc.Exception.from_pyexception(S.oerr)
     raise
 raise Exception('Error Message')
 @end=python@
@@ -782,10 +782,10 @@ T = aINS(main_array, 3, 2)
 @begin=python@
 M.add_local('cnt_fields')
 M.add_local(main_array=Array(1))
-S['cnt_fields'] = DB.afields(None, 'main_array', (locals(), S)) + 32
-S['cnt_fields'] = DB.afields('report', 'main_array2', (locals(), S)) + 47
-S['t'] = S['main_array'].insert(None, 3)
-S['t'] = S['main_array'].insert(None, 3, 2)
+S.cnt_fields = DB.afields(None, 'main_array', (locals(), S)) + 32
+S.cnt_fields = DB.afields('report', 'main_array2', (locals(), S)) + 47
+S.t = S.main_array.insert(None, 3)
+S.t = S.main_array.insert(None, 3, 2)
 @end=python@
 
 @begin=vfp@&&lines
@@ -799,7 +799,7 @@ SKIP someval IN TEST
 DB.skip(None, 1)
 DB.skip(None, 10)
 DB.skip('test', 1)
-DB.skip('test', S['someval'])
+DB.skip('test', S.someval)
 @end=python@
 
 @begin=vfp@&&lines
@@ -832,8 +832,8 @@ vfpfunc.on_key['f12'] = lambda: print('KEY PRESSED')
 print()  # @x, y
 print()  # @x, y CLEAR
 print()  # @x, y CLEAR TO a, b
-print('hello ' + S['username'])  # @x, y say 'hello ' + username
-print('hello ' + S['username'])  # @x, y say 'hello ' + username STYLE thestyle
+print('hello ' + S.username)  # @x, y say 'hello ' + username
+print('hello ' + S.username)  # @x, y say 'hello ' + username STYLE thestyle
 @end=python@
 
 @begin=vfp@&&lines
@@ -843,9 +843,9 @@ scatter to somearray
 @end=vfp@
 
 @begin=python@
-S['test'] = vfpfunc.scatter('name')
+S.test = vfpfunc.scatter('name')
 vfpfunc.scatter('memvar', blank=True)
-S['somearray'] = vfpfunc.scatter('array')
+S.somearray = vfpfunc.scatter('array')
 @end=python@
 
 SET TYPEAHEAD TO 0
