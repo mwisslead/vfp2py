@@ -194,8 +194,11 @@ procedure database_tests
       release loopcount
       assert alltrim(name) == 'Norma Fisher' MESSAGE alltrim(name) + ' should be Norma Fisher'
       assert recno() == 1
+      scatter name report_record
+      assert alltrim(report_record.name) == 'Norma Fisher' MESSAGE alltrim(report_record.name) + ' should be Norma Fisher'
       go bott
       assert alltrim(name) == 'Joshua Wood' MESSAGE alltrim(name) + ' should be Joshua Wood'
+      assert alltrim(report_record.name) == 'Norma Fisher' MESSAGE alltrim(report_record.name) + ' should be Norma Fisher'
       assert recno() == 4
       goto 1
       locate for st == 'ID'

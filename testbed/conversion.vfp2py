@@ -843,9 +843,9 @@ scatter to somearray
 @end=vfp@
 
 @begin=python@
-S.test = vfpfunc.scatter('name')
-vfpfunc.scatter('memvar', blank=True)
-S.somearray = vfpfunc.scatter('array')
+S.test = vfpfunc.scatter(totype='name')
+vfpfunc.scatter(blank=True)
+S.somearray = vfpfunc.scatter(totype='array')
 @end=python@
 
 SET TYPEAHEAD TO 0

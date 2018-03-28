@@ -1000,9 +1000,9 @@ scatter blank memvar
 scatter to somearray
 '''.strip()
     output_str = '''
-S.test = vfpfunc.scatter(\'name\')
-vfpfunc.scatter(\'memvar\', blank=True)
-S.somearray = vfpfunc.scatter(\'array\')
+S.test = vfpfunc.scatter(totype=\'name\')
+vfpfunc.scatter(blank=True)
+S.somearray = vfpfunc.scatter(totype=\'array\')
 '''.strip()
     test_output_str = vfp2py.vfp2py.prg2py(input_str, parser_start='lines', prepend_data='').strip()
     try:

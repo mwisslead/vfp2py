@@ -232,8 +232,11 @@ def database_tests():
         del M.loopcount
         assert S.name.strip() == 'Norma Fisher', S.name.strip() + ' should be Norma Fisher'
         assert DB.recno() == 1
+        S.report_record = vfpfunc.scatter(totype='name')
+        assert S.report_record.name.strip() == 'Norma Fisher', S.report_record.name.strip() + ' should be Norma Fisher'
         DB.goto(None, -1)
         assert S.name.strip() == 'Joshua Wood', S.name.strip() + ' should be Joshua Wood'
+        assert S.report_record.name.strip() == 'Norma Fisher', S.report_record.name.strip() + ' should be Norma Fisher'
         assert DB.recno() == 4
         DB.goto(None, 1)
         DB.locate(for_cond=lambda: S.st == 'ID')

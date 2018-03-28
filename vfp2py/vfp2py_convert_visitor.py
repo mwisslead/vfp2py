@@ -1639,27 +1639,28 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
     def visitScatterExpr(self, ctx):
         kwargs = {}
         if ctx.FIELDS():
-            fields = self.visit(ctx.expr()[0])
+            fields = self.visit(ctx.args(0))
             if ctx.LIKE():
-                kwargs['like'] = fields
+                kwargs['type'] = 'like'
             elif ctx.EXCEPT():
-                kwargs['except'] = fields
-            else:
-                kwargs['fields'] = fields
+                kwargs['type'] = 'except'
+            kwargs['fields'] = fields
         if ctx.MEMO():
             kwargs['memo'] = True
         if ctx.BLANK():
             kwargs['blank'] = True
         if ctx.NAME():
+            name = self.visit(ctx.expr(0))
             if ctx.ADDITIVE():
-                kwargs['additive'] = True
-            name = self.visit(ctx.expr()[-1])
-            return add_args_to_code('{} = {}', (name, make_func_code('vfpfunc.scatter', 'name', **kwargs)))
+                kwargs['additive'] = name
+            kwargs['totype'] = 'name'
         elif ctx.TO():
-            name = self.visit(ctx.expr()[-1])
-            return add_args_to_code('{} = {}', (name, make_func_code('vfpfunc.scatter', 'array', **kwargs)))
-        else:
-            return make_func_code('vfpfunc.scatter', 'memvar', **kwargs)
+            name = self.visit(ctx.expr(0))
+            kwargs['totype'] = 'array'
+        func = make_func_code('vfpfunc.scatter', **kwargs)
+        if not ctx.MEMVAR():
+            return add_args_to_code('{} = {}', (name, func))
+        return func
 
     def visitGatherExpr(self, ctx):
         pass
