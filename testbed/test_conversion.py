@@ -998,11 +998,17 @@ def Test19():
 scatter name test
 scatter blank memvar
 scatter to somearray
+gather name test
+gather memvar
+gather from somearray
 '''.strip()
     output_str = '''
 S.test = vfpfunc.scatter(totype=\'name\')
 vfpfunc.scatter(blank=True)
 S.somearray = vfpfunc.scatter(totype=\'array\')
+vfpfunc.gather(fromtype=\'name\', name=S.test)
+vfpfunc.gather()
+vfpfunc.gather(fromtype=\'array\', name=S.somearray)
 '''.strip()
     test_output_str = vfp2py.vfp2py.prg2py(input_str, parser_start='lines', prepend_data='').strip()
     try:

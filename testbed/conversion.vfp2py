@@ -840,12 +840,18 @@ print('hello ' + S.username)  # @x, y say 'hello ' + username STYLE thestyle
 scatter name test
 scatter blank memvar
 scatter to somearray
+gather name test
+gather memvar
+gather from somearray
 @end=vfp@
 
 @begin=python@
 S.test = vfpfunc.scatter(totype='name')
 vfpfunc.scatter(blank=True)
 S.somearray = vfpfunc.scatter(totype='array')
+vfpfunc.gather(fromtype='name', name=S.test)
+vfpfunc.gather()
+vfpfunc.gather(fromtype='array', name=S.somearray)
 @end=python@
 
 SET TYPEAHEAD TO 0

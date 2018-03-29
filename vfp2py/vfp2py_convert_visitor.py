@@ -1663,7 +1663,22 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         return func
 
     def visitGatherExpr(self, ctx):
-        pass
+        kwargs = {}
+        if ctx.FIELDS():
+            kwargs['fields'] = self.visit(ctx.args(0))
+            if ctx.LIKE():
+                kwargs['type'] = 'like'
+            elif ctx.EXCEPT():
+                kwargs['type'] = 'except'
+        if ctx.MEMO():
+            kwargs['memo'] = True
+        if ctx.NAME():
+            kwargs['name'] = self.visit(ctx.expr(0))
+            kwargs['fromtype'] = 'name'
+        elif ctx.FROM():
+            kwargs['name'] = self.visit(ctx.expr(0))
+            kwargs['fromtype'] = 'array'
+        return make_func_code('vfpfunc.gather', **kwargs)
 
     def visitScopeClause(self, ctx):
         if ctx.ALL():

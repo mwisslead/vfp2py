@@ -209,7 +209,7 @@ cmd
  | ZAP (IN specialExpr)? #zapTable
  | BROWSE (~NL)* #browse
  | SCATTER (FIELDS (LIKE | EXCEPT)? args | MEMO | BLANK | MEMVAR | NAME expr ADDITIVE? | TO expr)* #scatterExpr
- | GATHER (FIELDS (LIKE | EXCEPT)? expr)? MEMO? FROM (MEMVAR | NAME expr | expr) #gatherExpr
+ | GATHER (FIELDS (LIKE | EXCEPT)? args | MEMO | MEMVAR | NAME expr | FROM expr)* #gatherExpr
 
  | CLOSE ((DATABASE | INDEXES | TABLES) ALL? | ALL) #closeStmt
  | (READ EVENTS? | DOEVENTS FORCE?) #readEvent
