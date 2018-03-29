@@ -59,7 +59,10 @@ class CodeStr(unicode):
 
 def make_func_code(funcname, *args, **kwargs):
     args = [repr(x) for x in args]
-    args += ['{}={}'.format(key, repr(kwargs[key])) for key in kwargs]
+    if not all(valid_identifier(name) for name in kwargs):
+        args.append(add_args_to_code('**{}', [kwargs]))
+    else:
+        args += ['{}={}'.format(key, repr(kwargs[key])) for key in kwargs]
     return CodeStr('{}({})'.format(funcname, ', '.join(args)))
 
 def string_type(val):
@@ -484,9 +487,6 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             func = 'M.add_'  + scope
             kwargs = {str(name): array for name, array in arrays}
             names = [str(name) for name, ind in zip(names, inds) if not ind]
-            if not all(valid_identifier(name) for name in kwargs):
-                names.append(add_args_to_code('**{}', [kwargs]))
-                kwargs = {}
             return make_func_code(func, *names, **kwargs)
         else:
             names = [name for name, ind in zip(names, inds) if not ind]
