@@ -1578,6 +1578,8 @@ def version(ver_type=4):
 
 def wait(msg, to=None, window=[-1, -1], nowait=False, noclear=False, timeout=-1):
     pass
+def gather(val=None, fields=None, fieldstype=None, memo=None):
+    DB._update_from(val)
 
 def scatter(totype=None, name=None, fields=None, fieldstype=None, memo=False, blank=False):
     record = DB._current_record_copy()

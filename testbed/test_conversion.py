@@ -1006,9 +1006,9 @@ gather from somearray
 S.test = vfpfunc.scatter(totype=\'name\')
 vfpfunc.scatter(blank=True)
 S.somearray = vfpfunc.scatter(totype=\'array\')
-vfpfunc.gather(fromtype=\'name\', name=S.test)
+vfpfunc.gather(val=S.test)
 vfpfunc.gather()
-vfpfunc.gather(fromtype=\'array\', name=S.somearray)
+vfpfunc.gather(val=S.somearray)
 '''.strip()
     test_output_str = vfp2py.vfp2py.prg2py(input_str, parser_start='lines', prepend_data='').strip()
     try:

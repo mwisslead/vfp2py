@@ -281,6 +281,9 @@ def database_tests():
         DB.alter_table('report2', 'drop', 'st')
         assert DB.fcount() == 4
         assert S.report_record.name.strip() == 'Norma Fisher', S.report_record.name.strip() + ' should be Norma Fisher'
+        DB.append(None, False)
+        vfpfunc.gather(val=S.report_record)
+        assert S.name.strip() == 'Norma Fisher', S.name.strip() + ' should be Norma Fisher'
         DB.use(None, None, None)
         os.remove('report2.dbf')
     except Exception as S.err:

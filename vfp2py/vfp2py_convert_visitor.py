@@ -1672,12 +1672,8 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
                 kwargs['type'] = 'except'
         if ctx.MEMO():
             kwargs['memo'] = True
-        if ctx.NAME():
-            kwargs['name'] = self.visit(ctx.expr(0))
-            kwargs['fromtype'] = 'name'
-        elif ctx.FROM():
-            kwargs['name'] = self.visit(ctx.expr(0))
-            kwargs['fromtype'] = 'array'
+        if ctx.NAME() or ctx.FROM():
+            kwargs['val'] = self.visit(ctx.expr(0))
         return make_func_code('vfpfunc.gather', **kwargs)
 
     def visitScopeClause(self, ctx):

@@ -243,6 +243,9 @@ procedure database_tests
       ALTER TABLE REPORT2 DROP COLUMN ST
       ASSERT FCOUNT() == 4
       assert alltrim(report_record.name) == 'Norma Fisher' MESSAGE alltrim(report_record.name) + ' should be Norma Fisher'
+      append blank
+      gather from report_record
+      assert alltrim(name) == 'Norma Fisher' MESSAGE alltrim(name) + ' should be Norma Fisher'
       use
       DELETE FILE REPORT2.DBF
    catch to err

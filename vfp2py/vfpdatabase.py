@@ -72,12 +72,29 @@ class DatabaseContext(object):
     def _get_table_info(self, tablename=None):
         return self.open_tables[self.get_workarea(tablename)]
 
+    @property
+    def _current_record(self):
+        return self._get_table_info().table.current_record
+
     def _current_record_copy(self):
         record = Namespace()
         table = self._get_table_info().table
         for field in table.field_names:
             setattr(record, field, table.current_record[field])
         return record
+
+    def _update_from(self, val):
+        record = self._current_record
+        if not record:
+            return
+        fields = dbf.source_table(record).field_names
+        update = {field: getattr(val, field) for field in fields if hasattr(val, field)}
+        if not update:
+            try:
+                update = {field: v for field, v in zip(fields, val)}
+            except:
+                return
+        dbf.write(record, **update)
 
     def create_table(self, tablename, setup_string, free):
         if free == 'free':
