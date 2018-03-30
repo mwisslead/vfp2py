@@ -4,6 +4,8 @@ from __future__ import absolute_import, division, print_function
 import os
 import inspect
 
+from argparse import Namespace
+
 import dbf
 
 
@@ -69,6 +71,13 @@ class DatabaseContext(object):
 
     def _get_table_info(self, tablename=None):
         return self.open_tables[self.get_workarea(tablename)]
+
+    def _current_record_copy(self):
+        record = Namespace()
+        table = self._get_table_info().table
+        for field in table.field_names:
+            setattr(record, field, table.current_record[field])
+        return record
 
     def create_table(self, tablename, setup_string, free):
         if free == 'free':

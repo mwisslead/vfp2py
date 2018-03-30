@@ -1580,7 +1580,7 @@ def wait(msg, to=None, window=[-1, -1], nowait=False, noclear=False, timeout=-1)
     pass
 
 def scatter(totype=None, name=None, fields=None, fieldstype=None, memo=False, blank=False):
-    record = DB._get_table_info().table.current_record
+    record = DB._current_record_copy()
     if totype == 'name':
         return record
 
