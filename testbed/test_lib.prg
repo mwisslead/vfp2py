@@ -293,4 +293,7 @@ procedure scope_tests
 
    set procedure to time
    ?localtime()
+
+   set procedure to argparse
+   t = createobject('namespace')
 ENDPROC

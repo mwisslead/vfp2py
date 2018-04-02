@@ -333,4 +333,7 @@ def scope_tests():
 
     vfpfunc.set(u'procedure', 'time', set_value=True)
     print(F['localtime']())
+
+    vfpfunc.set(u'procedure', 'argparse', set_value=True)
+    S.t = vfpfunc.create_object('Namespace')
     M.popscope()

@@ -1045,6 +1045,7 @@ class _Variable(object):
 class _Function(object):
     def __init__(self):
         self.__dict__['functions'] = {}
+        self.__dict__['classes'] = {}
 
     def __getattr__(self, key):
         return self[key]
@@ -1075,12 +1076,15 @@ class _Function(object):
     def set_procedure(self, *procedures, **kwargs):
         if not kwargs.get('additive', False):
             self.functions.clear()
+            self.classes.clear()
         for procedure in procedures:
             module = __import__(procedure)
             for obj_name in dir(module):
                 obj = getattr(module, obj_name)
                 if isinstance(obj, (types.FunctionType, types.BuiltinFunctionType)):
                     self.functions[obj_name] = {'func': obj, 'source': procedure}
+                if inspect.isclass(obj):
+                    self.classes[obj_name] = {'class': obj, 'source': procedure}
 
     def release_procedure(self, *procedures, **kwargs):
         release_keys = []
@@ -1641,6 +1645,8 @@ def create_object(objtype, *args, **kwargs):
     frame = inspect.getouterframes(inspect.currentframe())[2][0]
     if objtype in frame.f_globals:
         return frame.f_globals[objtype](*args, **kwargs)
+    if objtype in F.classes:
+        return F.classes[objtype]['class']
     raise _EXCEPTION('create_object not fully implemented')
 
 def clearall():
