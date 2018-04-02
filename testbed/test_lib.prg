@@ -290,4 +290,7 @@ procedure scope_tests
    assert somearray[1, 4] == 3
    PRIVATE TEST, somearray[2, 5]
    RELEASE nonexistantvariable
+
+   set procedure to time
+   ?localtime()
 ENDPROC

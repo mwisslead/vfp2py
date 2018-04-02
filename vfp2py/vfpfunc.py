@@ -28,6 +28,7 @@ SET_PROPS = {
     'multilocks': ['OFF'],
     'near': ['OFF'],
     'notify': ['ON', 'ON'],
+    'procedure': None,
     'refresh': [0, 5],
     'status': ['OFF'],
     'status bar': ['ON'],
@@ -1072,11 +1073,13 @@ class _Function(object):
         return self.functions.pop(key)
 
     def set_procedure(self, *procedures, **kwargs):
+        if not kwargs.get('additive', False):
+            self.functions.clear()
         for procedure in procedures:
             module = __import__(procedure)
             for obj_name in dir(module):
                 obj = getattr(module, obj_name)
-                if isinstance(obj, types.FunctionType):
+                if isinstance(obj, (types.FunctionType, types.BuiltinFunctionType)):
                     self.functions[obj_name] = {'func': obj, 'source': procedure}
 
     def release_procedure(self, *procedures, **kwargs):
@@ -1623,6 +1626,8 @@ def set(setword, *args, **kwargs):
         settings[0] = args[0].upper()
     elif setword in ('index', 'refresh'):
         settings = args
+    elif setword == 'procedure':
+        F.set_procedure(*args, **kwargs)
     SET_PROPS[setword] = settings
 
 def text(text_lines, show=True):

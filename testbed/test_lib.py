@@ -330,4 +330,7 @@ def scope_tests():
     assert F['somearray'](1, 4) == 3
     M.add_private('test', somearray=Array(2, 5))
     del M.nonexistantvariable
+
+    vfpfunc.set(u'procedure', 'time', set_value=True)
+    print(F['localtime']())
     M.popscope()
