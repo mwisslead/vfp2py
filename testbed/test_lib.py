@@ -284,7 +284,8 @@ def database_tests():
         DB.append(None, False)
         vfpfunc.gather(val=S.report_record)
         assert S.name.strip() == 'Norma Fisher', S.name.strip() + ' should be Norma Fisher'
-        DB.use(None, None, None)
+        DB.use(None, DB.select_function('report2'), None)
+        DB.use(None, DB.select_function('report'), None)
         os.remove('report2.dbf')
     except Exception as S.err:
         S.err = vfpfunc.Exception.from_pyexception(S.err)
@@ -318,6 +319,7 @@ def database_tests():
     assert vfpfunc.sqlexec(S.sqlconn, 'DROP TABLE REPORT') > 0
     vfpfunc.sqlcommit(S.sqlconn)
     vfpfunc.sqldisconnect(S.sqlconn)
+    DB.close_tables(False)
     M.popscope()
 
 
