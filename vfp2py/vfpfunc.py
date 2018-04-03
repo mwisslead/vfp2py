@@ -1668,3 +1668,40 @@ M.pushscope()
 M.add_public('_screen')
 S._screen = MainWindow()
 S._screen.caption = 'VFP To Python'
+
+def _parameters(scope_func, *varnames):
+    def decorator(fn):
+        fn_args = fn.func_code.co_varnames
+        if len(fn_args) == 1 and fn_args[0] == 'self' and varnames:
+            def scoper(self, *args):
+                M.pushscope()
+                kwargs = {name: arg for name, arg in zip(varnames, args)}
+                args = varnames[len(args):]
+                scope_func(*args, **kwargs)
+                retval = fn(self)
+                M.popscope()
+                return retval
+        elif varnames:
+            def scoper(*args):
+                M.pushscope()
+                kwargs = {name: arg for name, arg in zip(varnames, args)}
+                args = varnames[len(args):]
+                scope_func(*args, **kwargs)
+                retval = fn()
+                M.popscope()
+                return retval
+        else:
+            def scoper(*args):
+                M.pushscope()
+                retval = fn(*args)
+                M.popscope()
+                return retval
+        scoper.func_name = fn.func_name
+        return scoper
+    return decorator
+
+def parameters(*varnames):
+    return _parameters(M.add_private, *varnames)
+
+def lparameters(*varnames):
+    return _parameters(M.add_local, *varnames)

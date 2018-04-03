@@ -9,45 +9,41 @@ import random
 import faker
 
 from vfp2py import vfpfunc
-from vfp2py.vfpfunc import DB, Array, F, M, S
+from vfp2py.vfpfunc import DB, Array, F, M, S, lparameters, parameters
 
 
+@lparameters()
 def _program_main():
-    M.pushscope()
-    M.popscope()
+    pass
 
 
+@lparameters()
 def select_tests():
-    M.pushscope()
     assert DB.select_function(0 if vfpfunc.set('compatible') == 'OFF' else None) == 1
     assert DB.select_function(0) == 1
     assert DB.select_function(1) == 32767
     assert DB.select_function(2) == 0
     assert DB.select_function('test') == 0
-    M.popscope()
 
 
+@lparameters()
 def chr_tests():
-    M.pushscope()
     assert ord('\x00'[0]) == 0
-    M.popscope()
 
 
+@lparameters()
 def set_tests():
-    M.pushscope()
     assert vfpfunc.set('compatible') == 'OFF'
     assert vfpfunc.set('compatible', 1) == 'PROMPT'
-    M.popscope()
 
 
+@lparameters()
 def used_tests():
-    M.pushscope()
     assert DB.used('test') == False
-    M.popscope()
 
 
+@lparameters()
 def date_tests():
-    M.pushscope()
     M.add_local('somedate')
     S.somedate = dt.date(2017, 6, 30)
     assert S.somedate == dt.date(2017, 6, 30)
@@ -62,11 +58,10 @@ def date_tests():
     assert vfpfunc.gomonth(S.somedate, -4) == dt.date(2017, 2, 28)
     assert vfpfunc.vartype(S.somedate) == 'D'
     assert vfpfunc.vartype(dt.datetime.combine(S.somedate, dt.datetime.min.time())) == 'T'
-    M.popscope()
 
 
+@lparameters()
 def math_tests():
-    M.pushscope()
     M.add_local('num_value')
     S.num_value = math.pi
     assert round(math.pi, 2) == 3.14
@@ -80,11 +75,10 @@ def math_tests():
     S.stringval = '1e5'
     assert float(S.stringval) == 100000
     assert vfpfunc.vartype(S.num_value) == 'N'
-    M.popscope()
 
 
+@lparameters()
 def string_tests():
-    M.pushscope()
     S.cstring = 'AAA  aaa, BBB bbb, CCC ccc.'
     assert vfpfunc.vartype(S.cstring) == 'C'
     assert len([w for w in S.cstring.split() if w]) == 6
@@ -128,11 +122,10 @@ def string_tests():
     S.cstring = '123AAbbbB\r\nTESTTEST\r\nTEXTLINES'
     assert vfpfunc.atline('T', S.cstring) == 2
     assert vfpfunc.ratline('T', S.cstring) == 3
-    M.popscope()
 
 
+@lparameters()
 def path_tests():
-    M.pushscope()
     assert vfpfunc.home() == os.getcwd()
     S.handle = open('test_lib_file', 'w')
     S.handle.close()
@@ -141,20 +134,17 @@ def path_tests():
     assert vfpfunc.home() != os.getcwd()
     assert not vfpfunc.isblank(vfpfunc.locfile('test_lib_file'))
     os.remove(os.path.join(vfpfunc.home(), 'test_lib_file'))
-    M.popscope()
 
 
+@lparameters()
 def misc_tests():
-    M.pushscope()
     assert vfpfunc.version() == 'Not FoxPro 9'
     assert vfpfunc.version(4) == vfpfunc.version()
     assert vfpfunc.version(5) == 900
-    M.popscope()
 
 
-def _add_db_record(seed=False):
-    M.pushscope()
-    M.add_local(seed=seed)
+@lparameters('seed')
+def _add_db_record():
     M.add_local('fake', 'fake_name', 'fake_st', 'fake_quantity', 'fake_received')
     S.fake = faker.Faker()
     S.fake.seed(S.seed)
@@ -163,12 +153,10 @@ def _add_db_record(seed=False):
     S.fake_quantity = S.fake.random_int(0, 100)
     S.fake_received = S.fake.boolean()
     DB.insert('report', (S.fake_name, S.fake_st, S.fake_quantity, S.fake_received))
-    M.popscope()
 
 
-def _sqlexec_add_record(sqlconn=False, seed=False):
-    M.pushscope()
-    M.add_local(sqlconn=sqlconn, seed=seed)
+@lparameters('sqlconn', 'seed')
+def _sqlexec_add_record():
     M.add_local('fake', 'fake_name', 'fake_st', 'fake_quantity', 'fake_received')
     S.fake = faker.Faker()
     S.fake.seed(S.seed)
@@ -178,11 +166,11 @@ def _sqlexec_add_record(sqlconn=False, seed=False):
     S.fake_received = S.fake.boolean()
     S.sqlcmd = "insert into REPORT values ('" + S.fake_name + "','" + S.fake_st + "'," + vfpfunc.num_to_str(S.fake_quantity).strip() + ',' + vfpfunc.num_to_str(int(S.fake_received)).strip() + ')'
     print(S.sqlcmd)
-    return M.popscope(vfpfunc.sqlexec(S.sqlconn, S.sqlcmd))
+    return vfpfunc.sqlexec(S.sqlconn, S.sqlcmd)
 
 
+@lparameters()
 def database_tests():
-    M.pushscope()
     # FIX ME: SET SAFETY OFF
     # FIX ME: SET ASSERTS ON
     try:
@@ -320,11 +308,10 @@ def database_tests():
     vfpfunc.sqlcommit(S.sqlconn)
     vfpfunc.sqldisconnect(S.sqlconn)
     DB.close_tables(False)
-    M.popscope()
 
 
+@lparameters()
 def scope_tests():
-    M.pushscope()
     M.add_public(somearray=Array(2, 5))
     M.add_public(**{'def': Array(10)})
     assert F['def'](1) == False
@@ -338,4 +325,3 @@ def scope_tests():
 
     vfpfunc.set('procedure', 'argparse', set_value=True)
     S.t = vfpfunc.create_object('Namespace')
-    M.popscope()

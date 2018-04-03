@@ -119,12 +119,17 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         self.imports = ['from __future__ import division, print_function']
         self.imports.append('from vfp2py import vfpfunc')
         self.imports.append('from vfp2py.vfpfunc import DB, Array, F, M, S')
+        self.imports.append('from vfp2py.vfpfunc import parameters, lparameters')
         defs = []
 
         for child in ctx.children:
             if isinstance(child, ctx.parser.FuncDefContext):
-                funcname, parameters, funcbody = self.visit(child)
-                defs += [CodeStr('def {}({}):'.format(funcname, ', '.join([str(repr(p)) + '=False' for p in parameters]))), funcbody]
+                funcname, decorator, funcbody = self.visit(child)
+                defs += [
+                    add_args_to_code('@{}', (decorator,)),
+                    add_args_to_code('def {}():', (funcname,)),
+                    funcbody
+                ]
                 if child.lineComment():
                     defs += sum((self.visit(comment) for comment in child.lineComment()), [])
             elif not isinstance(child, antlr4.tree.Tree.TerminalNodeImpl):
@@ -193,12 +198,11 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
                                 obj['args'][ident] = CodeStr(value.replace(' = ', '', 1))
                 obj['functions'] = {}
                 for funcdef in funcdefs:
-                    funcname, parameters, funcbody = self.visit(funcdef)
+                    funcname, decorator, funcbody = self.visit(funcdef)
                     if '.' in funcname:
                         func_parent, funcname = funcname.rsplit('.', 1)
                         if func_parent == name:
-                            parameters = [add_args_to_code('{}=False', (p,)) for p in parameters]
-                            obj['functions'][funcname] = [parameters, funcbody]
+                            obj['functions'][funcname] = [decorator, funcbody]
                 obj['args']['parent'] = CodeStr('self')
                 obj['args']['name'] = name
                 if obj['functions']:
@@ -209,21 +213,21 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
                 assignments.append(add_args_to_code('self.{} = {}', [CodeStr(name), self.func_call('createobject', obj['parent_type'], **obj['args'])]))
 
 
-        funcs = OrderedDict()
-        funcs['_assign'] = None
+        funcs = OrderedDict((
+            ('_assign', [None, None, float('inf')]),
+        ))
         for funcdef in funcdefs:
-            funcname, parameters, funcbody = self.visit(funcdef)
-            if funcname == 'init':
-                funcname, parameters, funcbody = self.visit(funcdef)
-            parameters = [add_args_to_code('{}=False', (p,)) for p in parameters]
+            funcname, decorator, funcbody = self.visit(funcdef)
             if '.' not in funcname:
-                funcs.update({funcname: [[CodeStr('self')] + parameters, funcbody, funcdef.start.line]})
+                funcs[funcname] = [decorator, funcbody, funcdef.start.line]
             assignments += sum((self.visit(comment) for comment in funcdef.lineComment()), [])
 
         classname, supername = self.visit(ctx.classDefStart())
 
-        funcbody = self.modify_func_body([CodeStr('{}._assign(self)'.format(supername))] + assignments)
-        funcs['_assign'] = [[CodeStr('self'), CodeStr('*args'), CodeStr('**kwargs')], funcbody, float('inf')]
+        funcbody = [CodeStr('{}._assign(self)'.format(supername))] + assignments
+        self.modify_func_body(funcbody)
+        funcs['_assign'][1] = funcbody
+        funcs['_assign'][0] = make_func_code('lparameters')
 
         retval = [CodeStr('class {}({}):'.format(classname, supername))]
         if funcs:
@@ -236,15 +240,20 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
                     supername = add_args_to_code('vfpfunc.classes[{}]', (str(supername),))
                 subclass_code = [CodeStr('class {}({}):'.format(name, supername))]
                 for funcname in subclass['functions']:
-                    parameters, funcbody = subclass['functions'][funcname]
-                    parameters = [CodeStr('self')] + parameters
-                    func = make_func_code(funcname, *parameters)
-                    subclass_code.append([add_args_to_code('def {}:', (func,)), funcbody])
+                    decorator, funcbody = subclass['functions'][funcname]
+                    subclass_code.append([
+                        add_args_to_code('@{}', (decorator,)),
+                        add_args_to_code('def {}(self):', (CodeStr(funcname),)),
+                        funcbody,
+                    ])
                 retval.append(subclass_code)
             for funcname in funcs:
-                parameters, funcbody, line_number = funcs[funcname]
-                func = make_func_code(funcname, *parameters)
-                retval.append([add_args_to_code('def {}:', (func,)), funcbody])
+                decorator, funcbody, line_number = funcs[funcname]
+                retval.append([
+                    add_args_to_code('@{}', (decorator,)),
+                    add_args_to_code('def {}(self):', (CodeStr(funcname),)),
+                    funcbody,
+                ])
         else:
             retval.append([CodeStr('pass')])
 
@@ -300,34 +309,18 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             body.append(CodeStr('pass'))
         while CodeStr('pass') in body:
             body.pop(body.index(CodeStr('pass')))
-        def fix_returns(lines):
-            newbody = []
-            for line in lines:
-                if isinstance(line, list):
-                    newbody.append(fix_returns(line))
-                elif isinstance(line, CodeStr) and line.startswith('return '):
-                    return_value = CodeStr(line[7:])
-                    newbody.append(CodeStr('return M.popscope({})'.format(return_value)))
-                else:
-                    newbody.append(line)
-            return newbody
-        body = [CodeStr('M.pushscope()')] + fix_returns(body)
-        if isinstance(body[-1], CodeStr) and body[-1].startswith('return '):
-            return body
-        body.append(CodeStr('M.popscope()'))
-        return body
+        if not body:
+            body.append(CodeStr('pass'))
 
     def visitFuncDef(self, ctx):
         name, parameters = self.visit(ctx.funcDefStart())
-        body = []
         if parameters:
-            kwargs = {p: p for p in parameters}
-            body.append(make_func_code('M.add_local', **kwargs))
+            parameter_type = 'l'
         else:
             try:
                 parameter_line = next(line for line in ctx.lines().line() if not line.lineComment())
                 parameter_cmd = parameter_line.cmd()
-                keyword = parameter_cmd.PARAMETER().symbol.text.lower()
+                parameter_type = parameter_cmd.PARAMETER().symbol.text.lower()[0]
                 parameters = [self.visit_with_disabled_scope(p)[0] for p in parameter_cmd.declarationItem()]
                 lines = ctx.lines()
                 children = [c for c in lines.children if c is not parameter_line]
@@ -335,19 +328,19 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
                     lines.removeLastChild()
                 for child in children:
                     lines.addChild(child)
-                if keyword.startswith('l'):
-                    func = 'M.add_local'
-                else:
-                    func = 'M.add_private'
-                kwargs = {p: p for p in parameters}
-                body.append(make_func_code(func, **kwargs))
             except (StopIteration, AttributeError):
                 parameters = []
+                parameter_type = 'l'
+        if parameter_type != 'l':
+            parameter_type = ''
+        parameter_type += 'parameters'
+        parameters = [str(p) for p in parameters]
+        decorator = make_func_code(parameter_type, *parameters)
         global FUNCNAME
         FUNCNAME = name
-        body += self.visit(ctx.lines())
-        body = self.modify_func_body(body)
-        return name, parameters, body
+#        body = self.modify_func_body(self.visit(ctx.lines()))
+        body = self.visit(ctx.lines())
+        return name, decorator, body
 
     def visitPrintStmt(self, ctx):
         kwargs = {}

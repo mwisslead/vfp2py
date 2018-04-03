@@ -274,11 +274,11 @@ import sys
 import test
 
 from vfp2py import vfpfunc
-from vfp2py.vfpfunc import DB, Array, F, M, S
+from vfp2py.vfpfunc import DB, Array, F, M, S, lparameters, parameters
 
 
+@lparameters()
 def _program_main():
-    M.pushscope()
     # comment with spaces
     ###############
     ### comment ###
@@ -296,7 +296,7 @@ def _program_main():
     print(vfpfunc.num_to_str(3), end=\'\')
     print(vfpfunc.num_to_str(3), file=sys.stderr)
     print(3)  # @ 10, 10 SAY 3
-    return M.popscope(S.x)
+    return S.x
 '''.strip()
     test_output_str = vfp2py.vfp2py.prg2py(input_str).strip()
     try:
@@ -363,99 +363,85 @@ ENDFUNC
 from __future__ import division, print_function
 
 from vfp2py import vfpfunc
-from vfp2py.vfpfunc import DB, Array, F, M, S
+from vfp2py.vfpfunc import DB, Array, F, M, S, lparameters, parameters
 
 
+@lparameters()
 def _program_main():
-    M.pushscope()
-    M.popscope()
+    pass
 
 
 class Subobj(vfpfunc.Custom):
 
-    def _assign(self, *args, **kwargs):
-        M.pushscope()
+    @lparameters()
+    def _assign(self):
         vfpfunc.Custom._assign(self)
         self.x = 3
 
         # comment
-        M.popscope()
-
-    def init(self, x=False):
-        M.pushscope()
-        M.add_local(x=x)
+    @lparameters(\'x\')
+    def init(self):
         super(type(self), self).init()
         self.x = S.x
-        M.popscope()
 
 # comment about subobj2
 
 
 class Subobj2(Subobj):
 
-    def _assign(self, *args, **kwargs):
-        M.pushscope()
+    @lparameters()
+    def _assign(self):
         Subobj._assign(self)
         self.x = 4
-        M.popscope()
 
 
 class Testclass(vfpfunc.Commandbutton):
 
-    def _assign(self, *args, **kwargs):
-        M.pushscope()
+    @lparameters()
+    def _assign(self):
         vfpfunc.Commandbutton._assign(self)
         self.test1 = vfpfunc.Custom(name=\'test1\', parent=self)
         self.test2 = Subobj(x=4, name=\'test2\', parent=self)
         self.test3 = vfpfunc.create_object(\'Unknownobj\', x=\'4\', name=\'test3\', parent=self)
-        M.popscope()
 
-    def init(self, x=False):
-        M.pushscope()
-        M.add_local(x=x)
+    @lparameters(\'x\')
+    def init(self):
         # FIX ME: NODEFAULT
-        M.popscope()
+        pass
 
 
 class Abutton(Testclass):
 
-    def _assign(self, *args, **kwargs):
-        M.pushscope()
+    @lparameters()
+    def _assign(self):
         Testclass._assign(self)
-        M.popscope()
 
+    @lparameters()
     def click(self):
-        M.pushscope()
         Testclass.click()
-        M.popscope()
 
 
-def random_function(x=False):
-    M.pushscope()
-    M.add_local(x=x)
+@lparameters(\'x\')
+def random_function():
 
     # something
     print(S.x)
-    M.popscope()
 
 # comment about testclass2
 
 
 class Testclass2(vfpfunc.classes[\'Unknownclass\']):
 
-    def _assign(self, *args, **kwargs):
-        M.pushscope()
+    @lparameters()
+    def _assign(self):
         vfpfunc.classes[\'Unknownclass\']._assign(self)
-        M.popscope()
 
 
-def another_random_function(x=False, y=False):
-    M.pushscope()
-    M.add_private(y=y, x=x)
+@parameters(\'x\', \'y\')
+def another_random_function():
 
     # something
     print(S.x)
-    M.popscope()
 '''.strip()
     test_output_str = vfp2py.vfp2py.prg2py(input_str).strip()
     try:
@@ -596,15 +582,14 @@ import math
 import os
 
 from vfp2py import vfpfunc
-from vfp2py.vfpfunc import DB, Array, F, M, S
+from vfp2py.vfpfunc import DB, Array, F, M, S, lparameters, parameters
 
 
+@lparameters()
 def _program_main():
-    M.pushscope()
     os.mkdir(\'test\')
     print(dt.datetime.now().date())
     print(math.pi)
-    M.popscope()
 '''.strip()
     test_output_str = vfp2py.vfp2py.prg2py(input_str).strip()
     try:
