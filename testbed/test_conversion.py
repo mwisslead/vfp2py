@@ -188,11 +188,11 @@ elif S.x == 2:
     pass
 else:
     print(S.test)
-S.somestring = vfpfunc.text([u\'       1234567890\',
-                             u\'       0123456789\',
-                             u\'       ABCDEFGHIJ\',
-                             u\'       KLMNOPQRST\',
-                             u\'       UVWXYZ\'], show=False)
+S.somestring = vfpfunc.text([\'       1234567890\',
+                             \'       0123456789\',
+                             \'       ABCDEFGHIJ\',
+                             \'       KLMNOPQRST\',
+                             \'       UVWXYZ\'], show=False)
 vfpfunc.quit()
 # FIX ME: CANCEL
 # FIX ME: RESUME
@@ -214,7 +214,7 @@ F[\'somefunc\'](False, S.a, False)
 # FIX ME: MODIFY WINDOW SCREEN FONT "FONT", 12 STYLE "B" TITLE "TITLE" NOFLOAT NOCLOSE NOZOOM
 # FIX ME: MODIFY COMMAND c:\\test.prg
 vfpfunc.define_menu(\'test\', window=vfpfunc.SCREEN, bar=True, line=2)
-vfpfunc.define_pad(\'test\', \'thing\', \'text\', color_scheme=3, message=\'menu\', key=(u\'alt+f\', \'ALT+F\'))
+vfpfunc.define_pad(\'test\', \'thing\', \'text\', color_scheme=3, message=\'menu\', key=(\'alt+f\', \'ALT+F\'))
 vfpfunc.define_popup(\'test\')
 vfpfunc.define_bar(1, \'test\', \'text\')
 vfpfunc.on_pad_bar(\'pad\', \'test\', \'thing\', (\'popup\', \'test\'))
@@ -705,24 +705,24 @@ SET RELATION TO a=b INTO test
 SET TALK OFF
 '''.strip()
     output_str = '''
-vfpfunc.set(u\'compatible\', \'OFF\', set_value=True)
-vfpfunc.set(u\'compatible\', \'ON\', set_value=True)
-vfpfunc.set(u\'compatible\', \'OFF\', set_value=True)
-vfpfunc.set(u\'compatible\', \'ON\', set_value=True)
-vfpfunc.set(u\'compatible\', \'OFF\', \'PROMPT\', set_value=True)
-vfpfunc.set(u\'compatible\', \'ON\', \'NOPROMPT\', set_value=True)
-vfpfunc.set(u\'classlib\', \'test\', set_value=True)
-vfpfunc.set(u\'classlib\', \'test\', class_file=\'test\', set_value=True)
-vfpfunc.set(u\'classlib\', \'test\', alias=\'nottest\', set_value=True)
-vfpfunc.set(u\'classlib\', \'test\', alias=\'nottest\', class_file=\'test\', additive=True, set_value=True)
-vfpfunc.set(u\'tableprompt\', \'ON\', set_value=True)
-vfpfunc.set(u\'exclusive\', \'ON\', set_value=True)
+vfpfunc.set(\'compatible\', \'OFF\', set_value=True)
+vfpfunc.set(\'compatible\', \'ON\', set_value=True)
+vfpfunc.set(\'compatible\', \'OFF\', set_value=True)
+vfpfunc.set(\'compatible\', \'ON\', set_value=True)
+vfpfunc.set(\'compatible\', \'OFF\', \'PROMPT\', set_value=True)
+vfpfunc.set(\'compatible\', \'ON\', \'NOPROMPT\', set_value=True)
+vfpfunc.set(\'classlib\', \'test\', set_value=True)
+vfpfunc.set(\'classlib\', \'test\', class_file=\'test\', set_value=True)
+vfpfunc.set(\'classlib\', \'test\', alias=\'nottest\', set_value=True)
+vfpfunc.set(\'classlib\', \'test\', alias=\'nottest\', class_file=\'test\', additive=True, set_value=True)
+vfpfunc.set(\'tableprompt\', \'ON\', set_value=True)
+vfpfunc.set(\'exclusive\', \'ON\', set_value=True)
 # FIX ME: SET HELP OFF
 # FIX ME: SET HELP TO TEST
 # FIX ME: SET HELP COLLECTION test
 # FIX ME: SET HELP SYSTEM
 # FIX ME: SET RELATION TO a=b INTO test
-vfpfunc.set(u\'talk\', \'OFF\', set_value=True)
+vfpfunc.set(\'talk\', \'OFF\', set_value=True)
 '''.strip()
     test_output_str = vfp2py.vfp2py.prg2py(input_str, parser_start='lines', prepend_data='').strip()
     try:

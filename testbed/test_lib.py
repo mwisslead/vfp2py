@@ -120,10 +120,10 @@ def string_tests():
     assert vfpfunc.strextract('This {{is}} a {{template}}', '{{is}}') == ' a {{template}}'
     assert vfpfunc.strextract('This {{is}} a {{template}}', '{{IS}}', '', 1, 1) == ' a {{template}}'
     assert '123AAbbB'.lower().find('aab'.lower()) + 1 == 4
-    S.cstring = vfpfunc.text([u'      123AAbbbB',
-                              u'      TESTTEST',
-                              u'      TEXTLINES',
-                              u'   '], show=False)
+    S.cstring = vfpfunc.text(['      123AAbbbB',
+                              '      TESTTEST',
+                              '      TEXTLINES',
+                              '   '], show=False)
     assert S.cstring == '123AAbbbBTESTTESTTEXTLINES'
     S.cstring = '123AAbbbB\r\nTESTTEST\r\nTEXTLINES'
     assert vfpfunc.atline('T', S.cstring) == 2
@@ -331,9 +331,9 @@ def scope_tests():
     M.add_private('test', somearray=Array(2, 5))
     del M.nonexistantvariable
 
-    vfpfunc.set(u'procedure', 'time', set_value=True)
+    vfpfunc.set('procedure', 'time', set_value=True)
     print(F['localtime']())
 
-    vfpfunc.set(u'procedure', 'argparse', set_value=True)
+    vfpfunc.set('procedure', 'argparse', set_value=True)
     S.t = vfpfunc.create_object('Namespace')
     M.popscope()

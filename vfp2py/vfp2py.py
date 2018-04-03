@@ -502,7 +502,7 @@ def prg2py_after_preproc(data, parser_start, input_filename):
         return output_tree
     output = add_indents(output_tree, 0)
     options = autopep8.parse_args(['--max-line-length', '100000', '-'])
-    return autopep8.fix_code(output, options)
+    return re.sub(r'(u)?(\'[^\']*\'|"[^"]*")', r'\2', autopep8.fix_code(output, options))
 
 def prg2py(data, parser_start='prg', prepend_data='procedure _program_main\n', input_filename=''):
     tokens = preprocess_code(data).tokens

@@ -1565,17 +1565,20 @@ def vfp_sys(funcnum, *args):
             return os.path.dirname(sys.executable)
         return os.path.dirname(sys.argv[0])
 
+TYPE_MAP = {
+    str: 'C',
+    dt.date: 'D',
+    bool: 'L',
+    int: 'N',
+    float: 'N',
+    dt.datetime: 'T',
+    type(None): 'X',
+}
+if sys.version_info < (3,):
+    TYPE_MAP[unicode] = 'C'
+
 def vartype(var):
-    t = type(var)
-    return {
-        str: 'C',
-        dt.date: 'D',
-        bool: 'L',
-        int: 'N',
-        float: 'N',
-        dt.datetime: 'T',
-        type(None): 'X',
-    }.get(t, 'O')
+    return TYPE_MAP.get(type(var), 'O')
 
 def version(ver_type=4):
     if ver_type == 4:

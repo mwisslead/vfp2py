@@ -1,5 +1,5 @@
 # coding=utf-8
-from __future__ import absolute_import, division, print_function
+from __future__ import absolute_import, division, print_function, unicode_literals
 
 import sys
 import os
@@ -20,8 +20,11 @@ from .VisualFoxpro9Visitor import VisualFoxpro9Visitor
 from . import vfpfunc
 from .vfpfunc import DB
 
-if sys.version_info >= (3,):
-    unicode=str
+if sys.version_info < (3,):
+    str=unicode
+    CHR = chr
+    def chr(x):
+        return CHR(x).decode('ascii')
 
 class RedirectedBuiltin(object):
     def __init__(self, func):
@@ -44,9 +47,9 @@ def isinstance(obj, istype):
     istype = tuple(x.func if real_isinstance(x, RedirectedBuiltin) else x for x in istype)
     return real_isinstance(obj, istype)
 
-class CodeStr(unicode):
+class CodeStr(str):
     def __repr__(self):
-        return unicode(self)
+        return str(self)
 
     def __add__(self, val):
         return CodeStr('{} + {}'.format(self, repr(val)))
@@ -66,7 +69,7 @@ def make_func_code(funcname, *args, **kwargs):
     return CodeStr('{}({})'.format(funcname, ', '.join(args)))
 
 def string_type(val):
-    return isinstance(val, (str, unicode)) and not isinstance(val, CodeStr)
+    return isinstance(val, str) and not isinstance(val, CodeStr)
 
 def create_string(val):
     try:
