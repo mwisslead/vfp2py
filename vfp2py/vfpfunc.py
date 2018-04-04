@@ -15,6 +15,11 @@ import pyodbc
 
 import dateutil.relativedelta
 
+try:
+    import win32com.client
+except ImportError:
+    pass
+
 from .vfpdatabase import DatabaseContext
 
 SET_PROPS = {
@@ -1650,7 +1655,11 @@ def create_object(objtype, *args, **kwargs):
         return frame.f_globals[objtype](*args, **kwargs)
     if objtype in F.classes:
         return F.classes[objtype]['class']
-    raise _EXCEPTION('create_object not fully implemented')
+    try:
+        return win32com.client.Dispatch(objtype)
+    except:
+        pass
+    raise _EXCEPTION('class definition \'{}\' not found'.format(objtype))
 
 def clearall():
     pass
