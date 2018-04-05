@@ -1228,9 +1228,6 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
 
         return make_func_code(func, *args)
 
-    def visitDoForm(self, ctx):
-        form = self.visit_with_disabled_scope(ctx.specialExpr())
-
     def visitClearStmt(self, ctx):
         command = None
         args = []
