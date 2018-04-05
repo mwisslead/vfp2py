@@ -10,6 +10,7 @@ import ctypes.util
 import traceback
 import re
 import inspect
+import glob
 
 import pyodbc
 
@@ -1556,12 +1557,29 @@ def sqltables(conn, table_type='', cursor_name=''):
 def sqldisconnect(connection):
     connection.close()
 
+SYS2000iter = None
 def vfp_sys(funcnum, *args):
+    global SYS2000iter
     if funcnum == 16:
         import imp
         if hasattr(sys, "frozen") or hasattr(sys, "importers") or imp.is_frozen("__main__"):
             return os.path.dirname(sys.executable)
         return os.path.dirname(sys.argv[0])
+    if funcnum == 2000:
+        #seems to implement FindFirstFile and FindNextFile in win32api
+        if len(args) == 1:
+            skel, = args
+            next_file = False
+        else:
+            skel, next_file = args[:2]
+        if next_file:
+            try:
+                return next(SYS2000iter)
+            except:
+                return ''
+        SYS2000iter = glob.iglob(skel)
+        return vfp_sys(2000, skel, 1)
+
 
 TYPE_MAP = {
     str: 'C',
