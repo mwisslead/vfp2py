@@ -1013,13 +1013,6 @@ class _Memvar(object):
             for var in list(self.local_scopes[-1]) + list(self.public_scopes[-1]):
                 del self[var]
 
-    def current_scope(self):
-        scope = {}
-        for public_scope in self.public_scopes:
-            scope.update(public_scope)
-        scope.update(self.local_scopes[-1])
-        return scope
-
 class _Variable(object):
     def __init__(self, memvar, db):
         self.__dict__['memvar'] = memvar
