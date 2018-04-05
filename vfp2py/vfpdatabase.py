@@ -126,6 +126,12 @@ class DatabaseContext(object):
         table_info = self._get_table_info(tablename)
         return table_info.name or os.path.splitext(os.path.basename(table_info.table.filename))[0]
 
+    def dbf(self, tablename=None):
+        try:
+            return self._get_table_info(tablename).table.filename
+        except:
+            pass
+
     def used(self, tablename):
         try:
             self.get_workarea(tablename)

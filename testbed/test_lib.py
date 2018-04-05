@@ -272,6 +272,7 @@ def database_tests():
         DB.append(None, False)
         vfpfunc.gather(val=S.report_record)
         assert S.name.strip() == 'Norma Fisher', S.name.strip() + ' should be Norma Fisher'
+        assert DB.dbf() == 'report2.dbf'
         DB.use(None, DB.select_function('report2'), None)
         DB.use(None, DB.select_function('report'), None)
         os.remove('report2.dbf')

@@ -246,6 +246,7 @@ procedure database_tests
       append blank
       gather from report_record
       assert alltrim(name) == 'Norma Fisher' MESSAGE alltrim(name) + ' should be Norma Fisher'
+      assert dbf() == 'report2.dbf'
       use in select('report2')
       use in select('report')
       DELETE FILE REPORT2.DBF
