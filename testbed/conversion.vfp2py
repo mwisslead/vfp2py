@@ -744,6 +744,7 @@ catch to oerr
    throw
 endtry
 throw 'Error' + ' Message'
+RETRY
 @end=vfp@
 
 @begin=python@
@@ -753,6 +754,7 @@ except Exception as S.oerr:
     S.oerr = vfpfunc.Exception.from_pyexception(S.oerr)
     raise
 raise Exception('Error Message')
+# FIX ME: RETRY
 @end=python@
 
 @begin=vfp@&&lines

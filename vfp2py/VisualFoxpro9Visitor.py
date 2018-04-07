@@ -355,6 +355,11 @@ class VisualFoxpro9Visitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by VisualFoxpro9Parser#retry.
+    def visitRetry(self, ctx):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by VisualFoxpro9Parser#replace.
     def visitReplace(self, ctx):
         return self.visitChildren(ctx)

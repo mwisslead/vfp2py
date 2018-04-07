@@ -189,6 +189,7 @@ cmd
  | USE (IN workArea=specialExpr | ORDER TAG? orderExpr=expr | ALIAS aliasExpr=specialExpr | SHARED | EXCLUSIVE | NOUPDATE | name=specialExpr)* #use
  | LOCATE queryCondition* #locate
  | CONTINUE #continueLocate
+ | RETRY #retry
  | REPLACE (queryCondition | specialExpr WITH expr)* #replace
  | INDEX ON specialExpr (TAG | TO) specialExpr COMPACT? (ASCENDING | DESCENDING)? (UNIQUE | CANDIDATE)? ADDITIVE? #indexOn
  | COUNT (TO toExpr=expr | queryCondition)* #count
@@ -685,6 +686,7 @@ identifier
  | TITLE
  | ICON
  | FILL
+ | RETRY
  ;
 
 NUMBER_LITERAL : (DIGIT* '.')? DIGIT+ (E [+-]? DIGIT*)?
@@ -992,6 +994,7 @@ MASTER: M A S T E R;
 TITLE: T I T L E;
 ICON: I C O N;
 FILL: F I L L;
+RETRY: R E T R Y;
 
 ID : [A-Za-z_] [a-zA-Z0-9_]*;
 

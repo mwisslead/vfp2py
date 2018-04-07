@@ -862,6 +862,7 @@ catch to oerr
    throw
 endtry
 throw \'Error\' + \' Message\'
+RETRY
 '''.strip()
     output_str = '''
 try:
@@ -870,6 +871,7 @@ except Exception as S.oerr:
     S.oerr = vfpfunc.Exception.from_pyexception(S.oerr)
     raise
 raise Exception(\'Error Message\')
+# FIX ME: RETRY
 '''.strip()
     test_output_str = vfp2py.vfp2py.prg2py(input_str, parser_start='lines', prepend_data='').strip()
     try:
