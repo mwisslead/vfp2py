@@ -9,6 +9,8 @@ import time
 import re
 import tempfile
 import shutil
+import tokenize
+import io
 
 import dbf
 
@@ -502,7 +504,14 @@ def prg2py_after_preproc(data, parser_start, input_filename):
         return output_tree
     output = add_indents(output_tree, 0)
     options = autopep8.parse_args(['--max-line-length', '100000', '-'])
-    return re.sub(r'(u)?(\'[^\']*\'|"[^"]*")', r'\2', autopep8.fix_code(output, options))
+    output = autopep8.fix_code(output, options)
+    tokens = list(tokenize.generate_tokens(io.StringIO(output).readline))
+    for i, token in enumerate(tokens):
+        token = list(token)
+        if token[0] == tokenize.STRING and token[1].startswith('u'):
+            token[1] = token[1][1:]
+        tokens[i] = tuple(token)
+    return tokenize.untokenize(tokens)
 
 def prg2py(data, parser_start='prg', prepend_data='procedure _program_main\n', input_filename=''):
     tokens = preprocess_code(data).tokens
