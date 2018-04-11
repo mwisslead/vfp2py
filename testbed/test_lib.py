@@ -311,6 +311,11 @@ def database_tests():
     DB.close_tables(False)
 
 
+@lparameters('arg1', 'arg2')
+def user_defined_function():
+    assert vfpfunc.pcount() == 1
+
+
 @lparameters()
 def scope_tests():
     M.add_public(somearray=Array(2, 5))
@@ -326,3 +331,5 @@ def scope_tests():
 
     vfpfunc.set('procedure', 'argparse', set_value=True)
     S.t = vfpfunc.create_object('Namespace')
+
+    user_defined_function(False)

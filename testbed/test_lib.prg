@@ -285,6 +285,10 @@ procedure database_tests
    close tables
 endproc
 
+procedure user_defined_function(arg1, arg2)
+   assert pcount() == 1
+endproc
+
 procedure scope_tests
    PUBLIC ARRAY somearray[2, 5]
    public array def[10]
@@ -299,4 +303,6 @@ procedure scope_tests
 
    set procedure to argparse
    t = createobject('namespace')
+
+   user_defined_function(.F.)
 ENDPROC

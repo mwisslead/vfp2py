@@ -48,6 +48,8 @@ HOME = os.path.dirname(os.path.abspath(HOME))
 
 SEARCH_PATH = [HOME]
 
+PCOUNTS = []
+
 try:
     from PySide import QtGui, QtCore
 
@@ -1384,6 +1386,9 @@ def num_to_str(num, length=10, decimals=0):
                 return '*' * length
             return string[:length-len(exp)] + exp
 
+def pcount():
+    return PCOUNTS[-1]
+
 def program(level=None):
     trace = traceback.extract_stack()[:-1]
     if level is None:
@@ -1694,26 +1699,38 @@ def _parameters(scope_func, *varnames):
         fn_args = fn.func_code.co_varnames
         if len(fn_args) == 1 and fn_args[0] == 'self' and varnames:
             def scoper(self, *args):
+                global PARAMETERS
                 M.pushscope()
+                PARAMETERS = len(args)
+                PCOUNTS.append(PARAMETERS)
                 kwargs = {name: arg for name, arg in zip(varnames, args)}
                 args = varnames[len(args):]
                 scope_func(*args, **kwargs)
                 retval = fn(self)
+                PCOUNTS.pop()
                 M.popscope()
                 return retval
         elif varnames:
             def scoper(*args):
+                global PARAMETERS
                 M.pushscope()
+                PARAMETERS = len(args)
+                PCOUNTS.append(PARAMETERS)
                 kwargs = {name: arg for name, arg in zip(varnames, args)}
                 args = varnames[len(args):]
                 scope_func(*args, **kwargs)
                 retval = fn()
+                PCOUNTS.pop()
                 M.popscope()
                 return retval
         else:
             def scoper(*args):
+                global PARAMETERS
                 M.pushscope()
+                PARAMETERS = 0
+                PCOUNTS.append(PARAMETERS)
                 retval = fn(*args)
+                PCOUNTS.pop()
                 M.popscope()
                 return retval
         scoper.func_name = fn.func_name
