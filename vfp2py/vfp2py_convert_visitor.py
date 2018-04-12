@@ -176,6 +176,13 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
     def visitNongreedyLines(self, ctx):
         return self.visitLines(ctx)
 
+    def modify_superclass(self, supername):
+        if hasattr(vfpfunc, supername):
+            supername = add_args_to_code('{}.{}', (CodeStr('vfpfunc'), supername))
+        elif supername not in self.class_list:
+            supername = add_args_to_code('vfpfunc.classes[{}]', (str(supername),))
+        return supername
+
     def visitClassDef(self, ctx):
         assignments = []
         subclasses = {}
@@ -233,11 +240,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         if funcs:
             for name in subclasses:
                 subclass = subclasses[name]
-                supername = CodeStr(subclass['parent_type'])
-                if hasattr(vfpfunc, supername):
-                    supername = add_args_to_code('{}.{}', (CodeStr('vfpfunc'), supername))
-                elif supername not in self.class_list:
-                    supername = add_args_to_code('vfpfunc.classes[{}]', (str(supername),))
+                supername = self.modify_superclass(CodeStr(subclass['parent_type']))
                 subclass_code = [CodeStr('class {}({}):'.format(name, supername))]
                 for funcname in subclass['functions']:
                     decorator, funcbody = subclass['functions'][funcname]
@@ -267,11 +270,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         classname, supername = names
         if hasattr(vfpfunc, classname):
             raise Exception(str(classname) + ' is a reserved classname')
-        if hasattr(vfpfunc, supername):
-            supername = add_args_to_code('{}.{}', (CodeStr('vfpfunc'), supername))
-        elif supername not in self.class_list:
-            supername = add_args_to_code('vfpfunc.classes[{}]', (str(supername),))
-            pass
+        supername = self.modify_superclass(supername)
         return classname, supername
 
     def visitClassAssign(self, assign):
