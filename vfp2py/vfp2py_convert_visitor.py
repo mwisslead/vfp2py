@@ -892,9 +892,10 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
                 return CodeStr('self')
             elif identifier == 'thisform':
                 return CodeStr('self.parentform')
-            return add_args_to_code('{}.{}', [scope, identifier])
+        if valid_identifier(identifier):
+            return add_args_to_code('{}.{}', [scope, CodeStr(identifier)])
         else:
-            return add_args_to_code('{}[{}]', [scope, str(identifier)])
+            return add_args_to_code('{}[{}]', [scope, identifier])
 
     def createIdAttr(self, identifier, trailer):
         if trailer and len(trailer) == 1 and isinstance(trailer[0], list):
@@ -1202,7 +1203,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
                     namespace += os.path.splitext(func)[1].replace('.', '_')
                 func = '_program_main'
             else:
-                func = create_string(add_args_to_code('F[{}]', [func]))
+                func = self.scopeId(func, 'func')
                 return make_func_code(func, *args)
 
         if namespace.endswith('.prg'):

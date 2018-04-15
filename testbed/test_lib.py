@@ -322,12 +322,12 @@ def scope_tests():
     M.add_public(**{'def': Array(10)})
     assert F['def'](1) == False
     S.somearray[1, 4] = 3
-    assert F['somearray'](1, 4) == 3
+    assert F.somearray(1, 4) == 3
     M.add_private('test', somearray=Array(2, 5))
     del M.nonexistantvariable
 
     vfpfunc.set('procedure', 'time', set_value=True)
-    print(F['localtime']())
+    print(F.localtime())
 
     vfpfunc.set('procedure', 'argparse', set_value=True)
     S.t = vfpfunc.create_object('Namespace')

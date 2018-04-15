@@ -210,7 +210,7 @@ vfpfunc.read_events()
 # FIX ME: COPY TO ARRAY FOR X = 3
 # FIX ME: SAVE TO test ALL LIKE something
 # FIX ME: ZOOM WINDOW SCREEN MAX
-F[\'somefunc\'](False, S.a, False)
+F.somefunc(False, S.a, False)
 # FIX ME: MODIFY WINDOW SCREEN FONT "FONT", 12 STYLE "B" TITLE "TITLE" NOFLOAT NOCLOSE NOZOOM
 # FIX ME: MODIFY COMMAND c:\\test.prg
 vfpfunc.define_menu(\'test\', window=vfpfunc.SCREEN, bar=True, line=2)
@@ -476,7 +476,7 @@ delete file test.txt recycle
 '''.strip()
     output_str = '''
 M.add_local(\'a\')
-F[\'a\']()
+F.a()
 F[\'a+b\']()
 F[S.a + S.b]()
 F[S.a.strip()]()
@@ -941,7 +941,7 @@ ON KEY LABEL F12 ?\'KEY PRESSED\'
 '''.strip()
     output_str = '''
 vfpfunc.error_func = None
-vfpfunc.error_func = lambda: F[\'test\']()
+vfpfunc.error_func = lambda: F.test()
 vfpfunc.shutdown_func = None
 vfpfunc.shutdown_func = lambda: shutdown.shutdown()
 vfpfunc.shutdown_func = lambda: vfpfunc.quit()
