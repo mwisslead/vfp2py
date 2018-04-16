@@ -274,7 +274,8 @@ import sys
 import test
 
 from vfp2py import vfpfunc
-from vfp2py.vfpfunc import DB, Array, F, M, S, lparameters, parameters
+from vfp2py.vfpfunc import DB, Array, C, F, M, S, lparameters, parameters, vfpclass
+_CLASSES = {}
 
 
 @lparameters()
@@ -363,7 +364,8 @@ ENDFUNC
 from __future__ import division, print_function
 
 from vfp2py import vfpfunc
-from vfp2py.vfpfunc import DB, Array, F, M, S, lparameters, parameters
+from vfp2py.vfpfunc import DB, Array, C, F, M, S, lparameters, parameters, vfpclass
+_CLASSES = {}
 
 
 @lparameters()
@@ -371,54 +373,75 @@ def _program_main():
     pass
 
 
-class Subobj(vfpfunc.Custom):
+@vfpclass
+def Subobj():
+    BaseClass = vfpfunc.Custom
 
-    @lparameters()
-    def _assign(self):
-        vfpfunc.Custom._assign(self)
-        self.x = 3
+    class Subobj(BaseClass):
 
-        # comment
-    @lparameters(\'x\')
-    def init(self):
-        super(type(self), self).init()
-        self.x = S.x
+        @lparameters()
+        def _assign(self):
+            BaseClass._assign(self)
+            self.x = 3
+
+            # comment
+        @lparameters(\'x\')
+        def init(self):
+            super(type(self), self).init()
+            self.x = S.x
+    return Subobj
 
 # comment about subobj2
 
 
-class Subobj2(Subobj):
+@vfpclass
+def Subobj2():
+    BaseClass = SubobjType()
 
-    @lparameters()
-    def _assign(self):
-        Subobj._assign(self)
-        self.x = 4
+    class Subobj2(BaseClass):
 
-
-class Testclass(vfpfunc.Commandbutton):
-
-    @lparameters()
-    def _assign(self):
-        vfpfunc.Commandbutton._assign(self)
-        self.test1 = vfpfunc.Custom(name=\'test1\', parent=self)
-        self.test2 = Subobj(x=4, name=\'test2\', parent=self)
-        self.test3 = vfpfunc.create_object(\'Unknownobj\', x=\'4\', name=\'test3\', parent=self)
-
-    @lparameters(\'x\')
-    def init(self):
-        # FIX ME: NODEFAULT
-        pass
+        @lparameters()
+        def _assign(self):
+            BaseClass._assign(self)
+            self.x = 4
+    return Subobj2
 
 
-class Abutton(Testclass):
+@vfpclass
+def Testclass():
+    BaseClass = vfpfunc.Commandbutton
 
-    @lparameters()
-    def _assign(self):
-        Testclass._assign(self)
+    class Testclass(BaseClass):
 
-    @lparameters()
-    def click(self):
-        Testclass.click()
+        @lparameters()
+        def _assign(self):
+            BaseClass._assign(self)
+            self.test1 = vfpfunc.Custom(name=\'test1\', parent=self)
+            self.test2 = Subobj(x=4, name=\'test2\', parent=self)
+            self.test3 = vfpfunc.create_object(\'Unknownobj\', x=\'4\', name=\'test3\', parent=self)
+
+        @lparameters(\'x\')
+        def init(self):
+            # FIX ME: NODEFAULT
+            pass
+    return Testclass
+
+
+@vfpclass
+def Abutton():
+    BaseClass = TestclassType()
+
+    class Abutton(BaseClass):
+
+        @lparameters()
+        def _assign(self):
+            BaseClass._assign(self)
+
+        @lparameters()
+        def click(self):
+            Testclass.click()
+
+    return Abutton
 
 
 @lparameters(\'x\')
@@ -430,11 +453,16 @@ def random_function():
 # comment about testclass2
 
 
-class Testclass2(vfpfunc.classes[\'Unknownclass\']):
+@vfpclass
+def Testclass2():
+    BaseClass = C[\'Unknownclass\']
 
-    @lparameters()
-    def _assign(self):
-        vfpfunc.classes[\'Unknownclass\']._assign(self)
+    class Testclass2(BaseClass):
+
+        @lparameters()
+        def _assign(self):
+            BaseClass._assign(self)
+    return Testclass2
 
 
 @parameters(\'x\', \'y\')
@@ -582,7 +610,8 @@ import math
 import os
 
 from vfp2py import vfpfunc
-from vfp2py.vfpfunc import DB, Array, F, M, S, lparameters, parameters
+from vfp2py.vfpfunc import DB, Array, C, F, M, S, lparameters, parameters, vfpclass
+_CLASSES = {}
 
 
 @lparameters()

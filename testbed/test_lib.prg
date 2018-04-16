@@ -306,3 +306,10 @@ procedure scope_tests
 
    user_defined_function(.F.)
 ENDPROC
+
+define class someclass as custom
+enddefine
+
+procedure class_tests
+   obj = createobject('someclass')
+endproc

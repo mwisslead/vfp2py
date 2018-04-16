@@ -9,7 +9,8 @@ import random
 import faker
 
 from vfp2py import vfpfunc
-from vfp2py.vfpfunc import DB, Array, F, M, S, lparameters, parameters
+from vfp2py.vfpfunc import DB, Array, C, F, M, S, lparameters, parameters, vfpclass
+_CLASSES = {}
 
 
 @lparameters()
@@ -333,3 +334,20 @@ def scope_tests():
     S.t = vfpfunc.create_object('Namespace')
 
     user_defined_function(False)
+
+
+@vfpclass
+def Someclass():
+    BaseClass = vfpfunc.Custom
+
+    class Someclass(BaseClass):
+
+        @lparameters()
+        def _assign(self):
+            BaseClass._assign(self)
+    return Someclass
+
+
+@lparameters()
+def class_tests():
+    S.obj = Someclass()

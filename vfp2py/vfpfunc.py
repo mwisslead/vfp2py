@@ -1046,7 +1046,6 @@ class _Variable(object):
 class _Function(object):
     def __init__(self):
         self.__dict__['functions'] = {}
-        self.__dict__['classes'] = {}
 
     def __getattr__(self, key):
         return self[key]
@@ -1077,15 +1076,12 @@ class _Function(object):
     def set_procedure(self, *procedures, **kwargs):
         if not kwargs.get('additive', False):
             self.functions.clear()
-            self.classes.clear()
         for procedure in procedures:
             module = __import__(procedure)
             for obj_name in dir(module):
                 obj = getattr(module, obj_name)
                 if isinstance(obj, (types.FunctionType, types.BuiltinFunctionType)):
                     self.functions[obj_name] = {'func': obj, 'source': procedure}
-                if inspect.isclass(obj):
-                    self.classes[obj_name] = {'class': obj, 'source': procedure}
 
     def release_procedure(self, *procedures, **kwargs):
         release_keys = []
@@ -1104,6 +1100,32 @@ class _Function(object):
         func = getattr(dll, funcname)
         alias = alias or funcname
         self.functions[alias] = {'func': func, 'source': dllname}
+
+class _Class(object):
+    def __init__(self):
+        self.modules = []
+
+    def __getattr__(self, key):
+        return self[key]
+
+    def __getitem__(self, key):
+        for module in self.modules:
+            if hasattr(module, '_CLASSES') and key in module._CLASSES:
+                return module._CLASSES[key](module)
+            elif hasattr(module, key) and inspect.isclass(getattr(module, key)):
+                return getattr(module, key)
+        raise KeyError(key)
+
+    def set_procedure(self, module, additive=False):
+        if not additive:
+            self.modules[:] = []
+        elif module in self.modules:
+            self.modules.remove(module)
+        self.modules.insert(0, module)
+
+    def release_procedure(self, *modules):
+        for module in modules:
+            self.modules.remove(module)
 
 def atline(search, string):
     return string[:string.find(search)+1].count('\r') + 1
@@ -1655,7 +1677,9 @@ def set(setword, *args, **kwargs):
     elif setword in ('index', 'refresh'):
         settings = args
     elif setword == 'procedure':
+        module = __import__(args[0])
         F.set_procedure(*args, **kwargs)
+        C.set_procedure(module, additive=kwargs.get('additive', False))
     SET_PROPS[setword] = settings
 
 def text(text_lines, show=True):
@@ -1669,8 +1693,10 @@ def create_object(objtype, *args, **kwargs):
     frame = inspect.getouterframes(inspect.currentframe())[2][0]
     if objtype in frame.f_globals:
         return frame.f_globals[objtype](*args, **kwargs)
-    if objtype in F.classes:
-        return F.classes[objtype]['class']
+    try:
+        return C[objtype]()
+    except:
+        pass
     try:
         return win32com.client.Dispatch(objtype)
     except:
@@ -1684,6 +1710,7 @@ DB = DatabaseContext()
 M = _Memvar()
 S = _Variable(M, DB)
 F = _Function()
+C = _Class()
 
 def module(module_name):
     return __import__(module_name.lower())
@@ -1742,3 +1769,10 @@ def parameters(*varnames):
 
 def lparameters(*varnames):
     return _parameters(M.add_local, *varnames)
+
+def vfpclass(fn):
+    fn.func_globals['_CLASSES'][fn.func_name] = fn
+    def double_caller(*args, **kwargs):
+        return fn()(*args, **kwargs)
+    fn.func_globals[fn.func_name + 'Type'] = fn
+    return double_caller

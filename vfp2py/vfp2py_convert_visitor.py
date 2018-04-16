@@ -118,9 +118,9 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
 
         self.imports = ['from __future__ import division, print_function']
         self.imports.append('from vfp2py import vfpfunc')
-        self.imports.append('from vfp2py.vfpfunc import DB, Array, F, M, S')
-        self.imports.append('from vfp2py.vfpfunc import parameters, lparameters')
-        defs = []
+        self.imports.append('from vfp2py.vfpfunc import DB, Array, C, F, M, S')
+        self.imports.append('from vfp2py.vfpfunc import parameters, lparameters, vfpclass')
+        defs = [CodeStr('_CLASSES = {}')]
 
         for child in ctx.children:
             if isinstance(child, ctx.parser.FuncDefContext):
@@ -135,7 +135,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             elif not isinstance(child, antlr4.tree.Tree.TerminalNodeImpl):
                 defs += self.visit(child)
 
-        imports = isort.SortImports(file_contents='\n'.join(set(self.imports))).output.splitlines()
+        imports = isort.SortImports(file_contents='\n'.join(set(self.imports)), line_length=100000).output.splitlines()
         return  [CodeStr(imp) for imp in imports] + defs
 
     def visitLine(self, ctx):
@@ -179,8 +179,10 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
     def modify_superclass(self, supername):
         if hasattr(vfpfunc, supername):
             supername = add_args_to_code('{}.{}', (CodeStr('vfpfunc'), supername))
-        elif supername not in self.class_list:
-            supername = add_args_to_code('vfpfunc.classes[{}]', (str(supername),))
+        elif supername in self.class_list:
+            supername = add_args_to_code('{}Type()', (supername,))
+        else:
+            supername = add_args_to_code('C[{}]', (str(supername),))
         return supername
 
     def visitClassDef(self, ctx):
@@ -231,12 +233,15 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
 
         classname, supername = self.visit(ctx.classDefStart())
 
-        funcbody = [CodeStr('{}._assign(self)'.format(supername))] + assignments
+        funcbody = [CodeStr('BaseClass._assign(self)')] + assignments
         self.modify_func_body(funcbody)
         funcs['_assign'][1] = funcbody
         funcs['_assign'][0] = make_func_code('lparameters')
 
-        retval = [CodeStr('class {}({}):'.format(classname, supername))]
+        retval = [
+            add_args_to_code('BaseClass = {}', (supername,)),
+            CodeStr('class {}(BaseClass):'.format(classname)),
+        ]
         if funcs:
             for name in subclasses:
                 subclass = subclasses[name]
@@ -259,6 +264,12 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
                 ])
         else:
             retval.append([CodeStr('pass')])
+        retval.append(add_args_to_code('return {}', (classname,)))
+        retval = [
+            CodeStr('@vfpclass'),
+            add_args_to_code('def {}():', (classname,)),
+            retval,
+        ]
 
         return retval + sum((self.visit(comment) for comment in ctx.lineComment()), [])
 
