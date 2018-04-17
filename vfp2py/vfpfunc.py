@@ -1045,51 +1045,37 @@ class _Variable(object):
 
 class _Function(object):
     def __init__(self):
-        self.__dict__['functions'] = {}
+        self.__dict__['modules'] = []
+        self.__dict__['dlls'] = []
 
     def __getattr__(self, key):
         return self[key]
 
     def __getitem__(self, key):
-        if key in self.functions:
-            return self.functions[key]['func']
+        for dll in self.dlls:
+            if hasattr(dll, key):
+                return getattr(dll, key)
+        for module in self.modules:
+            if not hasattr(module, key) or (hasattr(module, '_CLASSES') and key in module._CLASSES):
+                continue
+            obj = getattr(module, key)
+            if isinstance(obj, (types.FunctionType, types.BuiltinFunctionType)):
+                return obj
         for scope in M.public_scopes:
             if key in scope and isinstance(scope[key], Array):
                 return scope[key]
         raise _EXCEPTION('{} is not a procedure'.format(key))
 
-    def __setitem__(self, key, val):
-        self.functions[key] = {'func': val, 'source': None}
+    def set_procedure(self, module, additive=False):
+        if not additive:
+            self.modules[:] = []
+        elif module in self.modules:
+            self.modules.remove(module)
+        self.modules.insert(0, module)
 
-    def __setattr__(self, key, val):
-        if key in self.__dict__:
-            super(_Function, self).__setattr__(key, val)
-        else:
-            self[key] = val
-
-    def __repr__(self):
-        return repr(self.functions)
-
-    def pop(self, key):
-        return self.functions.pop(key)
-
-    def set_procedure(self, *procedures, **kwargs):
-        if not kwargs.get('additive', False):
-            self.functions.clear()
-        for procedure in procedures:
-            module = __import__(procedure)
-            for obj_name in dir(module):
-                obj = getattr(module, obj_name)
-                if isinstance(obj, (types.FunctionType, types.BuiltinFunctionType)):
-                    self.functions[obj_name] = {'func': obj, 'source': procedure}
-
-    def release_procedure(self, *procedures, **kwargs):
-        release_keys = []
-        for key in self.functions:
-            if self.functions[key]['source'] in procedures:
-                release_keys.append(key)
-        for key in release_keys:
-            self.functions.pop(key)
+    def release_procedure(self, *modules):
+        for module in modules:
+            self.modules.remove(module)
 
     def dll_declare(self, dllname, funcname, alias):
         # need something here to determine more about the dll file.
@@ -1097,9 +1083,15 @@ class _Function(object):
             dll = ctypes.CDLL(dllname)
         except:
             dll = ctypes.CDLL(ctypes.util.find_library(dllname))
+        try:
+            dll = next(d for d in self.dlls if d._name == dll._name)
+        except:
+            pass
         func = getattr(dll, funcname)
         alias = alias or funcname
-        self.functions[alias] = {'func': func, 'source': dllname}
+        setattr(dll, alias, func)
+        if dll not in self.dlls:
+            self.dlls.append(dll)
 
 class _Class(object):
     def __init__(self):
@@ -1678,7 +1670,7 @@ def set(setword, *args, **kwargs):
         settings = args
     elif setword == 'procedure':
         module = __import__(args[0])
-        F.set_procedure(*args, **kwargs)
+        F.set_procedure(module, additive=kwargs.get('additive', False))
         C.set_procedure(module, additive=kwargs.get('additive', False))
     SET_PROPS[setword] = settings
 
