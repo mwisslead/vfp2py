@@ -1243,6 +1243,9 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         command = None
         args = []
         if len(ctx.children) > 1:
+            if ctx.DLLS():
+                args = self.visit(ctx.specialArgs())
+                return make_func_code('F.dll_clear', *args)
             if ctx.expr():
                 args.append(self.visit(ctx.expr()))
             elif ctx.specialExpr():

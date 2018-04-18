@@ -639,6 +639,7 @@ POP KEY ALL
 POP KEY
 POP MENU TO MASTER test
 POP POPUP test
+declare integer printf in c as c_printf string
 CLEAR DLLS "TEST1", "TEST2"
 CLEAR MACROS
 CLEAR EVENTS
@@ -656,7 +657,8 @@ CLEAR
 # FIX ME: POP KEY
 # FIX ME: POP MENU TO MASTER test
 # FIX ME: POP POPUP test
-vfpfunc.clear(\'dlls\', \'test1\', \'test2\')
+F.dll_declare(\'c\', \'printf\', \'c_printf\')
+F.dll_clear(\'test1\', \'test2\')
 vfpfunc.clear(\'macros\')
 vfpfunc.clear(\'events\')
 vfpfunc.clear(None, \'all\')
