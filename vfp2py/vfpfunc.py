@@ -1093,6 +1093,15 @@ class _Function(object):
         if dll not in self.dlls:
             self.dlls.append(dll)
 
+    def dll_clear(self, *funcs):
+        if not funcs:
+            self.dlls = []
+        else:
+            for dll in self.dlls:
+                for func in funcs:
+                    if hasattr(dll, func):
+                        delattr(dll, func)
+
 class _Class(object):
     def __init__(self):
         self.modules = []
