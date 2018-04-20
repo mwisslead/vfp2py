@@ -412,7 +412,7 @@ def read_vfp_project(pjxfile):
     main_file = ''
 
     for record in table:
-        if record.exclude is None or record.exclude:
+        if dbf.is_deleted(record) or record.exclude is None or record.exclude:
             continue
         name, failed = find_full_path(record.name.rstrip('\x00'), directory)
         if failed:
