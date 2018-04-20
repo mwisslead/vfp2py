@@ -287,6 +287,13 @@ endproc
 
 procedure user_defined_function(arg1, arg2)
    assert pcount() == 1
+   assert parameters() == 1
+   user_defined_function2()
+   assert parameters() == 0
+   assert pcount() == 1
+endproc
+
+procedure user_defined_function2(arg1)
 endproc
 
 procedure scope_tests

@@ -803,6 +803,8 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             return add_args_to_code('{}[:1].{}()', [args[0], funcname])
         if funcname == 'inlist':
             return add_args_to_code('({} in {})', [args[0], tuple(args[1:])])
+        if funcname == 'parameters':
+            return CodeStr('vfpfunc.PARAMETERS')
         if funcname == 'pythonfunctioncall' and len(args) == 3 and isinstance(args[2], tuple):
             self.imports.append('import {}'.format(args[0]))
             return make_func_code('{}.{}'.format(args[0], args[1]), *args[2])

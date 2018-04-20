@@ -315,6 +315,15 @@ def database_tests():
 @lparameters('arg1', 'arg2')
 def user_defined_function():
     assert vfpfunc.pcount() == 1
+    assert vfpfunc.PARAMETERS == 1
+    user_defined_function2()
+    assert vfpfunc.PARAMETERS == 0
+    assert vfpfunc.pcount() == 1
+
+
+@lparameters('arg1')
+def user_defined_function2():
+    pass
 
 
 @lparameters()
