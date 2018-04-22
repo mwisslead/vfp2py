@@ -28,6 +28,8 @@ procedure date_tests
    assert month(somedate) == 6
    assert cmonth(somedate) == 'June'
    assert dmy(somedate) == '30 June 2017'
+   assert dtos(somedate) == '20170630'
+   assert dtoc(somedate) == '06/30/2017'
    assert len(time()) == 8
    assert len(time(1)) == 11
    assert dtot(somedate) == Datetime(2017, 6, 30, 0)

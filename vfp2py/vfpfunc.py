@@ -1169,6 +1169,18 @@ def ddesettopic(a, b, c):
 def dow_fix(weekday, firstday=0):
     return (weekday + 2 - (firstday or 1)) % 7 + 1
 
+def dtos(dateobj):
+    fmt = '%Y%m%d'
+    if hasattr(dateobj, 'hour'):
+        fmt += '%H%M%S'
+    return dateobj.strftime(fmt)
+
+def dtoc(dateobj):
+    fmt = '%m/%d/%Y'
+    if hasattr(dateobj, 'hour'):
+        fmt += '%H:%M:%S'
+    return dateobj.strftime(fmt)
+
 def error(txt):
     raise _EXCEPTION(txt)
 

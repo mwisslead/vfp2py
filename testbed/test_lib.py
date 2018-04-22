@@ -53,6 +53,8 @@ def date_tests():
     assert S.somedate.month == 6
     assert S.somedate.strftime('%B') == 'June'
     assert S.somedate.strftime('%d %B %Y') == '30 June 2017'
+    assert vfpfunc.dtos(S.somedate) == '20170630'
+    assert vfpfunc.dtoc(S.somedate) == '06/30/2017'
     assert len(dt.datetime.now().time().strftime('%H:%M:%S')) == 8
     assert len(dt.datetime.now().time().strftime('%H:%M:%S.%f')[:11]) == 11
     assert dt.datetime.combine(S.somedate, dt.datetime.min.time()) == dt.datetime(2017, 6, 30, 0)

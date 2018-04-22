@@ -691,9 +691,15 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
                 if len(args) < 2:
                     args.append('')
                 if args[1] == 1 or funcname == 'dtos':
-                    args[1] = add_args_to_code('\'%Y%m%d%H%M%S\' if hasattr({}, \'hour\') else \'%Y%m%d\'', [args[0]])
+                    if args[0] == 'dt.datetime.now()':
+                        args[1] = '%Y%m%d%H%M%S'
+                    elif args[0] == 'dt.datetime.now().date()':
+                        args[0] = CodeStr('dt.datetime.now()')
+                        args[1] = '%Y%m%d'
+                    else:
+                        return make_func_code('vfpfunc.dtos', args[0])
                 else:
-                    args[1] = add_args_to_code('\'%m/%d/%Y %H:%M:%S\' if hassattr({}, \'hour\') else \'%m/%d/%Y\'', [args[0]])
+                    return make_func_code('vfpfunc.dtoc', args[0])
                 return make_func_code('{}.{}'.format(args[0], 'strftime'), args[1])
         if funcname == 'iif' and len(args) == 3:
             return add_args_to_code('({} if {} else {})', [args[i] for i in (1, 0, 2)])
