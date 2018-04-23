@@ -761,6 +761,8 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
                 return add_args_to_code('{}[{}:]', args)
             if args[2] == 1:
                 return add_args_to_code('{}[{}]', args[:2])
+            if isinstance(args[1], CodeStr):
+                args[2] = CodeStr(repr(args[2]))
             args[2] += args[1]
             return add_args_to_code('{}[{}:{}]', args)
         if funcname == 'getenv':
