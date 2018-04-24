@@ -638,6 +638,15 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
                 arrname = str(arrname)
             args.append(arrname)
             args.append((localscode, CodeStr('S')))
+        if funcname == 'acopy':
+            func = add_args_to_code('{}.copy', (args[0],))
+            arrname = args[1]
+            replace_string = 'S.'
+            if arrname.startswith(replace_string):
+                arrname = str(arrname[len(replace_string):]) #FIXME
+            else:
+                arrname = str(arrname)
+            return make_func_code(func, arrname, *args[2:])
         if funcname == 'empty':
             return add_args_to_code('(not {} if {} is not None else False)', args + args)
         if funcname == 'occurs':

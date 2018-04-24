@@ -797,6 +797,10 @@ CNT_FIELDS = AFIELDS(MAIN_ARRAY) + 32
 CNT_FIELDS = AFIELDS(MAIN_ARRAY2, 'report') + 47
 T = aINS(main_array, 3)
 T = aINS(main_array, 3, 2)
+vals_copied = acopy(main_array, new_array)
+vals_copied = acopy(main_array, new_array, 5)
+vals_copied = acopy(main_array, new_array, 5, num_elements)
+vals_copied = acopy(main_array, new_array, 5, num_elements, 0)
 @end=vfp@
 
 @begin=python@
@@ -806,6 +810,10 @@ S.cnt_fields = DB.afields(None, 'main_array', (locals(), S)) + 32
 S.cnt_fields = DB.afields('report', 'main_array2', (locals(), S)) + 47
 S.t = S.main_array.insert(None, 3)
 S.t = S.main_array.insert(None, 3, 2)
+S.vals_copied = S.main_array.copy('new_array')
+S.vals_copied = S.main_array.copy('new_array', 5)
+S.vals_copied = S.main_array.copy('new_array', 5, S.num_elements)
+S.vals_copied = S.main_array.copy('new_array', 5, S.num_elements, 0)
 @end=python@
 
 @begin=vfp@&&lines
