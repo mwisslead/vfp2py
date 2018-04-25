@@ -54,11 +54,20 @@ class CodeStr(str):
     def __add__(self, val):
         return CodeStr('{} + {}'.format(self, repr(val)))
 
+    def __radd__(self, val):
+        return CodeStr('{} + {}'.format(repr(val), self))
+
     def __sub__(self, val):
         return CodeStr('{} - {}'.format(self, repr(val)))
 
+    def __rsub__(self, val):
+        return CodeStr('{} - {}'.format(repr(val), self))
+
     def __mul__(self, val):
         return CodeStr('{} * {}'.format(self, repr(val)))
+
+    def __rmul__(self, val):
+        return CodeStr('{} * {}'.format(repr(val), self))
 
 def make_func_code(funcname, *args, **kwargs):
     args = [repr(x) for x in args]
@@ -217,7 +226,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
                 if obj['functions']:
                     subclass = 'SubClass' + name.title()
                     subclasses[subclass] = {key: obj[key] for key in ('parent_type', 'functions')}
-                    obj['parent_type'] = 'self.' + subclass
+                    obj['parent_type'] = 'self.' + str(subclass)
                     self.class_list.append(obj['parent_type'])
                 assignments.append(add_args_to_code('self.{} = {}', [CodeStr(name), self.func_call('createobject', obj['parent_type'], **obj['args'])]))
 
@@ -575,6 +584,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         return CodeStr('not {}'.format(repr(self.visit(ctx.expr()))))
 
     def func_call(self, funcname, *args, **kwargs):
+        funcname = str(funcname)
         if not kwargs and len(args) == 1 and isinstance(args[0], (list, tuple)):
             args = args[0]
         args = list(args)
@@ -770,8 +780,6 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
                 return add_args_to_code('{}[{}:]', args)
             if args[2] == 1:
                 return add_args_to_code('{}[{}]', args[:2])
-            if isinstance(args[1], CodeStr):
-                args[2] = CodeStr(repr(args[2]))
             args[2] += args[1]
             return add_args_to_code('{}[{}:{}]', args)
         if funcname == 'getenv':
@@ -939,22 +947,18 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             trailer[-1][0] = CodeStr(trailer[-1][0])
             func = add_args_to_code('{}.{}', [self.createIdAttr(identifier, trailer[:-2])] + trailer[-1][:1])
             return make_func_code(func, *trailer[-1][1])
-        elif trailer:
-            trailer = self.convert_trailer_args(trailer)
         else:
-            trailer = CodeStr('')
+            trailer = [self.convert_trailer_args(t) for t in trailer or ()]
+            trailer = CodeStr(''.join(trailer))
         if identifier.islower():
             identifier = self.scopeId(identifier, 'val')
         return add_args_to_code('{}{}', (identifier, trailer))
 
-    def convert_trailer_args(self, trailers):
-        retval = ''
-        for trailer in trailers:
-            if isinstance(trailer, list):
-                retval += '({})'.format(', '.join(repr(t) for t in trailer))
-            else:
-                retval += '.' + trailer
-        return CodeStr(retval)
+    def convert_trailer_args(self, trailer):
+        if isinstance(trailer, list):
+            return make_func_code('', *trailer)
+        else:
+            return add_args_to_code('.{}', (trailer,))
 
     def visitFuncCallTrailer(self, ctx):
         trailer = self.visit(ctx.trailer()) or []

@@ -320,7 +320,11 @@ DEFINE CLASS SUBOBJ AS CUSTOM
    FUNCTION INIT(X)
       DODEFAULT()
       THIS.X = X
+      THIS.ARGTEST(THIS.X, 2)
    ENDFUNC
+
+   PROCEDURE ARGTEST(X, Y)
+   ENDPROC
 
    *comment
 ENDDEFINE
@@ -393,6 +397,11 @@ def Subobj():
         def init(self):
             super(type(self), self).init()
             self.x = S.x
+            self.argtest(self.x, 2)
+
+        @lparameters(\'x\', \'y\')
+        def argtest(self):
+            pass
     return Subobj
 
 # comment about subobj2
