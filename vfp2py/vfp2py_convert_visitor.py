@@ -651,7 +651,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             return add_args_to_code('(not {} if {} is not None else False)', args + args)
         if funcname == 'occurs':
             return add_args_to_code('{}.count({})', reversed(args))
-        if funcname in ('atc'):
+        if funcname in ('atc',):
             funcname = funcname[:-1]
             args[0] = add_args_to_code('{}.lower()', [args[0]])
             args[1] = add_args_to_code('{}.lower()', [args[1]])

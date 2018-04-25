@@ -53,6 +53,7 @@ DATETIME_VAL = {^2017-5-6 5P}
 ?CAST(string_val as blob)
 ?cast(float_val as currency)
 ?substr(string_val, int_val, 13)
+?at(\'.\', string_val)
 OBJ_VAL = CREATEOBJECT(\'TEST\')
 OBJ_VAL = CREATEOBJECT(\'FORM\')
 RELEASE STRING_VAL, INT_VAL, BOOL_VAL, NULL_VAL
@@ -163,6 +164,7 @@ print(S.x or S.y and S.w or S.z)
 print(bytearray(S.string_val))
 print(float(S.float_val))
 print(S.string_val[int(S.int_val) - 1:13 + int(S.int_val) - 1])
+print(S.string_val.find(\'.\') + 1)
 S.obj_val = vfpfunc.create_object(\'Test\')
 S.obj_val = vfpfunc.Form()
 del M.string_val, M.int_val, M.bool_val, M.null_val
