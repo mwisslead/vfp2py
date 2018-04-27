@@ -1112,7 +1112,7 @@ class _Class(object):
     def __getitem__(self, key):
         for module in self.modules:
             if hasattr(module, '_CLASSES') and key in module._CLASSES:
-                return module._CLASSES[key](module)
+                return module._CLASSES[key]()
             elif hasattr(module, key) and inspect.isclass(getattr(module, key)):
                 return getattr(module, key)
         raise KeyError(key)
