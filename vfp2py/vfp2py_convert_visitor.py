@@ -820,6 +820,8 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             return add_args_to_code(op[funcname], [int(arg) for arg in args])
         if funcname in ('abs', 'round', 'max', 'min'):
             return make_func_code(funcname, *args)
+        if funcname == 'mod':
+            return add_args_to_code('({} % {})', args)
         if funcname == 'int':
             return int(args[0])
         if funcname == 'isnull':

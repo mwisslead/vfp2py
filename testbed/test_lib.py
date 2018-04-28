@@ -73,6 +73,7 @@ def math_tests():
     assert abs(math.cos(math.radians(90)) - 0) < 0.001
     assert abs(math.cos(math.radians(45)) - math.sqrt(2) / 2) < 0.001
     assert 0 < random.random() and random.random() < 1
+    assert (5 % 2) == 1
 
     M.add_local('stringval')
     S.stringval = '1e5'

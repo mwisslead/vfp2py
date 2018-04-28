@@ -47,6 +47,7 @@ procedure math_tests
    assert abs(cos(dtor(90)) - 0) < 0.001
    assert abs(cos(dtor(45)) - sqrt(2)/2) < 0.001
    assert 0 < rand() and rand() < 1
+   assert mod(5, 2) == 1
 
    local stringval
    stringval = '1e5'
