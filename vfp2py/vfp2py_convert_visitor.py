@@ -825,7 +825,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         if funcname == 'isnull':
             return add_args_to_code('{} == {}', [args[0], None])
         if funcname in ('isalpha', 'islower', 'isdigit', 'isupper'):
-            return add_args_to_code('{}[:1].{}()', [args[0], funcname])
+            return add_args_to_code('{}[:1].{}()', [args[0], CodeStr(funcname)])
         if funcname == 'inlist':
             return add_args_to_code('({} in {})', [args[0], tuple(args[1:])])
         if funcname == 'parameters':
