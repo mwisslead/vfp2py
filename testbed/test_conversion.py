@@ -115,7 +115,9 @@ DEFINE POPUP test
 DEFINE BAR 1 OF test PROMPT \'text\'
 ON PAD test OF thing ACTIVATE POPUP test
 ON BAR 1 of test ACTIVATE POPUP test
+ACTIVATE SCREEN
 ACTIVATE MENU test NOWAIT
+ACTIVATE POPUP test
 '''.strip()
     output_str = '''
 # comment
@@ -223,7 +225,9 @@ vfpfunc.define_popup(\'test\')
 vfpfunc.define_bar(1, \'test\', \'text\')
 vfpfunc.on_pad_bar(\'pad\', \'test\', \'thing\', (\'popup\', \'test\'))
 vfpfunc.on_pad_bar(\'bar\', 1, \'test\', (\'popup\', \'test\'))
+# FIX ME: ACTIVATE SCREEN
 vfpfunc.activate_menu(\'test\', nowait=True)
+# FIX ME: ACTIVATE POPUP test
 '''.strip()
     test_output_str = vfp2py.vfp2py.prg2py(input_str, parser_start='lines', prepend_data='').strip()
     try:

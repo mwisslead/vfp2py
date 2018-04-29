@@ -1943,6 +1943,9 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             kwargs['message'] = self.visit(ctx.expr(1))
         return make_func_code('vfpfunc.define_bar', bar_number, menu_name, prompt, **kwargs)
 
+    def visitActivateScreen(self, ctx):
+        pass
+
     def visitActivateMenu(self, ctx):
         menu_name = self.visit(ctx.specialExpr(0))
         kwargs = {}
@@ -1951,6 +1954,9 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         if ctx.PAD():
             kwargs['pad'] = self.visit(ctx.specialExpr(1))
         return make_func_code('vfpfunc.activate_menu', menu_name, **kwargs)
+
+    def visitActivatePopup(self, ctx):
+        pass
 
     def visitShowCmd(self, ctx):
         pass

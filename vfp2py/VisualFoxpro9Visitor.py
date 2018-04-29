@@ -295,8 +295,18 @@ class VisualFoxpro9Visitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by VisualFoxpro9Parser#activateScreen.
+    def visitActivateScreen(self, ctx):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by VisualFoxpro9Parser#activateMenu.
     def visitActivateMenu(self, ctx):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by VisualFoxpro9Parser#activatePopup.
+    def visitActivatePopup(self, ctx):
         return self.visitChildren(ctx)
 
 
