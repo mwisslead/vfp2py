@@ -533,7 +533,7 @@ os.mkdir(S.test - S.test)
 os.mkdir('test+test')
 os.rmdir(S.test + S.test)
 os.rmdir(S.test.strip())
-subprocess.call(['ls', '-al', pathname])
+# FIX ME: !ls -al &pathname
 @end=python@
 
 @begin=vfp@&&lines

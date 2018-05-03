@@ -570,7 +570,7 @@ os.mkdir(S.test - S.test)
 os.mkdir(\'test+test\')
 os.rmdir(S.test + S.test)
 os.rmdir(S.test.strip())
-subprocess.call([\'ls\', \'-al\', pathname])
+# FIX ME: !ls -al &pathname
 '''.strip()
     test_output_str = vfp2py.vfp2py.prg2py(input_str, parser_start='lines', prepend_data='').strip()
     try:

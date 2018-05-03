@@ -33,6 +33,7 @@ lineComment
 
 line
  : lineComment
+ | (~NL)* '&' identifier (~NL)* lineEnd
  | (controlStmt | cmd) lineEnd
  ;
 
@@ -322,10 +323,6 @@ reference
  : '@' idAttr
  ;
 
-argReplace
- : '&' identifier
- ;
-
 expr
  : '(' expr ')' #subExpr
  | op=('+'|'-') expr #unaryNegation
@@ -360,7 +357,6 @@ complexId
 atom
  : identifier
  | reference
- | argReplace
  ;
 
 trailer

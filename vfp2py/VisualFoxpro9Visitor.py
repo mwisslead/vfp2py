@@ -630,11 +630,6 @@ class VisualFoxpro9Visitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by VisualFoxpro9Parser#argReplace.
-    def visitArgReplace(self, ctx):
-        return self.visitChildren(ctx)
-
-
     # Visit a parse tree produced by VisualFoxpro9Parser#comparison.
     def visitComparison(self, ctx):
         return self.visitChildren(ctx)
