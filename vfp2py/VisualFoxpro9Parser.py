@@ -1097,8 +1097,8 @@ def serializedATN():
         buf.write(u"\7\35\2\2\u0771\u0781\5Z.\13\u0772\u0773\f\t\2\2\u0773")
         buf.write(u"\u0774\t\36\2\2\u0774\u0781\5Z.\n\u0775\u0776\f\b\2\2")
         buf.write(u"\u0776\u0777\t!\2\2\u0777\u0781\5Z.\t\u0778\u0779\f\7")
-        buf.write(u"\2\2\u0779\u077a\5^\60\2\u077a\u077b\5Z.\b\u077b\u0781")
-        buf.write(u"\3\2\2\2\u077c\u077d\f\6\2\2\u077d\u077e\5\\/\2\u077e")
+        buf.write(u"\2\2\u0779\u077a\5\\/\2\u077a\u077b\5Z.\b\u077b\u0781")
+        buf.write(u"\3\2\2\2\u077c\u077d\f\6\2\2\u077d\u077e\5^\60\2\u077e")
         buf.write(u"\u077f\5Z.\7\u077f\u0781\3\2\2\2\u0780\u0765\3\2\2\2")
         buf.write(u"\u0780\u076c\3\2\2\2\u0780\u076f\3\2\2\2\u0780\u0772")
         buf.write(u"\3\2\2\2\u0780\u0775\3\2\2\2\u0780\u0778\3\2\2\2\u0780")
@@ -12680,27 +12680,27 @@ class VisualFoxpro9Parser ( Parser ):
                         pass
 
                     elif la_ == 6:
-                        localctx = VisualFoxpro9Parser.BooleanOrContext(self, VisualFoxpro9Parser.ExprContext(self, _parentctx, _parentState))
+                        localctx = VisualFoxpro9Parser.BooleanAndContext(self, VisualFoxpro9Parser.ExprContext(self, _parentctx, _parentState))
                         self.pushNewRecursionContext(localctx, _startState, self.RULE_expr)
                         self.state = 1910
                         if not self.precpred(self._ctx, 5):
                             from antlr4.error.Errors import FailedPredicateException
                             raise FailedPredicateException(self, "self.precpred(self._ctx, 5)")
                         self.state = 1911
-                        self.orOp()
+                        self.andOp()
                         self.state = 1912
                         self.expr(6)
                         pass
 
                     elif la_ == 7:
-                        localctx = VisualFoxpro9Parser.BooleanAndContext(self, VisualFoxpro9Parser.ExprContext(self, _parentctx, _parentState))
+                        localctx = VisualFoxpro9Parser.BooleanOrContext(self, VisualFoxpro9Parser.ExprContext(self, _parentctx, _parentState))
                         self.pushNewRecursionContext(localctx, _startState, self.RULE_expr)
                         self.state = 1914
                         if not self.precpred(self._ctx, 4):
                             from antlr4.error.Errors import FailedPredicateException
                             raise FailedPredicateException(self, "self.precpred(self._ctx, 4)")
                         self.state = 1915
-                        self.andOp()
+                        self.orOp()
                         self.state = 1916
                         self.expr(5)
                         pass

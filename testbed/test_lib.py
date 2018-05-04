@@ -79,6 +79,8 @@ def math_tests():
     S.stringval = '1e5'
     assert float(S.stringval) == 100000
     assert vfpfunc.vartype(S.num_value) == 'N'
+    assert not ((True or True) and False)
+    assert True or False and True
 
 
 @lparameters()

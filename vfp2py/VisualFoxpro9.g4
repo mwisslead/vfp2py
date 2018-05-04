@@ -332,8 +332,8 @@ expr
  | expr '%' expr #modulo
  | expr op=('+'|'-') expr #addition
  | expr op=('=='|NOTEQUALS|'='|'#'|'>'|GTEQ|'<'|LTEQ|'$') expr #comparison
- | expr orOp expr #booleanOr
  | expr andOp expr #booleanAnd
+ | expr orOp expr #booleanOr
  | constant #constantExpr
  | CAST '(' expr asType ')' #castExpr
  | (PERIOD | idAttr ':' ':')? atom trailer? #atomExpr

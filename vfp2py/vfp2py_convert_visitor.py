@@ -69,6 +69,37 @@ class CodeStr(str):
     def __rmul__(self, val):
         return CodeStr('{} * {}'.format(repr(val), self))
 
+class OperatorExpr(object):
+    precedence = -1
+    operator = '?'
+
+    def __init__(self, *args):
+        self.args = args
+
+    def wrap_arg(self, arg):
+        if isinstance(arg, OperatorExpr) and arg.precedence < self.precedence:
+            return '({})'.format(repr(arg))
+        return arg
+
+    def __repr__(self):
+        args = [self.wrap_arg(arg) for arg in self.args]
+        if len(args) == 1:
+            return '{}{}'.format(self.operator, args[0])
+        else:
+            return '{}{}{}'.format(args[0], self.operator, args[1])
+
+class OrExpr(OperatorExpr):
+    precedence = 0
+    operator = ' or '
+
+class AndExpr(OperatorExpr):
+    precedence = 1
+    operator = ' and '
+
+class NotExpr(OperatorExpr):
+    precedence = 2
+    operator = 'not '
+
 def make_func_code(funcname, *args, **kwargs):
     args = [repr(x) for x in args]
     if not all(valid_identifier(name) for name in kwargs):
@@ -570,18 +601,18 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
     def visitBooleanOr(self, ctx):
         left = self.visit(ctx.expr(0))
         right = self.visit(ctx.expr(1))
-        return CodeStr('{} {} {}'.format(repr(left), 'or', repr(right)))
+        return OrExpr(left, right)
 
     def visitBooleanAnd(self, ctx):
         left = self.visit(ctx.expr(0))
         right = self.visit(ctx.expr(1))
-        return CodeStr('{} {} {}'.format(repr(left), 'and', repr(right)))
+        return AndExpr(left, right)
 
     def visitUnaryNegation(self, ctx):
         return add_args_to_code('{}' if ctx.op.type == ctx.parser.PLUS_SIGN else '-{}', (self.visit(ctx.expr()),))
 
     def visitBooleanNegation(self, ctx):
-        return CodeStr('not {}'.format(repr(self.visit(ctx.expr()))))
+        return NotExpr(self.visit(ctx.expr()))
 
     def func_call(self, funcname, *args, **kwargs):
         funcname = str(funcname)
@@ -1205,7 +1236,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         return add_args_to_code('{} {} {}', (left, CodeStr(symbols[operation]), right))
 
     def visitSubExpr(self, ctx):
-        return add_args_to_code('{}', [self.visit(ctx.expr())])
+        return self.visit(ctx.expr())
 
     def visitFuncDo(self, ctx):
         func = self.visit(ctx.specialExpr(0))

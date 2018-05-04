@@ -53,6 +53,8 @@ procedure math_tests
    stringval = '1e5'
    assert val(stringval) = 100000
    assert vartype(num_value) == 'N'
+   assert not ((.t. or .t.) and .f.)
+   assert .t. or .f. and .t.
 endproc
 
 procedure string_tests
