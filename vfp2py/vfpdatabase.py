@@ -13,7 +13,7 @@ class DatabaseWorkspace(object):
     def __init__(self, tablename, alias=None):
         self.name = (alias or '').lower()
         self.table = dbf.Table(tablename)
-        self.table.open()
+        self.table.open(dbf.READ_WRITE)
         if len(self.table) > 0:
             self.table.goto(0)
         self.locate = None
@@ -267,7 +267,7 @@ class DatabaseContext(object):
     def pack(self, pack, tablename, workarea):
         if tablename:
             table = dbf.Table(tablename)
-            table.open()
+            table.open(dbf.READ_WRITE)
             table.pack()
             table.close()
         else:

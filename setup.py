@@ -23,7 +23,7 @@ setup(
         "Programming Language :: Python",
         "Topic :: Software Development :: Libraries :: Python Modules",
     ],
-    install_requires=[ANTLR4 + '==4.7.1', 'future', 'enum34', 'dbf', 'autopep8==1.2.4', 'isort', 'python-dateutil', 'pyodbc'],
+    install_requires=[ANTLR4 + '==4.7.1', 'dbf==0.97.2', 'autopep8==1.2.4', 'isort==4.3.4', 'python-dateutil==2.7.2', 'pyodbc==4.0.23'],
     test_suite='nose.collector',
     tests_require=['nose', 'Faker'],
     entry_points = {
