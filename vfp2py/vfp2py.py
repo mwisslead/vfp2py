@@ -23,12 +23,9 @@ from .VisualFoxpro9Parser import VisualFoxpro9Parser
 from .VisualFoxpro9Visitor import VisualFoxpro9Visitor
 
 from . import vfpfunc
-from .vfp2py_convert_visitor import PythonConvertVisitor
+from .vfp2py_convert_visitor import PythonConvertVisitor, CodeStr
 
 SEARCH_PATH = ['.']
-
-if sys.version_info >= (3,):
-    unicode=str
 
 def which(filename):
     '''find file on path'''
@@ -48,18 +45,8 @@ class Tic():
     def toc(self):
         return time.time()-self.start
 
-class CodeStr(unicode):
-    def __repr__(self):
-        return unicode(self)
 
-    def __add__(self, val):
-        return CodeStr('{} + {}'.format(self, repr(val)))
 
-    def __sub__(self, val):
-        return CodeStr('{} - {}'.format(self, repr(val)))
-
-    def __mul__(self, val):
-        return CodeStr('{} * {}'.format(self, repr(val)))
 
 class PreprocessVisitor(VisualFoxpro9Visitor):
     def __init__(self):
