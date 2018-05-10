@@ -35,17 +35,6 @@ def which(filename):
             return testpath
     return filename
 
-class Tic():
-    def __init__(self):
-        self.start = time.time()
-
-    def tic(self):
-        self.start = time.time()
-
-    def toc(self):
-        return time.time()-self.start
-
-
 
 
 class PreprocessVisitor(VisualFoxpro9Visitor):
@@ -506,7 +495,6 @@ def prg2py(data, parser_start='prg', prepend_data='procedure _program_main\n', i
     return prg2py_after_preproc(data, parser_start, input_filename)
 
 def convert_file(infile, outfile):
-    tic = Tic()
     file_ext = os.path.splitext(infile.lower())[1]
     if file_ext == '.pjx':
         convert_project(infile, outfile)
@@ -537,14 +525,11 @@ def convert_file(infile, outfile):
             name = os.path.basename(infile).lower()
             shutil.copy(infile, os.path.join(outfile, name))
         return
-    print(tic.toc())
-    tic.tic()
     data = 'procedure _program_main\n' + ''.join(token.text.replace('\r', '') for token in tokens)
     with tempfile.NamedTemporaryFile(suffix='.prg') as fid:
         pass
     with open(fid.name, 'wb') as fid:
         fid.write(data.encode('cp1252'))
     output = prg2py_after_preproc(data, 'prg', os.path.splitext(os.path.basename(infile))[0])
-    print(tic.toc())
     with open(outfile, 'wb') as fid:
         fid.write(('# coding=utf-8\n' + output).encode('utf-8'))
