@@ -917,8 +917,8 @@ RETRY
     output_str = '''
 try:
     assert False
-except Exception as S.oerr:
-    S.oerr = vfpfunc.Exception.from_pyexception(S.oerr)
+except Exception as err:
+    S.oerr = vfpfunc.Exception.from_pyexception(err)
     raise
 raise Exception(\'Error Message\')
 # FIX ME: RETRY

@@ -26,27 +26,6 @@ if sys.version_info < (3,):
     def chr(x):
         return CHR(x).decode('ascii')
 
-class RedirectedBuiltin(object):
-    def __init__(self, func):
-        self.func = func
-        self.name = func.__name__
-
-    def __call__(self, *args, **kwargs):
-        try:
-            return self.func(*args, **kwargs)
-        except:
-            return make_func_code(self.name, *args, **kwargs)
-
-for func in (chr, int, str, float):
-    globals()[func.__name__] = RedirectedBuiltin(func)
-
-real_isinstance = isinstance
-def isinstance(obj, istype):
-    if not real_isinstance(istype, tuple):
-        istype = (istype,)
-    istype = tuple(x.func if real_isinstance(x, RedirectedBuiltin) else x for x in istype)
-    return real_isinstance(obj, istype)
-
 class CodeStr(str):
     def __repr__(self):
         return str(self)
@@ -68,6 +47,27 @@ class CodeStr(str):
 
     def __rmul__(self, val):
         return CodeStr('{} * {}'.format(repr(val), self))
+
+class RedirectedBuiltin(object):
+    def __init__(self, func):
+        self.func = func
+        self.name = func.__name__
+
+    def __call__(self, *args, **kwargs):
+        try:
+            return self.func(*args, **kwargs)
+        except:
+            return make_func_code(self.name, *args, **kwargs)
+
+for func in (chr, int, str, float):
+    globals()[func.__name__] = RedirectedBuiltin(func)
+
+real_isinstance = isinstance
+def isinstance(obj, istype):
+    if not real_isinstance(istype, tuple):
+        istype = (istype,)
+    istype = tuple(x.func if real_isinstance(x, RedirectedBuiltin) else x for x in istype)
+    return real_isinstance(obj, istype)
 
 class OperatorExpr(object):
     precedence = -1
@@ -494,8 +494,8 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         try_lines = [CodeStr('try:'), try_lines]
 
         if identifier:
-            catch_lines = [CodeStr('except Exception as {}:'.format(identifier))]
-            catch_lines.append([add_args_to_code('{} = {}', [identifier, make_func_code('vfpfunc.Exception.from_pyexception', identifier)])])
+            catch_lines = [CodeStr('except Exception as err:')]
+            catch_lines.append([add_args_to_code('{} = {}', [identifier, make_func_code('vfpfunc.Exception.from_pyexception', CodeStr('err'))])])
         else:
             catch_lines = [CodeStr('except:')]
         catch_lines.append(self.visit(ctx.catchLines))

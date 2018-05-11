@@ -186,8 +186,8 @@ def database_tests():
         try:
             DB.use('report', 0, 'shared')
             assert False
-        except Exception as S.oerr:
-            S.oerr = vfpfunc.Exception.from_pyexception(S.oerr)
+        except Exception as err:
+            S.oerr = vfpfunc.Exception.from_pyexception(err)
             print(S.oerr.message)
             assert S.oerr.message == 'File is in use.'
         _add_db_record(0)
@@ -282,8 +282,8 @@ def database_tests():
         DB.use(None, DB.select_function('report2'), None)
         DB.use(None, DB.select_function('report'), None)
         os.remove('report2.dbf')
-    except Exception as S.err:
-        S.err = vfpfunc.Exception.from_pyexception(S.err)
+    except Exception as err:
+        S.err = vfpfunc.Exception.from_pyexception(err)
         print(S.err.message)
         DB.browse()
         raise

@@ -1736,7 +1736,7 @@ S._screen.caption = 'VFP To Python'
 
 def _parameters(scope_func, *varnames):
     def decorator(fn):
-        fn_args = fn.func_code.co_varnames
+        fn_args = fn.__code__.co_varnames
         if len(fn_args) == 1 and fn_args[0] == 'self' and varnames:
             def scoper(self, *args):
                 global PARAMETERS
@@ -1773,7 +1773,7 @@ def _parameters(scope_func, *varnames):
                 PCOUNTS.pop()
                 M.popscope()
                 return retval
-        scoper.func_name = fn.func_name
+        scoper.__name__ = fn.__name__
         return scoper
     return decorator
 
@@ -1784,8 +1784,8 @@ def lparameters(*varnames):
     return _parameters(M.add_local, *varnames)
 
 def vfpclass(fn):
-    fn.func_globals['_CLASSES'][fn.func_name] = fn
+    fn.__globals__['_CLASSES'][fn.__name__] = fn
     def double_caller(*args, **kwargs):
         return fn()(*args, **kwargs)
-    fn.func_globals[fn.func_name + 'Type'] = fn
+    fn.__globals__[fn.__name__ + 'Type'] = fn
     return double_caller
