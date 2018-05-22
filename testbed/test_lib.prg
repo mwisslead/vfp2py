@@ -163,6 +163,7 @@ procedure database_tests
       _add_db_record(1)
       _add_db_record(2)
       _add_db_record(3)
+      assert cpdbf() = 0
       ASSERT FCOUNT() == 4
       ALTER TABLE REPORT ADD COLUMN AGE N(3, 0)
       ASSERT FCOUNT() == 5

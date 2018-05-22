@@ -194,6 +194,7 @@ def database_tests():
         _add_db_record(1)
         _add_db_record(2)
         _add_db_record(3)
+        assert DB.cpdbf() == 0
         assert DB.fcount() == 4
         DB.alter_table('report', 'add', 'age n(3, 0)')
         assert DB.fcount() == 5

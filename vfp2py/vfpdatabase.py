@@ -369,3 +369,9 @@ class DatabaseContext(object):
             return self._get_table_info().table.field_count
         except:
             return 0
+
+    def cpdbf(self, tablename=None):
+        try:
+            return self._get_table_info(tablename).table.codepage.code
+        except AttributeError:
+            return 0
