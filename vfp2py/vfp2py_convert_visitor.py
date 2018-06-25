@@ -865,9 +865,12 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             return add_args_to_code('({} in {})', [args[0], tuple(args[1:])])
         if funcname == 'parameters':
             return CodeStr('vfpfunc.PARAMETERS')
-        if funcname == 'pythonfunctioncall' and len(args) == 3 and isinstance(args[2], tuple):
+        if funcname == 'pythonfunctioncall' and len(args) == 3:
             self.imports.append('import {}'.format(args[0]))
-            return make_func_code('{}.{}'.format(args[0], args[1]), *args[2])
+            if isinstance(args[2], tuple):
+                return make_func_code('{}.{}'.format(args[0], args[1]), *args[2])
+            else:
+                return make_func_code('{}.{}'.format(args[0], args[1]), add_args_to_code('*{}', (args[2],)))
         if funcname == 'createobject':
             if len(args) > 0 and string_type(args[0]) and args[0].lower() == 'pythontuple':
                 return tuple(args[1:])

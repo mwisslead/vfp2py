@@ -858,6 +858,7 @@ pylist.callmethod(\'append\', createobject(\'pythontuple\', \'appended value\'))
 pydict = createobject(\'pythondictionary\')
 pydict.setitem(\'one\', 1)
 ?pydict.getitem(\'one\')
+pythonfunctioncall(\'test\', \'test\', pytuple)
 '''.strip()
     output_str = '''
 M.add_local(somearray=Array(2, 5))
@@ -868,6 +869,7 @@ S.pylist.append(\'appended value\')
 S.pydict = {}
 S.pydict[\'one\'] = 1
 print(S.pydict[\'one\'])
+test.test(*S.pytuple)
 '''.strip()
     test_output_str = vfp2py.vfp2py.prg2py(input_str, parser_start='lines', prepend_data='').strip()
     try:
