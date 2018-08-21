@@ -53,10 +53,10 @@ DATETIME_VAL = {^2017-5-6 5P}
 ?CAST(string_val as blob)
 ?cast(float_val as currency)
 ?substr(string_val, int_val, 13)
-?substr(string_val, 1, 13)
+?subs(string_val, 1, 13)
 ?at(\'.\', string_val)
 OBJ_VAL = CREATEOBJECT(\'TEST\')
-OBJ_VAL = CREATEOBJECT(\'FORM\')
+OBJ_VAL = CREATE(\'FORM\')
 RELEASE STRING_VAL, INT_VAL, BOOL_VAL, NULL_VAL
 LOCAL ARRAY ITEMS[3, 5]
 LOCAL ITEM

@@ -20,6 +20,8 @@ from .VisualFoxpro9Visitor import VisualFoxpro9Visitor
 from . import vfpfunc
 from .vfpfunc import DB
 
+from .function_abbreviations import expander as function_expander
+
 if sys.version_info < (3,):
     str=unicode
     CHR = chr
@@ -616,6 +618,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
 
     def func_call(self, funcname, *args, **kwargs):
         funcname = str(funcname)
+        funcname = function_expander.get(funcname, funcname)
         if not kwargs and len(args) == 1 and isinstance(args[0], (list, tuple)):
             args = args[0]
         args = list(args)
