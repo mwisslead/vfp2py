@@ -216,7 +216,7 @@ cmd
  | SCATTER (FIELDS (LIKE | EXCEPT)? args | MEMO | BLANK | MEMVAR | NAME expr ADDITIVE? | TO expr)* #scatterExpr
  | GATHER (FIELDS (LIKE | EXCEPT)? args | MEMO | MEMVAR | NAME expr | FROM expr)* #gatherExpr
 
- | CLOSE ((DATABASE | INDEXES | TABLES) ALL? | ALL) #closeStmt
+ | CLOSE ((DATABASE | INDEXES | TABLE) ALL? | ALL) #closeStmt
  | (READ EVENTS? | DOEVENTS FORCE?) #readEvent
  | UNLOCK ALL #unlockCmd
  | CLEAR (ALL | CLASS expr | CLASSLIB specialExpr | DEBUG | DLLS specialArgs | EVENTS | ERROR | FIELDS | GETS | MACROS | MEMORY | MENUS | POPUP | PROGRAM | PROMPT | READ ALL? | RESOURCES expr | TYPEAHEAD | WINDOW)? #clearStmt
@@ -261,7 +261,7 @@ tableField
 
 setCmd
  : setword=ALTERNATE (ON | OFF | TO specialExpr ADDITIVE?)
- | setword=ASSERTS (ON | OFF)
+ | setword=(ASSERT | ASSERTS) (ON | OFF)
  | setword=BELL (ON | OFF | TO specialExpr)
  | setword=CENTURY (ON | OFF | TO (expr (ROLLOVER expr)?)?) 
  | setword=CLASSLIB TO specialExpr (IN specialExpr)? (ALIAS specialExpr)? ADDITIVE?
@@ -269,7 +269,7 @@ setCmd
  | setword=COMPATIBLE (ON | OFF | DB4 | FOXPLUS) (PROMPT | NOPROMPT)?
  | setword=CURSOR (ON | OFF)
  | setword=DATE TO? identifier
- | setword=DELETED (ON | OFF)
+ | setword=(DELETE | DELETED) (ON | OFF)
  | setword=EXACT (ON | OFF)
  | setword=EXCLUSIVE (ON | OFF)
  | setword=FILTER TO (specialExpr (IN specialExpr)?)?
@@ -436,256 +436,264 @@ scopeClause
 
 identifier
  : ID
- | TO
- | DO
- | IN
+ | ACTIVATE
+ | ADD
+ | ADDITIVE
+ | AFTER
+ | ALIAS
+ | ALL
+ | ALTER
+ | ALTERNATE
+ | AND
+ | APPEND
+ | ARRAY
  | AS
- | IF
+ | ASCENDING
+ | ASSERT
+ | ASSERTS
+ | AT
+ | BAR
+ | BEFORE
+ | BELL
+ | BLANK
+ | BOOLEANCHAR
+ | BOTTOM
+ | BROWSE
+ | BY
+ | CANDIDATE
+ | CASE
+ | CAST
+ | CATCH
+ | CENTURY
+ | CHDIR
+ | CLASS
+ | CLASSLIB
+ | CLEAR
+ | CLOCK
+ | CLOSE
+ | COLLECTION
+ | COLOR
+ | COLUMN
+ | COMMAND
+ | COMPACT
+ | COMPATIBLE
+ | COMPILE
+ | CONTINUE
+ | COPY
+ | COUNT
+ | CREATE
+ | CURSOR
+ | DATABASE
+ | DATE
+ | DBF
+ | DEACTIVATE
+ | DEBUG
+ | DEBUGOUT
+ | DECLARE
+ | DEFAULT
+ | DEFINE
+ | DELETE
+ | DELETED
+ | DESCENDING
+ | DIMENSION
+ | DISTINCT
+ | DLLS
+ | DO
+ | DOEVENTS
+ | DROP
+ | EACH
  | ELIF
  | ELSE
- | ENDIF
- | ON
- | OFF
- | ERROR
- | WITH
- | STORE
- | EXTERNAL
- | SCOPE
- | ARRAY
- | RECALL
- | DELETE
- | FILE
- | SET
- | RELEASE
- | RECYCLE
- | CREATE
- | TABLE
- | DATABASE
- | DBF
- | NAME
- | FREE
- | SELECT
- | USE
- | READ
- | EVENTS
- | SHUTDOWN
- | CLEAR
- | PROCEDURE
- | DEFINE
- | CLASS
+ | ENCRYPT
+ | ENDCASE
  | ENDDEFINE
- | LOCATE
- | CONTINUE
- | FOR
- | ENDFOR
- | WHILE
- | NOOPTIMIZE
- | STATUS
- | BAR
- | MEMOWIDTH
- | CURSOR
- | REFRESH
- | BELL
- | CENTURY
- | DATE
- | ADD
- | OBJECT
- | REPLACE
- | LIBRARY
- | SHARED
- | WAIT
- | WINDOW
- | NOWAIT
- | NOCLEAR
- | NOTIFY
  | ENDDO
- | DECLARE
+ | ENDFOR
+ | ENDIF
+ | ENDPROC
+ | ENDSCAN
+ | ENDTEXT
+ | ENDTRY
+ | ENDWITH
  | ERASE
- | SYSMENU
- | CLOCK
- | RETURN
- | PARAMETER
- | ALTERNATE
+ | ERROR
+ | EVENTS
  | EXACT
- | ALL
- | COUNT
- | GOTO
- | TOP
- | BOTTOM
- | RECORD
- | CLOSE
- | APPEND
- | BLANK
- | NOMENU
- | CASE
- | FROM
- | REPORT
- | FORM
- | NOEJECT
- | PRINTER
- | PROMPT
- | NOPROMPT
- | NOCONSOLE
- | COPY
- | STRUCTURE
- | DELETED
- | SUM
- | DISTINCT
- | INTO
- | NEXT
- | REST
- | SKIPKW
- | PACK
+ | EXCEPT
  | EXCLUSIVE
- | NEAR
- | NEAR
- | MKDIR
- | RMDIR
+ | EXTENDED
+ | EXTERNAL
+ | FIELDS
+ | FILE
+ | FILL
+ | FILTER
+ | FINALLY
+ | FLAGS
+ | FONT
+ | FOR
+ | FORCE
+ | FORM
+ | FOXPLUS
+ | FREE
+ | FROM
+ | GATHER
+ | GETS
+ | GOTO
+ | HELP
+ | HIDE
+ | ICON
+ | IF
+ | IFDEF
+ | IN
+ | INCLUDE
+ | INDEX
+ | INDEXES
+ | INSERT
+ | INTO
+ | JOIN
  | KEY
  | KEYBOARD
  | LABEL
- | PLAIN
- | MENU
- | AT
- | LINE
- | SCREEN
- | NOMARGIN
- | PAD
- | OF
- | COLOR
- | SCHEME
- | BEFORE
- | AFTER
- | NEGOTIATE
- | FONT
- | STYLE
- | MARK
- | MESSAGE
- | ACTIVATE
- | POPUP
- | SHADOW
- | MARGIN
- | RELATIVE
- | SELECTION
- | DEACTIVATE
- | SAME
- | NOSHOW
- | STEP
- | THEN
- | UNDEFINE
- | IFDEF
- | PUSH
- | POP
- | TIMEOUT
- | ENDWITH
- | TYPEAHEAD
- | ALIAS
- | ORDER
- | SEEK
- | WHERE
- | FILTER
- | RENAME
- | INCLUDE
- | CLASSLIB
- | BY
- | UNIQUE
- | INDEX
- | TAG
- | COMPACT
- | ASCENDING
- | DESCENDING
- | CANDIDATE
- | ADDITIVE
- | DIMENSION
- | NOT
- | AND
- | OR
- | SCAN
- | ENDSCAN
- | NULL
- | BOOLEANCHAR
- | DLLS
- | MACROS
- | NUMBER
- | ZAP
- | ROLLOVER
- | DEFAULT
- | SAVE
- | NOSAVE
- | PROGRAM
- | THROW
- | TABLES
- | EACH
- | CAST
- | ENDCASE
- | ENDPROC
- | REINDEX
- | INDEXES
- | OTHERWISE
- | RUN
- | EXTENDED
- | MEMO
- | ASSERT
- | TRY
- | CATCH
- | FINALLY
- | ENDTRY
- | BROWSE
- | INSERT
- | VALUES
- | MEMVAR
- | COMPATIBLE
- | DB4
- | FOXPLUS
- | TYPE
- | SCATTER
- | GATHER
- | EXCEPT
+ | LIBRARY
  | LIKE
- | FIELDS
- | ALTER
- | COLUMN
- | DROP
- | RESOURCES
- | LIST
- | HELP
- | SAY
- | COLLECTION
- | SYSTEM
- | TALK
- | PROGRAMCONTROL
- | NOUPDATE
- | RELATION
- | MODIFY
- | COMMAND
- | UNLOCK
- | COMPILE
- | SORT
- | UPDATE
- | RESTORE
- | DOEVENTS
- | FORCE
- | JOIN
- | TEXT
- | ENDTEXT
- | SHOW
- | HIDE
+ | LINE
  | LINKED
- | MENUS
- | NOTE
- | TEXTMERGE
- | FLAGS
- | PRETEXT
+ | LIST
+ | LOCATE
+ | MACROS
+ | MARGIN
+ | MARK
  | MASTER
- | ZOOM
- | MIN
  | MAX
+ | MEMO
+ | MEMORY
+ | MEMOWIDTH
+ | MEMVAR
+ | MENU
+ | MENUS
+ | MESSAGE
+ | MIN
+ | MKDIR
+ | MODIFY
+ | MULTILOCKS
+ | NAME
+ | NEAR
+ | NEGOTIATE
+ | NEXT
+ | NOCLEAR
+ | NOCONSOLE
+ | NODEBUG
+ | NOEJECT
+ | NOMARGIN
+ | NOMENU
+ | NOOPTIMIZE
+ | NOPROMPT
  | NORM
- | SIZE
- | TITLE
- | ICON
- | FILL
+ | NOSAVE
+ | NOSHOW
+ | NOT
+ | NOTE
+ | NOTIFY
+ | NOUPDATE
+ | NOWAIT
+ | NULL
+ | NUMBER
+ | OBJECT
+ | OF
+ | OFF
+ | ON
+ | OR
+ | ORDER
+ | OTHERWISE
+ | PACK
+ | PAD
+ | PARAMETER
+ | PLAIN
+ | POP
+ | POPUP
+ | PRETEXT
+ | PRINTER
+ | PROCEDURE
+ | PROGRAM
+ | PROGRAMCONTROL
+ | PROMPT
+ | PUSH
+ | READ
+ | RECALL
+ | RECORD
+ | RECYCLE
+ | REFRESH
+ | REINDEX
+ | RELATION
+ | RELATIVE
+ | RELEASE
+ | RENAME
+ | REPLACE
+ | REPORT
+ | RESOURCES
+ | REST
+ | RESTORE
  | RETRY
+ | RETURN
+ | RMDIR
+ | ROLLOVER
+ | RUN
+ | SAFETY
+ | SAME
+ | SAVE
+ | SAY
+ | SCAN
+ | SCATTER
+ | SCHEME
+ | SCOPE
+ | SCREEN
+ | SEEK
+ | SELECT
+ | SELECTION
+ | SET
+ | SHADOW
+ | SHARED
+ | SHOW
+ | SHUTDOWN
+ | SIZE
+ | SKIPKW
+ | SORT
+ | STATUS
+ | STEP
+ | STORE
+ | STRUCTURE
+ | STYLE
+ | SUM
+ | SYSMENU
+ | SYSTEM
+ | TABLE
+ | TABLEPROMPT
+ | TAG
+ | TALK
+ | TEXT
+ | TEXTMERGE
+ | THEN
+ | THROW
+ | TIMEOUT
+ | TITLE
+ | TO
+ | TOP
+ | TRY
+ | TYPE
+ | TYPEAHEAD
+ | UNDEFINE
+ | UNIQUE
+ | UNLOCK
+ | UPDATE
+ | USE
+ | VALUES
+ | WAIT
+ | WHERE
+ | WHILE
+ | WINDOW
+ | WITH
+ | ZAP
+ | ZOOM
  ;
 
 NUMBER_LITERAL : (DIGIT* '.')? DIGIT+ (E [+-]? DIGIT*)?
@@ -732,268 +740,286 @@ COMMENT: ('&&' (~'\n')* | ';' WS* '&&' (~'\n')* NL) -> channel(1);
 
 LINECONT : ';' WS* NL -> channel(2);
 
-NOTE: N O T E;
-ASSERT: A S S E R T;
-ASSERTS: ASSERT S;
-TO : T O;
-DO : D O;
-IN : I N;
+ACTIVATE : A C T I (V (A (T E?)?)?)?;
+ADD : A D D;
+ADDITIVE : A D D I T I V E;
+AFTER : A F T E R;
+ALIAS : A L I A S;
+ALL : A L L;
+ALTER: A L T E R;
+ALTERNATE : A L T E R N A T E;
+AND : A N D;
+APPEND : A P P E (N D?)?;
+ARRAY : A R R A Y?;
 AS : A S;
-IF : I F;
+ASCENDING : A S C E N D I N G;
+ASSERT: A S S E (R T?)?;
+ASSERTS: A S S E R T S;
+AT : A T;
+//'AVER|AGE'
+BAR : B A R;
+BEFORE : B E F O R E;
+BELL : B E L L;
+BLANK : B L A N K?;
+BOOLEANCHAR : (F | N | T | Y);
+BOTTOM : B O T T O M | B O T T;
+//'BRIT|ISH'
+BROWSE: B R O W (S E?)?;
+//'BUIL|D'
+BY : B Y;
+//'CALC|ULATE'
+CANDIDATE : C A N D I D A T E;
+CASE : C A S E;
+CAST: C A S T;
+CATCH: C A T C H?;
+CENTURY : C E N T (U (R Y?)?)?;
+//'CHAN|GE'
+CHDIR: C D | C H D I R?;
+CLASS : C L A S S;
+CLASSLIB : C L A S S L I B;
+CLEAR : C L E A R?;
+CLOCK : C L O C K;
+CLOSE : C L O S E?;
+COLLECTION: C O L L E C T I O N;
+COLOR : C O L O R;
+COLUMN: C O L U M N;
+COMMAND: C O M M A N D;
+COMPACT : C O M P A C T;
+COMPATIBLE: C O M P A T I B L E;
+COMPILE: C O M P (I (L E?)?)?;
+CONTINUE : C O N T (I (N (U E?)?)?)?;
+COPY : C O P Y;
+COUNT : C O U N T?;
+CREATE : C R E A (T E?)?;
+CURSOR : C U R S (O R?)?;
+DATABASE : D A T A (B A S E (S)?)?;
+DATE : D A T E;
+DB4 : D B '4';
+DBF : D B F;
+DEACTIVATE : D E A C (T (I (V (A (T E?)?)?)?)?)?;
+DEBUG: D E B U G?;
+DEBUGOUT: D E B U G O (U T?)?;
+DECLARE : D E C L (A (R E?)?)?;
+DEFAULT : D E F A U L T;
+DEFINE : D E F I (N E?)?;
+DELETE : D E L E (T E?)?;
+DELETED : D E L E T E D;
+DESCENDING : D E S C E N D I N G;
+//'DEVI|CE'
+DIMENSION : D I M E (N (S (I (O N?)?)?)?)?;
+//'DISP|LAY'
+DISTINCT : D I S T I N C T;
+DLLS : D L L S;
+DO : D O;
+DOEVENTS: D O E V (E (N (T S?)?)?)?;
+DROP: D R O P;
+EACH: E A C H;
+//'EJEC|T'
 ELIF : E L I F;
 ELSE : E L S E;
-ENDIF : E N D I F;
-ON : O N;
-OFF : O F F;
-ERROR : E R R O R;
-WITH : W I T H;
-STORE : S T O R E;
-EXTERNAL: E X T E R N A L;
-ARRAY : A R R A Y;
-DELETE : D E L E T E;
-RECALL : R E C A L L;
-FILE : F I L E S?;
-SET : S E T;
-RELEASE : R E L E A S E;
-RECYCLE : R E C Y C L E;
-CREATE : C R E A T E;
-TABLE : T A B L E;
-TABLEPROMPT: T A B L E P R O M P T;
-DBF : D B F;
-NAME : N A M E;
-FREE : F R E E;
-SELECT : S E L E (C T?)?;
-USE : U S E;
-READ : R E A D;
-EVENTS : E V E N T S;
-SHUTDOWN : S H U T D O W N;
-CLEAR : C L E A R;
-PROCEDURE : P R O C (E D U R E)? | F U N C T I O N;
-ENDPROC : E N D P R O C? | E N D F U N C;
-DEFINE : D E F I N E;
-CLASS : C L A S S;
-ENDDEFINE : E N D D E F I N E;
-LOCATE : L O C A T E;
-CONTINUE : C O N T I N U E;
-FOR : F O R;
-ENDFOR : E N D F O R;
-WHILE : W H I L E;
-NOOPTIMIZE : N O O P T I M I Z E;
-SAFETY: S A F E T Y;
-STATUS : S T A T U S;
-BAR : B A R;
-MEMOWIDTH : M E M O W I D T H;
-CURSOR : C U R S O R;
-REFRESH : R E F R E S H;
-BELL : B E L L;
-CENTURY : C E N T U R Y;
-COMPATIBLE: C O M P A T I B L E;
-DATE : D A T E;
-ADD : A D D;
-OBJECT : O B J E C T;
-REPLACE : R E P L A C E;
-LIBRARY : L I B R A R Y;
-SHARED : S H A R E D?;
-WAIT : W A I T;
-WINDOW : W I N D (O W (S)?)?;
-NOWAIT : N O W A I T;
-NOCLEAR : N O C L E A R;
-NOTIFY : N O T I F Y;
-ENDDO : E N D D O;
-DECLARE : D E C L A R E;
-ERASE : E R A S E;
-SYSMENU : S Y S M E N U;
-CLOCK : C L O C K;
-RETURN : R E T U R N;
-PARAMETER : L? P A R A M E T E R S?;
-ALTERNATE : A L T E R N A T E;
-EXACT : E X A C T;
-ALL : A L L;
-COUNT : C O U N T;
-GOTO : G O (T O)?;
-TOP : T O P;
-BOTTOM : B O T T O M | B O T T;
-RECORD : R E C O R D;
-CLOSE : C L O S E;
-APPEND : A P P E N D;
-BLANK : B L A N K;
-NOMENU : N O M E N U;
-CASE : C A S E;
-ENDCASE : E N D C A S E;
-OTHERWISE : O T H E R W I S E;
-FROM : F R O M;
-REPORT : R E P O R T;
-FORM : F O R M;
-NOEJECT : N O E J E C T;
-PRINTER : P R I N T E R;
-PROMPT : P R O M P T;
-NOPROMPT : N O P R O M P T;
-DB4 : D B '4';
-FOXPLUS : F O X P L U S;
-NOCONSOLE : N O C O N S O L E;
-COPY : C O P Y;
-STRUCTURE : S T R U C T U R E;
-DELETED : D E L E T E D;
-SUM : S U M;
-DISTINCT : D I S T I N C T;
-INTO : I N T O;
-NEXT : N E X T;
-REST : R E S T;
-SKIPKW : S K I P;
-EXCLUSIVE : E X C L (U S I V E)?;
-NEAR : N E A R;
-MKDIR : (M K D I R | M D);
-RMDIR : (R M D I R | R D);
-KEY : K E Y;
-KEYBOARD : K E Y B O A R D;
-LABEL : L A B E L;
-PLAIN : P L A I N;
-MENU : M E N U;
-AT : A T;
-LINE : L I N E;
-SCREEN : S C R E E N;
-NOMARGIN : N O M A R G I N;
-PAD : P A D;
-OF : O F;
-COLOR : C O L O R;
-SCHEME : S C H E M E;
-BEFORE : B E F O R E;
-AFTER : A F T E R;
-NEGOTIATE : N E G O T I A T E;
-FONT : F O N T;
-STYLE : S T Y L E;
-MARK : M A R K;
-MESSAGE : M E S S A G E;
-ACTIVATE : A C T I V A T E;
-POPUP : P O P U P S?;
-EXTENDED : E X T E N D E D;
-SHADOW : S H A D O W;
-MARGIN : M A R G I N;
-RELATIVE : R E L A T I V E;
-SELECTION : S E L E C T I O N;
-DEACTIVATE : D E A C T I V A T E;
-SAME : S A M E;
-SHOW: S H O W;
-HIDE: H I D E;
-NOSHOW : N O S H O W;
-STEP : S T E P;
-THEN : T H E N;
-UNDEFINE : U N D E F (I N E)?;
-IFDEF : I F D E F;
-PUSH : P U S H;
-POP : P O P;
-TIMEOUT : T I M E O U T;
-ENDWITH : E N D W I T H;
-TYPEAHEAD : T Y P E A H E A D;
-ALIAS : A L I A S;
-ORDER : O R D E R;
-SEEK : S E E K;
-WHERE : W H E R E;
-FILTER : F I L T E R;
-RENAME : R E N A M E;
-INCLUDE : I N C L U D E;
-CLASSLIB : C L A S S L I B;
-BY : B Y;
-UNIQUE : U N I Q U E;
-INDEX : I N D E X;
-TAG : T A G;
-COMPACT : C O M P A C T;
-ASCENDING : A S C E N D I N G;
-DESCENDING : D E S C E N D I N G;
-CANDIDATE : C A N D I D A T E;
-ADDITIVE : A D D I T I V E;
-DIMENSION : D I M E N S I O N;
-NOT : N O T;
-AND : A N D;
-OTHERAND : '.' AND '.';
-OR : O R;
-OTHEROR : '.' OR '.';
-SCAN : S C A N;
-ENDSCAN : E N D S C A N;
-NULL : N U L L;
-BOOLEANCHAR : (F | N | T | Y);
-DLLS : D L L S;
-MACROS : M A C R O S;
-NUMBER : N U M B E R;
-ZAP : Z A P;
-ROLLOVER : R O L L O V E R;
-DEFAULT : D E F A U L T;
-SAVE : S A V E;
-NOSAVE : N O S A V E;
-DATABASE : D A T A (B A S E (S)?)?;
-TABLES : T A B L E S;
-INDEXES : I N D E X E S;
-PACK: P A C K;
-REINDEX: R E I N D E X;
-MEMO: M E M O;
-PROGRAM: P R O G R A M;
-SCOPE: (P R O T E C T E D | H I D D E N | P U B L I C | P R I V A T E | L O C A L);
-THROW: T H R O W;
-EACH: E A C H;
-CAST: C A S T;
-RUN: R U N;
-MULTILOCKS: M U L T I L O C K S;
-TRY: T R Y;
-CATCH: C A T C H;
-FINALLY: F I N A L L Y;
-ENDTRY: E N D T R Y;
-BROWSE: B R O W S E;
-INSERT: I N S E R T;
-VALUES: V A L U E S;
-MEMVAR: M E M V A R;
-TYPE: T Y P E;
-CHDIR: C D | C H D I R;
-SCATTER: S C A T T E R;
-GATHER: G A T H E R;
-EXCEPT: E X C E P T;
-LIKE: L I K E;
-FIELDS: F I E L D S;
-ALTER: A L T E R;
-COLUMN: C O L U M N;
-DROP: D R O P;
-DEBUG: D E B U G;
-GETS: G E T S;
-NODEBUG: N O DEBUG;
-DEBUGOUT: DEBUG O U T;
-MEMORY: M E M O R Y;
-MENUS: M E N U S;
-RESOURCES: R E S O U R C E S;
-LIST: L I S T;
-HELP: H E L P;
-SAY: S A Y;
-COLLECTION: C O L L E C T I O N;
-SYSTEM: S Y S T E M;
-TALK: T A L K;
-PROGRAMCONTROL: (C A N C E L | S U S P E N D | R E S U M E | Q U I T | E X I T | L O O P | N O D E F A U L T);
-NOUPDATE: N O U P D A T E;
-RELATION: R E L A T I O N;
-MODIFY: M O D I F Y;
-COMMAND: C O M M A N D;
-UNLOCK: U N L O C K;
-COMPILE: C O M P I L E;
-SORT: S O R T;
-UPDATE: U P D A T E;
-RESTORE: R E S T O R E;
-ZOOM: Z O O M;
-MIN: M I N;
-MAX: M A X;
-NORM: N O R M;
-SIZE: S I Z E;
-DOEVENTS: D O E V E N T S;
-FORCE: F O R C E;
-JOIN: J O I N;
-TEXT: T E X T;
-ENDTEXT: E N D TEXT;
-LINKED: L I N K E D;
-TEXTMERGE: TEXT M E R G E;
-FLAGS: F L A G S;
-PRETEXT: P R E TEXT;
 ENCRYPT: E N C R Y P T;
-MASTER: M A S T E R;
-TITLE: T I T L E;
-ICON: I C O N;
+ENDCASE : E N D C (A (S E?)?)?;
+ENDDEFINE : E N D D E (F (I (N E?)?)?)?;
+ENDDO : E N D D O;
+ENDFOR : E N D F O R?;
+ENDIF : E N D I F?;
+ENDPROC : E N D P (R (O C?)?)? | E N D (F (U (N C?)?)?)?;
+//'ENDPRI|NTJOB'
+ENDSCAN : E N D S (C (A N?)?)?;
+ENDTEXT: E N D T (E (X T?)?)?;
+ENDTRY: E N D T R Y?;
+ENDWITH : E N D W (I (T H?)?)?;
+ERASE : E R A S E?;
+ERROR : E R R O R?;
+EVENTS : E V E N T S;
+EXACT : E X A C T?;
+EXCEPT: E X C E P T;
+EXCLUSIVE : E X C L (U S I V E)?;
+//'EXPO|RT'
+EXTENDED : E X T E N D E D;
+EXTERNAL: E X T E (R (N (A L?)?)?)?;
+FIELDS: F I E L D S;
+FILE : F I L E S?;
 FILL: F I L L;
-RETRY: R E T R Y;
+FILTER : F I L T (E R?)?;
+FINALLY: F I N A (L (L Y?)?)?;
+FLAGS: F L A G S;
+//'FLUS|H'
+FONT : F O N T;
+FOR : F O R;
+FORCE: F O R C E;
+FORM : F O R M;
+FOXPLUS : F O X P L U S;
+FREE : F R E E;
+FROM : F R O M;
+GATHER: G A T H (E R?)?;
+//'GETE|XPR'
+GETS: G E T S;
+GOTO : G O (T O)?;
+HELP: H E L P;
+HIDE: H I D E;
+ICON: I C O N;
+IF : I F;
+IFDEF : I F D E F;
+//'IMPL|EMENTS'
+IN : I N;
+INCLUDE : I N C L U D E;
+INDEX : I N D E X;
+INDEXES : I N D E X E S;
+INSERT: I N S E (R T?)?;
+INTO : I N T O;
+JOIN: J O I N;
+KEY : K E Y;
+KEYBOARD : K E Y B (O (A (R D?)?)?)?;
+LABEL : L A B E L;
+LIBRARY : L I B R A R Y;
+LIKE: L I K E;
+LINE : L I N E;
+LINKED: L I N K E D;
+LIST: L I S T;
+LOCATE : L O C A (T E?)?;
+MACROS : M A C R O S;
+MARGIN : M A R G I N;
+MARK : M A R K;
+MASTER: M A S T E R;
+MAX: M A X;
+MEMO: M E M O;
+MEMORY: M E M O R Y;
+MEMOWIDTH : M E M O W I D T H;
+MEMVAR: M E M V A R;
+MENU : M E N U;
+MENUS: M E N U S;
+MESSAGE : M E S S (A (G E?)?)?;
+MIN: M I N;
+MKDIR : (M K D I R? | M D);
+MODIFY: M O D I (F Y?)?;
+//'MOUS|E'
+MULTILOCKS: M U L T I L O C K S;
+NAME : N A M E;
+NEAR : N E A R;
+NEGOTIATE : N E G O T I A T E;
+NEXT : N E X T;
+NOCLEAR : N O C L E A R;
+NOCONSOLE : N O C O N S O L E;
+NODEBUG: N O DEBUG;
+NOEJECT : N O E J E C T;
+NOMARGIN : N O M A R G I N;
+NOMENU : N O M E N U;
+NOOPTIMIZE : N O O P T I M I Z E;
+NOPROMPT : N O P R O M P T;
+NORM: N O R M;
+NOSAVE : N O S A V E;
+NOSHOW : N O S H O W;
+NOT : N O T;
+NOTE: N O T E;
+NOTIFY : N O T I F Y;
+NOUPDATE: N O U P D A T E;
+NOWAIT : N O W A I T;
+NULL : N U L L;
+NUMBER : N U M B E R;
+OBJECT : O B J E C T;
+OF : O F;
+OFF : O F F;
+ON : O N;
+OR : O R;
+ORDER : O R D E R;
+OTHERAND : '.' AND '.';
+OTHEROR : '.' OR '.';
+OTHERWISE : O T H E (R (W (I (S E?)?)?)?)?;
+PACK: P A C K;
+PAD : P A D;
+PARAMETER : L P A R (A (M (E (T (E (R S?)?)?)?)?)?)? | P A R A (M (E (T (E (R S?)?)?)?)?)?;
+//'PICT|URE'
+PLAIN : P L A I N;
+POP : P O P;
+POPUP : P O P U P S?;
+PRETEXT: P R E TEXT;
+PRINTER : P R I N (T (E R?)?)?;
+//'PRIN|TJOB'
+PROCEDURE : P R O C (E (D (U (R E?)?)?)?)? | F U N C (T (I (O N?)?)?)?;
+PROGRAM: P R O G R A M;
+PROGRAMCONTROL: (C A N C (E L?)? | S U S P (E (N D?)?)? | R E S U (M E?)? | Q U I T | E X I T | L O O P | N O D E (F (A (U (L T?)?)?)?)?);
+PROMPT : P R O M P T;
+PUSH : P U S H;
+READ : R E A D;
+RECALL : R E C A (L L?)?;
+RECORD : R E C O R D;
+RECYCLE : R E C Y C L E;
+REFRESH : R E F R E S H;
+REINDEX: R E I N (D (E X?)?)?;
+RELATION: R E L A T I O N;
+RELATIVE : R E L A T I V E;
+RELEASE : R E L E (A (S E?)?)?;
+//'REMO|VE'
+RENAME : R E N A (M E?)?;
+REPLACE : R E P L (A (C E?)?)?;
+REPORT : R E P O R T;
+RESOURCES: R E S O U R C E S;
+REST : R E S T;
+RESTORE: R E S T (O (R E?)?)?;
+RETRY: R E T R Y?;
+RETURN : R E T U (R N?)?;
+RMDIR : (R M D I R? | R D);
+//'ROLL|BACK'
+ROLLOVER : R O L L O V E R;
+RUN: R U N;
+SAFETY: S A F E (T Y?)?;
+SAME : S A M E;
+SAVE : S A V E;
+SAY: S A Y;
+SCAN : S C A N;
+SCATTER: S C A T (T (E R?)?)?;
+SCHEME : S C H E M E;
+SCOPE: (P R O T (E (C (T (E D?)?)?)?)? | H I D D (E N?)? | P U B L (I C?)? | P R I V (A (T E?)?)? | L O C A L);
+SCREEN : S C R E (E N?)?;
+SEEK : S E E K;
+SELECT : S E L E (C T?)?;
+SELECTION : S E L E C T I O N;
+SET : S E T;
+SHADOW : S H A D O W;
+SHARED : S H A R E D?;
+SHOW: S H O W;
+SHUTDOWN : S H U T D O W N;
+SIZE: S I Z E;
+SKIPKW : S K I P;
+SORT: S O R T;
+STATUS : S T A T U S;
+STEP : S T E P;
+STORE : S T O R E?;
+STRUCTURE : S T R U (C (T (U (R E?)?)?)?)?;
+STYLE : S T Y L E;
+SUM : S U M;
+SYSMENU : S Y S M E N U;
+SYSTEM: S Y S T E M;
+TABLE : T A B L (E S?)?;
+TABLEPROMPT: T A B L E P R O M P T;
+TAG : T A G;
+TALK: T A L K;
+TEXT: T E X T;
+TEXTMERGE: TEXT M E R G E;
+THEN : T H E N;
+THROW: T H R O W?;
+TIMEOUT : T I M E (O (U T?)?)?;
+TITLE: T I T L E;
+TO : T O;
+TOP : T O P;
+//'TOTA|L'
+TRY: T R Y;
+TYPE: T Y P E;
+TYPEAHEAD : T Y P E A H E A D;
+UNDEFINE : U N D E F (I N E)?;
+UNIQUE : U N I Q U E;
+UNLOCK: U N L O (C K?)?;
+UPDATE: U P D A (T E?)?;
+USE : U S E;
+VALUES: V A L U E S;
+WAIT : W A I T;
+WHERE : W H E R E;
+WHILE : W H I L E;
+WINDOW : W I N D (O (W S?)?)?;
+WITH : W I T H;
+ZAP : Z A P;
+ZOOM: Z O O M;
 
 ID : [A-Za-z_] [a-zA-Z0-9_]*;
 
@@ -1031,3 +1057,4 @@ fragment Y : [Yy];
 fragment Z : [Zz];
 fragment DIGIT : [0-9];
 fragment HEXDIGIT : [0-9A-Fa-f];
+

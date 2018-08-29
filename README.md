@@ -46,3 +46,6 @@ whole projects pjx files.
 ```
 
 To convert a file simply run `vfp2py --logging input_file.prg output_file.py` or `vfp2py --logging input_project.pjx output_directory`
+
+### Acknowledgments
+Jayanta Narayan Choudhuri for providing a list of keyword and function abbreviations.
