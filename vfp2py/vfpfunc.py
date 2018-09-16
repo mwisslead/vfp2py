@@ -11,6 +11,7 @@ import traceback
 import re
 import inspect
 import glob
+import importlib
 
 import pyodbc
 
@@ -1690,7 +1691,7 @@ def set(setword, *args, **kwargs):
     elif setword in ('index', 'refresh'):
         settings = args
     elif setword == 'procedure':
-        module = __import__(args[0])
+        module = importlib.import_module(args[0])
         F.set_procedure(module, additive=kwargs.get('additive', False))
         C.set_procedure(module, additive=kwargs.get('additive', False))
     SET_PROPS[setword] = settings
@@ -1789,3 +1790,5 @@ def vfpclass(fn):
         return fn()(*args, **kwargs)
     fn.__globals__[fn.__name__ + 'Type'] = fn
     return double_caller
+
+set('procedure', 'vfp2py.vfpfunc', set_value=True)
