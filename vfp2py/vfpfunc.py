@@ -1520,7 +1520,7 @@ def strtran(string, old, new='', start=0, maxreplace=None, flags=0):
     return retstr
 
 def stuff(string, start, num_replaced, repl):
-    return string[:start-1] + repl + string[start-1+num_replaced:]
+    return string[:int(start)-1] + repl + string[int(start)-1+int(num_replaced):]
 
 def sqlcommit(conn):
     try:
