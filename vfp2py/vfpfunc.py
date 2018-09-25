@@ -1785,6 +1785,8 @@ def lparameters(*varnames):
     return _parameters(M.add_local, *varnames)
 
 def vfpclass(fn):
+    if '_CLASSES' not in fn.__globals__:
+        fn.__globals__['_CLASSES'] = {}
     fn.__globals__['_CLASSES'][fn.__name__] = fn
     def double_caller(*args, **kwargs):
         return fn()(*args, **kwargs)

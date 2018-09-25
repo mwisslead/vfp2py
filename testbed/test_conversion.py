@@ -285,7 +285,6 @@ import test
 
 from vfp2py import vfpfunc
 from vfp2py.vfpfunc import DB, Array, C, F, M, S, lparameters, parameters, vfpclass
-_CLASSES = {}
 
 
 @lparameters()
@@ -379,7 +378,6 @@ from __future__ import division, print_function
 
 from vfp2py import vfpfunc
 from vfp2py.vfpfunc import DB, Array, C, F, M, S, lparameters, parameters, vfpclass
-_CLASSES = {}
 
 
 @lparameters()
@@ -630,7 +628,6 @@ import os
 
 from vfp2py import vfpfunc
 from vfp2py.vfpfunc import DB, Array, C, F, M, S, lparameters, parameters, vfpclass
-_CLASSES = {}
 
 
 @lparameters()

@@ -162,7 +162,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         self.imports.append('from vfp2py import vfpfunc')
         self.imports.append('from vfp2py.vfpfunc import DB, Array, C, F, M, S')
         self.imports.append('from vfp2py.vfpfunc import parameters, lparameters, vfpclass')
-        defs = [CodeStr('_CLASSES = {}')]
+        defs = []
 
         for child in ctx.children:
             if isinstance(child, ctx.parser.FuncDefContext):

@@ -7,10 +7,8 @@ import os
 import random
 
 import faker
-
 from vfp2py import vfpfunc
 from vfp2py.vfpfunc import DB, Array, C, F, M, S, lparameters, parameters, vfpclass
-_CLASSES = {}
 
 
 @lparameters()
