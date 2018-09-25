@@ -12,6 +12,7 @@ import re
 import inspect
 import glob
 import importlib
+import functools
 
 import pyodbc
 
@@ -1739,6 +1740,7 @@ def _parameters(scope_func, *varnames):
     def decorator(fn):
         fn_args = fn.__code__.co_varnames
         if len(fn_args) == 1 and fn_args[0] == 'self' and varnames:
+            @functools.wraps(fn)
             def scoper(self, *args):
                 global PARAMETERS
                 M.pushscope()
@@ -1752,6 +1754,7 @@ def _parameters(scope_func, *varnames):
                 M.popscope()
                 return retval
         elif varnames:
+            @functools.wraps(fn)
             def scoper(*args):
                 global PARAMETERS
                 M.pushscope()
@@ -1765,6 +1768,7 @@ def _parameters(scope_func, *varnames):
                 M.popscope()
                 return retval
         else:
+            @functools.wraps(fn)
             def scoper(*args):
                 global PARAMETERS
                 M.pushscope()
@@ -1788,6 +1792,7 @@ def vfpclass(fn):
     if '_CLASSES' not in fn.__globals__:
         fn.__globals__['_CLASSES'] = {}
     fn.__globals__['_CLASSES'][fn.__name__] = fn
+    @functools.wraps(fn)
     def double_caller(*args, **kwargs):
         return fn()(*args, **kwargs)
     fn.__globals__[fn.__name__ + 'Type'] = fn
