@@ -705,9 +705,9 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
                 'rat': 'rfind',
             }[funcname]
             return add_args_to_code('{}.{}({})', [args[1], CodeStr(funcname), args[0]]) + 1
-        if funcname in ('repli', 'replicate'):
-            args[1:] = [int(arg) for arg in args[1:]]
-            return add_args_to_code('({} * {})', args)
+        if funcname == 'replicate' and len(args) == 2:
+            args[1] = int(args[1])
+            return add_args_to_code('{}', args[:1]) * add_args_to_code('{}', args[1:])
         if funcname in ('date', 'datetime', 'time', 'dtot'):
             self.imports.append('import datetime as dt')
             if len(args) == 0:
