@@ -49,6 +49,7 @@ class CodeStr(str):
 
     def __rmul__(self, val):
         return CodeStr('{} * {}'.format(repr(val), self))
+PASS = CodeStr('pass')
 
 class RedirectedBuiltin(object):
     def __init__(self, func):
@@ -212,7 +213,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         def badline(line):
             return line.startswith('#') or not line if hasattr(line, 'startswith') else not line
         if not retval or all(badline(l) for l in retval):
-            retval.append(CodeStr('pass'))
+            retval.append(PASS)
         return retval
 
     def visitNongreedyLines(self, ctx):
@@ -305,7 +306,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
                     funcbody,
                 ])
         else:
-            retval.append([CodeStr('pass')])
+            retval.append([PASS])
         retval.append(add_args_to_code('return {}', (classname,)))
         retval = [
             CodeStr('@vfpclass'),
@@ -358,11 +359,11 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         while len(body) > 0 and (not body[-1] or (isinstance(body[-1], CodeStr) and (body[-1] == 'return'))):
             body.pop()
         if len(body) == 0:
-            body.append(CodeStr('pass'))
-        while CodeStr('pass') in body:
-            body.pop(body.index(CodeStr('pass')))
+            body.append(PASS)
+        while PASS in body:
+            body.pop(body.index(PASS))
         if not body:
-            body.append(CodeStr('pass'))
+            body.append(PASS)
 
     def visitFuncDef(self, ctx):
         name, parameters = self.visit(ctx.funcDefStart())
@@ -433,7 +434,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         items = [self.visit(elem) for elem in ctx.singleCase()]
 
         if not items:
-            retval += [CodeStr('if True:'), [CodeStr('pass')]]
+            retval += [CodeStr('if True:'), [PASS]]
         else:
             expr, lines = items[0]
             retval += [CodeStr('if {}:'.format(expr)), lines]
