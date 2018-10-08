@@ -1759,11 +1759,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             return 'rest',
 
     def visitReport(self, ctx):
-        if ctx.specialExpr():
-            formname = self.visit(ctx.specialExpr())
-        else:
-            formname = None
-        return make_func_code('vfpfunc.report_form', formname)
+        return make_func_code('vfpfunc.report_form', self.visit(ctx.specialExpr()))
 
     def visitSetCmd(self, ctx):
         setword = ctx.setword.text.lower()

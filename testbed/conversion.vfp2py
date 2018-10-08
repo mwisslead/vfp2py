@@ -900,6 +900,15 @@ vfpfunc.gather()
 vfpfunc.gather(val=S.somearray)
 @end=python@
 
+@begin=vfp@&&lines
+REPORT FORM TEST.FRX TO PRINTER NOCONSOLE
+REPORT FORM ?
+@end=vfp@
+
+@begin=python@
+vfpfunc.report_form('test.frx')
+vfpfunc.report_form(None)
+@end=python@
 SET TYPEAHEAD TO 0
 ?LEFT('Hello, World', 5)
 WAIT WINDOW space(3) + 'please wait' + CHR(32) NOWAIT TIMEOUT 1.3

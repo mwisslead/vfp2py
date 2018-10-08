@@ -1064,3 +1064,21 @@ vfpfunc.gather(val=S.somearray)
         print(''.join(diff))
         raise
 
+
+def Test20():
+    input_str = '''
+REPORT FORM TEST.FRX TO PRINTER NOCONSOLE
+REPORT FORM ?
+'''.strip()
+    output_str = '''
+vfpfunc.report_form(\'test.frx\')
+vfpfunc.report_form(None)
+'''.strip()
+    test_output_str = vfp2py.vfp2py.prg2py(input_str, parser_start='lines', prepend_data='').strip()
+    try:
+        assert test_output_str == output_str
+    except AssertionError:
+        diff = difflib.unified_diff((test_output_str + '\n').splitlines(1), (output_str + '\n').splitlines(1))
+        print(''.join(diff))
+        raise
+
