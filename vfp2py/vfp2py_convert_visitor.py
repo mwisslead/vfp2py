@@ -148,6 +148,9 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         self.scope = True
         return retval
 
+    def list_visit(self, list_ctx):
+        return [self.visit(x) for x in list_ctx]
+
     def getCtxText(self, ctx):
         start, stop = ctx.getSourceInterval()
         tokens = ctx.parser._input.tokens[start:stop+1]
@@ -353,7 +356,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         return self.visit(ctx.idAttr())
 
     def visitParameters(self, ctx):
-        return [self.visit(parameter) for parameter in ctx.parameter()]
+        return self.list_visit(ctx.parameter())
 
     def modify_func_body(self, body):
         while len(body) > 0 and (not body[-1] or (isinstance(body[-1], CodeStr) and (body[-1] == 'return'))):
@@ -429,9 +432,9 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         return retval
 
     def visitCaseStmt(self, ctx):
-        retval = [self.visit(comment) for comment in ctx.lineComment()]
+        retval = self.list_visit(ctx.lineComment())
 
-        items = [self.visit(elem) for elem in ctx.singleCase()]
+        items = self.list_visit(ctx.singleCase())
 
         if not items:
             retval += [CodeStr('if True:'), [PASS]]
@@ -578,7 +581,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         return [self.visit(expr) if expr else False for expr in exprs]
 
     def visitSpecialArgs(self, ctx):
-        return [self.visit(c) for c in ctx.specialExpr()]
+        return self.list_visit(ctx.specialExpr())
 
     def visitComparison(self, ctx):
         symbol_dict = {
@@ -1021,7 +1024,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         return self.createIdAttr(identifier, trailer)
 
     def visitIdAttr2(self, ctx):
-        return CodeStr('.'.join(([self.withid] if ctx.startPeriod else []) + [self.visit(identifier) for identifier in ctx.identifier()]))
+        return CodeStr('.'.join(([self.withid] if ctx.startPeriod else []) + self.list_visit(ctx.identifier())))
 
     datatypes_map = {
         'w': 'blob',
@@ -1125,7 +1128,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
 
     def visitCopyMoveFile(self, ctx):
         self.imports.append('import shutil')
-        args = [self.visit(arg) for arg in ctx.specialExpr()] #args = [fromFile, toFile]
+        args = self.list_visit(ctx.specialExpr()) #args = [fromFile, toFile]
         if ctx.RENAME():
             return make_func_code('shutil.move', *args)
         else:
@@ -1384,7 +1387,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             return [self.visit(ctx.expr())]
 
     def visitTwoExpr(self, ctx):
-        return [self.visit(expr) for expr in ctx.expr()]
+        return self.list_visit(ctx.expr())
 
     def visitFile(self, ctx):
         return ctx.getText()
@@ -1784,7 +1787,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             args = (self.visit(ctx.expr()[0]),)
         elif setword == 'procedure':
             kwargs.update({'additive': True} if ctx.ADDITIVE() else {})
-            args = [self.visit(expr) for expr in ctx.specialExpr()]
+            args = self.list_visit(ctx.specialExpr())
         elif setword == 'bell':
             args = ('TO', self.visit(ctx.specialExpr()[0])) if ctx.TO() else ('ON' if ctx.ON() else 'OFF',)
         elif setword in ('cursor', 'deleted', 'exact', 'exclusive', 'multilocks', 'near', 'status', 'status bar', 'tableprompt', 'talk', 'unique'):
@@ -1822,7 +1825,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         elif setword == 'date':
             args = (str(self.visit_with_disabled_scope(ctx.identifier())),)
         elif setword == 'refresh':
-            args = [self.visit(expr) for expr in ctx.expr()]
+            args = self.list_visit(ctx.expr())
             if len(args) < 2:
                 args.append(5)
         elif setword == 'notify':
@@ -1834,14 +1837,14 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         elif setword == 'clock':
             args = [x.symbol.text.lower() for x in (ctx.ON(), ctx.OFF(), ctx.TO(), ctx.STATUS()) if x]
             if ctx.expr():
-                args += [self.visit(expr) for expr in ctx.expr()]
+                args += self.list_visit(ctx.expr())
         elif setword == 'memowidth':
             args = (self.visit(ctx.expr()[0]),)
         elif setword == 'library':
             kwargs.update({'additive': True} if ctx.ADDITIVE() else {})
-            args = [self.visit(expr) for expr in ctx.specialExpr()]
+            args = self.list_visit(ctx.specialExpr())
         elif setword == 'filter':
-            args = [self.visit(expr) for expr in ctx.specialExpr()]
+            args = self.list_visit(ctx.specialExpr())
         elif setword == 'order':
             order = self.visit(ctx.specialExpr(0))
             of_expr = self.visit(ctx.ofExpr)
