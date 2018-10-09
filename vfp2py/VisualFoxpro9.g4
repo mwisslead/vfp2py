@@ -33,7 +33,7 @@ lineComment
 
 line
  : lineComment
- | (~NL)* '&' identifier (~NL)* lineEnd
+ | MACROLINE lineEnd
  | (controlStmt | cmd) lineEnd
  ;
 
@@ -739,6 +739,8 @@ SINGLEQUOTE: '\'';
 COMMENT: ('&&' (~'\n')* | ';' WS* '&&' (~'\n')* NL) -> channel(1);
 
 LINECONT : ';' WS* NL -> channel(2);
+
+MACROLINE : ~[\n&]* '&' ID (~'\n')*;
 
 ACTIVATE : A C T I (V (A (T E?)?)?)?;
 ADD : A D D;

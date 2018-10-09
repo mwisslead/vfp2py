@@ -188,7 +188,10 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         try:
             retval = self.visit(ctx.cmd() or ctx.controlStmt() or ctx.lineComment())
             if retval is None:
-                raise Exception('just to jump to except block')
+                if ctx.MACROLINE():
+                    retval = make_func_code('vfpfunc.macro_eval', create_string(ctx.MACROLINE().getText()))
+                else:
+                    raise Exception('just to jump to except block')
         except Exception as err:
             logging.getLogger(__name__).exception(str(err))
             lines = self.getCtxText(ctx)

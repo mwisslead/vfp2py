@@ -533,7 +533,7 @@ os.mkdir(S.test - S.test)
 os.mkdir('test+test')
 os.rmdir(S.test + S.test)
 os.rmdir(S.test.strip())
-# FIX ME: !ls -al &pathname
+vfpfunc.macro_eval('!ls -al &pathname')
 @end=python@
 
 @begin=vfp@&&lines
