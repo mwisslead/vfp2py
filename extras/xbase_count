@@ -1,8 +1,8 @@
 #! /usr/bin/env python
+from __future__ import print_function, unicode_literals
+
 '''Count lines in xbase source files'''
 '''Used by sloccount'''
-
-from __future__ import print_function
 
 import sys
 import argparse
@@ -19,6 +19,7 @@ def countline(line):
     return line and not (line.startswith('*') or line.startswith('&&') or re.match(r'^[Ee][Nn][Dd][A-Za-z]*$', line))
 
 def main(argv=None):
+    encoding = 'cp1252'
     args = parse_args(argv)
     files = []
     if args.f:
@@ -33,7 +34,7 @@ def main(argv=None):
     for filename in files:
         filename = filename.strip()
         with open(filename, 'rb') as fid:
-            lines = len([None for line in fid.readlines() if countline(line)])
+            lines = len([None for line in fid.readlines() if countline(line.decode(encoding))])
         print('{} {}'.format(lines, filename))
         total += lines
 
