@@ -112,7 +112,7 @@ def string_tests():
     assert S.cstring.strip() == 'AAA'
     assert S.cstring.rstrip() == ' AAA'
     assert S.cstring.lstrip() == 'AAA   '
-    assert S.cstring.lstrip() == S.cstring.lstrip()
+    assert S.cstring.rstrip() == S.cstring.rstrip()
     assert vfpfunc.strextract('This {{is}} a {{template}}', '{{', '}}') == 'is'
     assert vfpfunc.strextract('This {{is}} a {{template}}', '{{', '}}', 2) == 'template'
     assert vfpfunc.strextract('This {{is}} a {{template}}', '{{is}}') == ' a {{template}}'

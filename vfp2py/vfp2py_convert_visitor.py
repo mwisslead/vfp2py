@@ -774,8 +774,8 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         if funcname in ('alltrim', 'ltrim', 'rtrim', 'lower', 'upper', 'padr', 'padl', 'padc', 'proper'):
             funcname = {
                 'alltrim': 'strip',
-                'ltrim': 'rstrip',
-                'rtrim': 'lstrip',
+                'ltrim': 'lstrip',
+                'rtrim': 'rstrip',
                 'padr': 'ljust',
                 'padl': 'rjust',
                 'padc': 'center',
