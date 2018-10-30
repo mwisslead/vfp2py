@@ -314,6 +314,7 @@ function_abbreviations = [
 
 expander = {
     'MSGB' : 'MESSAGEBOX',
+    'TRIM' : 'RTRIM',
 }
 expander = {key.lower(): val.lower() for key, val in expander.items()}
 
