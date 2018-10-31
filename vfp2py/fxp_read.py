@@ -11,6 +11,8 @@ from datetime import datetime, timedelta
 from collections import OrderedDict
 import re
 
+import dbf
+
 HEADER_SIZE = 0x29
 
 class BinaryFix(object):
@@ -1443,8 +1445,8 @@ def read_until_null(fid):
         string = string[:-1]
     return string.decode('ISO-8859-1')
 
-def read_fxp_file_block(fid):
-    start_pos = fid.tell()
+def read_fxp_file_block(fid, start_pos, name_pos):
+    fid.seek(start_pos)
     num_procedures, num_classes, main_codepos, procedure_pos, class_pos, source_info_pos, num_code_lines, code_lines_pos = struct.unpack('<hhiiiiii', fid.read(0x1c))
 
     procedure_pos += start_pos
@@ -1454,10 +1456,15 @@ def read_fxp_file_block(fid):
 
     date = get_date(fid)
 
-    unknown3 = read_uint(fid)
-    unknown4 = fid.read(1)
+    original_name_pos = read_uint(fid)
+    codepage = dbf.code_pages[255 - struct.unpack('<B', fid.read(1))[0]]
 
-    for item in ('start_pos', 'num_procedures', 'num_classes', 'main_codepos', 'procedure_pos', 'class_pos', 'source_info_pos', 'num_code_lines', 'code_lines_pos', 'date', 'unknown3', 'unknown4'):
+    goback = fid.tell()
+    fid.seek(name_pos + original_name_pos)
+    original_name = read_until_null(fid)
+    fid.seek(goback)
+
+    for item in ('start_pos', 'num_procedures', 'num_classes', 'main_codepos', 'procedure_pos', 'class_pos', 'source_info_pos', 'num_code_lines', 'code_lines_pos', 'date', 'original_name', 'codepage'):
         print(item + ' = ' + str(eval(item)))
 
     fid.seek(procedure_pos)
@@ -1544,9 +1551,8 @@ def fxp_read():
             for item in ('file_type', 'file_start', 'file_stop', 'base_dir_start', 'file_name_start', 'unknown1', 'unknown2', 'filename1', 'filename2'):
                 print(item + ' = ' + str(eval(item)))
             if file_type == 0:
-                fid.seek(file_start)
                 try:
-                    output[filename2] = read_fxp_file_block(fid)
+                    output[filename2] = read_fxp_file_block(fid, file_start, name_pos)
                 except:
                     pass
                 if len(sys.argv) > 2:
