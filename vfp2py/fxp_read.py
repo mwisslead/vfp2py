@@ -1517,11 +1517,11 @@ def read_fxp_file_block(fid):
 
 def fxp_read():
     with open(sys.argv[1], 'rb') as fid:
-        identifier, head, num_files, num_unknown, footer_pos, name_pos, name_len, unknown_string, unknown = struct.unpack('<3sHHHIII18sH', fid.read(HEADER_SIZE))
+        identifier, head, num_files, main_file, footer_pos, name_pos, name_len, unknown_string, unknown = struct.unpack('<3sHHHIII18sH', fid.read(HEADER_SIZE))
         unknown2 = unknown & 0xff
         unknown3 = (unknown & 0xff00) >> 8
 
-        for item in ('head', 'num_files', 'num_unknown', 'footer_pos', 'name_pos', 'name_len', 'unknown_string', 'unknown', 'unknown2', 'unknown3'):
+        for item in ('head', 'num_files', 'main_file', 'footer_pos', 'name_pos', 'name_len', 'unknown_string', 'unknown', 'unknown2', 'unknown3'):
             print(item + ' = ' + str(eval(item)))
         print()
 
@@ -1533,6 +1533,8 @@ def fxp_read():
             os.mkdir(sys.argv[2])
         output = OrderedDict()
         for i in range(num_files):
+            if i == main_file:
+                print('MAIN')
             fid.seek(footer_pos + 25*i)
             file_type, file_start, file_stop, base_dir_start, file_name_start, unknown1, unknown2 = struct.unpack('<BIIIIII', fid.read(25))
             fid.seek(name_pos + base_dir_start)
