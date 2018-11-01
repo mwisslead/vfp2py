@@ -15,6 +15,29 @@ import dbf
 
 HEADER_SIZE = 0x29
 
+def checksum_calc(string):
+    chunk = string[0]
+    chunka = (chunk & 0xF0) >> 4
+    chunkb = (chunk & 0x0F) >> 0
+    chunk = string[1]
+    chunkc = (chunk & 0xF0) >> 4
+    chunkd = (chunk & 0x0F) >> 0
+
+    for chunk in string:
+        chunka ^= (chunk & 0xF0) >> 4
+        chunkb ^= (chunk & 0x0F) >> 0
+
+        chunk = (chunka << 9) + ((chunka ^ chunkb) << 5)
+
+        chunka, chunkb, chunkc, chunkd = (
+            chunka ^ chunkb ^ chunkc ^ ((chunk & 0xF000) >> 12),
+            chunkd ^ ((chunk & 0x0F00) >> 8),
+            chunka ^ ((chunk & 0x00F0) >> 4),
+            chunka ^ chunkb ^ ((chunk & 0x000F) >> 0),
+        )
+
+    return (chunka << 12) + (chunkb << 8) + (chunkc << 4) + (chunkd << 0)
+
 class BinaryFix(object):
     def __init__(self, name, open_params):
         self.fid = io.open(name, open_params)
@@ -1465,7 +1488,7 @@ def read_fxp_file_block(fid, start_pos, name_pos):
     fid.seek(goback)
 
     for item in ('start_pos', 'num_procedures', 'num_classes', 'main_codepos', 'procedure_pos', 'class_pos', 'source_info_pos', 'num_code_lines', 'code_lines_pos', 'date', 'original_name', 'codepage'):
-        print(item + ' = ' + str(eval(item)))
+        print('{} = {!r}'.format(item, eval(item)))
 
     fid.seek(procedure_pos)
     procedures = [OrderedDict((key, val) for key, val in zip(('name', 'pos', 'class', 'unknown'), ('', main_codepos, -1, 0)))] + [read_procedure_header(fid) for i in range(num_procedures)]
@@ -1524,16 +1547,19 @@ def read_fxp_file_block(fid, start_pos, name_pos):
 
 def fxp_read():
     with open(sys.argv[1], 'rb') as fid:
-        identifier, head, num_files, main_file, footer_pos, name_pos, name_len, unknown_string, unknown = struct.unpack('<3sHHHIII18sH', fid.read(HEADER_SIZE))
-        unknown2 = unknown & 0xff
-        unknown3 = (unknown & 0xff00) >> 8
+        header_bytes = fid.read(HEADER_SIZE)
+        identifier, head, num_files, main_file, footer_pos, name_pos, name_len, reserved, checksum = struct.unpack('<3sHHHIII18sH', header_bytes)
 
-        for item in ('head', 'num_files', 'main_file', 'footer_pos', 'name_pos', 'name_len', 'unknown_string', 'unknown', 'unknown2', 'unknown3'):
-            print(item + ' = ' + str(eval(item)))
+        for item in ('head', 'num_files', 'main_file', 'footer_pos', 'name_pos', 'name_len', 'reserved', 'checksum'):
+            print('{} = {!r}'.format(item, eval(item)))
         print()
 
         if identifier != b'\xfe\xf2\xff':
             print('bad header')
+            return
+
+        if checksum != checksum_calc(header_bytes[:-4]):
+            print('bad checksum')
             return
 
         if len(sys.argv) > 2 and not os.path.exists(sys.argv[2]):
@@ -1543,13 +1569,13 @@ def fxp_read():
             if i == main_file:
                 print('MAIN')
             fid.seek(footer_pos + 25*i)
-            file_type, file_start, file_stop, base_dir_start, file_name_start, unknown1, unknown2 = struct.unpack('<BIIIIII', fid.read(25))
+            file_type, file_start, file_stop, base_dir_start, file_name_start, reserved = struct.unpack('<BIIII8s', fid.read(25))
             fid.seek(name_pos + base_dir_start)
             filename1 = read_until_null(fid)
             fid.seek(name_pos + file_name_start)
             filename2 = read_until_null(fid)
-            for item in ('file_type', 'file_start', 'file_stop', 'base_dir_start', 'file_name_start', 'unknown1', 'unknown2', 'filename1', 'filename2'):
-                print(item + ' = ' + str(eval(item)))
+            for item in ('file_type', 'file_start', 'file_stop', 'base_dir_start', 'file_name_start', 'reserved', 'filename1', 'filename2'):
+                print('{} = {!r}'.format(item, eval(item)))
             if file_type == 0:
                 try:
                     output[filename2] = read_fxp_file_block(fid, file_start, name_pos)
