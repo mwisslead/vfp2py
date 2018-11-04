@@ -1548,22 +1548,34 @@ def read_fxp_file_block(fid, start_pos, name_pos):
 def fxp_read():
     with open(sys.argv[1], 'rb') as fid:
         header_bytes = fid.read(HEADER_SIZE)
+
+        if len(header_bytes) < HEADER_SIZE:
+            raise Exception('File header too short')
+
         identifier, head, num_files, main_file, footer_pos, name_pos, name_len, reserved, checksum = struct.unpack('<3sHHHIII18sH', header_bytes)
+
+        if identifier == b'\xfe\xf2\xee':
+            print(repr(header_bytes))
+            raise Exception('Encrypted file')
+
+        if identifier != b'\xfe\xf2\xff':
+            print('bad header')
+            raise Exception('bad header: {!r}'.format(identifier))
+
+        if checksum != checksum_calc(header_bytes[:-4]):
+            raise Exception('bad checksum')
 
         for item in ('head', 'num_files', 'main_file', 'footer_pos', 'name_pos', 'name_len', 'reserved', 'checksum'):
             print('{} = {!r}'.format(item, eval(item)))
         print()
 
-        if identifier != b'\xfe\xf2\xff':
-            print('bad header')
-            return
+        if len(sys.argv) > 2:
+            try:
+                os.makedirs(sys.argv[2])
+            except OSError as e:
+                if e.errno != errno.EEXIST:
+                    raise
 
-        if checksum != checksum_calc(header_bytes[:-4]):
-            print('bad checksum')
-            return
-
-        if len(sys.argv) > 2 and not os.path.exists(sys.argv[2]):
-            os.mkdir(sys.argv[2])
         output = OrderedDict()
         for i in range(num_files):
             if i == main_file:
