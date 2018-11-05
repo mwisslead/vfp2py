@@ -1433,8 +1433,7 @@ def read_code_block(fid):
     fid.seek(start_pos)
     return read_code_line_area(fid, names, start_pos+tot_length)
 
-def get_date(fid):
-    date_bits = read_uint(fid)
+def convert_date(date_bits):
     year = ((date_bits & 0xfe000000) >> 25) + 1980
     month = (date_bits & 0x1e00000) >> 21
     day = (date_bits & 0x1f0000) >> 16
@@ -1444,18 +1443,20 @@ def get_date(fid):
     return datetime(year, month, day, hour, minute, second)
 
 def read_procedure_header(fid):
-    name = read_string(fid)
-    code_pos = read_uint(fid)
-    unknown = read_short(fid)
-    class_num = read_short(fid)
-    return OrderedDict((key, val) for key, val in zip(('name', 'pos', 'class', 'unknown'), (name, code_pos, class_num, unknown)))
+    return OrderedDict((
+        ('name', read_string(fid)),
+        ('pos', read_uint(fid)),
+        ('class_flag', read_short(fid)),
+        ('class', read_short(fid)),
+    ))
 
 def read_class_header(fid):
-    name = read_string(fid)
-    parent_name = read_string(fid)
-    code_pos = read_uint(fid)
-    unknown1 = read_short(fid)
-    return {'name': name, 'parent': parent_name, 'procedures': [], 'pos': code_pos}
+    return {
+        'name': read_string(fid),
+        'parent': read_string(fid),
+        'pos': read_uint(fid),
+        'reserved': fid.read(2),
+    }
 
 def read_line_info(fid):
     return read_raw(fid, 2)
@@ -1474,28 +1475,27 @@ def read_until_null(fid):
 
 def read_fxp_file_block(fid, start_pos, name_pos):
     fid.seek(start_pos)
-    num_procedures, num_classes, main_codepos, procedure_pos, class_pos, source_info_pos, num_code_lines, code_lines_pos = struct.unpack('<hhiiiiii', fid.read(0x1c))
+    fmt = '<hhiiiiiiIIB'
+    num_procedures, num_classes, main_codepos, procedure_pos, class_pos, source_info_pos, num_code_lines, code_lines_pos, date, original_name_pos, codepage = struct.unpack(fmt, fid.read(struct.calcsize(fmt)))
 
     procedure_pos += start_pos
     class_pos += start_pos
     code_lines_pos += start_pos
     source_info_pos += start_pos
 
-    date = get_date(fid)
+    date = convert_date(date)
 
-    original_name_pos = read_uint(fid)
-    codepage = dbf.code_pages[255 - struct.unpack('<B', fid.read(1))[0]]
+    codepage = dbf.code_pages[255 - codepage]
 
-    goback = fid.tell()
     fid.seek(name_pos + original_name_pos)
     original_name = read_until_null(fid)
-    fid.seek(goback)
 
-    for item in ('start_pos', 'num_procedures', 'num_classes', 'main_codepos', 'procedure_pos', 'class_pos', 'source_info_pos', 'num_code_lines', 'code_lines_pos', 'date', 'original_name', 'codepage'):
+    for item in ('num_procedures', 'num_classes', 'main_codepos', 'procedure_pos', 'class_pos', 'source_info_pos', 'num_code_lines', 'code_lines_pos', 'date', 'original_name', 'codepage'):
         print('{} = {!r}'.format(item, eval(item)))
 
     fid.seek(procedure_pos)
-    procedures = [OrderedDict((key, val) for key, val in zip(('name', 'pos', 'class', 'unknown'), ('', main_codepos, -1, 0)))] + [read_procedure_header(fid) for i in range(num_procedures)]
+    procedures = [OrderedDict((key, val) for key, val in zip(('name', 'pos', 'class_flag', 'class'), ('', main_codepos, 0, -1)))]
+    procedures += [read_procedure_header(fid) for i in range(num_procedures)]
     
     fid.seek(class_pos, 0)
     classes = [read_class_header(fid) for i in range(num_classes)]
@@ -1506,46 +1506,10 @@ def read_fxp_file_block(fid, start_pos, name_pos):
     fid.seek(source_info_pos)
     source_info = [read_source_info(fid) for i in range(num_procedures + num_classes + 1)]
 
-    for proc in procedures:
-        fid.seek(proc['pos'] + start_pos)
-        proc['code'] = read_code_block(fid)
-        proc.pop('pos')
-
-    for cls in classes:
-        fid.seek(cls['pos'] + start_pos)
-        cls['code'] = read_code_block(fid)
-        cls.pop('pos')
-
-    if False:
-        with open(source_file, 'rb') as fid:
-            for item in source_info:
-                fid.seek(item[2])
-                print(item[1])
-                print(fid.read(item[3] - item[2]).decode('ISO-8859-1'))
-
-    removed_procedures = []
-    for i, cls in enumerate(classes):
-        code_lines = [line.strip() for line in cls['code'].split('\n') if line.strip()]
-        good_code_lines = []
-        for code_ind, line in enumerate(code_lines):
-            match = re.match(r'add (hidden |protected |)?method ([0-9]*)', line)
-            if match:
-                match = match.groups()
-                qualifier = match[0].upper()
-                proc = procedures[int(match[1])]
-                assert proc['class'] == i
-                cls['procedures'].append((qualifier, proc))
-                removed_procedures.append(proc)
-            else:
-                good_code_lines.append(line)
-        code_lines = good_code_lines
-        if 'ENDPROC' in code_lines:
-            code_lines.pop(code_lines.index('ENDPROC'))
-        cls['code'] = ''.join((line + '\n' for line in code_lines))
-
-    procedures = [proc for proc in procedures if proc not in removed_procedures]
-    for proc in procedures:
-        proc.pop('class')
+    for proc_or_cls in procedures + classes:
+        fid.seek(proc_or_cls['pos'] + start_pos)
+        proc_or_cls['code'] = read_code_block(fid)
+        proc_or_cls.pop('pos')
 
     return procedures, classes
 
@@ -1630,15 +1594,21 @@ def fxp_read():
                 with open(os.path.join(sys.argv[2], os.path.splitext(filename)[0]) + '.prg', 'wb') as outfid:
                     procedures, classes = output[filename]
                     for proc in procedures:
-                        if proc['name']:
-                            outfid.write('PROCEDURE {}\n'.format(proc['name']).encode('ISO-8859-1'))
-                        outfid.write(proc['code'].encode('ISO-8859-1'))
+                        if not proc['class_flag']:
+                            if proc['name']:
+                                outfid.write('PROCEDURE {}\n'.format(proc['name']).encode('ISO-8859-1'))
+                            outfid.write(proc['code'].encode('ISO-8859-1'))
                     for cls in classes:
                         outfid.write('DEFINE CLASS {} AS {}\n'.format(cls['name'], cls['parent']).encode('ISO-8859-1'))
-                        outfid.write(cls['code'].encode('ISO-8859-1'))
-                        for qualifier, proc in cls['procedures']:
-                            outfid.write('{}PROCEDURE {}\n'.format(qualifier, proc['name']).encode('ISO-8859-1'))
-                            outfid.write(proc['code'].encode('ISO-8859-1'))
+                        for line in cls['code'].splitlines(True):
+                            match = re.match(r'add (hidden |protected |)?method ([0-9]*)', line)
+                            if match:
+                                qualifier = match.groups()[0]
+                                proc = procedures[int(match.groups()[1])]
+                                outfid.write('{}PROCEDURE {}\n'.format(qualifier, proc['name']).encode('ISO-8859-1'))
+                                outfid.write(proc['code'].encode('ISO-8859-1'))
+                            else:
+                                outfid.write(line)
 
         for filename in output:
             import pprint
