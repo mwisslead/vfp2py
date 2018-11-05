@@ -1580,28 +1580,29 @@ def fxp_read():
                 if e.errno != errno.EEXIST:
                     raise
 
+        fid.seek(footer_pos)
+        footer_entries = [struct.unpack('<BIIII8s', fid.read(FOOTER_ENTRY_SIZE)) for i in range(num_files)]
+
         output = OrderedDict()
-        for i in range(num_files):
+        for i, (file_type, file_start, file_stop, dirname_start, filename_start, reserved) in enumerate(footer_entries):
             if i == main_file:
                 print('MAIN')
-            fid.seek(footer_pos + FOOTER_ENTRY_SIZE * i)
-            file_type, file_start, file_stop, base_dir_start, file_name_start, reserved = struct.unpack('<BIIII8s', fid.read(FOOTER_ENTRY_SIZE))
-            fid.seek(name_pos + base_dir_start)
-            filename1 = read_until_null(fid)
-            fid.seek(name_pos + file_name_start)
-            filename2 = read_until_null(fid)
-            for item in ('file_type', 'file_start', 'file_stop', 'base_dir_start', 'file_name_start', 'reserved', 'filename1', 'filename2'):
+            fid.seek(name_pos + dirname_start)
+            dirname = read_until_null(fid)
+            fid.seek(name_pos + filename_start)
+            filename = read_until_null(fid)
+            for item in ('file_type', 'file_start', 'file_stop', 'dirname_start', 'filename_start', 'reserved', 'dirname', 'filename'):
                 print('{} = {!r}'.format(item, eval(item)))
             if file_type == 0:
                 try:
-                    output[filename2] = read_fxp_file_block(fid, file_start, name_pos)
+                    output[filename] = read_fxp_file_block(fid, file_start, name_pos)
                 except:
                     pass
                 if len(sys.argv) > 2:
-                    with open(os.path.join(sys.argv[2], filename2), 'wb') as outfid:
+                    with open(os.path.join(sys.argv[2], filename), 'wb') as outfid:
                         fid.seek(file_start)
                         blocklen = file_stop - file_start
-                        filename_blocklen = len(filename1) + len(filename2) + 3
+                        filename_blocklen = len(dirname) + len(filename) + 3
                         new_footer_pos = HEADER_SIZE + blocklen + filename_blocklen
                         new_name_pos = HEADER_SIZE + blocklen
                         header_data = bytearray(struct.pack('<5sHHIII', IDENTIFIER, 1, 0, new_footer_pos, new_name_pos, filename_blocklen))
@@ -1613,13 +1614,13 @@ def fxp_read():
                         outfid.write(fid.read(blocklen))
                         file_stop = outfid.tell()
                         outfid.write(b'\x00')
-                        outfid.write((filename1 + '\x00').encode('ISO-8859-1'))
-                        outfid.write((filename2 + '\x00').encode('ISO-8859-1'))
-                        outfid.write(struct.pack('<BIIII', file_type, file_start, file_stop, 1, 1 + len(filename1) + 1))
+                        outfid.write((dirname + '\x00').encode('ISO-8859-1'))
+                        outfid.write((filename + '\x00').encode('ISO-8859-1'))
+                        outfid.write(struct.pack('<BIIII', file_type, file_start, file_stop, 1, 1 + len(dirname) + 1))
                         outfid.write(b'\x00' * 8)
             else:
                 if len(sys.argv) > 2:
-                    with open(os.path.join(sys.argv[2], filename2), 'wb') as outfid:
+                    with open(os.path.join(sys.argv[2], filename), 'wb') as outfid:
                         fid.seek(file_start)
                         outfid.write(fid.read(file_stop - file_start))
             print()
