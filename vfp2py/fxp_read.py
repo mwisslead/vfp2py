@@ -10,10 +10,14 @@ from math import floor, log10
 from datetime import datetime, timedelta
 from collections import OrderedDict
 import re
+import errno
 
 import dbf
 
 HEADER_SIZE = 0x29
+FOOTER_ENTRY_SIZE = 0x19
+ENCRYPTED_IDENTIFIER = b'\xfe\xf2\xee'
+IDENTIFIER = b'\xfe\xf2\xff\x20\x02'
 
 def checksum_calc(string):
     chunk = string[0]
@@ -1552,20 +1556,20 @@ def fxp_read():
         if len(header_bytes) < HEADER_SIZE:
             raise Exception('File header too short')
 
-        identifier, head, num_files, main_file, footer_pos, name_pos, name_len, reserved, checksum = struct.unpack('<3sHHHIII18sH', header_bytes)
+        identifier, num_files, main_file, footer_pos, name_pos, name_len, reserved, checksum = struct.unpack('<5sHHIII18sH', header_bytes)
 
-        if identifier == b'\xfe\xf2\xee':
+        if identifier.startswith(ENCRYPTED_IDENTIFIER):
             print(repr(header_bytes))
             raise Exception('Encrypted file')
 
-        if identifier != b'\xfe\xf2\xff':
+        if identifier != IDENTIFIER:
             print('bad header')
             raise Exception('bad header: {!r}'.format(identifier))
 
         if checksum != checksum_calc(header_bytes[:-4]):
             raise Exception('bad checksum')
 
-        for item in ('head', 'num_files', 'main_file', 'footer_pos', 'name_pos', 'name_len', 'reserved', 'checksum'):
+        for item in ('num_files', 'main_file', 'footer_pos', 'name_pos', 'name_len', 'reserved', 'checksum'):
             print('{} = {!r}'.format(item, eval(item)))
         print()
 
@@ -1580,8 +1584,8 @@ def fxp_read():
         for i in range(num_files):
             if i == main_file:
                 print('MAIN')
-            fid.seek(footer_pos + 25*i)
-            file_type, file_start, file_stop, base_dir_start, file_name_start, reserved = struct.unpack('<BIIII8s', fid.read(25))
+            fid.seek(footer_pos + FOOTER_ENTRY_SIZE * i)
+            file_type, file_start, file_stop, base_dir_start, file_name_start, reserved = struct.unpack('<BIIII8s', fid.read(FOOTER_ENTRY_SIZE))
             fid.seek(name_pos + base_dir_start)
             filename1 = read_until_null(fid)
             fid.seek(name_pos + file_name_start)
@@ -1598,14 +1602,21 @@ def fxp_read():
                         fid.seek(file_start)
                         blocklen = file_stop - file_start
                         filename_blocklen = len(filename1) + len(filename2) + 3
-                        outfid.write(struct.pack('<3sHHHIII18sH', identifier, head, 1, 0, 0x29 + blocklen + filename_blocklen, 0x29 + blocklen, filename_blocklen, unknown_string, unknown))
+                        new_footer_pos = HEADER_SIZE + blocklen + filename_blocklen
+                        new_name_pos = HEADER_SIZE + blocklen
+                        header_data = bytearray(struct.pack('<5sHHIII', IDENTIFIER, 1, 0, new_footer_pos, new_name_pos, filename_blocklen))
+                        header_data += b'\x00' * 16
+                        outfid.write(header_data)
+                        outfid.write(b'\x00' * 2)
+                        outfid.write(struct.pack('<H', checksum_calc(header_data)))
                         file_start = outfid.tell()
                         outfid.write(fid.read(blocklen))
                         file_stop = outfid.tell()
                         outfid.write(b'\x00')
                         outfid.write((filename1 + '\x00').encode('ISO-8859-1'))
                         outfid.write((filename2 + '\x00').encode('ISO-8859-1'))
-                        outfid.write(struct.pack('<BIIIIII', file_type, file_start, file_stop, 1, 1 + len(filename1) + 1, unknown1, unknown2))
+                        outfid.write(struct.pack('<BIIII', file_type, file_start, file_stop, 1, 1 + len(filename1) + 1))
+                        outfid.write(b'\x00' * 8)
             else:
                 if len(sys.argv) > 2:
                     with open(os.path.join(sys.argv[2], filename2), 'wb') as outfid:
