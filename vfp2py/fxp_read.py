@@ -17,7 +17,7 @@ import dbf
 HEADER_SIZE = 0x29
 FOOTER_ENTRY_SIZE = 0x19
 ENCRYPTED_IDENTIFIER = b'\xfe\xf2\xee'
-IDENTIFIER = b'\xfe\xf2\xff\x20\x02'
+IDENTIFIER = b'\xfe\xf2\xff'
 
 def checksum_calc(string):
     chunk = string[0]
@@ -1556,9 +1556,9 @@ def fxp_read():
         if len(header_bytes) < HEADER_SIZE:
             raise Exception('File header too short')
 
-        identifier, num_files, main_file, footer_pos, name_pos, name_len, reserved, checksum = struct.unpack('<5sHHIII18sH', header_bytes)
+        identifier, head, num_files, main_file, footer_pos, name_pos, name_len, reserved, checksum = struct.unpack('<3s2sHHIII18sH', header_bytes)
 
-        if identifier.startswith(ENCRYPTED_IDENTIFIER):
+        if identifier == ENCRYPTED_IDENTIFIER:
             print(repr(header_bytes))
             raise Exception('Encrypted file')
 
@@ -1569,7 +1569,7 @@ def fxp_read():
         if checksum != checksum_calc(header_bytes[:-4]):
             raise Exception('bad checksum')
 
-        for item in ('num_files', 'main_file', 'footer_pos', 'name_pos', 'name_len', 'reserved', 'checksum'):
+        for item in ('head', 'num_files', 'main_file', 'footer_pos', 'name_pos', 'name_len', 'reserved', 'checksum'):
             print('{} = {!r}'.format(item, eval(item)))
         print()
 
