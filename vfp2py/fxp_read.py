@@ -1513,8 +1513,8 @@ def read_fxp_file_block(fid, start_pos, name_pos):
 
     return procedures, classes
 
-def fxp_read():
-    with open(sys.argv[1], 'rb') as fid:
+def fxp_read(fxp_file, output_dir=None):
+    with open(fxp_file, 'rb') as fid:
         header_bytes = fid.read(HEADER_SIZE)
 
         if len(header_bytes) < HEADER_SIZE:
@@ -1537,9 +1537,9 @@ def fxp_read():
             print('{} = {!r}'.format(item, eval(item)))
         print()
 
-        if len(sys.argv) > 2:
+        if output_dir:
             try:
-                os.makedirs(sys.argv[2])
+                os.makedirs(output_dir)
             except OSError as e:
                 if e.errno != errno.EEXIST:
                     raise
@@ -1562,8 +1562,8 @@ def fxp_read():
                     output[filename] = read_fxp_file_block(fid, file_start, name_pos)
                 except:
                     pass
-                if len(sys.argv) > 2:
-                    with open(os.path.join(sys.argv[2], filename), 'wb') as outfid:
+                if output_dir:
+                    with open(os.path.join(output_dir, filename), 'wb') as outfid:
                         fid.seek(file_start)
                         blocklen = file_stop - file_start
                         filename_blocklen = len(dirname) + len(filename) + 3
@@ -1583,15 +1583,15 @@ def fxp_read():
                         outfid.write(struct.pack('<BIIII', file_type, file_start, file_stop, 1, 1 + len(dirname) + 1))
                         outfid.write(b'\x00' * 8)
             else:
-                if len(sys.argv) > 2:
-                    with open(os.path.join(sys.argv[2], filename), 'wb') as outfid:
+                if output_dir:
+                    with open(os.path.join(output_dir, filename), 'wb') as outfid:
                         fid.seek(file_start)
                         outfid.write(fid.read(file_stop - file_start))
             print()
 
-        if len(sys.argv) > 2:
+        if output_dir:
             for filename in output:
-                with open(os.path.join(sys.argv[2], os.path.splitext(filename)[0]) + '.prg', 'wb') as outfid:
+                with open(os.path.join(output_dir, os.path.splitext(filename)[0]) + '.prg', 'wb') as outfid:
                     procedures, classes = output[filename]
                     for proc in procedures:
                         if not proc['class_flag']:
@@ -1619,4 +1619,4 @@ def fxp_read():
             printer.pprint(classes)
 
 if __name__ == '__main__':
-    fxp_read()
+    fxp_read(sys.argv[1], sys.argv[2] if len(sys.argv) > 2 else None)
