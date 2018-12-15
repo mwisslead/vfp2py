@@ -442,7 +442,7 @@ def convert_project(infile, directory):
         print(file=fid)
         print('config = {}'.format(pp.pformat(config)), file=fid)
         print(file=fid)
-        print('{}._program_main()'.format(name), file=fid)
+        print('{}.MAIN()'.format(name), file=fid)
     with open(os.path.join(directory, '__init__.py'), 'wb') as fid:
         pass
     directory = os.path.dirname(directory)

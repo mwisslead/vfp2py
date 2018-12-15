@@ -292,7 +292,7 @@ from vfp2py.vfpfunc import DB, Array, C, F, M, S, lparameters, parameters, vfpcl
 
 
 @lparameters()
-def _program_main():
+def MAIN():
     # comment with spaces
     ###############
     ### comment ###
@@ -305,7 +305,7 @@ def _program_main():
     S.x = \'test\\r\\n\'
     S.x = \'\\x05\'
     S.x = \'\\r\\n\'
-    test._program_main()
+    test.MAIN()
     print(vfpfunc.num_to_str(3))
     print(vfpfunc.num_to_str(3), end=\'\')
     print(vfpfunc.num_to_str(3), file=sys.stderr)
@@ -385,7 +385,7 @@ from vfp2py.vfpfunc import DB, Array, C, F, M, S, lparameters, parameters, vfpcl
 
 
 @lparameters()
-def _program_main():
+def MAIN():
     pass
 
 
@@ -533,7 +533,7 @@ a.test()
 vfpfunc.module(S.a).test()
 vfpfunc.module(S.a + \'.PRG\').test()
 vfpfunc.module(S.a + (S.b)).test()
-test._program_main()
+test.MAIN()
 test.test()
 vfpfunc.do_form(\'splash.scx\')
 vfpfunc.do_form(\'splash.scx\', name=\'splashy\')
@@ -635,7 +635,7 @@ from vfp2py.vfpfunc import DB, Array, C, F, M, S, lparameters, parameters, vfpcl
 
 
 @lparameters()
-def _program_main():
+def MAIN():
     os.mkdir(\'test\')
     print(dt.datetime.now().date())
     print(math.pi)

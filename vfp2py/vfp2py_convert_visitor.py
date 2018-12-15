@@ -168,9 +168,11 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         self.imports.append('from vfp2py.vfpfunc import parameters, lparameters, vfpclass')
         defs = []
 
-        for child in ctx.children:
+        for i, child in enumerate(ctx.children):
             if isinstance(child, ctx.parser.FuncDefContext):
                 funcname, decorator, funcbody = self.visit(child)
+                if i == 0 and funcname == '_program_main':
+                    funcname = CodeStr('MAIN')
                 defs += [
                     add_args_to_code('@{}', (decorator,)),
                     add_args_to_code('def {}():', (funcname,)),
@@ -1282,7 +1284,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
                 namespace = os.path.splitext(func)[0]
                 if os.path.splitext(func)[1] in ('.mpr', '.spr'):
                     namespace += os.path.splitext(func)[1].replace('.', '_')
-                func = '_program_main'
+                func = 'MAIN'
             else:
                 func = self.scopeId(func, 'func')
                 return make_func_code(func, *args)
