@@ -52,6 +52,7 @@ SEARCH_PATH = [HOME]
 
 PCOUNTS = []
 
+_str = str
 try:
     from PySide import QtGui, QtCore
 
@@ -601,7 +602,7 @@ try:
             self._source = source
             table = DB._get_table_info(source).table
             for record in table:
-                self.addItem(QtGui.QListWidgetItem(str(record[0])))
+                self.addItem(QtGui.QListWidgetItem(_str(record[0])))
 
         @property
         def multiselect(self):
@@ -641,7 +642,7 @@ try:
 
             for i, record in enumerate(table):
                 for j, val in enumerate(record):
-                    self.setItem(i, j, QtGui.QTableWidgetItem(str(val)))
+                    self.setItem(i, j, QtGui.QTableWidgetItem(_str(val)))
 
         def focusInEvent(self, event):
             self.refresh()
@@ -857,7 +858,7 @@ class Exception(object):
     def from_pyexception(cls, exc):
         trace = traceback.extract_stack()
         obj = cls()
-        obj.message = str(exc)
+        obj.message = _str(exc)
         if hasattr(exc, '__traceback__'):
             tb = exc.__traceback__
         else:
@@ -935,7 +936,7 @@ class Array(object):
 
     def __repr__(self):
         dims = (self.dim1,) if self.dim1 == len(self) else (self.dim1, len(self) // self.dim1)
-        return '{}({})'.format(type(self).__name__, ', '.join(str(dim) for dim in dims))
+        return '{}({})'.format(type(self).__name__, ', '.join(_str(dim) for dim in dims))
 
 class _Memvar(object):
     def __init__(self):
@@ -1319,7 +1320,7 @@ def messagebox(msg, arg1=None, arg2=None, timeout=None, details=''):
     flags=0
     title='vfp2py'
     if arg1 is not None:
-        if isinstance(arg1, str):
+        if isinstance(arg1, _str):
             title = arg1
             if arg2 is not None:
                 flags = arg2
@@ -1387,41 +1388,6 @@ def messagebox(msg, arg1=None, arg2=None, timeout=None, details=''):
         NO: RETURN_NO
     }[button] if retval != -1 else -1
 
-def num_to_str(num, length=10, decimals=0):
-    length = int(length)
-    decimals = int(decimals)
-    if num == int(num):
-        string = str(int(num))
-        if length >= len(string):
-            return ' ' * (length-len(string)) + string
-        return '*' * length
-    else:
-        string = '{:f}'.format(num)
-        integer, mantissa = string.split('.')
-        if decimals:
-            if len(mantissa) <= decimals:
-                mantissa += '0' * (decimals - len(mantissa))
-            else:
-                if int(mantissa[decimals:]) > 0:
-                    mantissa = str(int(mantissa[:decimals]) + 1)
-                    if len(mantissa) > decimals:
-                        integer += 1
-                        mantissa = '0' * decimals
-                mantissa = mantissa[:decimals]
-            string = integer + '.' + mantissa
-        else:
-            string = integer
-        if length >= len(string):
-            return ' ' * (length-len(string)) + string
-        else:
-            string = '{:e}'.format(num)
-            if length >= len(string):
-                return ' ' * (length-len(string)) + string
-            string, exp = string.split('e')
-            exp = 'e' + exp
-            if length <= len(exp):
-                return '*' * length
-            return string[:length-len(exp)] + exp
 
 def pcount():
     return PCOUNTS[-1]
@@ -1459,6 +1425,23 @@ def rgb(red, green, blue):
 def seconds():
     now = dt.datetime.now()
     return (now - dt.datetime.combine(now, dt.time(0, 0))).seconds
+
+def str(num, length=10, decimals=0):
+    length = int(length)
+    string = '{{:.{}f}}'.format(int(decimals)).format(num)
+    if len(string) > length and len(string) - (decimals - 1) <= length:
+        string = string[:length]
+    elif len(string) > length:
+        string = string.split('.')[0]
+        if len(string) >= length:
+            string = '{:E}'.format(num)
+            groups = list(re.match(r'(\d.)(\d+)(E[+-])0*(\d+)', string).groups())
+            trim = sum(len(x) for x in groups) - length
+            if trim > 0:
+                groups[1] = groups[1][:-trim]
+            string = ''.join(groups)
+    string = string.rjust(length)
+    return string if len(string) == length else '*' * length
 
 def strextract(string, begin, end='', occurance=1, flag=0):
     begin = re.escape(begin)
@@ -1554,7 +1537,7 @@ def _odbc_cursor_to_db(results, cursor_name):
             field_name = column[0][:10]
             field_type = {
                 int: 'N',
-                str: 'C',
+                _str: 'C',
                 bool: 'L',
                 float: 'N',
             }[column[1]]
@@ -1624,7 +1607,7 @@ def vfp_sys(funcnum, *args):
 
 
 TYPE_MAP = {
-    str: 'C',
+    _str: 'C',
     dt.date: 'D',
     bool: 'L',
     int: 'N',

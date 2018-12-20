@@ -12,7 +12,7 @@ from vfp2py.vfpfunc import DB, Array, C, F, M, S, lparameters, parameters, vfpcl
 
 
 @lparameters()
-def _program_main():
+def MAIN():
     pass
 
 
@@ -168,7 +168,7 @@ def _sqlexec_add_record():
     S.fake_st = S.fake.state_abbr()
     S.fake_quantity = S.fake.random_int(0, 100)
     S.fake_received = S.fake.boolean()
-    S.sqlcmd = "insert into REPORT values ('" + S.fake_name + "','" + S.fake_st + "'," + vfpfunc.num_to_str(S.fake_quantity).strip() + ',' + vfpfunc.num_to_str(int(S.fake_received)).strip() + ')'
+    S.sqlcmd = "insert into REPORT values ('" + S.fake_name + "','" + S.fake_st + "'," + vfpfunc.str(S.fake_quantity).strip() + ',' + vfpfunc.str(int(S.fake_received)).strip() + ')'
     print(S.sqlcmd)
     return vfpfunc.sqlexec(S.sqlconn, S.sqlcmd)
 

@@ -306,9 +306,9 @@ def MAIN():
     S.x = \'\\x05\'
     S.x = \'\\r\\n\'
     test.MAIN()
-    print(vfpfunc.num_to_str(3))
-    print(vfpfunc.num_to_str(3), end=\'\')
-    print(vfpfunc.num_to_str(3), file=sys.stderr)
+    print(vfpfunc.str(3))
+    print(vfpfunc.str(3), end=\'\')
+    print(vfpfunc.str(3), file=sys.stderr)
     print(3)  # @ 10, 10 SAY 3
     return S.x
 '''.strip()

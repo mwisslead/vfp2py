@@ -642,7 +642,6 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             'ratc': 'rat',
             'rightc': 'right',
             'select': 'select_function',
-            'str': 'num_to_str',
             'stuffc': 'stuff',
             'substrc': 'substr',
             'sys': 'vfp_sys',
