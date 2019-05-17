@@ -221,14 +221,10 @@ def convert_vcx_to_vfp_code(mnxfile):
     tmpfile = tmpfile.name
     dbffile = copy_obscured_dbf(mnxfile, 'vct', tmpfile)
 
-    code = ''
+    codes = []
     with dbf.Table(dbffile) as table:
-        includes = list(set(sum(([x for x in record.reserved8.splitlines()] for record in table), [])))
-        if len(includes) > 1:
-            raise Exception('temporarily badly implemented to just place single include at top or fail')
-        code += '\n'.join('#include "{}"'.format(x) for x in table[1].reserved8.splitlines()) + '\n'
-
         for record in table:
+            code = '\n'.join('#include "{}"'.format(x) for x in record.reserved8.splitlines()) + '\n'
             if not (record.objname and record['class']):
                 continue
             code += 'DEFINE CLASS {} AS {}\n'.format(record.objname, record['class'])
@@ -277,11 +273,12 @@ def convert_vcx_to_vfp_code(mnxfile):
             code += '\n'.join(props) + '\n\n'
             code += '\n'.join(record.methods.splitlines()) + '\n'
             code += 'ENDDEFINE\n\n'
+            codes.append(code)
 
     os.remove(table.filename)
     os.remove(table.memoname)
 
-    return code
+    return codes
 
 def convert_scx_to_vfp_code(scxfile):
     with tempfile.NamedTemporaryFile() as tmpfile:
@@ -511,8 +508,8 @@ def convert_file(infile, outfile):
             data = convert_scx_to_vfp_code(infile)
             tokens = preprocess_code(data).tokens
         elif file_ext == '.vcx':
-            data = convert_vcx_to_vfp_code(infile)
-            tokens = preprocess_code(data).tokens
+            datas = convert_vcx_to_vfp_code(infile)
+            tokens = [token for data in datas for token in preprocess_code(data).tokens]
         else:
             tokens = preprocess_file(infile).tokens
     elif file_ext in ('.frx', '.mnx', '.fll', '.app'):
