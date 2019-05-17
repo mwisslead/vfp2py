@@ -269,6 +269,7 @@ setCmd
  | setword=COMPATIBLE (ON | OFF | DB4 | FOXPLUS) (PROMPT | NOPROMPT)?
  | setword=CURSOR (ON | OFF)
  | setword=DATE TO? identifier
+ | setword=DEFAULT TO specialExpr
  | setword=(DELETE | DELETED) (ON | OFF)
  | setword=EXACT (ON | OFF)
  | setword=EXCLUSIVE (ON | OFF)

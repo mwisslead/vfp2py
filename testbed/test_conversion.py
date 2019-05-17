@@ -735,6 +735,7 @@ SET CLASSLIB TO TEST ALIAS NOTTEST
 SET CLASSLIB TO TEST IN TEST ALIAS NOTTEST ADDITIVE
 SET TABLEPROMPT ON
 SET EXCLUSIVE ON
+SET DEFAULT TO SOMETHING
 SET HELP OFF
 SET HELP TO TEST
 SET HELP COLLECTION test
@@ -755,6 +756,7 @@ vfpfunc.set(\'classlib\', \'test\', alias=\'nottest\', set_value=True)
 vfpfunc.set(\'classlib\', \'test\', alias=\'nottest\', class_file=\'test\', additive=True, set_value=True)
 vfpfunc.set(\'tableprompt\', \'ON\', set_value=True)
 vfpfunc.set(\'exclusive\', \'ON\', set_value=True)
+# FIX ME: SET DEFAULT TO SOMETHING
 # FIX ME: SET HELP OFF
 # FIX ME: SET HELP TO TEST
 # FIX ME: SET HELP COLLECTION test
