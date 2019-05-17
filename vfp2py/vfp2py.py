@@ -26,6 +26,7 @@ from . import vfpfunc
 from .vfp2py_convert_visitor import PythonConvertVisitor, CodeStr
 
 SEARCH_PATH = ['.']
+INCLUDE = {}
 
 def which(filename):
     '''find file on path'''
@@ -76,7 +77,11 @@ class PreprocessVisitor(VisualFoxpro9Visitor):
         if isinstance(filename, CodeStr):
             filename = eval(filename)
         filename = which(filename)
-        include_visitor = preprocess_file(filename)
+        if filename in INCLUDE:
+            include_visitor = INCLUDE[filename]
+        else:
+            include_visitor = preprocess_file(filename)
+            INCLUDE[filename] = include_visitor
         self.memory.update(include_visitor.memory)
         return include_visitor.tokens
 
