@@ -1985,6 +1985,9 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             kwargs['message'] = self.visit(ctx.expr(1))
         return make_func_code('vfpfunc.define_bar', bar_number, menu_name, prompt, **kwargs)
 
+    def visitActivateWindow(self, ctx):
+        pass
+
     def visitActivateScreen(self, ctx):
         pass
 

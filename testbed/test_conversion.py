@@ -118,6 +118,7 @@ DEFINE POPUP test
 DEFINE BAR 1 OF test PROMPT \'text\'
 ON PAD test OF thing ACTIVATE POPUP test
 ON BAR 1 of test ACTIVATE POPUP test
+ACTIVATE WINDOW window
 ACTIVATE SCREEN
 ACTIVATE MENU test NOWAIT
 ACTIVATE POPUP test
@@ -231,6 +232,7 @@ vfpfunc.define_popup(\'test\')
 vfpfunc.define_bar(1, \'test\', \'text\')
 vfpfunc.on_pad_bar(\'pad\', \'test\', \'thing\', (\'popup\', \'test\'))
 vfpfunc.on_pad_bar(\'bar\', 1, \'test\', (\'popup\', \'test\'))
+# FIX ME: ACTIVATE WINDOW window
 # FIX ME: ACTIVATE SCREEN
 vfpfunc.activate_menu(\'test\', nowait=True)
 # FIX ME: ACTIVATE POPUP test
