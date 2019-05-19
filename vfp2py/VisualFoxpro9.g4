@@ -268,6 +268,7 @@ setCmd
  | setword=CLOCK (ON | OFF | STATUS | TO (expr ',' expr)?)
  | setword=COMPATIBLE (ON | OFF | DB4 | FOXPLUS) (PROMPT | NOPROMPT)?
  | setword=CURSOR (ON | OFF)
+ | setword=DATABASE TO specialExpr
  | setword=DATE TO? identifier
  | setword=DEFAULT TO specialExpr
  | setword=(DELETE | DELETED) (ON | OFF)
