@@ -313,7 +313,7 @@ def database_tests():
     assert vfpfunc.sqlexec(S.sqlconn, 'DROP TABLE REPORT') > 0
     vfpfunc.sqlcommit(S.sqlconn)
     vfpfunc.sqldisconnect(S.sqlconn)
-    DB.close_tables(False)
+    # FIX ME: close tables
 
 
 @lparameters('arg1', 'arg2')

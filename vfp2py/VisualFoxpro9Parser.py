@@ -1,9 +1,10 @@
-# Generated from VisualFoxpro9.g4 by ANTLR 4.7.1
+# Generated from VisualFoxpro9.g4 by ANTLR 4.7.2
 # encoding: utf-8
 from __future__ import print_function
 from antlr4 import *
 from io import StringIO
 import sys
+
 
 def serializedATN():
     with StringIO() as buf:
@@ -1783,9 +1784,10 @@ class VisualFoxpro9Parser ( Parser ):
 
     def __init__(self, input, output=sys.stdout):
         super(VisualFoxpro9Parser, self).__init__(input, output=output)
-        self.checkVersion("4.7.1")
+        self.checkVersion("4.7.2")
         self._interp = ParserATNSimulator(self, self.atn, self.decisionsToDFA, self.sharedContextCache)
         self._predicates = None
+
 
 
 
@@ -1831,6 +1833,7 @@ class VisualFoxpro9Parser ( Parser ):
         finally:
             self.exitRule()
         return localctx
+
 
     class PreprocessorLinesContext(ParserRuleContext):
 
@@ -1882,6 +1885,7 @@ class VisualFoxpro9Parser ( Parser ):
             self.exitRule()
         return localctx
 
+
     class PreprocessorLineContext(ParserRuleContext):
 
         def __init__(self, parser, parent=None, invokingState=-1):
@@ -1912,6 +1916,8 @@ class VisualFoxpro9Parser ( Parser ):
         def lineEnd(self):
             return self.getTypedRuleContext(VisualFoxpro9Parser.LineEndContext,0)
 
+        def HASH(self):
+            return self.getToken(VisualFoxpro9Parser.HASH, 0)
         def EOF(self):
             return self.getToken(VisualFoxpro9Parser.EOF, 0)
 
@@ -1928,6 +1934,8 @@ class VisualFoxpro9Parser ( Parser ):
             super(VisualFoxpro9Parser.PreprocessorUndefineContext, self).__init__(parser)
             self.copyFrom(ctx)
 
+        def HASH(self):
+            return self.getToken(VisualFoxpro9Parser.HASH, 0)
         def UNDEFINE(self):
             return self.getToken(VisualFoxpro9Parser.UNDEFINE, 0)
         def identifier(self):
@@ -1952,6 +1960,11 @@ class VisualFoxpro9Parser ( Parser ):
             self.elseBody = None # PreprocessorLinesContext
             self.copyFrom(ctx)
 
+        def HASH(self, i=None):
+            if i is None:
+                return self.getTokens(VisualFoxpro9Parser.HASH)
+            else:
+                return self.getToken(VisualFoxpro9Parser.HASH, i)
         def NL(self, i=None):
             if i is None:
                 return self.getTokens(VisualFoxpro9Parser.NL)
@@ -1994,6 +2007,8 @@ class VisualFoxpro9Parser ( Parser ):
             super(VisualFoxpro9Parser.PreprocessorJunkContext, self).__init__(parser)
             self.copyFrom(ctx)
 
+        def HASH(self):
+            return self.getToken(VisualFoxpro9Parser.HASH, 0)
         def lineEnd(self):
             return self.getTypedRuleContext(VisualFoxpro9Parser.LineEndContext,0)
 
@@ -2026,6 +2041,8 @@ class VisualFoxpro9Parser ( Parser ):
             super(VisualFoxpro9Parser.PreprocessorDefineContext, self).__init__(parser)
             self.copyFrom(ctx)
 
+        def HASH(self):
+            return self.getToken(VisualFoxpro9Parser.HASH, 0)
         def DEFINE(self):
             return self.getToken(VisualFoxpro9Parser.DEFINE, 0)
         def identifier(self):
@@ -2053,6 +2070,8 @@ class VisualFoxpro9Parser ( Parser ):
             super(VisualFoxpro9Parser.PreprocessorIncludeContext, self).__init__(parser)
             self.copyFrom(ctx)
 
+        def HASH(self):
+            return self.getToken(VisualFoxpro9Parser.HASH, 0)
         def INCLUDE(self):
             return self.getToken(VisualFoxpro9Parser.INCLUDE, 0)
         def specialExpr(self):
@@ -2264,6 +2283,7 @@ class VisualFoxpro9Parser ( Parser ):
             self.exitRule()
         return localctx
 
+
     class PrgContext(ParserRuleContext):
 
         def __init__(self, parser, parent=None, invokingState=-1):
@@ -2338,6 +2358,7 @@ class VisualFoxpro9Parser ( Parser ):
             self.exitRule()
         return localctx
 
+
     class LineCommentContext(ParserRuleContext):
 
         def __init__(self, parser, parent=None, invokingState=-1):
@@ -2347,6 +2368,9 @@ class VisualFoxpro9Parser ( Parser ):
         def lineEnd(self):
             return self.getTypedRuleContext(VisualFoxpro9Parser.LineEndContext,0)
 
+
+        def ASTERISK(self):
+            return self.getToken(VisualFoxpro9Parser.ASTERISK, 0)
 
         def NOTE(self):
             return self.getToken(VisualFoxpro9Parser.NOTE, 0)
@@ -2420,6 +2444,7 @@ class VisualFoxpro9Parser ( Parser ):
         finally:
             self.exitRule()
         return localctx
+
 
     class LineContext(ParserRuleContext):
 
@@ -2509,6 +2534,7 @@ class VisualFoxpro9Parser ( Parser ):
             self.exitRule()
         return localctx
 
+
     class LineEndContext(ParserRuleContext):
 
         def __init__(self, parser, parent=None, invokingState=-1):
@@ -2554,6 +2580,7 @@ class VisualFoxpro9Parser ( Parser ):
         finally:
             self.exitRule()
         return localctx
+
 
     class LinesContext(ParserRuleContext):
 
@@ -2605,6 +2632,7 @@ class VisualFoxpro9Parser ( Parser ):
             self.exitRule()
         return localctx
 
+
     class NongreedyLinesContext(ParserRuleContext):
 
         def __init__(self, parser, parent=None, invokingState=-1):
@@ -2654,6 +2682,7 @@ class VisualFoxpro9Parser ( Parser ):
         finally:
             self.exitRule()
         return localctx
+
 
     class ClassDefStartContext(ParserRuleContext):
 
@@ -2720,6 +2749,7 @@ class VisualFoxpro9Parser ( Parser ):
         finally:
             self.exitRule()
         return localctx
+
 
     class ClassDefContext(ParserRuleContext):
 
@@ -2806,6 +2836,7 @@ class VisualFoxpro9Parser ( Parser ):
             self.exitRule()
         return localctx
 
+
     class ClassPropertyContext(ParserRuleContext):
 
         def __init__(self, parser, parent=None, invokingState=-1):
@@ -2876,6 +2907,7 @@ class VisualFoxpro9Parser ( Parser ):
             self.exitRule()
         return localctx
 
+
     class ParameterContext(ParserRuleContext):
 
         def __init__(self, parser, parent=None, invokingState=-1):
@@ -2927,6 +2959,7 @@ class VisualFoxpro9Parser ( Parser ):
             self.exitRule()
         return localctx
 
+
     class ParametersContext(ParserRuleContext):
 
         def __init__(self, parser, parent=None, invokingState=-1):
@@ -2939,6 +2972,12 @@ class VisualFoxpro9Parser ( Parser ):
             else:
                 return self.getTypedRuleContext(VisualFoxpro9Parser.ParameterContext,i)
 
+
+        def COMMA(self, i=None):
+            if i is None:
+                return self.getTokens(VisualFoxpro9Parser.COMMA)
+            else:
+                return self.getToken(VisualFoxpro9Parser.COMMA, i)
 
         def getRuleIndex(self):
             return VisualFoxpro9Parser.RULE_parameters
@@ -2981,6 +3020,7 @@ class VisualFoxpro9Parser ( Parser ):
             self.exitRule()
         return localctx
 
+
     class FuncDefStartContext(ParserRuleContext):
 
         def __init__(self, parser, parent=None, invokingState=-1):
@@ -2999,6 +3039,12 @@ class VisualFoxpro9Parser ( Parser ):
 
         def SCOPE(self):
             return self.getToken(VisualFoxpro9Parser.SCOPE, 0)
+
+        def LEFTPAREN(self):
+            return self.getToken(VisualFoxpro9Parser.LEFTPAREN, 0)
+
+        def RIGHTPAREN(self):
+            return self.getToken(VisualFoxpro9Parser.RIGHTPAREN, 0)
 
         def asType(self):
             return self.getTypedRuleContext(VisualFoxpro9Parser.AsTypeContext,0)
@@ -3074,6 +3120,7 @@ class VisualFoxpro9Parser ( Parser ):
         finally:
             self.exitRule()
         return localctx
+
 
     class FuncDefContext(ParserRuleContext):
 
@@ -3154,6 +3201,7 @@ class VisualFoxpro9Parser ( Parser ):
             self.exitRule()
         return localctx
 
+
     class IfStartContext(ParserRuleContext):
 
         def __init__(self, parser, parent=None, invokingState=-1):
@@ -3213,6 +3261,7 @@ class VisualFoxpro9Parser ( Parser ):
         finally:
             self.exitRule()
         return localctx
+
 
     class IfStmtContext(ParserRuleContext):
 
@@ -3287,6 +3336,7 @@ class VisualFoxpro9Parser ( Parser ):
             self.exitRule()
         return localctx
 
+
     class ForStartContext(ParserRuleContext):
 
         def __init__(self, parser, parent=None, invokingState=-1):
@@ -3302,6 +3352,9 @@ class VisualFoxpro9Parser ( Parser ):
         def idAttr(self):
             return self.getTypedRuleContext(VisualFoxpro9Parser.IdAttrContext,0)
 
+
+        def EQUALS(self):
+            return self.getToken(VisualFoxpro9Parser.EQUALS, 0)
 
         def TO(self):
             return self.getToken(VisualFoxpro9Parser.TO, 0)
@@ -3399,6 +3452,7 @@ class VisualFoxpro9Parser ( Parser ):
             self.exitRule()
         return localctx
 
+
     class ForEndContext(ParserRuleContext):
 
         def __init__(self, parser, parent=None, invokingState=-1):
@@ -3464,6 +3518,7 @@ class VisualFoxpro9Parser ( Parser ):
             self.exitRule()
         return localctx
 
+
     class ForStmtContext(ParserRuleContext):
 
         def __init__(self, parser, parent=None, invokingState=-1):
@@ -3513,6 +3568,7 @@ class VisualFoxpro9Parser ( Parser ):
         finally:
             self.exitRule()
         return localctx
+
 
     class SingleCaseContext(ParserRuleContext):
 
@@ -3568,6 +3624,7 @@ class VisualFoxpro9Parser ( Parser ):
             self.exitRule()
         return localctx
 
+
     class OtherwiseContext(ParserRuleContext):
 
         def __init__(self, parser, parent=None, invokingState=-1):
@@ -3615,6 +3672,7 @@ class VisualFoxpro9Parser ( Parser ):
         finally:
             self.exitRule()
         return localctx
+
 
     class CaseStmtContext(ParserRuleContext):
 
@@ -3715,6 +3773,7 @@ class VisualFoxpro9Parser ( Parser ):
             self.exitRule()
         return localctx
 
+
     class WhileStartContext(ParserRuleContext):
 
         def __init__(self, parser, parent=None, invokingState=-1):
@@ -3775,6 +3834,7 @@ class VisualFoxpro9Parser ( Parser ):
             self.exitRule()
         return localctx
 
+
     class WhileStmtContext(ParserRuleContext):
 
         def __init__(self, parser, parent=None, invokingState=-1):
@@ -3823,6 +3883,7 @@ class VisualFoxpro9Parser ( Parser ):
         finally:
             self.exitRule()
         return localctx
+
 
     class WithStmtContext(ParserRuleContext):
 
@@ -3895,6 +3956,7 @@ class VisualFoxpro9Parser ( Parser ):
         finally:
             self.exitRule()
         return localctx
+
 
     class ScanStmtContext(ParserRuleContext):
 
@@ -3978,6 +4040,7 @@ class VisualFoxpro9Parser ( Parser ):
         finally:
             self.exitRule()
         return localctx
+
 
     class TryStmtContext(ParserRuleContext):
 
@@ -4089,6 +4152,7 @@ class VisualFoxpro9Parser ( Parser ):
             self.exitRule()
         return localctx
 
+
     class ControlStmtContext(ParserRuleContext):
 
         def __init__(self, parser, parent=None, invokingState=-1):
@@ -4194,6 +4258,7 @@ class VisualFoxpro9Parser ( Parser ):
             self.exitRule()
         return localctx
 
+
     class CmdContext(ParserRuleContext):
 
         def __init__(self, parser, parent=None, invokingState=-1):
@@ -4251,6 +4316,8 @@ class VisualFoxpro9Parser ( Parser ):
         def specialArgs(self):
             return self.getTypedRuleContext(VisualFoxpro9Parser.SpecialArgsContext,0)
 
+        def ASTERISK(self):
+            return self.getToken(VisualFoxpro9Parser.ASTERISK, 0)
         def DISTINCT(self):
             return self.getToken(VisualFoxpro9Parser.DISTINCT, 0)
         def FROM(self):
@@ -4614,6 +4681,11 @@ class VisualFoxpro9Parser ( Parser ):
                 return self.getTokens(VisualFoxpro9Parser.AT)
             else:
                 return self.getToken(VisualFoxpro9Parser.AT, i)
+        def COMMA(self, i=None):
+            if i is None:
+                return self.getTokens(VisualFoxpro9Parser.COMMA)
+            else:
+                return self.getToken(VisualFoxpro9Parser.COMMA, i)
 
         def accept(self, visitor):
             if hasattr(visitor, "visitWaitCmd"):
@@ -4828,6 +4900,8 @@ class VisualFoxpro9Parser ( Parser ):
             return self.getToken(VisualFoxpro9Parser.RUN, 0)
         def EXCLAMATION(self):
             return self.getToken(VisualFoxpro9Parser.EXCLAMATION, 0)
+        def FORWARDSLASH(self):
+            return self.getToken(VisualFoxpro9Parser.FORWARDSLASH, 0)
         def identifier(self):
             return self.getTypedRuleContext(VisualFoxpro9Parser.IdentifierContext,0)
 
@@ -4874,6 +4948,11 @@ class VisualFoxpro9Parser ( Parser ):
             else:
                 return self.getTypedRuleContext(VisualFoxpro9Parser.ExprContext,i)
 
+        def COMMA(self, i=None):
+            if i is None:
+                return self.getTokens(VisualFoxpro9Parser.COMMA)
+            else:
+                return self.getToken(VisualFoxpro9Parser.COMMA, i)
         def FROM(self):
             return self.getToken(VisualFoxpro9Parser.FROM, 0)
         def SIZE(self):
@@ -5019,6 +5098,8 @@ class VisualFoxpro9Parser ( Parser ):
             self.styleExpr = None # ExprContext
             self.copyFrom(ctx)
 
+        def COMMERCIALAT(self):
+            return self.getToken(VisualFoxpro9Parser.COMMERCIALAT, 0)
         def args(self, i=None):
             if i is None:
                 return self.getTypedRuleContexts(VisualFoxpro9Parser.ArgsContext)
@@ -5330,12 +5411,16 @@ class VisualFoxpro9Parser ( Parser ):
             return self.getToken(VisualFoxpro9Parser.DBF, 0)
         def CURSOR(self):
             return self.getToken(VisualFoxpro9Parser.CURSOR, 0)
+        def LEFTPAREN(self):
+            return self.getToken(VisualFoxpro9Parser.LEFTPAREN, 0)
         def tableField(self, i=None):
             if i is None:
                 return self.getTypedRuleContexts(VisualFoxpro9Parser.TableFieldContext)
             else:
                 return self.getTypedRuleContext(VisualFoxpro9Parser.TableFieldContext,i)
 
+        def RIGHTPAREN(self):
+            return self.getToken(VisualFoxpro9Parser.RIGHTPAREN, 0)
         def FROM(self):
             return self.getToken(VisualFoxpro9Parser.FROM, 0)
         def ARRAY(self):
@@ -5345,6 +5430,11 @@ class VisualFoxpro9Parser ( Parser ):
 
         def FREE(self):
             return self.getToken(VisualFoxpro9Parser.FREE, 0)
+        def COMMA(self, i=None):
+            if i is None:
+                return self.getTokens(VisualFoxpro9Parser.COMMA)
+            else:
+                return self.getToken(VisualFoxpro9Parser.COMMA, i)
 
         def accept(self, visitor):
             if hasattr(visitor, "visitCreateTable"):
@@ -5517,9 +5607,19 @@ class VisualFoxpro9Parser ( Parser ):
             return self.getToken(VisualFoxpro9Parser.FROM, 0)
         def VALUES(self):
             return self.getToken(VisualFoxpro9Parser.VALUES, 0)
+        def LEFTPAREN(self, i=None):
+            if i is None:
+                return self.getTokens(VisualFoxpro9Parser.LEFTPAREN)
+            else:
+                return self.getToken(VisualFoxpro9Parser.LEFTPAREN, i)
         def args(self):
             return self.getTypedRuleContext(VisualFoxpro9Parser.ArgsContext,0)
 
+        def RIGHTPAREN(self, i=None):
+            if i is None:
+                return self.getTokens(VisualFoxpro9Parser.RIGHTPAREN)
+            else:
+                return self.getToken(VisualFoxpro9Parser.RIGHTPAREN, i)
         def ARRAY(self):
             return self.getToken(VisualFoxpro9Parser.ARRAY, 0)
         def expr(self):
@@ -5886,6 +5986,8 @@ class VisualFoxpro9Parser ( Parser ):
             return self.getToken(VisualFoxpro9Parser.MENU, 0)
         def LABEL(self):
             return self.getToken(VisualFoxpro9Parser.LABEL, 0)
+        def PLUS_SIGN(self):
+            return self.getToken(VisualFoxpro9Parser.PLUS_SIGN, 0)
 
         def accept(self, visitor):
             if hasattr(visitor, "visitOnStmt"):
@@ -5975,6 +6077,8 @@ class VisualFoxpro9Parser ( Parser ):
             else:
                 return self.getTypedRuleContext(VisualFoxpro9Parser.SpecialExprContext,i)
 
+        def QUESTION(self):
+            return self.getToken(VisualFoxpro9Parser.QUESTION, 0)
         def NAME(self, i=None):
             if i is None:
                 return self.getTokens(VisualFoxpro9Parser.NAME)
@@ -6080,6 +6184,8 @@ class VisualFoxpro9Parser ( Parser ):
         def specialExpr(self):
             return self.getTypedRuleContext(VisualFoxpro9Parser.SpecialExprContext,0)
 
+        def QUESTION(self):
+            return self.getToken(VisualFoxpro9Parser.QUESTION, 0)
         def RECYCLE(self):
             return self.getToken(VisualFoxpro9Parser.RECYCLE, 0)
 
@@ -6143,6 +6249,11 @@ class VisualFoxpro9Parser ( Parser ):
             else:
                 return self.getTypedRuleContext(VisualFoxpro9Parser.IdentifierContext,i)
 
+        def EQUALS(self, i=None):
+            if i is None:
+                return self.getTokens(VisualFoxpro9Parser.EQUALS)
+            else:
+                return self.getToken(VisualFoxpro9Parser.EQUALS, i)
         def expr(self, i=None):
             if i is None:
                 return self.getTypedRuleContexts(VisualFoxpro9Parser.ExprContext)
@@ -6152,6 +6263,11 @@ class VisualFoxpro9Parser ( Parser ):
         def specialExpr(self):
             return self.getTypedRuleContext(VisualFoxpro9Parser.SpecialExprContext,0)
 
+        def COMMA(self, i=None):
+            if i is None:
+                return self.getTokens(VisualFoxpro9Parser.COMMA)
+            else:
+                return self.getToken(VisualFoxpro9Parser.COMMA, i)
         def FROM(self, i=None):
             if i is None:
                 return self.getTokens(VisualFoxpro9Parser.FROM)
@@ -6361,6 +6477,11 @@ class VisualFoxpro9Parser ( Parser ):
             return self.getToken(VisualFoxpro9Parser.PARAMETER, 0)
         def SCOPE(self):
             return self.getToken(VisualFoxpro9Parser.SCOPE, 0)
+        def COMMA(self, i=None):
+            if i is None:
+                return self.getTokens(VisualFoxpro9Parser.COMMA)
+            else:
+                return self.getToken(VisualFoxpro9Parser.COMMA, i)
         def ARRAY(self):
             return self.getToken(VisualFoxpro9Parser.ARRAY, 0)
 
@@ -6389,12 +6510,22 @@ class VisualFoxpro9Parser ( Parser ):
 
         def ON(self):
             return self.getToken(VisualFoxpro9Parser.ON, 0)
+        def FORWARDSLASH(self, i=None):
+            if i is None:
+                return self.getTokens(VisualFoxpro9Parser.FORWARDSLASH)
+            else:
+                return self.getToken(VisualFoxpro9Parser.FORWARDSLASH, i)
         def identifier(self, i=None):
             if i is None:
                 return self.getTypedRuleContexts(VisualFoxpro9Parser.IdentifierContext)
             else:
                 return self.getTypedRuleContext(VisualFoxpro9Parser.IdentifierContext,i)
 
+        def COMMA(self, i=None):
+            if i is None:
+                return self.getTokens(VisualFoxpro9Parser.COMMA)
+            else:
+                return self.getToken(VisualFoxpro9Parser.COMMA, i)
         def ASCENDING(self, i=None):
             if i is None:
                 return self.getTokens(VisualFoxpro9Parser.ASCENDING)
@@ -6473,6 +6604,11 @@ class VisualFoxpro9Parser ( Parser ):
                 return self.getTokens(VisualFoxpro9Parser.NUMBER_LITERAL)
             else:
                 return self.getToken(VisualFoxpro9Parser.NUMBER_LITERAL, i)
+        def COMMA(self, i=None):
+            if i is None:
+                return self.getTokens(VisualFoxpro9Parser.COMMA)
+            else:
+                return self.getToken(VisualFoxpro9Parser.COMMA, i)
         def BEFORE(self):
             return self.getToken(VisualFoxpro9Parser.BEFORE, 0)
         def identifier(self, i=None):
@@ -6501,6 +6637,8 @@ class VisualFoxpro9Parser ( Parser ):
             return self.getToken(VisualFoxpro9Parser.COLOR, 0)
         def SCHEME(self):
             return self.getToken(VisualFoxpro9Parser.SCHEME, 0)
+        def PLUS_SIGN(self):
+            return self.getToken(VisualFoxpro9Parser.PLUS_SIGN, 0)
         def FOR(self):
             return self.getToken(VisualFoxpro9Parser.FOR, 0)
 
@@ -6552,6 +6690,11 @@ class VisualFoxpro9Parser ( Parser ):
             super(VisualFoxpro9Parser.PrintStmtContext, self).__init__(parser)
             self.copyFrom(ctx)
 
+        def QUESTION(self, i=None):
+            if i is None:
+                return self.getTokens(VisualFoxpro9Parser.QUESTION)
+            else:
+                return self.getToken(VisualFoxpro9Parser.QUESTION, i)
         def DEBUGOUT(self):
             return self.getToken(VisualFoxpro9Parser.DEBUGOUT, 0)
         def args(self):
@@ -6617,12 +6760,22 @@ class VisualFoxpro9Parser ( Parser ):
             else:
                 return self.getTypedRuleContext(VisualFoxpro9Parser.IdAttrContext,i)
 
+        def EQUALS(self, i=None):
+            if i is None:
+                return self.getTokens(VisualFoxpro9Parser.EQUALS)
+            else:
+                return self.getToken(VisualFoxpro9Parser.EQUALS, i)
         def expr(self, i=None):
             if i is None:
                 return self.getTypedRuleContexts(VisualFoxpro9Parser.ExprContext)
             else:
                 return self.getTypedRuleContext(VisualFoxpro9Parser.ExprContext,i)
 
+        def COMMA(self, i=None):
+            if i is None:
+                return self.getTokens(VisualFoxpro9Parser.COMMA)
+            else:
+                return self.getToken(VisualFoxpro9Parser.COMMA, i)
 
         def accept(self, visitor):
             if hasattr(visitor, "visitAddObject"):
@@ -6641,6 +6794,8 @@ class VisualFoxpro9Parser ( Parser ):
             return self.getToken(VisualFoxpro9Parser.REPORT, 0)
         def FORM(self):
             return self.getToken(VisualFoxpro9Parser.FORM, 0)
+        def QUESTION(self):
+            return self.getToken(VisualFoxpro9Parser.QUESTION, 0)
         def specialExpr(self):
             return self.getTypedRuleContext(VisualFoxpro9Parser.SpecialExprContext,0)
 
@@ -6689,6 +6844,8 @@ class VisualFoxpro9Parser ( Parser ):
             return self.getToken(VisualFoxpro9Parser.FILE, 0)
         def COMMAND(self):
             return self.getToken(VisualFoxpro9Parser.COMMAND, 0)
+        def QUESTION(self):
+            return self.getToken(VisualFoxpro9Parser.QUESTION, 0)
         def specialExpr(self):
             return self.getTypedRuleContext(VisualFoxpro9Parser.SpecialExprContext,0)
 
@@ -6926,6 +7083,13 @@ class VisualFoxpro9Parser ( Parser ):
             else:
                 return self.getTypedRuleContext(VisualFoxpro9Parser.IdAttrContext,i)
 
+        def EQUALS(self):
+            return self.getToken(VisualFoxpro9Parser.EQUALS, 0)
+        def COMMA(self, i=None):
+            if i is None:
+                return self.getTokens(VisualFoxpro9Parser.COMMA)
+            else:
+                return self.getToken(VisualFoxpro9Parser.COMMA, i)
 
         def accept(self, visitor):
             if hasattr(visitor, "visitAssign"):
@@ -6976,6 +7140,8 @@ class VisualFoxpro9Parser ( Parser ):
             super(VisualFoxpro9Parser.ExprCmdContext, self).__init__(parser)
             self.copyFrom(ctx)
 
+        def EQUALS(self):
+            return self.getToken(VisualFoxpro9Parser.EQUALS, 0)
         def expr(self):
             return self.getTypedRuleContext(VisualFoxpro9Parser.ExprContext,0)
 
@@ -10465,6 +10631,7 @@ class VisualFoxpro9Parser ( Parser ):
             self.exitRule()
         return localctx
 
+
     class QueryConditionContext(ParserRuleContext):
 
         def __init__(self, parser, parent=None, invokingState=-1):
@@ -10543,6 +10710,7 @@ class VisualFoxpro9Parser ( Parser ):
             self.exitRule()
         return localctx
 
+
     class TextChunkContext(ParserRuleContext):
 
         def __init__(self, parser, parent=None, invokingState=-1):
@@ -10597,6 +10765,7 @@ class VisualFoxpro9Parser ( Parser ):
             self.exitRule()
         return localctx
 
+
     class DllArgsContext(ParserRuleContext):
 
         def __init__(self, parser, parent=None, invokingState=-1):
@@ -10609,6 +10778,12 @@ class VisualFoxpro9Parser ( Parser ):
             else:
                 return self.getTypedRuleContext(VisualFoxpro9Parser.DllArgContext,i)
 
+
+        def COMMA(self, i=None):
+            if i is None:
+                return self.getTokens(VisualFoxpro9Parser.COMMA)
+            else:
+                return self.getToken(VisualFoxpro9Parser.COMMA, i)
 
         def getRuleIndex(self):
             return VisualFoxpro9Parser.RULE_dllArgs
@@ -10651,6 +10826,7 @@ class VisualFoxpro9Parser ( Parser ):
             self.exitRule()
         return localctx
 
+
     class DllArgContext(ParserRuleContext):
 
         def __init__(self, parser, parent=None, invokingState=-1):
@@ -10660,6 +10836,9 @@ class VisualFoxpro9Parser ( Parser ):
         def datatype(self):
             return self.getTypedRuleContext(VisualFoxpro9Parser.DatatypeContext,0)
 
+
+        def COMMERCIALAT(self):
+            return self.getToken(VisualFoxpro9Parser.COMMERCIALAT, 0)
 
         def identifier(self):
             return self.getTypedRuleContext(VisualFoxpro9Parser.IdentifierContext,0)
@@ -10709,6 +10888,7 @@ class VisualFoxpro9Parser ( Parser ):
         finally:
             self.exitRule()
         return localctx
+
 
     class TableFieldContext(ParserRuleContext):
 
@@ -10765,6 +10945,7 @@ class VisualFoxpro9Parser ( Parser ):
         finally:
             self.exitRule()
         return localctx
+
 
     class SetCmdContext(ParserRuleContext):
 
@@ -10833,6 +11014,12 @@ class VisualFoxpro9Parser ( Parser ):
 
         def STATUS(self):
             return self.getToken(VisualFoxpro9Parser.STATUS, 0)
+
+        def COMMA(self, i=None):
+            if i is None:
+                return self.getTokens(VisualFoxpro9Parser.COMMA)
+            else:
+                return self.getToken(VisualFoxpro9Parser.COMMA, i)
 
         def COMPATIBLE(self):
             return self.getToken(VisualFoxpro9Parser.COMPATIBLE, 0)
@@ -11778,6 +11965,7 @@ class VisualFoxpro9Parser ( Parser ):
             self.exitRule()
         return localctx
 
+
     class DeclarationItemContext(ParserRuleContext):
 
         def __init__(self, parser, parent=None, invokingState=-1):
@@ -11851,6 +12039,7 @@ class VisualFoxpro9Parser ( Parser ):
             self.exitRule()
         return localctx
 
+
     class AsTypeContext(ParserRuleContext):
 
         def __init__(self, parser, parent=None, invokingState=-1):
@@ -11893,6 +12082,7 @@ class VisualFoxpro9Parser ( Parser ):
         finally:
             self.exitRule()
         return localctx
+
 
     class AsTypeOfContext(ParserRuleContext):
 
@@ -11950,11 +12140,15 @@ class VisualFoxpro9Parser ( Parser ):
             self.exitRule()
         return localctx
 
+
     class ArgsItemContext(ParserRuleContext):
 
         def __init__(self, parser, parent=None, invokingState=-1):
             super(VisualFoxpro9Parser.ArgsItemContext, self).__init__(parent, invokingState)
             self.parser = parser
+
+        def COMMA(self):
+            return self.getToken(VisualFoxpro9Parser.COMMA, 0)
 
         def expr(self):
             return self.getTypedRuleContext(VisualFoxpro9Parser.ExprContext,0)
@@ -11995,6 +12189,7 @@ class VisualFoxpro9Parser ( Parser ):
         finally:
             self.exitRule()
         return localctx
+
 
     class ArgsContext(ParserRuleContext):
 
@@ -12075,6 +12270,7 @@ class VisualFoxpro9Parser ( Parser ):
             self.exitRule()
         return localctx
 
+
     class SpecialArgsContext(ParserRuleContext):
 
         def __init__(self, parser, parent=None, invokingState=-1):
@@ -12087,6 +12283,12 @@ class VisualFoxpro9Parser ( Parser ):
             else:
                 return self.getTypedRuleContext(VisualFoxpro9Parser.SpecialExprContext,i)
 
+
+        def COMMA(self, i=None):
+            if i is None:
+                return self.getTokens(VisualFoxpro9Parser.COMMA)
+            else:
+                return self.getToken(VisualFoxpro9Parser.COMMA, i)
 
         def getRuleIndex(self):
             return VisualFoxpro9Parser.RULE_specialArgs
@@ -12129,11 +12331,15 @@ class VisualFoxpro9Parser ( Parser ):
             self.exitRule()
         return localctx
 
+
     class ReferenceContext(ParserRuleContext):
 
         def __init__(self, parser, parent=None, invokingState=-1):
             super(VisualFoxpro9Parser.ReferenceContext, self).__init__(parent, invokingState)
             self.parser = parser
+
+        def COMMERCIALAT(self):
+            return self.getToken(VisualFoxpro9Parser.COMMERCIALAT, 0)
 
         def idAttr(self):
             return self.getTypedRuleContext(VisualFoxpro9Parser.IdAttrContext,0)
@@ -12169,6 +12375,7 @@ class VisualFoxpro9Parser ( Parser ):
             self.exitRule()
         return localctx
 
+
     class ExprContext(ParserRuleContext):
 
         def __init__(self, parser, parent=None, invokingState=-1):
@@ -12197,12 +12404,24 @@ class VisualFoxpro9Parser ( Parser ):
             else:
                 return self.getTypedRuleContext(VisualFoxpro9Parser.ExprContext,i)
 
+        def DOUBLEEQUALS(self):
+            return self.getToken(VisualFoxpro9Parser.DOUBLEEQUALS, 0)
         def NOTEQUALS(self):
             return self.getToken(VisualFoxpro9Parser.NOTEQUALS, 0)
+        def EQUALS(self):
+            return self.getToken(VisualFoxpro9Parser.EQUALS, 0)
+        def HASH(self):
+            return self.getToken(VisualFoxpro9Parser.HASH, 0)
+        def GREATERTHAN(self):
+            return self.getToken(VisualFoxpro9Parser.GREATERTHAN, 0)
         def GTEQ(self):
             return self.getToken(VisualFoxpro9Parser.GTEQ, 0)
+        def LESSTHAN(self):
+            return self.getToken(VisualFoxpro9Parser.LESSTHAN, 0)
         def LTEQ(self):
             return self.getToken(VisualFoxpro9Parser.LTEQ, 0)
+        def DOLLAR(self):
+            return self.getToken(VisualFoxpro9Parser.DOLLAR, 0)
 
         def accept(self, visitor):
             if hasattr(visitor, "visitComparison"):
@@ -12219,12 +12438,16 @@ class VisualFoxpro9Parser ( Parser ):
 
         def CAST(self):
             return self.getToken(VisualFoxpro9Parser.CAST, 0)
+        def LEFTPAREN(self):
+            return self.getToken(VisualFoxpro9Parser.LEFTPAREN, 0)
         def expr(self):
             return self.getTypedRuleContext(VisualFoxpro9Parser.ExprContext,0)
 
         def asType(self):
             return self.getTypedRuleContext(VisualFoxpro9Parser.AsTypeContext,0)
 
+        def RIGHTPAREN(self):
+            return self.getToken(VisualFoxpro9Parser.RIGHTPAREN, 0)
 
         def accept(self, visitor):
             if hasattr(visitor, "visitCastExpr"):
@@ -12247,6 +12470,11 @@ class VisualFoxpro9Parser ( Parser ):
         def idAttr(self):
             return self.getTypedRuleContext(VisualFoxpro9Parser.IdAttrContext,0)
 
+        def COLON(self, i=None):
+            if i is None:
+                return self.getTokens(VisualFoxpro9Parser.COLON)
+            else:
+                return self.getToken(VisualFoxpro9Parser.COLON, i)
         def trailer(self):
             return self.getTypedRuleContext(VisualFoxpro9Parser.TrailerContext,0)
 
@@ -12264,9 +12492,13 @@ class VisualFoxpro9Parser ( Parser ):
             super(VisualFoxpro9Parser.SubExprContext, self).__init__(parser)
             self.copyFrom(ctx)
 
+        def LEFTPAREN(self):
+            return self.getToken(VisualFoxpro9Parser.LEFTPAREN, 0)
         def expr(self):
             return self.getTypedRuleContext(VisualFoxpro9Parser.ExprContext,0)
 
+        def RIGHTPAREN(self):
+            return self.getToken(VisualFoxpro9Parser.RIGHTPAREN, 0)
 
         def accept(self, visitor):
             if hasattr(visitor, "visitSubExpr"):
@@ -12284,6 +12516,8 @@ class VisualFoxpro9Parser ( Parser ):
         def expr(self):
             return self.getTypedRuleContext(VisualFoxpro9Parser.ExprContext,0)
 
+        def EXCLAMATION(self):
+            return self.getToken(VisualFoxpro9Parser.EXCLAMATION, 0)
         def NOT(self):
             return self.getToken(VisualFoxpro9Parser.NOT, 0)
 
@@ -12304,6 +12538,10 @@ class VisualFoxpro9Parser ( Parser ):
         def expr(self):
             return self.getTypedRuleContext(VisualFoxpro9Parser.ExprContext,0)
 
+        def PLUS_SIGN(self):
+            return self.getToken(VisualFoxpro9Parser.PLUS_SIGN, 0)
+        def MINUS_SIGN(self):
+            return self.getToken(VisualFoxpro9Parser.MINUS_SIGN, 0)
 
         def accept(self, visitor):
             if hasattr(visitor, "visitUnaryNegation"):
@@ -12347,6 +12585,13 @@ class VisualFoxpro9Parser ( Parser ):
             else:
                 return self.getTypedRuleContext(VisualFoxpro9Parser.ExprContext,i)
 
+        def ASTERISK(self, i=None):
+            if i is None:
+                return self.getTokens(VisualFoxpro9Parser.ASTERISK)
+            else:
+                return self.getToken(VisualFoxpro9Parser.ASTERISK, i)
+        def CARAT(self):
+            return self.getToken(VisualFoxpro9Parser.CARAT, 0)
 
         def accept(self, visitor):
             if hasattr(visitor, "visitPower"):
@@ -12368,6 +12613,10 @@ class VisualFoxpro9Parser ( Parser ):
             else:
                 return self.getTypedRuleContext(VisualFoxpro9Parser.ExprContext,i)
 
+        def ASTERISK(self):
+            return self.getToken(VisualFoxpro9Parser.ASTERISK, 0)
+        def FORWARDSLASH(self):
+            return self.getToken(VisualFoxpro9Parser.FORWARDSLASH, 0)
 
         def accept(self, visitor):
             if hasattr(visitor, "visitMultiplication"):
@@ -12388,6 +12637,8 @@ class VisualFoxpro9Parser ( Parser ):
             else:
                 return self.getTypedRuleContext(VisualFoxpro9Parser.ExprContext,i)
 
+        def MODULO(self):
+            return self.getToken(VisualFoxpro9Parser.MODULO, 0)
 
         def accept(self, visitor):
             if hasattr(visitor, "visitModulo"):
@@ -12426,6 +12677,10 @@ class VisualFoxpro9Parser ( Parser ):
             else:
                 return self.getTypedRuleContext(VisualFoxpro9Parser.ExprContext,i)
 
+        def PLUS_SIGN(self):
+            return self.getToken(VisualFoxpro9Parser.PLUS_SIGN, 0)
+        def MINUS_SIGN(self):
+            return self.getToken(VisualFoxpro9Parser.MINUS_SIGN, 0)
 
         def accept(self, visitor):
             if hasattr(visitor, "visitAddition"):
@@ -12720,6 +12975,7 @@ class VisualFoxpro9Parser ( Parser ):
             self.unrollRecursionContexts(_parentctx)
         return localctx
 
+
     class AndOpContext(ParserRuleContext):
 
         def __init__(self, parser, parent=None, invokingState=-1):
@@ -12765,6 +13021,7 @@ class VisualFoxpro9Parser ( Parser ):
         finally:
             self.exitRule()
         return localctx
+
 
     class OrOpContext(ParserRuleContext):
 
@@ -12812,6 +13069,7 @@ class VisualFoxpro9Parser ( Parser ):
             self.exitRule()
         return localctx
 
+
     class ComplexIdContext(ParserRuleContext):
 
         def __init__(self, parser, parent=None, invokingState=-1):
@@ -12832,6 +13090,12 @@ class VisualFoxpro9Parser ( Parser ):
         def idAttr(self):
             return self.getTypedRuleContext(VisualFoxpro9Parser.IdAttrContext,0)
 
+
+        def COLON(self, i=None):
+            if i is None:
+                return self.getTokens(VisualFoxpro9Parser.COLON)
+            else:
+                return self.getToken(VisualFoxpro9Parser.COLON, i)
 
         def getRuleIndex(self):
             return VisualFoxpro9Parser.RULE_complexId
@@ -12919,6 +13183,7 @@ class VisualFoxpro9Parser ( Parser ):
             self.exitRule()
         return localctx
 
+
     class AtomContext(ParserRuleContext):
 
         def __init__(self, parser, parent=None, invokingState=-1):
@@ -12974,6 +13239,7 @@ class VisualFoxpro9Parser ( Parser ):
             self.exitRule()
         return localctx
 
+
     class TrailerContext(ParserRuleContext):
 
         def __init__(self, parser, parent=None, invokingState=-1):
@@ -12996,6 +13262,14 @@ class VisualFoxpro9Parser ( Parser ):
             super(VisualFoxpro9Parser.FuncCallTrailerContext, self).__init__(parser)
             self.copyFrom(ctx)
 
+        def LEFTPAREN(self):
+            return self.getToken(VisualFoxpro9Parser.LEFTPAREN, 0)
+        def RIGHTPAREN(self):
+            return self.getToken(VisualFoxpro9Parser.RIGHTPAREN, 0)
+        def LEFTBRACKET(self):
+            return self.getToken(VisualFoxpro9Parser.LEFTBRACKET, 0)
+        def RIGHTBRACKET(self):
+            return self.getToken(VisualFoxpro9Parser.RIGHTBRACKET, 0)
         def trailer(self):
             return self.getTypedRuleContext(VisualFoxpro9Parser.TrailerContext,0)
 
@@ -13016,6 +13290,8 @@ class VisualFoxpro9Parser ( Parser ):
             super(VisualFoxpro9Parser.IdentTrailerContext, self).__init__(parser)
             self.copyFrom(ctx)
 
+        def PERIOD(self):
+            return self.getToken(VisualFoxpro9Parser.PERIOD, 0)
         def identifier(self):
             return self.getTypedRuleContext(VisualFoxpro9Parser.IdentifierContext,0)
 
@@ -13113,6 +13389,7 @@ class VisualFoxpro9Parser ( Parser ):
             self.exitRule()
         return localctx
 
+
     class PathnameContext(ParserRuleContext):
 
         def __init__(self, parser, parent=None, invokingState=-1):
@@ -13122,6 +13399,9 @@ class VisualFoxpro9Parser ( Parser ):
         def identifier(self):
             return self.getTypedRuleContext(VisualFoxpro9Parser.IdentifierContext,0)
 
+
+        def COLON(self):
+            return self.getToken(VisualFoxpro9Parser.COLON, 0)
 
         def pathElement(self, i=None):
             if i is None:
@@ -13180,6 +13460,7 @@ class VisualFoxpro9Parser ( Parser ):
             self.exitRule()
         return localctx
 
+
     class PathElementContext(ParserRuleContext):
 
         def __init__(self, parser, parent=None, invokingState=-1):
@@ -13196,8 +13477,68 @@ class VisualFoxpro9Parser ( Parser ):
         def BACKSLASH(self):
             return self.getToken(VisualFoxpro9Parser.BACKSLASH, 0)
 
+        def SEMICOLON(self):
+            return self.getToken(VisualFoxpro9Parser.SEMICOLON, 0)
+
+        def AMPERSAND(self):
+            return self.getToken(VisualFoxpro9Parser.AMPERSAND, 0)
+
+        def COMMERCIALAT(self):
+            return self.getToken(VisualFoxpro9Parser.COMMERCIALAT, 0)
+
+        def PLUS_SIGN(self):
+            return self.getToken(VisualFoxpro9Parser.PLUS_SIGN, 0)
+
+        def MINUS_SIGN(self):
+            return self.getToken(VisualFoxpro9Parser.MINUS_SIGN, 0)
+
+        def PERIOD(self):
+            return self.getToken(VisualFoxpro9Parser.PERIOD, 0)
+
+        def LEFTBRACKET(self):
+            return self.getToken(VisualFoxpro9Parser.LEFTBRACKET, 0)
+
+        def RIGHTBRACKET(self):
+            return self.getToken(VisualFoxpro9Parser.RIGHTBRACKET, 0)
+
+        def LEFTBRACE(self):
+            return self.getToken(VisualFoxpro9Parser.LEFTBRACE, 0)
+
+        def RIGHTBRACE(self):
+            return self.getToken(VisualFoxpro9Parser.RIGHTBRACE, 0)
+
+        def LEFTPAREN(self):
+            return self.getToken(VisualFoxpro9Parser.LEFTPAREN, 0)
+
+        def RIGHTPAREN(self):
+            return self.getToken(VisualFoxpro9Parser.RIGHTPAREN, 0)
+
+        def EXCLAMATION(self):
+            return self.getToken(VisualFoxpro9Parser.EXCLAMATION, 0)
+
+        def HASH(self):
+            return self.getToken(VisualFoxpro9Parser.HASH, 0)
+
+        def DOUBLEEQUALS(self):
+            return self.getToken(VisualFoxpro9Parser.DOUBLEEQUALS, 0)
+
         def NOTEQUALS(self):
             return self.getToken(VisualFoxpro9Parser.NOTEQUALS, 0)
+
+        def MODULO(self):
+            return self.getToken(VisualFoxpro9Parser.MODULO, 0)
+
+        def EQUALS(self):
+            return self.getToken(VisualFoxpro9Parser.EQUALS, 0)
+
+        def CARAT(self):
+            return self.getToken(VisualFoxpro9Parser.CARAT, 0)
+
+        def COMMA(self):
+            return self.getToken(VisualFoxpro9Parser.COMMA, 0)
+
+        def DOLLAR(self):
+            return self.getToken(VisualFoxpro9Parser.DOLLAR, 0)
 
         def getRuleIndex(self):
             return VisualFoxpro9Parser.RULE_pathElement
@@ -13355,6 +13696,7 @@ class VisualFoxpro9Parser ( Parser ):
             self.exitRule()
         return localctx
 
+
     class SpecialExprContext(ParserRuleContext):
 
         def __init__(self, parser, parent=None, invokingState=-1):
@@ -13410,6 +13752,7 @@ class VisualFoxpro9Parser ( Parser ):
             self.exitRule()
         return localctx
 
+
     class ConstantContext(ParserRuleContext):
 
         def __init__(self, parser, parent=None, invokingState=-1):
@@ -13432,14 +13775,37 @@ class VisualFoxpro9Parser ( Parser ):
             super(VisualFoxpro9Parser.DateContext, self).__init__(parser)
             self.copyFrom(ctx)
 
+        def LEFTBRACE(self):
+            return self.getToken(VisualFoxpro9Parser.LEFTBRACE, 0)
+        def RIGHTBRACE(self):
+            return self.getToken(VisualFoxpro9Parser.RIGHTBRACE, 0)
+        def FORWARDSLASH(self, i=None):
+            if i is None:
+                return self.getTokens(VisualFoxpro9Parser.FORWARDSLASH)
+            else:
+                return self.getToken(VisualFoxpro9Parser.FORWARDSLASH, i)
+        def COLON(self, i=None):
+            if i is None:
+                return self.getTokens(VisualFoxpro9Parser.COLON)
+            else:
+                return self.getToken(VisualFoxpro9Parser.COLON, i)
+        def CARAT(self):
+            return self.getToken(VisualFoxpro9Parser.CARAT, 0)
         def NUMBER_LITERAL(self, i=None):
             if i is None:
                 return self.getTokens(VisualFoxpro9Parser.NUMBER_LITERAL)
             else:
                 return self.getToken(VisualFoxpro9Parser.NUMBER_LITERAL, i)
+        def MINUS_SIGN(self, i=None):
+            if i is None:
+                return self.getTokens(VisualFoxpro9Parser.MINUS_SIGN)
+            else:
+                return self.getToken(VisualFoxpro9Parser.MINUS_SIGN, i)
         def identifier(self):
             return self.getTypedRuleContext(VisualFoxpro9Parser.IdentifierContext,0)
 
+        def COMMA(self):
+            return self.getToken(VisualFoxpro9Parser.COMMA, 0)
 
         def accept(self, visitor):
             if hasattr(visitor, "visitDate"):
@@ -13454,6 +13820,11 @@ class VisualFoxpro9Parser ( Parser ):
             super(VisualFoxpro9Parser.BoolOrNullContext, self).__init__(parser)
             self.copyFrom(ctx)
 
+        def PERIOD(self, i=None):
+            if i is None:
+                return self.getTokens(VisualFoxpro9Parser.PERIOD)
+            else:
+                return self.getToken(VisualFoxpro9Parser.PERIOD, i)
         def NULL(self):
             return self.getToken(VisualFoxpro9Parser.NULL, 0)
         def BOOLEANCHAR(self):
@@ -13488,6 +13859,23 @@ class VisualFoxpro9Parser ( Parser ):
             super(VisualFoxpro9Parser.StringContext, self).__init__(parser)
             self.copyFrom(ctx)
 
+        def SINGLEQUOTE(self, i=None):
+            if i is None:
+                return self.getTokens(VisualFoxpro9Parser.SINGLEQUOTE)
+            else:
+                return self.getToken(VisualFoxpro9Parser.SINGLEQUOTE, i)
+        def DOUBLEQUOTE(self, i=None):
+            if i is None:
+                return self.getTokens(VisualFoxpro9Parser.DOUBLEQUOTE)
+            else:
+                return self.getToken(VisualFoxpro9Parser.DOUBLEQUOTE, i)
+        def LEFTBRACKET(self):
+            return self.getToken(VisualFoxpro9Parser.LEFTBRACKET, 0)
+        def RIGHTBRACKET(self, i=None):
+            if i is None:
+                return self.getTokens(VisualFoxpro9Parser.RIGHTBRACKET)
+            else:
+                return self.getToken(VisualFoxpro9Parser.RIGHTBRACKET, i)
         def NL(self, i=None):
             if i is None:
                 return self.getTokens(VisualFoxpro9Parser.NL)
@@ -13509,6 +13897,8 @@ class VisualFoxpro9Parser ( Parser ):
 
         def NUMBER_LITERAL(self):
             return self.getToken(VisualFoxpro9Parser.NUMBER_LITERAL, 0)
+        def DOLLAR(self):
+            return self.getToken(VisualFoxpro9Parser.DOLLAR, 0)
 
         def accept(self, visitor):
             if hasattr(visitor, "visitNumberOrCurrency"):
@@ -13755,6 +14145,7 @@ class VisualFoxpro9Parser ( Parser ):
             self.exitRule()
         return localctx
 
+
     class IdAttr2Context(ParserRuleContext):
 
         def __init__(self, parser, parent=None, invokingState=-1):
@@ -13768,6 +14159,12 @@ class VisualFoxpro9Parser ( Parser ):
             else:
                 return self.getTypedRuleContext(VisualFoxpro9Parser.IdentifierContext,i)
 
+
+        def PERIOD(self, i=None):
+            if i is None:
+                return self.getTokens(VisualFoxpro9Parser.PERIOD)
+            else:
+                return self.getToken(VisualFoxpro9Parser.PERIOD, i)
 
         def getRuleIndex(self):
             return VisualFoxpro9Parser.RULE_idAttr2
@@ -13817,6 +14214,7 @@ class VisualFoxpro9Parser ( Parser ):
         finally:
             self.exitRule()
         return localctx
+
 
     class IdAttrContext(ParserRuleContext):
 
@@ -13880,6 +14278,7 @@ class VisualFoxpro9Parser ( Parser ):
             self.exitRule()
         return localctx
 
+
     class TwoExprContext(ParserRuleContext):
 
         def __init__(self, parser, parent=None, invokingState=-1):
@@ -13892,6 +14291,9 @@ class VisualFoxpro9Parser ( Parser ):
             else:
                 return self.getTypedRuleContext(VisualFoxpro9Parser.ExprContext,i)
 
+
+        def COMMA(self):
+            return self.getToken(VisualFoxpro9Parser.COMMA, 0)
 
         def getRuleIndex(self):
             return VisualFoxpro9Parser.RULE_twoExpr
@@ -13925,11 +14327,18 @@ class VisualFoxpro9Parser ( Parser ):
             self.exitRule()
         return localctx
 
+
     class ArrayIndexContext(ParserRuleContext):
 
         def __init__(self, parser, parent=None, invokingState=-1):
             super(VisualFoxpro9Parser.ArrayIndexContext, self).__init__(parent, invokingState)
             self.parser = parser
+
+        def LEFTPAREN(self):
+            return self.getToken(VisualFoxpro9Parser.LEFTPAREN, 0)
+
+        def RIGHTPAREN(self):
+            return self.getToken(VisualFoxpro9Parser.RIGHTPAREN, 0)
 
         def expr(self):
             return self.getTypedRuleContext(VisualFoxpro9Parser.ExprContext,0)
@@ -13938,6 +14347,12 @@ class VisualFoxpro9Parser ( Parser ):
         def twoExpr(self):
             return self.getTypedRuleContext(VisualFoxpro9Parser.TwoExprContext,0)
 
+
+        def LEFTBRACKET(self):
+            return self.getToken(VisualFoxpro9Parser.LEFTBRACKET, 0)
+
+        def RIGHTBRACKET(self):
+            return self.getToken(VisualFoxpro9Parser.RIGHTBRACKET, 0)
 
         def getRuleIndex(self):
             return VisualFoxpro9Parser.RULE_arrayIndex
@@ -14012,6 +14427,7 @@ class VisualFoxpro9Parser ( Parser ):
             self.exitRule()
         return localctx
 
+
     class DatatypeContext(ParserRuleContext):
 
         def __init__(self, parser, parent=None, invokingState=-1):
@@ -14049,6 +14465,7 @@ class VisualFoxpro9Parser ( Parser ):
         finally:
             self.exitRule()
         return localctx
+
 
     class ScopeClauseContext(ParserRuleContext):
 
@@ -14126,6 +14543,7 @@ class VisualFoxpro9Parser ( Parser ):
         finally:
             self.exitRule()
         return localctx
+
 
     class IdentifierContext(ParserRuleContext):
 

@@ -1,9 +1,10 @@
-# Generated from VisualFoxpro9.g4 by ANTLR 4.7.1
+# Generated from VisualFoxpro9.g4 by ANTLR 4.7.2
 # encoding: utf-8
 from __future__ import print_function
 from antlr4 import *
 from io import StringIO
 import sys
+
 
 
 def serializedATN():
@@ -2341,7 +2342,7 @@ class VisualFoxpro9Lexer(Lexer):
 
     def __init__(self, input=None, output=sys.stdout):
         super(VisualFoxpro9Lexer, self).__init__(input, output=output)
-        self.checkVersion("4.7.1")
+        self.checkVersion("4.7.2")
         self._interp = LexerATNSimulator(self, self.atn, self.decisionsToDFA, PredictionContextCache())
         self._actions = None
         self._predicates = None
