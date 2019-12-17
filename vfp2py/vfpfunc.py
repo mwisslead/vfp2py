@@ -1705,6 +1705,9 @@ def create_object(objtype, *args, **kwargs):
 def clearall():
     pass
 
+def clear(*args):
+    pass
+
 DB = DatabaseContext()
 M = _Memvar()
 S = _Variable(M, DB)
