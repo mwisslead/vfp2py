@@ -267,8 +267,10 @@ setCmd
  | setword=CLASSLIB TO specialExpr (IN specialExpr)? (ALIAS specialExpr)? ADDITIVE?
  | setword=CLOCK (ON | OFF | STATUS | TO (expr ',' expr)?)
  | setword=COMPATIBLE (ON | OFF | DB4 | FOXPLUS) (PROMPT | NOPROMPT)?
+ | setword=CONSOLE (ON | OFF)
  | setword=CURSOR (ON | OFF)
  | setword=DATABASE TO specialExpr
+ | setword=DATASESSION TO expr
  | setword=DATE TO? identifier
  | setword=DEFAULT TO specialExpr
  | setword=(DELETE | DELETED) (ON | OFF)
@@ -289,6 +291,7 @@ setCmd
  | setword=RELATION TO expr INTO specialExpr (IN specialExpr)? ADDITIVE?
  | setword=SAFETY (ON | OFF)
  | setword=STATUS BAR? (ON | OFF)
+ | setword=STEP (ON | OFF)
  | setword=SYSMENU (ON | OFF | TO (DEFAULT | expr)? | SAVE | NOSAVE)
  | setword=TABLEPROMPT (ON | OFF)
  | setword=TALK (ON | OFF)
@@ -480,12 +483,14 @@ identifier
  | COMPACT
  | COMPATIBLE
  | COMPILE
+ | CONSOLE
  | CONTINUE
  | COPY
  | COUNT
  | CREATE
  | CURSOR
  | DATABASE
+ | DATASESSION
  | DATE
  | DBF
  | DEACTIVATE
@@ -791,12 +796,14 @@ COMMAND: C O M M A N D;
 COMPACT : C O M P A C T;
 COMPATIBLE: C O M P A T I B L E;
 COMPILE: C O M P (I (L E?)?)?;
+CONSOLE: C O N S O L E;
 CONTINUE : C O N T (I (N (U E?)?)?)?;
 COPY : C O P Y;
 COUNT : C O U N T?;
 CREATE : C R E A (T E?)?;
 CURSOR : C U R S (O R?)?;
 DATABASE : D A T A (B A S E (S)?)?;
+DATASESSION: D A T A S E S S I O N;
 DATE : D A T E;
 DB4 : D B '4';
 DBF : D B F;
