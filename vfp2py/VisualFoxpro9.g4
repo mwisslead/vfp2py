@@ -90,7 +90,7 @@ ifStmt
 
 forStart
  : FOR idAttr '=' loopStart=expr TO loopStop=expr (STEP loopStep=expr)? NL
- | FOR EACH idAttr IN expr NL
+ | FOR EACH idAttr IN expr FOXOBJECT? NL
  ;
 
 forEnd
@@ -540,6 +540,7 @@ identifier
  | FOR
  | FORCE
  | FORM
+ | FOXOBJECT
  | FOXPLUS
  | FREE
  | FROM
@@ -860,6 +861,7 @@ FONT : F O N T;
 FOR : F O R;
 FORCE: F O R C E;
 FORM : F O R M;
+FOXOBJECT: F O X O B J E C T;
 FOXPLUS : F O X P L U S;
 FREE : F R E E;
 FROM : F R O M;
