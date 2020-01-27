@@ -1,4 +1,4 @@
-# Generated from VisualFoxpro9.g4 by ANTLR 4.7.2
+# Generated from VisualFoxpro9.g4 by ANTLR 4.8
 from antlr4 import *
 
 # This class defines a complete generic visitor for a parse tree produced by VisualFoxpro9Parser.
