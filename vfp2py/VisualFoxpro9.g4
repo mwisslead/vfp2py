@@ -130,7 +130,7 @@ scanStmt
  ;
 
 tryStmt
- : TRY NL tryLines=lines (CATCH (TO identifier)? NL catchLines=lines)? (FINALLY NL finallyLines=lines)? ENDTRY
+ : TRY NL tryLines=lines (CATCH (WHEN expr | TO identifier)* NL catchLines=lines)? (FINALLY NL finallyLines=lines)? ENDTRY
  ;
 
 controlStmt
@@ -696,6 +696,7 @@ identifier
  | USE
  | VALUES
  | WAIT
+ | WHEN
  | WHERE
  | WHILE
  | WINDOW
@@ -1027,6 +1028,7 @@ UPDATE: U P D A (T E?)?;
 USE : U S E;
 VALUES: V A L U E S;
 WAIT : W A I T;
+WHEN : W H E N;
 WHERE : W H E R E;
 WHILE : W H I L E;
 WINDOW : W I N D (O (W S?)?)?;

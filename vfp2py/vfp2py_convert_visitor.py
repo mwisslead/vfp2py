@@ -500,15 +500,18 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         if not ctx.CATCH():
             return try_lines + finally_lines
 
-        identifier = add_args_to_code('S.{}', (self.visit(ctx.identifier()),))
-
         try_lines = [CodeStr('try:'), try_lines]
 
-        if identifier:
+        if ctx.identifier():
+            identifier = add_args_to_code('S.{}', (self.visit(ctx.identifier()[0]),))
+
             catch_lines = [CodeStr('except Exception as err:')]
             catch_lines.append([add_args_to_code('{} = {}', [identifier, make_func_code('vfpfunc.Exception.from_pyexception', CodeStr('err'))])])
         else:
-            catch_lines = [CodeStr('except:')]
+            catch_lines = [CodeStr('except Exception:')]
+        if ctx.expr():
+            when = self.visit(ctx.expr()[0])
+            catch_lines.append([add_args_to_code('if not ({}):', (when,)), [CodeStr('raise')]])
         catch_lines.append(self.visit(ctx.catchLines))
 
         finally_lines = [CodeStr('finally:'), finally_lines] if finally_lines else []
