@@ -24,7 +24,7 @@ setup(
         "Programming Language :: Foxpro",
         "Topic :: Software Development :: Libraries :: Python Modules",
     ],
-    install_requires=[ANTLR4 + '==4.8', 'dbf==0.97.2', 'autopep8==1.2.4', 'isort==4.3.4', 'python-dateutil==2.7.2', 'pyodbc==4.0.23'],
+    install_requires=[ANTLR4 + '==4.8', 'dbf==0.97.2', 'autopep8==1.2.4', 'isort==4.3.4', 'python-dateutil==2.7.2', 'pyodbc>=4.0.23'],
     test_suite='nose.collector',
     tests_require=['nose', 'Faker<=0.9.0'],
     entry_points = {
