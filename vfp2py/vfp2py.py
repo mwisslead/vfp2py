@@ -39,9 +39,10 @@ def which(filename):
 
 
 class PreprocessVisitor(VisualFoxpro9Visitor):
-    def __init__(self):
+    def __init__(self, encoding):
         self.tokens = None
         self.memory = {}
+        self.encoding = encoding
 
     def visitPreprocessorCode(self, ctx):
         return self.visit(ctx.preprocessorLines())
@@ -80,7 +81,7 @@ class PreprocessVisitor(VisualFoxpro9Visitor):
         if filename in INCLUDE:
             include_visitor = INCLUDE[filename]
         else:
-            include_visitor = preprocess_file(filename)
+            include_visitor = preprocess_file(filename, self.encoding)
             INCLUDE[filename] = include_visitor
         self.memory.update(include_visitor.memory)
         return include_visitor.tokens
@@ -185,20 +186,20 @@ class TreeCleanVisitor(VisualFoxpro9Visitor):
             ctx.expr().op.type = ctx.parser.PLUS_SIGN
             ctx.op.type = ctx.parser.PLUS_SIGN
 
-def preprocess_code(data):
+def preprocess_code(data, encoding):
     input_stream = antlr4.InputStream(data)
     lexer = VisualFoxpro9Lexer(input_stream)
     stream = antlr4.CommonTokenStream(lexer)
     parser = VisualFoxpro9Parser(stream)
     tree = run_parser(stream, parser, 'preprocessorCode')
-    visitor = PreprocessVisitor()
+    visitor = PreprocessVisitor(encoding)
     visitor.tokens = visitor.visit(tree)
     return visitor
 
-def preprocess_file(filename):
+def preprocess_file(filename, encoding):
     with open(filename, 'rb') as fid:
-        data = fid.read().decode('cp1252')
-    return preprocess_code(data)
+        data = fid.read().decode(encoding)
+    return preprocess_code(data, encoding)
 
 def find_file_ignore_case(filename, directories):
     for directory in directories:
@@ -491,15 +492,15 @@ def prg2py_after_preproc(data, parser_start, input_filename):
         tokens[i] = tuple(token)
     return tokenize.untokenize(tokens)
 
-def prg2py(data, parser_start='prg', prepend_data='procedure _program_main\n', input_filename=''):
-    tokens = preprocess_code(data).tokens
+def prg2py(data, encoding, parser_start='prg', prepend_data='procedure _program_main\n', input_filename=''):
+    tokens = preprocess_code(data, encoding).tokens
     data = prepend_data + ''.join(token.text.replace('\r', '') for token in tokens)
     return prg2py_after_preproc(data, parser_start, input_filename)
 
-def convert_file(infile, outfile):
+def convert_file(infile, outfile, encoding):
     file_ext = os.path.splitext(infile.lower())[1]
     if file_ext == '.pjx':
-        convert_project(infile, outfile)
+        convert_project(infile, outfile, encoding)
         return
     elif file_ext in ('.prg', '.mpr', '.spr', '.scx', '.vcx'):
         if os.path.isdir(outfile):
@@ -511,12 +512,12 @@ def convert_file(infile, outfile):
                 return
         if file_ext == '.scx':
             data = convert_scx_to_vfp_code(infile)
-            tokens = preprocess_code(data).tokens
+            tokens = preprocess_code(data, encoding).tokens
         elif file_ext == '.vcx':
             datas = convert_vcx_to_vfp_code(infile)
-            tokens = [token for data in datas for token in preprocess_code(data).tokens]
+            tokens = [token for data in datas for token in preprocess_code(data, encoding).tokens]
         else:
-            tokens = preprocess_file(infile).tokens
+            tokens = preprocess_file(infile, encoding).tokens
     elif file_ext in ('.frx', '.mnx', '.fll', '.app'):
         print('{} files not currently supported'.format(file_ext))
         return

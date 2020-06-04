@@ -13,6 +13,7 @@ def Test0():
 LOCAL STRING_VAL, FLOAT_VAL, MONEY_VAL, INT_VAL, BLOB_VAL, BOOL_VAL, NULL_VAL, NULLDATE_VAL, DATE_VAL, DATETIME_VAL, OBJ_VAL
 LOCAL Y, Z, W
 STRING_VAL = \'str\'
+ü1 = "Hellü"
 float_val = 3.0
 float_val = .5e-5
 float_val = 8e+18
@@ -130,6 +131,7 @@ ACTIVATE POPUP test
 M.add_local(\'string_val\', \'float_val\', \'money_val\', \'int_val\', \'blob_val\', \'bool_val\', \'null_val\', \'nulldate_val\', \'date_val\', \'datetime_val\', \'obj_val\')
 M.add_local(\'y\', \'z\', \'w\')
 S.string_val = \'str\'
+S.ü1 = \'Hellü\'
 S.float_val = 3.0
 S.float_val = .5e-5
 S.float_val = 8e+18
@@ -237,7 +239,7 @@ vfpfunc.on_pad_bar(\'bar\', 1, \'test\', (\'popup\', \'test\'))
 vfpfunc.activate_menu(\'test\', nowait=True)
 # FIX ME: ACTIVATE POPUP test
 '''.strip()
-    test_output_str = vfp2py.vfp2py.prg2py(input_str, parser_start='lines', prepend_data='').strip()
+    test_output_str = vfp2py.vfp2py.prg2py(input_str, 'cp1252', parser_start='lines', prepend_data='').strip()
     try:
         assert test_output_str == output_str
     except AssertionError:
@@ -314,7 +316,7 @@ def MAIN():
     print(3)  # @ 10, 10 SAY 3
     return S.x
 '''.strip()
-    test_output_str = vfp2py.vfp2py.prg2py(input_str).strip()
+    test_output_str = vfp2py.vfp2py.prg2py(input_str, 'cp1252').strip()
     try:
         assert test_output_str == output_str
     except AssertionError:
@@ -494,7 +496,7 @@ def another_random_function():
     # something
     print(S.x)
 '''.strip()
-    test_output_str = vfp2py.vfp2py.prg2py(input_str).strip()
+    test_output_str = vfp2py.vfp2py.prg2py(input_str, 'cp1252').strip()
     try:
         assert test_output_str == output_str
     except AssertionError:
@@ -546,7 +548,7 @@ os.remove(\'test.txt\')
 os.remove(vfpfunc.getfile(\'\', \'Select file to\', \'Delete\', 0, \'Delete\'))
 send2trash(\'test.txt\')
 '''.strip()
-    test_output_str = vfp2py.vfp2py.prg2py(input_str, parser_start='lines', prepend_data='').strip()
+    test_output_str = vfp2py.vfp2py.prg2py(input_str, 'cp1252', parser_start='lines', prepend_data='').strip()
     try:
         assert test_output_str == output_str
     except AssertionError:
@@ -576,7 +578,7 @@ os.rmdir(S.test + S.test)
 os.rmdir(S.test.strip())
 vfpfunc.macro_eval(\'!ls -al &pathname\')
 '''.strip()
-    test_output_str = vfp2py.vfp2py.prg2py(input_str, parser_start='lines', prepend_data='').strip()
+    test_output_str = vfp2py.vfp2py.prg2py(input_str, 'cp1252', parser_start='lines', prepend_data='').strip()
     try:
         assert test_output_str == output_str
     except AssertionError:
@@ -610,7 +612,7 @@ DB.locate(nooptimize=True, while_cond=lambda: S.x > 5)
 del M.search_for, M.countval, M.sumval
 DB.update(\'test\', [(\'a\', S.b), (\'c\', S.d), (\'e\', S.f)], where=lambda: S.x == 3)
 '''.strip()
-    test_output_str = vfp2py.vfp2py.prg2py(input_str, parser_start='lines', prepend_data='').strip()
+    test_output_str = vfp2py.vfp2py.prg2py(input_str, 'cp1252', parser_start='lines', prepend_data='').strip()
     try:
         assert test_output_str == output_str
     except AssertionError:
@@ -642,7 +644,7 @@ def MAIN():
     print(dt.datetime.now().date())
     print(math.pi)
 '''.strip()
-    test_output_str = vfp2py.vfp2py.prg2py(input_str).strip()
+    test_output_str = vfp2py.vfp2py.prg2py(input_str, 'cp1252').strip()
     try:
         assert test_output_str == output_str
     except AssertionError:
@@ -688,7 +690,7 @@ vfpfunc.clear(\'read\')
 vfpfunc.clear(\'read\', \'all\')
 vfpfunc.clear(None)
 '''.strip()
-    test_output_str = vfp2py.vfp2py.prg2py(input_str, parser_start='lines', prepend_data='').strip()
+    test_output_str = vfp2py.vfp2py.prg2py(input_str, 'cp1252', parser_start='lines', prepend_data='').strip()
     try:
         assert test_output_str == output_str
     except AssertionError:
@@ -712,7 +714,7 @@ S.y = \'failed\'
 assert not S.x
 assert S.x == True, S.y + \' ASSERT\'
 '''.strip()
-    test_output_str = vfp2py.vfp2py.prg2py(input_str, parser_start='lines', prepend_data='').strip()
+    test_output_str = vfp2py.vfp2py.prg2py(input_str, 'cp1252', parser_start='lines', prepend_data='').strip()
     try:
         assert test_output_str == output_str
     except AssertionError:
@@ -764,7 +766,7 @@ vfpfunc.set(\'exclusive\', \'ON\', set_value=True)
 # FIX ME: SET RELATION TO a=b INTO test
 vfpfunc.set(\'talk\', \'OFF\', set_value=True)
 '''.strip()
-    test_output_str = vfp2py.vfp2py.prg2py(input_str, parser_start='lines', prepend_data='').strip()
+    test_output_str = vfp2py.vfp2py.prg2py(input_str, 'cp1252', parser_start='lines', prepend_data='').strip()
     try:
         assert test_output_str == output_str
     except AssertionError:
@@ -786,7 +788,7 @@ DB.append_from(None, \'table_name\', filetype=\'delimited\')
 DB.append_from(None, \'table_name\', filetype=\'delimited\')
 DB.insert(None, S.test)
 '''.strip()
-    test_output_str = vfp2py.vfp2py.prg2py(input_str, parser_start='lines', prepend_data='').strip()
+    test_output_str = vfp2py.vfp2py.prg2py(input_str, 'cp1252', parser_start='lines', prepend_data='').strip()
     try:
         assert test_output_str == output_str
     except AssertionError:
@@ -844,7 +846,7 @@ print(os.path.join(S.mydir, \'dir1\', \'dir2\', \'dir3\'))
 print(os.getcwd())
 del M.myfile, M.mydir
 '''.strip()
-    test_output_str = vfp2py.vfp2py.prg2py(input_str, parser_start='lines', prepend_data='').strip()
+    test_output_str = vfp2py.vfp2py.prg2py(input_str, 'cp1252', parser_start='lines', prepend_data='').strip()
     try:
         assert test_output_str == output_str
     except AssertionError:
@@ -876,7 +878,7 @@ S.pydict[\'one\'] = 1
 print(S.pydict[\'one\'])
 test.test(*S.pytuple)
 '''.strip()
-    test_output_str = vfp2py.vfp2py.prg2py(input_str, parser_start='lines', prepend_data='').strip()
+    test_output_str = vfp2py.vfp2py.prg2py(input_str, 'cp1252', parser_start='lines', prepend_data='').strip()
     try:
         assert test_output_str == output_str
     except AssertionError:
@@ -902,7 +904,7 @@ M.add_private(\'test\', somearray=Array(2, 5))
 # FIX ME: EXTERNAL ARRAY someotherarray[3]
 # FIX ME: EXTERNAL PROCEDURE test
 '''.strip()
-    test_output_str = vfp2py.vfp2py.prg2py(input_str, parser_start='lines', prepend_data='').strip()
+    test_output_str = vfp2py.vfp2py.prg2py(input_str, 'cp1252', parser_start='lines', prepend_data='').strip()
     try:
         assert test_output_str == output_str
     except AssertionError:
@@ -930,7 +932,7 @@ except Exception as err:
 raise Exception(\'Error Message\')
 # FIX ME: RETRY
 '''.strip()
-    test_output_str = vfp2py.vfp2py.prg2py(input_str, parser_start='lines', prepend_data='').strip()
+    test_output_str = vfp2py.vfp2py.prg2py(input_str, 'cp1252', parser_start='lines', prepend_data='').strip()
     try:
         assert test_output_str == output_str
     except AssertionError:
@@ -964,7 +966,7 @@ S.vals_copied = S.main_array.copy(\'new_array\', 5)
 S.vals_copied = S.main_array.copy(\'new_array\', 5, S.num_elements)
 S.vals_copied = S.main_array.copy(\'new_array\', 5, S.num_elements, 0)
 '''.strip()
-    test_output_str = vfp2py.vfp2py.prg2py(input_str, parser_start='lines', prepend_data='').strip()
+    test_output_str = vfp2py.vfp2py.prg2py(input_str, 'cp1252', parser_start='lines', prepend_data='').strip()
     try:
         assert test_output_str == output_str
     except AssertionError:
@@ -986,7 +988,7 @@ DB.skip(None, 10)
 DB.skip(\'test\', 1)
 DB.skip(\'test\', S.someval)
 '''.strip()
-    test_output_str = vfp2py.vfp2py.prg2py(input_str, parser_start='lines', prepend_data='').strip()
+    test_output_str = vfp2py.vfp2py.prg2py(input_str, 'cp1252', parser_start='lines', prepend_data='').strip()
     try:
         assert test_output_str == output_str
     except AssertionError:
@@ -1012,7 +1014,7 @@ vfpfunc.shutdown_func = lambda: shutdown.shutdown()
 vfpfunc.shutdown_func = lambda: vfpfunc.quit()
 vfpfunc.on_key[\'f12\'] = lambda: print(\'KEY PRESSED\')
 '''.strip()
-    test_output_str = vfp2py.vfp2py.prg2py(input_str, parser_start='lines', prepend_data='').strip()
+    test_output_str = vfp2py.vfp2py.prg2py(input_str, 'cp1252', parser_start='lines', prepend_data='').strip()
     try:
         assert test_output_str == output_str
     except AssertionError:
@@ -1036,7 +1038,7 @@ print()  # @x, y CLEAR TO a, b
 print(\'hello \' + S.username)  # @x, y say \'hello \' + username
 print(\'hello \' + S.username)  # @x, y say \'hello \' + username STYLE thestyle
 '''.strip()
-    test_output_str = vfp2py.vfp2py.prg2py(input_str, parser_start='lines', prepend_data='').strip()
+    test_output_str = vfp2py.vfp2py.prg2py(input_str, 'cp1252', parser_start='lines', prepend_data='').strip()
     try:
         assert test_output_str == output_str
     except AssertionError:
@@ -1062,7 +1064,7 @@ vfpfunc.gather(val=S.test)
 vfpfunc.gather()
 vfpfunc.gather(val=S.somearray)
 '''.strip()
-    test_output_str = vfp2py.vfp2py.prg2py(input_str, parser_start='lines', prepend_data='').strip()
+    test_output_str = vfp2py.vfp2py.prg2py(input_str, 'cp1252', parser_start='lines', prepend_data='').strip()
     try:
         assert test_output_str == output_str
     except AssertionError:
@@ -1080,7 +1082,7 @@ REPORT FORM ?
 vfpfunc.report_form(\'test.frx\')
 vfpfunc.report_form(None)
 '''.strip()
-    test_output_str = vfp2py.vfp2py.prg2py(input_str, parser_start='lines', prepend_data='').strip()
+    test_output_str = vfp2py.vfp2py.prg2py(input_str, 'cp1252', parser_start='lines', prepend_data='').strip()
     try:
         assert test_output_str == output_str
     except AssertionError:

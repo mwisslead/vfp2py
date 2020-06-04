@@ -53,9 +53,9 @@ class TestsGenVisitor(conversionVisitor):
             '''
             special_directive = str(test.FoxStart().symbol.text[13:].strip())
             if special_directive:
-                test_output = 'vfp2py.vfp2py.prg2py(input_str, parser_start={}, prepend_data=\'\')'.format(repr(special_directive))
+                test_output = 'vfp2py.vfp2py.prg2py(input_str, \'cp1252\', parser_start={}, prepend_data=\'\')'.format(repr(special_directive))
             else:
-                test_output = 'vfp2py.vfp2py.prg2py(input_str)'
+                test_output = 'vfp2py.vfp2py.prg2py(input_str, \'cp1252\')'
             test_func = test_func.format(i, docstring(foxlines), docstring(pylines), test_output)
             t += test_func.split('!           ')[1:]
 

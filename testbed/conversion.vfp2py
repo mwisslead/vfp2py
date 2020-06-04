@@ -6,6 +6,7 @@ Functions.
 LOCAL STRING_VAL, FLOAT_VAL, MONEY_VAL, INT_VAL, BLOB_VAL, BOOL_VAL, NULL_VAL, NULLDATE_VAL, DATE_VAL, DATETIME_VAL, OBJ_VAL
 LOCAL Y, Z, W
 STRING_VAL = 'str'
+ü1 = "Hellü"
 float_val = 3.0
 float_val = .5e-5
 float_val = 8e+18
@@ -124,6 +125,7 @@ ACTIVATE POPUP test
 M.add_local('string_val', 'float_val', 'money_val', 'int_val', 'blob_val', 'bool_val', 'null_val', 'nulldate_val', 'date_val', 'datetime_val', 'obj_val')
 M.add_local('y', 'z', 'w')
 S.string_val = 'str'
+S.ü1 = 'Hellü'
 S.float_val = 3.0
 S.float_val = .5e-5
 S.float_val = 8e+18
