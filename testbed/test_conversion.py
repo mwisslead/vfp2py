@@ -1004,6 +1004,7 @@ ON ERROR DO test
 ON SHUTDOWN
 ON SHUTDOWN DO SHUTDOWN IN SHUTDOWN
 ON SHUTDOWN QUIT
+ON ESCAPE QUIT
 ON KEY LABEL F12 ?\'KEY PRESSED\'
 '''.strip()
     output_str = '''
@@ -1012,6 +1013,7 @@ vfpfunc.error_func = lambda: F.test()
 vfpfunc.shutdown_func = None
 vfpfunc.shutdown_func = lambda: shutdown.shutdown()
 vfpfunc.shutdown_func = lambda: vfpfunc.quit()
+vfpfunc.escape_func = lambda: vfpfunc.quit()
 vfpfunc.on_key[\'f12\'] = lambda: print(\'KEY PRESSED\')
 '''.strip()
     test_output_str = vfp2py.vfp2py.prg2py(input_str, 'cp1252', parser_start='lines', prepend_data='').strip()

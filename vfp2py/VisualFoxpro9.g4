@@ -274,6 +274,7 @@ setCmd
  | setword=DATE TO? identifier
  | setword=DEFAULT TO specialExpr
  | setword=(DELETE | DELETED) (ON | OFF)
+ | setword=ESCAPE (ON | OFF)
  | setword=EXACT (ON | OFF)
  | setword=EXCLUSIVE (ON | OFF)
  | setword=FILTER TO (specialExpr (IN specialExpr)?)?
@@ -524,6 +525,7 @@ identifier
  | ENDWITH
  | ERASE
  | ERROR
+ | ESCAPE
  | EVENTS
  | EXACT
  | EXCEPT
@@ -844,6 +846,7 @@ ENDTRY: E N D T R Y?;
 ENDWITH : E N D W (I (T H?)?)?;
 ERASE : E R A S E?;
 ERROR : E R R O R?;
+ESCAPE : E S C A P E;
 EVENTS : E V E N T S;
 EXACT : E X A C T?;
 EXCEPT: E X C E P T;

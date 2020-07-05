@@ -1370,6 +1370,8 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             return self.on_event(ctx, 'vfpfunc.error_func')
         elif event == 'shutdown':
             return self.on_event(ctx, 'vfpfunc.shutdown_func')
+        elif event == 'escape':
+            return self.on_event(ctx, 'vfpfunc.escape_func')
 
     def visitRaiseError(self, ctx):
         expr = [self.visit(ctx.expr())] or []
@@ -1796,7 +1798,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             args = self.list_visit(ctx.specialExpr())
         elif setword == 'bell':
             args = ('TO', self.visit(ctx.specialExpr()[0])) if ctx.TO() else ('ON' if ctx.ON() else 'OFF',)
-        elif setword in ('cursor', 'deleted', 'exact', 'exclusive', 'multilocks', 'near', 'status', 'status bar', 'tableprompt', 'talk', 'unique'):
+        elif setword in ('cursor', 'deleted', 'escape', 'exact', 'exclusive', 'multilocks', 'near', 'status', 'status bar', 'tableprompt', 'talk', 'unique'):
             args = ('ON' if ctx.ON() else 'OFF',)
         elif setword == 'century':
             if ctx.TO():
