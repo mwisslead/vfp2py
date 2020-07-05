@@ -6,8 +6,6 @@ from setuptools import setup
 
 VERSION='0.1.0'
 
-ANTLR4 = 'antlr4-python{}-runtime'.format(sys.version_info.major)
-
 setup(
     name='vfp2py',
     version=VERSION,
@@ -24,9 +22,17 @@ setup(
         "Programming Language :: Foxpro",
         "Topic :: Software Development :: Libraries :: Python Modules",
     ],
-    install_requires=[ANTLR4 + '==4.8', 'dbf==0.97.2', 'autopep8==1.2.4', 'isort==4.3.4', 'python-dateutil==2.7.2', 'pyodbc>=4.0.23'],
+    install_requires=[
+        'antlr4-python2-runtime==4.8; python_version < \'3\'',
+        'antlr4-python3-runtime==4.8; python_version >= \'3\'',
+        'dbf',
+        'autopep8',
+        'isort<5',
+        'python-dateutil',
+        'pyodbc'
+    ],
     test_suite='nose.collector',
-    tests_require=['nose', 'Faker<=0.9.0'],
+    tests_require=['nose', 'Faker'],
     entry_points = {
         'console_scripts': ['vfp2py=vfp2py.__main__:main'],
     }
