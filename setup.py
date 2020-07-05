@@ -19,7 +19,6 @@ setup(
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
         "Programming Language :: Python",
-        "Programming Language :: Foxpro",
         "Topic :: Software Development :: Libraries :: Python Modules",
     ],
     install_requires=[
