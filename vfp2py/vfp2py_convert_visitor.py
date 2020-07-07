@@ -1347,6 +1347,22 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         if func:
             if isinstance(func, list) and len(func) == 1:
                 func = func[0]
+            if isinstance(ctx.cmd(), ctx.parser.AssignContext):
+                import ast
+                x = ast.parse(func).body[0]
+                def pull_item(item):
+                    return func[item.col_offset:item.end_col_offset]
+                val = CodeStr(pull_item(x.value))
+                assigns = []
+                for target in x.targets:
+                    if isinstance(target, ast.Attribute):
+                        base = CodeStr(pull_item(target.value))
+                        assigns.append(make_func_code('setattr', base, target.attr, val))
+                    elif isinstance(target, ast.Subscript):
+                        assigns.append(make_func_code(pull_item(target.value) + '.__setitem__', CodeStr(pull_item(target.slice.value)), val))
+                    else:
+                        raise Exception('huh?')
+                func = CodeStr(' and '.join(assigns))
             func = add_args_to_code('lambda: {}', (func,))
         return [add_args_to_code('{} = {}', (CodeStr(func_prefix), func),)]
 
