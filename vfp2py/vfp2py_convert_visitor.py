@@ -568,7 +568,7 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
         for var in ctx.idAttr():
             trailer = self.visit(var.trailer()) or []
             if len(trailer) > 0 and isinstance(trailer[-1], list):
-                identifier = self.visit(ctx.idAttr()[0].identifier())
+                identifier = self.visit(var.identifier())
                 arg = self.createIdAttr(identifier, trailer[:-1])
                 args.append('{}[{}]'.format(arg, ','.join(repr(x) for x in trailer[-1])))
             else:
