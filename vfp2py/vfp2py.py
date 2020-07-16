@@ -407,7 +407,7 @@ def read_vfp_project(pjxfile):
 
     return files, main_file
 
-def convert_project(infile, directory):
+def convert_project(infile, directory, encoding):
     project_files, main_file = read_vfp_project(infile)
     global SEARCH_PATH
     search = SEARCH_PATH
@@ -423,7 +423,7 @@ def convert_project(infile, directory):
         try:
             print('processing {}'.format(name))
             SEARCH_PATH = search
-            convert_file(project_files[name] or name, outfile)
+            convert_file(project_files[name] or name, outfile, encoding)
         except Exception as err:
             logging.getLogger().exception(err)
             print('failed to convert {}'.format(name))
