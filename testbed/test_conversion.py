@@ -744,6 +744,8 @@ SET HELP COLLECTION test
 SET HELP SYSTEM
 SET RELATION TO a=b INTO test
 SET TALK OFF
+SET UDFPARMS TO REFERENCE
+SET UDFPARMS TO VALUE
 '''.strip()
     output_str = '''
 vfpfunc.set(\'compatible\', \'OFF\', set_value=True)
@@ -765,6 +767,8 @@ vfpfunc.set(\'exclusive\', \'ON\', set_value=True)
 # FIX ME: SET HELP SYSTEM
 # FIX ME: SET RELATION TO a=b INTO test
 vfpfunc.set(\'talk\', \'OFF\', set_value=True)
+vfpfunc.set(\'udfparms\', \'reference\', set_value=True)
+vfpfunc.set(\'udfparms\', \'value\', set_value=True)
 '''.strip()
     test_output_str = vfp2py.vfp2py.prg2py(input_str, 'cp1252', parser_start='lines', prepend_data='').strip()
     try:

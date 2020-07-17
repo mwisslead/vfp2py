@@ -1878,6 +1878,8 @@ class PythonConvertVisitor(VisualFoxpro9Visitor):
             args = (order, of_expr, in_expr)
         elif setword == 'index':
             args = (self.visit(ctx.specialExpr(0)),)
+        elif setword == 'udfparms':
+            args = ['value' if ctx.VALUE() else 'reference']
         else:
             return
         return make_func_code('vfpfunc.set', setword, *args, **kwargs)

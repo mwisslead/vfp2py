@@ -297,6 +297,7 @@ setCmd
  | setword=TABLEPROMPT (ON | OFF)
  | setword=TALK (ON | OFF)
  | setword=TYPEAHEAD TO expr
+ | setword=UDFPARMS TO (VALUE | REFERENCE)
  | setword=UNIQUE (ON | OFF)
  ;
 
@@ -632,6 +633,7 @@ identifier
  | RECALL
  | RECORD
  | RECYCLE
+ | REFERENCE
  | REFRESH
  | REINDEX
  | RELATION
@@ -691,11 +693,13 @@ identifier
  | TRY
  | TYPE
  | TYPEAHEAD
+ | UDFPARMS
  | UNDEFINE
  | UNIQUE
  | UNLOCK
  | UPDATE
  | USE
+ | VALUE
  | VALUES
  | WAIT
  | WHEN
@@ -962,6 +966,7 @@ READ : R E A D;
 RECALL : R E C A (L L?)?;
 RECORD : R E C O R D;
 RECYCLE : R E C Y C L E;
+REFERENCE: R E F E R E N C E;
 REFRESH : R E F R E S H;
 REINDEX: R E I N (D (E X?)?)?;
 RELATION: R E L A T I O N;
@@ -1024,11 +1029,13 @@ TOP : T O P;
 TRY: T R Y;
 TYPE: T Y P E;
 TYPEAHEAD : T Y P E A H E A D;
+UDFPARMS: U D F P A R M S;
 UNDEFINE : U N D E F (I N E)?;
 UNIQUE : U N I Q U E;
 UNLOCK: U N L O (C K?)?;
 UPDATE: U P D A (T E?)?;
 USE : U S E;
+VALUE: V A L U E;
 VALUES: V A L U E S;
 WAIT : W A I T;
 WHEN : W H E N;

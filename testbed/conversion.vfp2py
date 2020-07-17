@@ -666,6 +666,8 @@ SET HELP COLLECTION test
 SET HELP SYSTEM
 SET RELATION TO a=b INTO test
 SET TALK OFF
+SET UDFPARMS TO REFERENCE
+SET UDFPARMS TO VALUE
 @end=vfp@
 
 @begin=python@
@@ -688,6 +690,8 @@ vfpfunc.set('exclusive', 'ON', set_value=True)
 # FIX ME: SET HELP SYSTEM
 # FIX ME: SET RELATION TO a=b INTO test
 vfpfunc.set('talk', 'OFF', set_value=True)
+vfpfunc.set('udfparms', 'reference', set_value=True)
+vfpfunc.set('udfparms', 'value', set_value=True)
 @end=python@
 
 @begin=vfp@&&lines
