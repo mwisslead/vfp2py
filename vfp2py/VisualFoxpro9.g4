@@ -333,7 +333,7 @@ reference
 expr
  : '(' expr ')' #subExpr
  | op=('+'|'-') expr #unaryNegation
- | ('!'|NOT) expr #booleanNegation
+ | ('!'|NOT|OTHERNOT) expr #booleanNegation
  | expr ('*' '*'|'^') expr #power
  | expr op=('*'|'/') expr #multiplication
  | expr '%' expr #modulo
@@ -945,6 +945,7 @@ ON : O N;
 OR : O R;
 ORDER : O R D E R;
 OTHERAND : '.' AND '.';
+OTHERNOT : '.' NOT '.';
 OTHEROR : '.' OR '.';
 OTHERWISE : O T H E (R (W (I (S E?)?)?)?)?;
 PACK: P A C K;
