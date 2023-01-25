@@ -287,7 +287,7 @@ setCmd
  | setword=NOTIFY CURSOR? (ON | OFF)
  | setword=ORDER TO (specialExpr | TAG? specialExpr (OF ofExpr=specialExpr)? (IN inExpr=specialExpr)? (ASCENDING | DESCENDING)?)?
  | setword=PRINTER (ON PROMPT? | OFF | TO (DEFAULT | NAME specialExpr | specialExpr ADDITIVE?)?)
- | setword=PROCEDURE TO specialExpr (',' specialExpr)* ADDITIVE?
+ | setword=PROCEDURE TO (specialExpr (',' specialExpr)* ADDITIVE?)?
  | setword=REFRESH TO expr (',' expr)?
  | setword=RELATION TO expr INTO specialExpr (IN specialExpr)? ADDITIVE?
  | setword=SAFETY (ON | OFF)
