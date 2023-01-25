@@ -1,4 +1,4 @@
-AntlrJar=antlr-4.8-complete.jar
+AntlrJar=antlr-4.11.1-complete.jar
 Antlr=java -jar $(shell realpath $(AntlrJar))
 PyVer=$(shell python -c 'import sys; print(sys.version_info[0])')
 

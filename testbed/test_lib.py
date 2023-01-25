@@ -207,18 +207,18 @@ def database_tests():
         assert S.loopcount == 4
         DB.goto(None, 3)
         S.loopcount = 0
-        for _ in DB.scanner(scope=('all',), condition=lambda: S.st.strip() == 'ID'):
+        for _ in DB.scanner(condition=lambda: S.st.strip() == 'ID', scope=('all',)):
             assert len(S.name.strip()) > 0
             S.loopcount += 1
         assert S.loopcount == 2
         S.loopcount = 0
-        for _ in DB.scanner(scope=('rest',), condition=lambda: S.st.strip() == 'ID'):
+        for _ in DB.scanner(condition=lambda: S.st.strip() == 'ID', scope=('rest',)):
             assert len(S.name.strip()) > 0
             S.loopcount += 1
         assert S.loopcount == 0
         DB.goto(None, 0)
         S.loopcount = 0
-        for _ in DB.scanner(scope=('rest',), condition=lambda: S.st.strip() == 'ID'):
+        for _ in DB.scanner(condition=lambda: S.st.strip() == 'ID', scope=('rest',)):
             assert len(S.name.strip()) > 0
             S.loopcount += 1
         assert S.loopcount == 2
@@ -354,7 +354,6 @@ def Someclass():
     BaseClass = vfpfunc.Custom
 
     class Someclass(BaseClass):
-
         @lparameters()
         def _assign(self):
             BaseClass._assign(self)

@@ -22,8 +22,7 @@ setup(
         "Topic :: Software Development :: Libraries :: Python Modules",
     ],
     install_requires=[
-        'antlr4-python2-runtime==4.8; python_version < \'3\'',
-        'antlr4-python3-runtime==4.8; python_version >= \'3\'',
+        'antlr4-python3-runtime==4.11.1',
         'dbf',
         'autopep8',
         'isort<5',

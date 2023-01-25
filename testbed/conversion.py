@@ -1,4 +1,4 @@
-# Generated from conversion.g4 by ANTLR 4.8
+# Generated from conversion.g4 by ANTLR 4.11.1
 # encoding: utf-8
 from antlr4 import *
 from io import StringIO
@@ -8,23 +8,18 @@ if sys.version_info[1] > 5:
 else:
 	from typing.io import TextIO
 
-
 def serializedATN():
-    with StringIO() as buf:
-        buf.write("\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\t")
-        buf.write("\36\4\2\t\2\4\3\t\3\3\2\7\2\b\n\2\f\2\16\2\13\13\2\3\3")
-        buf.write("\3\3\7\3\17\n\3\f\3\16\3\22\13\3\3\3\3\3\3\3\7\3\27\n")
-        buf.write("\3\f\3\16\3\32\13\3\3\3\3\3\3\3\2\2\4\2\4\2\2\2\36\2\t")
-        buf.write("\3\2\2\2\4\f\3\2\2\2\6\b\5\4\3\2\7\6\3\2\2\2\b\13\3\2")
-        buf.write("\2\2\t\7\3\2\2\2\t\n\3\2\2\2\n\3\3\2\2\2\13\t\3\2\2\2")
-        buf.write("\f\20\7\3\2\2\r\17\7\7\2\2\16\r\3\2\2\2\17\22\3\2\2\2")
-        buf.write("\20\16\3\2\2\2\20\21\3\2\2\2\21\23\3\2\2\2\22\20\3\2\2")
-        buf.write("\2\23\24\7\6\2\2\24\30\7\4\2\2\25\27\7\t\2\2\26\25\3\2")
-        buf.write("\2\2\27\32\3\2\2\2\30\26\3\2\2\2\30\31\3\2\2\2\31\33\3")
-        buf.write("\2\2\2\32\30\3\2\2\2\33\34\7\b\2\2\34\5\3\2\2\2\5\t\20")
-        buf.write("\30")
-        return buf.getvalue()
-
+    return [
+        4,1,7,28,2,0,7,0,2,1,7,1,1,0,5,0,6,8,0,10,0,12,0,9,9,0,1,1,1,1,5,
+        1,13,8,1,10,1,12,1,16,9,1,1,1,1,1,1,1,5,1,21,8,1,10,1,12,1,24,9,
+        1,1,1,1,1,1,1,0,0,2,0,2,0,0,28,0,7,1,0,0,0,2,10,1,0,0,0,4,6,3,2,
+        1,0,5,4,1,0,0,0,6,9,1,0,0,0,7,5,1,0,0,0,7,8,1,0,0,0,8,1,1,0,0,0,
+        9,7,1,0,0,0,10,14,5,1,0,0,11,13,5,5,0,0,12,11,1,0,0,0,13,16,1,0,
+        0,0,14,12,1,0,0,0,14,15,1,0,0,0,15,17,1,0,0,0,16,14,1,0,0,0,17,18,
+        5,4,0,0,18,22,5,2,0,0,19,21,5,7,0,0,20,19,1,0,0,0,21,24,1,0,0,0,
+        22,20,1,0,0,0,22,23,1,0,0,0,23,25,1,0,0,0,24,22,1,0,0,0,25,26,5,
+        6,0,0,26,3,1,0,0,0,3,7,14,22
+    ]
 
 class conversion ( Parser ):
 
@@ -57,7 +52,7 @@ class conversion ( Parser ):
 
     def __init__(self, input:TokenStream, output:TextIO = sys.stdout):
         super().__init__(input, output)
-        self.checkVersion("4.8")
+        self.checkVersion("4.11.1")
         self._interp = ParserATNSimulator(self, self.atn, self.decisionsToDFA, self.sharedContextCache)
         self._predicates = None
 
@@ -65,6 +60,7 @@ class conversion ( Parser ):
 
 
     class ConversionTestsContext(ParserRuleContext):
+        __slots__ = 'parser'
 
         def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
             super().__init__(parent, invokingState)
@@ -99,7 +95,7 @@ class conversion ( Parser ):
             self.state = 7
             self._errHandler.sync(self)
             _la = self._input.LA(1)
-            while _la==conversion.FoxStart:
+            while _la==1:
                 self.state = 4
                 self.conversionTest()
                 self.state = 9
@@ -116,6 +112,7 @@ class conversion ( Parser ):
 
 
     class ConversionTestContext(ParserRuleContext):
+        __slots__ = 'parser'
 
         def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
             super().__init__(parent, invokingState)
@@ -169,7 +166,7 @@ class conversion ( Parser ):
             self.state = 14
             self._errHandler.sync(self)
             _la = self._input.LA(1)
-            while _la==conversion.FoxLine:
+            while _la==5:
                 self.state = 11
                 self.match(conversion.FoxLine)
                 self.state = 16
@@ -183,7 +180,7 @@ class conversion ( Parser ):
             self.state = 22
             self._errHandler.sync(self)
             _la = self._input.LA(1)
-            while _la==conversion.PyLine:
+            while _la==7:
                 self.state = 19
                 self.match(conversion.PyLine)
                 self.state = 24
