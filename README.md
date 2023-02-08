@@ -24,7 +24,7 @@ whole projects pjx files.
 - Speed up parsing
 
 ## Installation
-`python setup.py install`
+`python -m pip install setup.py`
 
 ## Usage
 ```
