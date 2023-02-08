@@ -24,7 +24,7 @@ whole projects pjx files.
 - Speed up parsing
 
 ## Installation
-`python -m pip install setup.py`
+`python -m pip install /path/to/vfp2py`
 
 ## Usage
 ```
