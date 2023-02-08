@@ -4,7 +4,7 @@ from __future__ import absolute_import, division, print_function
 import sys
 from setuptools import setup
 
-VERSION='0.1.0'
+VERSION='0.1.1'
 
 setup(
     name='vfp2py',
@@ -12,7 +12,7 @@ setup(
     description='Convert foxpro code to python',
     author='Michael Wisslead',
     author_email='michael.wisslead@gmail.com',
-    url='https://github.com/mwisslead',
+    url='https://github.com/mwisslead/vfp2py',
     packages=['vfp2py'],
     classifiers=[
         "Intended Audience :: Developers",
